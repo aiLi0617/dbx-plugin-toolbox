@@ -1,0 +1,174 @@
+export async function ready() {
+  if (window.dbxPlugin?.ready) await window.dbxPlugin.ready;
+}
+
+function errorText(err) {
+  if (err == null) return "";
+  if (typeof err === "string") return err;
+  return String(err.message || err.msg || err.data?.message || "");
+}
+
+function isSidecarStarting(err) {
+  return /sidecar is not ready|backend is not ready/i.test(errorText(err));
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function invoke(method, params = {}, timeoutMs = 30000) {
+  await ready();
+  if (!window.dbxPlugin?.invoke) {
+    throw new Error("DBX plugin host is not available");
+  }
+  let lastErr;
+  const waits = [0, 200, 400, 800, 1600, 2500];
+  for (const wait of waits) {
+    if (wait) await sleep(wait);
+    try {
+      return await window.dbxPlugin.invoke(method, params, { timeoutMs });
+    } catch (err) {
+      lastErr = err;
+      if (!isSidecarStarting(err)) throw err;
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error(errorText(lastErr) || "Sidecar is not ready");
+}
+
+export function locale() {
+  return window.dbxPlugin?.locale || navigator.language || "en";
+}
+
+export function theme() {
+  return window.dbxPlugin?.theme || { appearance: "light", tokens: {} };
+}
+
+export function themeAppearance() {
+  return theme().appearance === "dark" ? "dark" : "light";
+}
+
+/** Public plugin tokens (`--color-*`) and DBX/shadcn aliases (`--card`, `--accent`, …). */
+const COLOR_TOKEN_NAMES = [
+  "background",
+  "foreground",
+  "card",
+  "card-foreground",
+  "popover",
+  "popover-foreground",
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "secondary-foreground",
+  "muted",
+  "muted-foreground",
+  "accent",
+  "accent-foreground",
+  "destructive",
+  "destructive-foreground",
+  "border",
+  "input",
+  "ring",
+  "sidebar",
+  "sidebar-foreground",
+  "sidebar-primary",
+  "sidebar-primary-foreground",
+  "sidebar-accent",
+  "sidebar-accent-foreground",
+  "sidebar-border",
+  "sidebar-ring",
+  "success",
+  "success-foreground",
+  "success-bg",
+  "warning",
+  "warning-foreground",
+  "warning-bg",
+  "info",
+  "info-foreground",
+  "info-bg",
+];
+
+const ALIAS_PAIRS = [
+  ["--font-sans", "--font-family"],
+  ["--font-mono", "--dbx-editor-font-family"],
+  ["--dbx-editor-font-size", "--editor-font-size"],
+  ["--radius-sm", "--dbx-radius-sm"],
+  ["--radius-md", "--dbx-radius-md"],
+  ["--radius-lg", "--dbx-radius-lg"],
+  ["--radius-xl", "--dbx-radius-xl"],
+];
+
+let appliedInlineTokens = new Set();
+
+function tokenCssValue(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (typeof value === "string" && value.trim()) return value.trim();
+  return "";
+}
+
+function tokenCssName(name) {
+  const raw = String(name || "").trim();
+  if (!raw) return "";
+  const dashed = raw.startsWith("--") ? raw : `--${raw}`;
+  return /^--[a-zA-Z_][a-zA-Z0-9-]*$/.test(dashed) ? dashed : "";
+}
+
+function flattenTokens(tokens, prefix = "") {
+  const out = {};
+  if (!tokens || typeof tokens !== "object" || Array.isArray(tokens)) return out;
+  for (const [key, value] of Object.entries(tokens)) {
+    const name = prefix ? `${prefix}-${key}` : key;
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const nested = Object.values(value);
+      if (nested.length && nested.every((item) => typeof item === "string" || typeof item === "number")) {
+        Object.assign(out, flattenTokens(value, name.replace(/^--+/, "")));
+      }
+      continue;
+    }
+    const cssName = tokenCssName(name);
+    const cssValue = tokenCssValue(value);
+    if (cssName && cssValue) out[cssName] = cssValue;
+  }
+  return out;
+}
+
+function setToken(root, applied, name, value) {
+  root.style.setProperty(name, value);
+  applied[name] = value;
+}
+
+/** Push host appearance + CSS tokens onto the document root so the UI tracks DBX theme/palette changes. */
+export function applyTheme() {
+  const value = theme();
+  const root = document.documentElement;
+  const body = document.body;
+  const appearance = value.appearance === "dark" ? "dark" : "light";
+  root.dataset.dbxTheme = appearance;
+  root.classList.toggle("dark", appearance === "dark");
+  root.style.colorScheme = appearance;
+  if (body) {
+    body.dataset.dbxTheme = appearance;
+    body.dataset.theme = appearance;
+  }
+
+  const applied = flattenTokens(value.tokens);
+  for (const [name, tokenValue] of Object.entries(applied)) {
+    root.style.setProperty(name, tokenValue);
+  }
+
+  for (const key of COLOR_TOKEN_NAMES) {
+    const longName = `--color-${key}`;
+    const shortName = `--${key}`;
+    if (applied[longName] && !applied[shortName]) setToken(root, applied, shortName, applied[longName]);
+    if (applied[shortName] && !applied[longName]) setToken(root, applied, longName, applied[shortName]);
+  }
+  for (const [left, right] of ALIAS_PAIRS) {
+    if (applied[left] && !applied[right]) setToken(root, applied, right, applied[left]);
+    if (applied[right] && !applied[left]) setToken(root, applied, left, applied[right]);
+  }
+
+  const nextKeys = new Set(Object.keys(applied));
+  for (const name of appliedInlineTokens) {
+    if (!nextKeys.has(name)) root.style.removeProperty(name);
+  }
+  appliedInlineTokens = nextKeys;
+}

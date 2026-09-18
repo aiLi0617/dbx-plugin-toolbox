@@ -1,12 +1,19 @@
-use std::collections::HashSet;
+mod crypto;
+mod fsutil;
+mod helpers;
+mod keystore;
+mod prefs;
+
 use std::sync::Mutex;
 
 use dbx_plugin_sdk::{PluginEmitter, PluginError, PluginHandler, PluginMetadata, PluginServer, RequestContext};
-use serde_json::{json, Value};
+use serde_json::Value;
+
+use crate::keystore::Vault;
 
 #[derive(Default)]
 struct Plugin {
-    connections: Mutex<HashSet<String>>,
+    vault: Mutex<Vault>,
 }
 
 impl PluginHandler for Plugin {
@@ -17,54 +24,30 @@ impl PluginHandler for Plugin {
         params: Value,
         _emitter: &PluginEmitter,
     ) -> Result<Value, PluginError> {
+        if method.starts_with("toolbox/keys/") {
+            let mut vault = self.vault.lock().map_err(|_| PluginError::new(-32000, "Vault lock is poisoned"))?;
+            return vault.handle(method, params);
+        }
+        if method.starts_with("toolbox/prefs/") {
+            return prefs::handle(method, params);
+        }
+        if method == "toolbox/save-file" || method == "toolbox/reveal-file" {
+            return fsutil::handle(method, params);
+        }
         match method {
-            "connection/test" => {
-                let connection = params.get("connection").cloned().unwrap_or_default();
-                Ok(json!({
-                    "success": true,
-                    "message": format!(
-                        "工具箱 is ready for {}:{}.",
-                        connection.get("host").and_then(Value::as_str).unwrap_or("localhost"),
-                        connection.get("port").and_then(Value::as_u64).unwrap_or(0)
-                    )
-                }))
+            "toolbox/json" => crypto::json_op(params),
+            "toolbox/hash" => crypto::hash_op(params),
+            "toolbox/crypto" => {
+                let vault = self.vault.lock().map_err(|_| PluginError::new(-32000, "Vault lock is poisoned"))?;
+                crypto::crypto_op(&vault, params)
             }
-            "connection/connect" => {
-                let connection_id = connection_id(&params)?;
-                self.connections
-                    .lock()
-                    .map_err(|_| PluginError::new(-32000, "Connection registry is poisoned"))?
-                    .insert(connection_id.to_string());
-                Ok(json!({ "success": true }))
-            }
-            "connection/disconnect" => {
-                let connection_id = connection_id(&params)?;
-                self.connections
-                    .lock()
-                    .map_err(|_| PluginError::new(-32000, "Connection registry is poisoned"))?
-                    .remove(connection_id);
-                Ok(json!({ "success": true }))
-            }
-            "dbx-plugin-toolbox/ping" => Ok(json!({
-                "ok": true,
-                "plugin": "io.github.aili0617.toolbox",
-                "language": "rust",
-                "connectionId": params.get("connectionId").cloned().unwrap_or(Value::Null)
-            })),
+            "toolbox/cert" => crypto::cert_op(params),
             _ => Err(PluginError::method_not_found(method)),
         }
     }
 }
 
-fn connection_id(params: &Value) -> Result<&str, PluginError> {
-    params
-        .get("connection")
-        .and_then(|connection| connection.get("id"))
-        .and_then(Value::as_str)
-        .ok_or_else(|| PluginError::new(-32602, "Missing connection id"))
-}
-
 fn main() -> std::io::Result<()> {
-    let metadata = PluginMetadata::new("io.github.aili0617.toolbox", env!("CARGO_PKG_VERSION")).with_capability("connections");
+    let metadata = PluginMetadata::new("io.github.aili0617.toolbox", env!("CARGO_PKG_VERSION"));
     PluginServer::new(metadata, Plugin::default()).serve()
 }

@@ -1,0 +1,27 @@
+{
+  "name": "io.github.aili0617.toolbox-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch"
+  },
+  "dependencies": {
+    "@bwip-js/browser": "^4.11.4",
+    "cron-parser": "^5.5.0",
+    "diff": "^8.0.2",
+    "fast-xml-parser": "^5.2.5",
+    "js-beautify": "^1.15.4",
+    "js-yaml": "^4.1.1",
+    "jsonpath-plus": "^10.3.1",
+    "marked": "^17.0.1",
+    "qrcode": "^1.5.4",
+    "smol-toml": "^1.6.0",
+    "sql-formatter": "^15.6.10"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "svelte": "^5.38.7",
+    "vite": "^7.1.5"
+  }
+}
