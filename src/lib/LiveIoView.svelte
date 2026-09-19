@@ -31,7 +31,7 @@
     {#if spec.options?.length}
       <div class="options">
         {#each spec.options as opt (opt.key)}
-          {#if !opt.visibleWhen || opt.visibleWhen.values.includes(optionValues[opt.visibleWhen.key])}
+          {#if Object.hasOwn(optionValues, opt.key) && (!opt.visibleWhen || opt.visibleWhen.values.includes(optionValues[opt.visibleWhen.key]))}
             {#if opt.type === "checkbox"}
               <label class="check">
                 <input type="checkbox" bind:checked={optionValues[opt.key]} />

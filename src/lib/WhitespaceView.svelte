@@ -23,13 +23,12 @@
   <div class="options">
     <div class="field">
       <span>{t("类型", "Kind")}</span>
-      <div class="seg" role="tablist" aria-label={t("类型", "Kind")}>
+      <div class="seg" role="group" aria-label={t("类型", "Kind")}>
         {#each TEXT_CLEANUP_KINDS as item (item.value)}
           <button
             class:active={kind === item.value}
             aria-pressed={kind === item.value}
             onclick={() => (kind = item.value)}
-            role="tab"
             type="button"
           >{t(item.zh, item.en)}</button>
         {/each}

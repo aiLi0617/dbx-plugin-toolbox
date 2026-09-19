@@ -2,26 +2,41 @@
   "name": "io.github.aili0617.toolbox-ui",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "vite build",
-    "build:watch": "vite build --watch"
+    "build:watch": "vite build --watch",
+    "test": "node --test tests/*.test.js",
+    "check": "npm test && npm run build"
   },
   "dependencies": {
     "@bwip-js/browser": "^4.11.4",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
     "cron-parser": "^5.5.0",
     "diff": "^8.0.2",
+    "exceljs": "^4.4.0",
     "fast-xml-parser": "^5.2.5",
     "js-beautify": "^1.15.4",
     "js-yaml": "^4.1.1",
     "jsonpath-plus": "^10.3.1",
+    "lossless-json": "^4.3.1",
     "marked": "^17.0.1",
+    "prettier": "^3.9.8",
     "qrcode": "^1.5.4",
     "smol-toml": "^1.6.0",
-    "sql-formatter": "^15.6.10"
+    "sql-formatter": "^15.6.10",
+    "xml-parser-xo": "^4.1.6",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "svelte": "^5.38.7",
     "vite": "^7.1.5"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
   }
 }

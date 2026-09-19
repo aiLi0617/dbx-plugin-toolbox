@@ -12,9 +12,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="json-tree" onmouseleave={() => onHover(null)}>
-  {#if value === undefined}
-    <p class="json-tree-empty">{locale.startsWith("zh") ? "输入有效 JSON 后显示树形结构" : "Tree appears when JSON is valid"}</p>
-  {:else}
+  {#if value !== undefined}
     <JsonTreeNode
       {value}
       path=""
@@ -44,9 +42,5 @@
     font-size: var(--dbx-editor-font-size, 13px);
     line-height: 1.7;
     background: var(--json-surface);
-  }
-  .json-tree-empty {
-    margin: 24px 8px;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
 </style>

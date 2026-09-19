@@ -12,5 +12,12 @@ export default defineConfig({
       },
     },
   ],
-  build: { outDir: "ui", emptyOutDir: true },
+  // DBX inlines the entry module and its CSP only permits inline/blob scripts.
+  // Keep one JS module and one stylesheet so no lazy asset needs a blocked URL.
+  build: {
+    outDir: "ui",
+    emptyOutDir: true,
+    cssCodeSplit: false,
+    rollupOptions: { output: { inlineDynamicImports: true } },
+  },
 });

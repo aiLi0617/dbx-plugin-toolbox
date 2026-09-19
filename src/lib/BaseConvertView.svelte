@@ -21,6 +21,7 @@
   let invalidId = $state("");
   let copiedId = $state("");
   let info = $state(null);
+  let copyError = $state("");
 
   const t = (zh, en) => pick(locale, zh, en);
   const formatOpts = $derived({ group: grouped, prefix: prefixes });
@@ -54,6 +55,7 @@
     if (values[fromId] === text) return;
     values[fromId] = text;
     copiedId = "";
+    copyError = "";
     if (!text.trim()) {
       invalidId = "";
       number = null;
@@ -66,6 +68,9 @@
     const radix = radixOf(fromId);
     if (!radix) {
       invalidId = fromId;
+      number = null;
+      info = null;
+      for (const key of Object.keys(values)) if (key !== fromId) values[key] = "";
       return;
     }
     try {
@@ -74,7 +79,9 @@
       paint(fromId);
     } catch {
       invalidId = fromId;
+      number = null;
       info = null;
+      for (const key of Object.keys(values)) if (key !== fromId) values[key] = "";
     }
   }
 
@@ -90,7 +97,7 @@
 
   async function copy(id) {
     const text = values[id];
-    if (!text || invalidId === id) return;
+    if (!text || invalidId) return;
     try {
       await copyText(text);
       copiedId = id;
@@ -99,6 +106,7 @@
       }, 1200);
     } catch {
       copiedId = "";
+      copyError = t("复制失败，请选择文本手动复制。", "Copy failed. Select the text and copy manually.");
     }
   }
 
@@ -132,19 +140,27 @@
 </script>
 
 <div class="base-convert">
+  {#if copyError}<p class="dbx-hint" role="alert">{copyError}</p>{/if}
   <div class="base-head">
-    {#if info}
-      <p class="dbx-hint">
-        <span class="base-meta">{info.bits} bit · {info.bytes} B</span>
-        {#if info.glyph}
-          <span class="base-meta">'{info.glyph}'</span>
-        {/if}
-        {#if info.code && (info.unicode || !info.glyph)}
-          <span class="base-meta">{info.code}</span>
-        {/if}
-      </p>
-    {/if}
-    <button class="dbx-btn dbx-btn--ghost" onclick={clearAll} type="button">{t("清空", "Clear")}</button>
+    <div class="base-info-card" aria-label={t("当前值信息", "Current value information")}>
+      <div class="base-info-item">
+        <span class="base-info-label">{t("位宽", "Bits")}</span>
+        <span class="base-info-value">{info ? `${info.bits} bit` : "—"}</span>
+      </div>
+      <div class="base-info-item">
+        <span class="base-info-label">{t("字节数", "Bytes")}</span>
+        <span class="base-info-value">{info ? `${info.bytes} B` : "—"}</span>
+      </div>
+      <div class="base-info-item">
+        <span class="base-info-label">{t("字符", "Character")}</span>
+        <span class="base-info-value base-info-glyph">{info?.glyph ? `'${info.glyph}'` : "—"}</span>
+      </div>
+      <div class="base-info-item">
+        <span class="base-info-label">Unicode</span>
+        <span class="base-info-value">{info?.code || "—"}</span>
+      </div>
+    </div>
+    <button class="dbx-btn clear-action" onclick={clearAll} type="button">{t("清空", "Clear")}</button>
   </div>
 
   <div class="base-opts">
@@ -305,16 +321,51 @@
     justify-content: flex-end;
     gap: 8px;
   }
-  .base-head .dbx-hint {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0 auto 0 0;
+  .clear-action {
+    flex: 0 0 auto;
+    min-width: 72px;
   }
-  .base-meta {
-    font-variant-numeric: tabular-nums;
+  .base-info-card {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    background: var(--color-muted, color-mix(in srgb, CanvasText 4%, transparent));
+  }
+  .base-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    padding: 8px 10px;
+  }
+  .base-info-item + .base-info-item {
+    border-left: 1px solid var(--color-border, color-mix(in srgb, CanvasText 12%, transparent));
+  }
+  .base-info-label {
+    overflow: hidden;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    font-size: 11px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .base-info-value {
+    overflow: hidden;
     color: var(--color-foreground, CanvasText);
-    opacity: 0.72;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .base-info-glyph {
+    font-family: var(--font-sans, system-ui, sans-serif);
   }
   .base-opts {
     display: flex;
@@ -438,6 +489,22 @@
   }
 
   @media (max-width: 560px) {
+    .base-head {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .base-info-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .base-info-item + .base-info-item {
+      border-left: 0;
+    }
+    .base-info-item:nth-child(odd) {
+      border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 12%, transparent));
+    }
+    .base-info-item:nth-child(n + 3) {
+      border-top: 1px solid var(--color-border, color-mix(in srgb, CanvasText 12%, transparent));
+    }
     .base-row {
       grid-template-columns: minmax(0, 1fr) 30px;
     }

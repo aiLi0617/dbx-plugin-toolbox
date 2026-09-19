@@ -1,6 +1,8 @@
 <script>
   import { chrome, pick } from "./i18n.js";
-  import { invoke } from "./host.js";
+  import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
+  import { copyText as copyToClipboard } from "./clipboard.js";
+  import { parseLosslessJson, parseSafeJson, toSafeJsonValue, precisionErrorMessage } from "./jsonPrecision.js";
   import { jsonLanguages, convertJsonToLang } from "./jsonToLang.js";
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
   import JsonTreeView from "./JsonTreeView.svelte";
@@ -33,50 +35,52 @@
   let moreOpen = $state(false);
   let moreEl = $state(null);
   let rightMode = $state("tree");
+  let textActionsHeight = $state(42);
+  const formatLanguages = new Set(["yaml", "xml", "toml", "csv", "query"]);
+  const availableLanguages = $derived(jsonLanguages.filter((lang) => rightMode === "convert" ? formatLanguages.has(lang.value) : !formatLanguages.has(lang.value)));
   let convertLang = $state("typescript");
   let tableName = $state("");
   let convertOut = $state("");
-  let error = $state("");
-  let notice = $state("");
+  let actionError = $state("");
+  let parseError = $state("");
+  let convertError = $state("");
   let parsed = $state(undefined);
-  let jsonValid = $state(false);
   let collapsed = $state({});
   let copied = $state("");
   let seededFold = false;
 
   const zh = $derived(String(locale || "").toLowerCase().startsWith("zh"));
   const t = (zhText, en) => pick(locale, zhText, en);
-  const parseHint = $derived(
-    !jsonText.trim()
-      ? ""
-      : parsed === undefined && error
-        ? error
-        : "",
-  );
+  const rightError = $derived(actionError || parseError || (rightMode === "tree" ? "" : convertError));
+  const inputError = $derived(inputLimitError(jsonText, INPUT_LIMITS.json, t("JSON 输入", "JSON input")));
 
   $effect(() => {
     const text = jsonText;
+    actionError = "";
     const timer = setTimeout(() => {
       if (!text.trim()) {
         parsed = undefined;
-        jsonValid = false;
-        error = "";
+        parseError = "";
         seededFold = false;
         collapsed = {};
         return;
       }
+      if (inputError) {
+        parsed = undefined;
+        parseError = inputError;
+        return;
+      }
       try {
-        const value = JSON.parse(text);
+        const value = parseSafeJson(text);
         parsed = value;
-        jsonValid = true;
-        error = "";
+        parseError = "";
         if (!seededFold) {
           collapsed = defaultCollapsed(value);
           seededFold = true;
         }
       } catch (err) {
-        jsonValid = false;
-        error = err?.message || String(err);
+        parsed = undefined;
+        parseError = precisionErrorMessage(err, locale);
       }
     }, 160);
     return () => clearTimeout(timer);
@@ -89,20 +93,12 @@
     }, 1200);
   }
 
-  function say(msg) {
-    notice = msg;
-    error = "";
-    setTimeout(() => {
-      if (notice === msg) notice = "";
-    }, 1600);
-  }
-
   function wrap(fn) {
     try {
-      error = "";
+      actionError = "";
       fn();
     } catch (err) {
-      error = err?.message || String(err);
+      actionError = precisionErrorMessage(err, locale);
     }
   }
 
@@ -128,7 +124,7 @@
 
   function captureUnsorted() {
     if (unsortedValue !== undefined) return;
-    unsortedValue = JSON.parse(jsonText);
+    unsortedValue = parseLosslessJson(jsonText);
   }
 
   function setSortDir(dir, checked) {
@@ -154,7 +150,7 @@
       return;
     }
     wrap(() => {
-      jsonText = serializeJson(restoreKeyOrder(JSON.parse(jsonText), unsortedValue), pretty);
+      jsonText = serializeJson(restoreKeyOrder(parseLosslessJson(jsonText), unsortedValue), pretty);
       sortKeys = false;
       unsortedValue = undefined;
     });
@@ -180,29 +176,6 @@
     };
   });
 
-  async function validate() {
-    if (!jsonText.trim()) {
-      error = t("请输入 JSON", "Enter JSON first");
-      notice = "";
-      return;
-    }
-    error = "";
-    try {
-      const result = await invoke("toolbox/json", { action: "validate", text: jsonText });
-      if (result.ok) {
-        say(result.message || t("JSON 有效", "Valid JSON"));
-        return;
-      }
-      const loc = result.line != null && result.column != null ? ` (line ${result.line}, column ${result.column})` : "";
-      error = `${result.message || "JSON error"}${loc}`;
-    } catch {
-      wrap(() => {
-        JSON.parse(jsonText);
-        say(t("JSON 有效", "Valid JSON"));
-      });
-    }
-  }
-
   function toUnicode() {
     wrap(() => {
       jsonText = chineseToUnicode(jsonText);
@@ -219,7 +192,6 @@
     wrap(() => {
       jsonText = addJsonEscape(jsonText);
       parsed = undefined;
-      jsonValid = false;
       seededFold = false;
     });
   }
@@ -231,9 +203,10 @@
   }
 
   function writeTree(next) {
+    next = toSafeJsonValue(next);
     if (sortKeys && unsortedValue === undefined) {
       try {
-        unsortedValue = JSON.parse(jsonText);
+        unsortedValue = parseLosslessJson(jsonText);
       } catch {
         /* keep going */
       }
@@ -241,11 +214,11 @@
     const value = sortKeys ? sortValue(next, sortKeys) : next;
     jsonText = serializeJson(value, pretty);
     parsed = value;
-    error = "";
+    actionError = "";
   }
 
   function currentJson() {
-    return JSON.parse(jsonText);
+    return parseSafeJson(jsonText);
   }
 
   function onToggle(path) {
@@ -281,19 +254,25 @@
   }
 
   async function copyText(text, kind) {
-    await navigator.clipboard.writeText(text || "");
-    flash(kind);
+    if (!text) return;
+    actionError = "";
+    try {
+      await copyToClipboard(text);
+      flash(kind);
+    } catch {
+      actionError = t("复制失败，请选择文本后手动复制。", "Copy failed. Select the text and copy it manually.");
+    }
   }
 
   function clearAll() {
     jsonText = "";
     convertOut = "";
     parsed = undefined;
-    error = "";
-    notice = "";
+    actionError = "";
+    parseError = "";
+    convertError = "";
     collapsed = {};
     seededFold = false;
-    jsonValid = false;
     sortKeys = false;
     unsortedValue = undefined;
   }
@@ -357,6 +336,7 @@
     const el = splitEl;
     if (!el || typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(() => {
+      if (el.getBoundingClientRect().width <= 0) return;
       const next = clampLeft(leftPct, el.getBoundingClientRect().width);
       if (Math.abs(next - leftPct) > 0.05) leftPct = next;
     });
@@ -365,11 +345,13 @@
   });
 
   $effect(() => {
-    if (rightMode !== "convert") return;
+    if (rightMode !== "convert" && rightMode !== "generate") return;
     const text = jsonText;
     const lang = convertLang;
     const table = tableName;
     const sort = sortKeys;
+    convertOut = "";
+    convertError = "";
     const timer = setTimeout(() => {
       if (!text.trim()) {
         convertOut = "";
@@ -377,38 +359,28 @@
       }
       try {
         convertOut = convertJsonToLang(text, lang, { table, sortKeys: sort });
-        error = "";
       } catch (err) {
-        try {
-          JSON.parse(text);
-          error = err?.message || String(err);
-        } catch {
-          convertOut = "";
-        }
+        convertOut = "";
+        convertError = precisionErrorMessage(err, locale);
       }
     }, 180);
     return () => clearTimeout(timer);
   });
 
-  function showConvert() {
-    rightMode = "convert";
+  function showMode(mode) {
+    rightMode = mode;
+    if (mode === "convert" && !formatLanguages.has(convertLang)) convertLang = "yaml";
+    if (mode === "generate" && formatLanguages.has(convertLang)) convertLang = "typescript";
   }
 </script>
 
 <div class="json-workbench">
-  {#if error}
-    <div class="banner">{error}</div>
-  {:else if notice}
-    <div class="banner banner-ok">{notice}</div>
-  {/if}
-
   <div class="json-split" class:dragging bind:this={splitEl} style:--left-pct="{leftPct}%">
     <section class="json-pane json-pane-left">
       <div class="json-pane-bar">
         <div class="json-pane-bar-start">
           <button class="dbx-btn" onclick={format} type="button">{t("格式化", "Format")}</button>
           <button class="dbx-btn" onclick={minify} type="button">{t("压缩", "Minify")}</button>
-          <button class="dbx-btn" onclick={validate} type="button">{t("校验", "Validate")}</button>
           <div class="json-more" bind:this={moreEl}>
             <button
               class="dbx-btn"
@@ -482,13 +454,12 @@
           </button>
         </div>
       </div>
-      <div class="json-editor-wrap">
-        <JsonCodeEditor bind:value={jsonText} {showLineNumbers} placeholder={'{ "name": "dbx" }'} />
-        <div class="json-editor-actions" role="toolbar" aria-label={t("文本转换", "Text convert")}>
-          <button class="dbx-btn" onclick={toUnicode} type="button">{t("中文转 Unicode", "Chinese → Unicode")}</button>
-          <button class="dbx-btn" onclick={fromUnicode} type="button">{t("Unicode 转中文", "Unicode → Chinese")}</button>
-          <button class="dbx-btn" onclick={escapeText} type="button">{t("添加转义", "Escape")}</button>
-          <button class="dbx-btn" onclick={unescapeText} type="button">{t("去除转义", "Unescape")}</button>
+      <div class="json-editor-wrap" style:--json-editor-bottom-space="{textActionsHeight + 24}px">
+        <JsonCodeEditor bind:value={jsonText} {showLineNumbers} {locale} maxLength={INPUT_LIMITS.json} placeholder={'{ "name": "dbx" }'} />
+        <div class="json-text-actions" bind:clientHeight={textActionsHeight} role="group" aria-label={t("中文与转义", "Unicode and escaping")}>
+          {#each [[toUnicode, "中文转 Unicode", "Chinese → Unicode"], [fromUnicode, "Unicode 转中文", "Unicode → Chinese"], [escapeText, "添加转义", "Escape"], [unescapeText, "去除转义", "Unescape"]] as [action, labelZh, labelEn]}
+            <button class="dbx-btn" onclick={action} type="button">{t(labelZh, labelEn)}</button>
+          {/each}
         </div>
       </div>
     </section>
@@ -498,7 +469,6 @@
       class:dragging
       type="button"
       aria-label={t("调整左右宽度", "Resize panes")}
-      aria-orientation="vertical"
       onpointerdown={onResizePointerDown}
       onpointermove={onResizePointerMove}
       onpointerup={onResizePointerUp}
@@ -508,26 +478,48 @@
 
     <section class="json-pane json-pane-right">
       <div class="json-pane-bar">
-        <button class="dbx-btn" class:active={rightMode === "tree"} onclick={() => (rightMode = "tree")} type="button">
-          {t("树形编辑", "Tree")}
-        </button>
-        <button class="dbx-btn" class:active={rightMode === "convert"} onclick={showConvert} type="button">
-          {t("转换", "Convert")}
-        </button>
-        {#if rightMode === "convert"}
+        <div class="json-modes" role="group" aria-label={t("JSON 功能", "JSON tools")}>
+          {#each [["tree", "树形编辑", "Tree"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
+            <button class="dbx-btn" class:active={rightMode === mode} aria-pressed={rightMode === mode} onclick={() => showMode(mode)} type="button">{t(labelZh, labelEn)}</button>
+          {/each}
+        </div>
+        {#if rightMode === "convert" || rightMode === "generate"}
           <Select
             class="json-lang-select"
             bind:value={convertLang}
             ariaLabel={t("目标语言", "Language")}
-            options={jsonLanguages.map((lang) => ({ value: lang.value, label: zh ? lang.zh : lang.en }))}
+            options={availableLanguages.map((lang) => ({ value: lang.value, label: zh ? lang.zh : lang.en }))}
           />
           {#if convertLang === "mysql"}
             <input class="dbx-input json-table-input" placeholder="users" bind:value={tableName} aria-label={t("表名", "Table")} />
           {/if}
         {/if}
         {#if rightMode === "tree"}
-          <button class="dbx-btn" disabled={parsed === undefined} onclick={expandAll} type="button">{t("全展开", "Expand all")}</button>
-          <button class="dbx-btn" disabled={parsed === undefined} onclick={collapseAll} type="button">{t("全折叠", "Collapse all")}</button>
+          <button
+            class="dbx-btn dbx-btn--ghost json-icon-btn"
+            disabled={parsed === undefined}
+            onclick={expandAll}
+            type="button"
+            title={t("全展开", "Expand all")}
+            aria-label={t("全展开", "Expand all")}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
+          <button
+            class="dbx-btn dbx-btn--ghost json-icon-btn"
+            disabled={parsed === undefined}
+            onclick={collapseAll}
+            type="button"
+            title={t("全折叠", "Collapse all")}
+            aria-label={t("全折叠", "Collapse all")}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
         {:else}
           <button class="dbx-btn" onclick={() => copyText(convertOut, "out")} type="button">
             {copied === "out" ? t(chrome.copied.zh, chrome.copied.en) : t("复制输出", "Copy output")}
@@ -535,23 +527,25 @@
         {/if}
       </div>
 
-      {#if rightMode === "tree"}
-        <div class="json-tree-shell">
-          {#if parseHint && parsed === undefined}
-            <p class="json-tree-hint">{t("JSON 无效，修复后显示树形结构", "Fix JSON to show the tree")}</p>
+      <div class="json-result">
+        {#if rightError}
+          <p class="json-result-error" role="status">{rightError}</p>
+        {/if}
+        {#if rightMode === "tree"}
+          {#if parsed !== undefined || !rightError}
+            <JsonTreeView value={parsed} {collapsed} {onToggle} {onAdd} {onDelete} {onEdit} {onRename} {locale} />
           {/if}
-          <JsonTreeView value={parsed} {collapsed} {onToggle} {onAdd} {onDelete} {onEdit} {onRename} {locale} />
-        </div>
-      {:else}
-        <div class="json-convert">
+        {:else}
           <pre class="out json-convert-out">{convertOut}</pre>
-        </div>
-      {/if}
+        {/if}
+      </div>
     </section>
   </div>
 </div>
 
 <style>
+  .json-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .json-modes .active { background: var(--color-primary); color: var(--color-primary-foreground); }
   .json-workbench {
     flex: 1;
     min-height: 0;
@@ -622,6 +616,7 @@
   }
   .json-pane-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     align-items: center;
     flex-shrink: 0;
@@ -704,8 +699,7 @@
       transform: scale(1);
     }
   }
-  .json-tree-shell,
-  .json-convert {
+  .json-result {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -715,10 +709,15 @@
     background: var(--color-card, var(--color-background, Canvas));
     overflow: hidden;
   }
-  .json-tree-hint {
+  .json-result-error {
     margin: 0;
-    padding: 8px 12px 0;
-    font-size: 12px;
+    padding: 12px;
+    min-height: 0;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    line-height: 1.6;
     color: var(--color-destructive, #dc2626);
   }
   .json-convert-out {
@@ -737,38 +736,22 @@
     display: flex;
     flex-direction: column;
   }
-  .json-editor-wrap :global(.json-code) {
-    --json-pad-bottom: 48px;
-  }
-  .json-editor-actions {
+  .json-text-actions {
     position: absolute;
-    left: 8px;
-    bottom: 8px;
-    z-index: 6;
+    left: 12px;
+    bottom: 12px;
+    z-index: 2;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 6px;
     width: max-content;
-    max-width: calc(100% - 16px);
-    padding: 4px;
-    overflow-x: auto;
+    max-width: calc(100% - 24px);
+    box-sizing: border-box;
+    padding: 6px;
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: var(--radius-md, 8px);
-    background: color-mix(in srgb, var(--color-card, var(--color-background, Canvas)) 88%, transparent);
-    box-shadow: 0 8px 22px color-mix(in srgb, CanvasText 12%, transparent);
-    backdrop-filter: blur(10px);
-  }
-  .json-editor-actions :global(.dbx-btn) {
-    flex: 0 0 auto;
-    height: 26px;
-    padding: 0 8px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-  .banner-ok {
-    border-color: color-mix(in srgb, var(--color-primary, #2563eb) 28%, transparent);
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 10%, var(--color-background, Canvas));
-    color: var(--color-foreground, CanvasText);
+    background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
+    box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 12%, transparent);
   }
   @media (max-width: 860px) {
     .json-split {

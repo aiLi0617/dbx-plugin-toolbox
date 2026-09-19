@@ -8,6 +8,19 @@ function errorText(err) {
   return String(err.message || err.msg || err.data?.message || "");
 }
 
+function normalizeError(err, method) {
+  if (err instanceof Error && err.code && err.method === method) return err;
+  const message = errorText(err) || "Request failed";
+  const normalized = err instanceof Error ? err : new Error(message);
+  if (!normalized.message) normalized.message = message;
+  const rawCode = err?.code ?? err?.data?.code;
+  normalized.code = rawCode === undefined || rawCode === null
+    ? /timeout|timed out/i.test(message) ? "TIMEOUT" : "HOST_ERROR"
+    : String(rawCode);
+  normalized.method = method;
+  return normalized;
+}
+
 function isSidecarStarting(err) {
   return /sidecar is not ready|backend is not ready/i.test(errorText(err));
 }
@@ -23,16 +36,17 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
   }
   let lastErr;
   const waits = [0, 200, 400, 800, 1600, 2500];
+  const timeout = Number.isFinite(Number(timeoutMs)) ? Math.max(1, Math.min(Number(timeoutMs), 10 * 60 * 1000)) : 30000;
   for (const wait of waits) {
     if (wait) await sleep(wait);
     try {
-      return await window.dbxPlugin.invoke(method, params, { timeoutMs });
+      return await window.dbxPlugin.invoke(method, params, { timeoutMs: timeout });
     } catch (err) {
-      lastErr = err;
-      if (!isSidecarStarting(err)) throw err;
+      lastErr = normalizeError(err, method);
+      if (!isSidecarStarting(lastErr)) throw lastErr;
     }
   }
-  throw lastErr instanceof Error ? lastErr : new Error(errorText(lastErr) || "Sidecar is not ready");
+  throw normalizeError(lastErr, method);
 }
 
 export function locale() {

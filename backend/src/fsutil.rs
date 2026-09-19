@@ -10,6 +10,36 @@ use serde_json::{json, Value};
 use crate::helpers::{bad, err, opt_str, str_param};
 
 const MAX_BYTES: usize = 8 * 1024 * 1024;
+const MAX_BASE64_BYTES: usize = MAX_BYTES.div_ceil(3) * 4;
+const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
+
+#[derive(Clone, Copy)]
+struct ImageFormat {
+    mime: &'static str,
+    extension: &'static str,
+    label: &'static str,
+}
+
+const PNG_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/png",
+    extension: "png",
+    label: "PNG",
+};
+const JPEG_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/jpeg",
+    extension: "jpg",
+    label: "JPEG",
+};
+const WEBP_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/webp",
+    extension: "webp",
+    label: "WebP",
+};
+const SVG_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/svg+xml",
+    extension: "svg",
+    label: "SVG",
+};
 
 static LAST_SAVED: Mutex<Option<PathBuf>> = Mutex::new(None);
 
@@ -17,21 +47,115 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     match method {
         "toolbox/save-file" => save_file(params),
         "toolbox/reveal-file" => reveal_file(params),
+        "toolbox/copy-image" => copy_image(params),
         _ => Err(PluginError::method_not_found(method)),
     }
 }
 
-fn save_file(params: Value) -> Result<Value, PluginError> {
-    let name = sanitize_file_name(str_param(&params, "fileName").unwrap_or("barcode.png"));
-    let title = opt_str(&params, "title").unwrap_or("Save PNG");
+fn copy_image(params: Value) -> Result<Value, PluginError> {
     let bytes = decode_data(str_param(&params, "data")?)?;
+    validate_png(&bytes)?;
+    copy_png_to_clipboard(&bytes)?;
+    Ok(json!({ "ok": true }))
+}
+
+#[cfg(target_os = "windows")]
+fn copy_png_to_clipboard(bytes: &[u8]) -> Result<(), PluginError> {
+    use std::ffi::c_void;
+    use std::ptr;
+    use std::thread;
+    use std::time::Duration;
+
+    type Handle = isize;
+    const GMEM_MOVEABLE: u32 = 0x0002;
+
+    #[link(name = "user32")]
+    extern "system" {
+        fn OpenClipboard(owner: Handle) -> i32;
+        fn EmptyClipboard() -> i32;
+        fn CloseClipboard() -> i32;
+        fn SetClipboardData(format: u32, memory: Handle) -> Handle;
+        fn RegisterClipboardFormatW(name: *const u16) -> u32;
+    }
+    #[link(name = "kernel32")]
+    extern "system" {
+        fn GlobalAlloc(flags: u32, bytes: usize) -> Handle;
+        fn GlobalLock(memory: Handle) -> *mut c_void;
+        fn GlobalUnlock(memory: Handle) -> i32;
+        fn GlobalFree(memory: Handle) -> Handle;
+    }
+
+    let format_name: Vec<u16> = "PNG\0".encode_utf16().collect();
+    let format = unsafe { RegisterClipboardFormatW(format_name.as_ptr()) };
+    if format == 0 {
+        return Err(err("Failed to register PNG clipboard format"));
+    }
+
+    let mut opened = false;
+    for _ in 0..10 {
+        if unsafe { OpenClipboard(0) } != 0 {
+            opened = true;
+            break;
+        }
+        thread::sleep(Duration::from_millis(20));
+    }
+    if !opened {
+        return Err(err("Clipboard is busy"));
+    }
+
+    let result = unsafe {
+        if EmptyClipboard() == 0 {
+            Err(err("Failed to clear clipboard"))
+        } else {
+            let memory = GlobalAlloc(GMEM_MOVEABLE, bytes.len());
+            if memory == 0 {
+                Err(err("Failed to allocate clipboard memory"))
+            } else {
+                let target = GlobalLock(memory) as *mut u8;
+                if target.is_null() {
+                    GlobalFree(memory);
+                    Err(err("Failed to lock clipboard memory"))
+                } else {
+                    ptr::copy_nonoverlapping(bytes.as_ptr(), target, bytes.len());
+                    GlobalUnlock(memory);
+                    if SetClipboardData(format, memory) == 0 {
+                        GlobalFree(memory);
+                        Err(err("Failed to write PNG to clipboard"))
+                    } else {
+                        Ok(())
+                    }
+                }
+            }
+        }
+    };
+    unsafe { CloseClipboard() };
+    result
+}
+
+#[cfg(not(target_os = "windows"))]
+fn copy_png_to_clipboard(_bytes: &[u8]) -> Result<(), PluginError> {
+    Err(err(
+        "Native image clipboard is not available on this platform",
+    ))
+}
+
+fn save_file(params: Value) -> Result<Value, PluginError> {
+    let format = image_format(opt_str(&params, "mimeType").unwrap_or(PNG_FORMAT.mime))?;
+    let name = sanitize_file_name(
+        str_param(&params, "fileName").unwrap_or("barcode"),
+        format.extension,
+    );
+    let title = opt_str(&params, "title").unwrap_or("Save image");
+    let bytes = decode_data(str_param(&params, "data")?)?;
+    validate_image(&bytes, format)?;
     let start_dir = download_dir().ok();
-    let Some(mut path) = pick_save_path(title, &name, start_dir.as_deref()) else {
+    let Some(mut path) = pick_save_path(title, &name, start_dir.as_deref(), format) else {
         return Ok(json!({ "cancelled": true }));
     };
-    path = ensure_png(path);
+    path = ensure_extension(path, format.extension);
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| err(format!("Failed to create folder: {error}")))?;
+        fs::create_dir_all(parent)
+            .map_err(|error| err(format!("Failed to create folder: {error}")))?;
     }
     fs::write(&path, bytes).map_err(|error| err(format!("Failed to save file: {error}")))?;
     if let Ok(mut last) = LAST_SAVED.lock() {
@@ -57,7 +181,12 @@ fn reveal_file(params: Value) -> Result<Value, PluginError> {
     Ok(json!({ "ok": true }))
 }
 
-fn pick_save_path(title: &str, name: &str, start_dir: Option<&Path>) -> Option<PathBuf> {
+fn pick_save_path(
+    title: &str,
+    name: &str,
+    start_dir: Option<&Path>,
+    format: ImageFormat,
+) -> Option<PathBuf> {
     let title = title.to_string();
     let name = name.to_string();
     let start_dir = start_dir.map(Path::to_path_buf);
@@ -65,7 +194,10 @@ fn pick_save_path(title: &str, name: &str, start_dir: Option<&Path>) -> Option<P
         .name("save-dialog".into())
         .spawn(move || {
             let mut dialog = rfd::FileDialog::new();
-            dialog = dialog.set_title(&title).set_file_name(&name).add_filter("PNG", &["png"]);
+            dialog = dialog
+                .set_title(&title)
+                .set_file_name(&name)
+                .add_filter(format.label, &[format.extension]);
             if let Some(dir) = start_dir.as_deref() {
                 dialog = dialog.set_directory(dir);
             }
@@ -83,6 +215,9 @@ fn download_dir() -> Result<PathBuf, PluginError> {
 
 fn decode_data(data: &str) -> Result<Vec<u8>, PluginError> {
     let raw = data.split(',').next_back().unwrap_or(data).trim();
+    if raw.len() > MAX_BASE64_BYTES {
+        return Err(bad("File is too large"));
+    }
     let bytes = B64.decode(raw).map_err(|_| bad("Invalid file data"))?;
     if bytes.is_empty() {
         return Err(bad("File is empty"));
@@ -93,11 +228,67 @@ fn decode_data(data: &str) -> Result<Vec<u8>, PluginError> {
     Ok(bytes)
 }
 
-fn sanitize_file_name(raw: &str) -> String {
+fn validate_png(bytes: &[u8]) -> Result<(), PluginError> {
+    validate_image(bytes, PNG_FORMAT)
+}
+
+fn image_format(mime: &str) -> Result<ImageFormat, PluginError> {
+    match mime.trim().to_ascii_lowercase().as_str() {
+        "image/png" => Ok(PNG_FORMAT),
+        "image/jpeg" | "image/jpg" => Ok(JPEG_FORMAT),
+        "image/webp" => Ok(WEBP_FORMAT),
+        "image/svg+xml" => Ok(SVG_FORMAT),
+        _ => Err(bad("Unsupported image format")),
+    }
+}
+
+fn validate_image(bytes: &[u8], format: ImageFormat) -> Result<(), PluginError> {
+    let valid = match format.mime {
+        "image/png" => bytes.starts_with(PNG_SIGNATURE),
+        "image/jpeg" => bytes.starts_with(&[0xff, 0xd8, 0xff]),
+        "image/webp" => bytes.len() >= 12 && &bytes[..4] == b"RIFF" && &bytes[8..12] == b"WEBP",
+        "image/svg+xml" => validate_svg(bytes),
+        _ => false,
+    };
+    if valid {
+        Ok(())
+    } else {
+        Err(bad(format!("Image data is not valid {}", format.label)))
+    }
+}
+
+fn validate_svg(bytes: &[u8]) -> bool {
+    let Ok(text) = std::str::from_utf8(bytes) else {
+        return false;
+    };
+    let lower = text.to_ascii_lowercase();
+    let trimmed = lower.trim_start();
+    let starts_as_svg = trimmed.starts_with("<svg") || trimmed.starts_with("<?xml");
+    starts_as_svg
+        && lower.contains("<svg")
+        && lower.contains("</svg")
+        && !lower.contains("<script")
+        && !lower.contains("javascript:")
+        && !lower.contains("<foreignobject")
+        && !lower.contains("<iframe")
+        && !lower.contains("<object")
+        && !lower.contains("<embed")
+        && !lower.contains("<use")
+        && !lower.contains(" xlink:href=")
+        && !lower.contains(" href=\"http:")
+        && !lower.contains(" href=\"https:")
+        && !lower.contains(" href=\"//")
+        && !lower.contains(" href=\"javascript:")
+        && !lower
+            .split(|ch: char| !ch.is_ascii_alphanumeric())
+            .any(|token| token.starts_with("on") && token.len() > 2)
+}
+
+fn sanitize_file_name(raw: &str, extension: &str) -> String {
     let base = Path::new(raw)
         .file_name()
         .and_then(|value| value.to_str())
-        .unwrap_or("barcode.png");
+        .unwrap_or("barcode");
     let cleaned: String = base
         .chars()
         .map(|ch| match ch {
@@ -111,19 +302,20 @@ fn sanitize_file_name(raw: &str) -> String {
         .take(120)
         .collect();
     if cleaned.is_empty() {
-        return "barcode.png".into();
+        return format!("barcode.{extension}");
     }
-    if cleaned.to_ascii_lowercase().ends_with(".png") {
+    let suffix = format!(".{extension}");
+    if cleaned.to_ascii_lowercase().ends_with(&suffix) {
         cleaned
     } else {
-        format!("{cleaned}.png")
+        format!("{cleaned}{suffix}")
     }
 }
 
-fn ensure_png(path: PathBuf) -> PathBuf {
+fn ensure_extension(path: PathBuf, extension: &str) -> PathBuf {
     match path.extension().and_then(|ext| ext.to_str()) {
-        Some(ext) if ext.eq_ignore_ascii_case("png") => path,
-        _ => path.with_extension("png"),
+        Some(ext) if ext.eq_ignore_ascii_case(extension) => path,
+        _ => path.with_extension(extension),
     }
 }
 
@@ -141,11 +333,15 @@ fn open_in_folder(path: &Path) -> Result<(), PluginError> {
     let result = {
         #[cfg(target_os = "windows")]
         {
-            Command::new("explorer").arg(format!("/select,{}", path.display())).spawn()
+            Command::new("explorer")
+                .arg(format!("/select,{}", path.display()))
+                .spawn()
         }
         #[cfg(target_os = "macos")]
         {
-            Command::new("open").args(["-R", &path.to_string_lossy()]).spawn()
+            Command::new("open")
+                .args(["-R", &path.to_string_lossy()])
+                .spawn()
         }
         #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
         {
@@ -155,4 +351,51 @@ fn open_in_folder(path: &Path) -> Result<(), PluginError> {
     };
     result.map_err(|error| err(format!("Failed to open folder: {error}")))?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rejects_non_png_and_oversized_base64_before_decoding() {
+        assert!(validate_png(b"not a png").is_err());
+        let mut png = PNG_SIGNATURE.to_vec();
+        png.extend_from_slice(b"payload");
+        assert!(validate_png(&png).is_ok());
+        assert!(decode_data(&"A".repeat(MAX_BASE64_BYTES + 1)).is_err());
+    }
+
+    #[test]
+    fn validates_supported_image_formats() {
+        assert_eq!(image_format("image/png").unwrap().extension, "png");
+        assert_eq!(image_format("image/jpeg").unwrap().extension, "jpg");
+        assert_eq!(image_format("image/webp").unwrap().extension, "webp");
+        assert!(image_format("image/gif").is_err());
+        assert!(validate_image(&[0xff, 0xd8, 0xff, 0xe0], JPEG_FORMAT).is_ok());
+        assert!(validate_image(b"RIFF1234WEBP", WEBP_FORMAT).is_ok());
+        assert!(validate_image(b"not an image", WEBP_FORMAT).is_err());
+        assert!(validate_image(
+            b"<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>",
+            SVG_FORMAT
+        )
+        .is_ok());
+        assert!(validate_image(b"<svg><script>alert(1)</script></svg>", SVG_FORMAT).is_err());
+        assert!(validate_image(b"<svg onmouseover=\"alert(1)\"></svg>", SVG_FORMAT).is_err());
+        assert!(validate_image(b"<svg><foreignObject></foreignObject></svg>", SVG_FORMAT).is_err());
+        assert!(validate_image(
+            b"<svg><image href=\"https://example.com/x\"/></svg>",
+            SVG_FORMAT
+        )
+        .is_err());
+        assert!(image_format("image/svg+xml").is_ok());
+        assert_eq!(sanitize_file_name("code.svg", "svg"), "code.svg");
+    }
+
+    #[test]
+    fn sanitizes_export_names() {
+        assert_eq!(sanitize_file_name("../bad:name", "jpg"), "bad_name.jpg");
+        assert_eq!(sanitize_file_name("...", "png"), "barcode.png");
+        assert_eq!(sanitize_file_name("code.PNG", "png"), "code.PNG");
+    }
 }

@@ -65,15 +65,20 @@
     const raw = String(text ?? "").trim();
     const asHex = parseHexColor(raw);
     if (asHex) return asHex;
-    const rgbMatch = raw.match(/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+    const rgbMatch = raw.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
     if (rgbMatch) {
       const r = Number(rgbMatch[1]);
       const g = Number(rgbMatch[2]);
       const b = Number(rgbMatch[3]);
       if ([r, g, b].every((n) => n <= 255)) return { r, g, b };
     }
-    const hslMatch = raw.match(/^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%/i);
-    if (hslMatch) return hslToRgb(Number(hslMatch[1]), Number(hslMatch[2]) / 100, Number(hslMatch[3]) / 100);
+    const hslMatch = raw.match(/^hsl\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*\)$/i);
+    if (hslMatch) {
+      const h = Number(hslMatch[1]);
+      const s = Number(hslMatch[2]);
+      const l = Number(hslMatch[3]);
+      if (h <= 360 && s <= 100 && l <= 100) return hslToRgb(h, s / 100, l / 100);
+    }
     return null;
   }
 

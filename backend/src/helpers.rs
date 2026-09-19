@@ -28,6 +28,18 @@ pub fn u32_param(params: &Value, key: &str, default: u32) -> u32 {
     params
         .get(key)
         .and_then(Value::as_u64)
-        .map(|value| value as u32)
+        .and_then(|value| u32::try_from(value).ok())
         .unwrap_or(default)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn u32_parameters_do_not_wrap_large_values() {
+        assert_eq!(u32_param(&json!({ "value": 4 }), "value", 2), 4);
+        assert_eq!(u32_param(&json!({ "value": u64::MAX }), "value", 2), 2);
+    }
 }

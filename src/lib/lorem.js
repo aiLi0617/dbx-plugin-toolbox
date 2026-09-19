@@ -61,12 +61,25 @@ export function resolveLoremLocale(language, fallbackLocale) {
 
 export const LOREM_MIN_LINES = 1;
 export const LOREM_MAX_LINES = 1000;
+export const LOREM_MAX_CUSTOM_LENGTH = 10_000;
+export const LOREM_MAX_OUTPUT_LENGTH = 1_000_000;
 
-export function lorem(lines = 1, language = "auto", fallbackLocale = "zh-CN") {
-  const text = LINE[resolveLoremLocale(language, fallbackLocale)] || LINE.en;
+export function lorem(lines = 1, language = "auto", fallbackLocale = "zh-CN", customText = "") {
+  const custom = String(customText ?? "");
+  if (custom.length > LOREM_MAX_CUSTOM_LENGTH) {
+    const error = new Error("Custom content is limited to 10,000 characters.");
+    error.code = "custom-length";
+    throw error;
+  }
+  const text = custom.trim() ? custom : LINE[resolveLoremLocale(language, fallbackLocale)] || LINE.en;
   const n = Math.floor(Number(lines));
   const count = Number.isFinite(n)
     ? Math.min(LOREM_MAX_LINES, Math.max(LOREM_MIN_LINES, n))
     : LOREM_MIN_LINES;
+  if (text.length * count + count - 1 > LOREM_MAX_OUTPUT_LENGTH) {
+    const error = new Error("Output is limited to 1,000,000 characters. Reduce the repeat count or content length.");
+    error.code = "output-length";
+    throw error;
+  }
   return Array.from({ length: count }, () => text).join("\n");
 }

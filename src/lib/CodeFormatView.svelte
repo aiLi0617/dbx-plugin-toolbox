@@ -2,29 +2,47 @@
   import IoSplit from "./IoSplit.svelte";
   import Select from "./Select.svelte";
   import { pick } from "./i18n.js";
-  import { CODE_LANGUAGES, formatCode } from "./tools/format.js";
+  import { CODE_LANGUAGES, formatCode, SQL_DIALECTS } from "./tools/format.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
   let language = $state("sql");
   let action = $state("format");
+  let sqlDialect = $state("sql");
+  let indent = $state("2");
   let input = $state("");
-
-  const result = $derived.by(() => {
-    if (!input.trim()) return { text: "", error: "", notice: "" };
-    try {
-      const next = formatCode(input, language, language === "xml" ? action : "format");
-      if (next && typeof next === "object") {
-        return next.ok
-          ? { text: next.text, error: "", notice: next.text }
-          : { text: "", error: next.text, notice: "" };
+  let result = $state({ text: "", error: "", notice: "" });
+  let busy = $state(false);
+  $effect(() => {
+    const next = ({ js: "javascript", ts: "typescript" })[initialOptions.language] || initialOptions.language;
+    if (CODE_LANGUAGES.some((item) => item.value === next)) language = next;
+  });
+  $effect(() => {
+    const source = input;
+    const lang = language;
+    const op = lang === "xml" ? action : "format";
+    const dialect = sqlDialect;
+    const width = Number(indent);
+    result = { text: "", error: "", notice: "" };
+    busy = Boolean(source.trim());
+    if (!source.trim()) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const next = await formatCode(source, lang, op, dialect, width);
+        if (cancelled) return;
+        result = next && typeof next === "object"
+          ? next.ok ? { text: next.text, error: "", notice: next.text } : { text: "", error: next.text, notice: "" }
+          : { text: String(next ?? ""), error: "", notice: "" };
+      } catch (err) {
+        if (!cancelled) result = { text: "", error: err?.message || String(err), notice: "" };
+      } finally {
+        if (!cancelled) busy = false;
       }
-      return { text: String(next ?? ""), error: "", notice: "" };
-    } catch (err) {
-      return { text: "", error: err?.message || String(err), notice: "" };
-    }
+    }, 180);
+    return () => { cancelled = true; clearTimeout(timer); };
   });
 </script>
 
@@ -37,6 +55,12 @@
         options={CODE_LANGUAGES.map((item) => ({ value: item.value, label: t(item.zh, item.en) }))}
       />
     </label>
+    {#if language === "sql"}
+      <label class="field">
+        <span>{t("方言", "Dialect")}</span>
+        <Select bind:value={sqlDialect} options={SQL_DIALECTS} />
+      </label>
+    {/if}
     {#if language === "xml"}
       <label class="field">
         <span>{t("操作", "Action")}</span>
@@ -47,6 +71,16 @@
             { value: "validate", label: t("校验", "Validate") },
           ]}
         />
+      </label>
+    {/if}
+    {#if !(language === "xml" && action === "validate")}
+      <label class="field">
+        <span>{t("缩进", "Indent")}</span>
+        <Select bind:value={indent} options={[
+          { value: "2", label: t("2 空格", "2 spaces") },
+          { value: "4", label: t("4 空格", "4 spaces") },
+          { value: "8", label: t("8 空格", "8 spaces") },
+        ]} />
       </label>
     {/if}
   </div>
@@ -60,6 +94,7 @@
     error={result.error}
     inputLabel={t("源码", "Source")}
     outputLabel={t("结果", "Result")}
+    outputStatus={busy ? t("处理中…", "Processing…") : ""}
     {language}
   />
 </div>

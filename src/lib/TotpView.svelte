@@ -1,34 +1,47 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
-  import { totp } from "./codec.js";
+  import Select from "./Select.svelte";
+  import { parseTotpConfig, totp } from "./codec.js";
   import { pick } from "./i18n.js";
 
   let { locale = "zh-CN" } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
-  const STEP = 30;
-
   let secret = $state("");
+  let digits = $state("6");
+  let step = $state("30");
+  let algorithm = $state("SHA-1");
   let code = $state("");
   let error = $state("");
-  let remaining = $state(STEP);
+  let remaining = $state(30);
+  let activeStep = $state(30);
 
   $effect(() => {
     const raw = secret.trim();
     if (!raw) {
       code = "";
       error = "";
-      remaining = STEP - (Math.floor(Date.now() / 1000) % STEP);
+      activeStep = Number(step);
+      remaining = activeStep - (Math.floor(Date.now() / 1000) % activeStep);
       return;
     }
     let cancelled = false;
     let lastCounter = -1;
     const refresh = async () => {
-      remaining = STEP - (Math.floor(Date.now() / 1000) % STEP);
-      const counter = Math.floor(Date.now() / 1000 / STEP);
+      let config;
+      try {
+        config = parseTotpConfig(raw, { digits, step, algorithm });
+      } catch {
+        code = "";
+        error = t("不是有效的 TOTP 密钥或 URI", "Not a valid TOTP secret or URI");
+        return;
+      }
+      remaining = config.step - (Math.floor(Date.now() / 1000) % config.step);
+      activeStep = config.step;
+      const counter = Math.floor(Date.now() / 1000 / config.step);
       if (counter === lastCounter) return;
       try {
-        const next = await totp(raw);
+        const next = await totp(raw, config.digits, config.step, config.algorithm);
         if (cancelled) return;
         code = next;
         error = "";
@@ -47,8 +60,8 @@
     };
   });
 
-  const grouped = $derived(code ? `${code.slice(0, 3)} ${code.slice(3)}` : "");
-  const ratio = $derived(remaining / STEP);
+  const grouped = $derived(code ? (code.length === 8 ? `${code.slice(0, 4)} ${code.slice(4)}` : `${code.slice(0, 3)} ${code.slice(3)}`) : "");
+  const ratio = $derived(remaining / activeStep);
 </script>
 
 <div class="page">
@@ -56,12 +69,18 @@
     <span class="label">{t("密钥（Base32）", "Secret (Base32)")}</span>
     <input
       class="dbx-input mono"
+      type="password"
       spellcheck="false"
       autocomplete="off"
-      placeholder="JBSWY3DPEHPK3PXP"
+      placeholder="JBSWY3DPEHPK3PXP / otpauth://..."
       bind:value={secret}
     />
   </label>
+  <div class="totp-options">
+    <label class="block"><span class="label">{t("位数", "Digits")}</span><Select bind:value={digits} options={[{ value: "6", label: "6" }, { value: "8", label: "8" }]} /></label>
+    <label class="block"><span class="label">{t("周期", "Period")}</span><Select bind:value={step} options={[{ value: "30", label: "30s" }, { value: "60", label: "60s" }]} /></label>
+    <label class="block"><span class="label">{t("算法", "Algorithm")}</span><Select bind:value={algorithm} options={["SHA-1", "SHA-256", "SHA-512"].map((value) => ({ value, label: value }))} /></label>
+  </div>
 
   {#if error}
     <p class="dbx-hint error">{error}</p>
@@ -91,6 +110,8 @@
     flex-direction: column;
     gap: 6px;
   }
+  .totp-options { display: flex; flex-wrap: wrap; gap: 8px; }
+  .totp-options :global(.dbx-select) { width: auto; min-width: 100px; }
   .label {
     font-size: 12px;
     font-weight: 500;

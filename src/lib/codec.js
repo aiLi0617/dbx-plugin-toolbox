@@ -5,6 +5,7 @@ function bytesToHex(bytes) {
 function hexToBytes(hex) {
   const clean = hex.replace(/\s+/g, "");
   if (clean.length % 2) throw new Error("Odd hex length");
+  if (!/^[0-9a-f]*$/i.test(clean)) throw new Error("Invalid hex");
   const out = new Uint8Array(clean.length / 2);
   for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
   return out;
@@ -93,59 +94,60 @@ export function encodeBase58(bytes) {
   if (!bytes.length) return "";
   let zeros = 0;
   while (zeros < bytes.length && bytes[zeros] === 0) zeros++;
-  const digits = [0];
-  for (let i = zeros; i < bytes.length; i++) {
-    let carry = bytes[i];
-    for (let j = 0; j < digits.length; j++) {
-      carry += digits[j] << 8;
-      digits[j] = carry % 58;
-      carry = (carry / 58) | 0;
-    }
-    while (carry) {
-      digits.push(carry % 58);
-      carry = (carry / 58) | 0;
-    }
+  let value = 0n;
+  for (const byte of bytes) value = (value << 8n) | BigInt(byte);
+  let body = "";
+  while (value > 0n) {
+    body = B58[Number(value % 58n)] + body;
+    value /= 58n;
   }
-  return "1".repeat(zeros) + digits.reverse().map((d) => B58[d]).join("");
+  return "1".repeat(zeros) + body;
 }
 
 export function decodeBase58(text) {
   const clean = text.trim();
+  if (!clean) return new Uint8Array();
   let zeros = 0;
   while (zeros < clean.length && clean[zeros] === "1") zeros++;
-  const bytes = [0];
-  for (let i = zeros; i < clean.length; i++) {
-    let carry = B58.indexOf(clean[i]);
-    if (carry < 0) throw new Error("Invalid Base58");
-    for (let j = 0; j < bytes.length; j++) {
-      carry += bytes[j] * 58;
-      bytes[j] = carry & 255;
-      carry >>= 8;
-    }
-    while (carry) {
-      bytes.push(carry & 255);
-      carry >>= 8;
-    }
+  let value = 0n;
+  for (const ch of clean) {
+    const digit = B58.indexOf(ch);
+    if (digit < 0) throw new Error("Invalid Base58");
+    value = value * 58n + BigInt(digit);
   }
-  return new Uint8Array([...Array(zeros).fill(0), ...bytes.reverse()]);
+  const body = [];
+  while (value > 0n) {
+    body.push(Number(value & 0xffn));
+    value >>= 8n;
+  }
+  body.reverse();
+  return new Uint8Array([...Array(zeros).fill(0), ...body]);
 }
 
 export function encodeQuotedPrintable(text) {
-  const bytes = textToBytes(text);
-  let out = "";
-  let line = 0;
-  for (const b of bytes) {
-    let chunk;
-    if ((b >= 33 && b <= 126 && b !== 61) || b === 9 || b === 32) chunk = String.fromCharCode(b);
-    else chunk = "=" + b.toString(16).toUpperCase().padStart(2, "0");
-    if (line + chunk.length > 75) {
-      out += "=\r\n";
-      line = 0;
+  const logicalLines = String(text ?? "").split(/\r\n|\r|\n/);
+  return logicalLines.map((line) => {
+    const bytes = textToBytes(line);
+    let trailingStart = bytes.length;
+    while (trailingStart > 0 && (bytes[trailingStart - 1] === 9 || bytes[trailingStart - 1] === 32)) trailingStart--;
+    const tokens = [...bytes].map((b, i) => {
+      const trailingSpace = (b === 9 || b === 32) && i >= trailingStart;
+      return !trailingSpace && ((b >= 33 && b <= 60) || (b >= 62 && b <= 126) || b === 9 || b === 32)
+        ? String.fromCharCode(b)
+        : `=${b.toString(16).toUpperCase().padStart(2, "0")}`;
+    });
+    let out = "";
+    let width = 0;
+    for (const token of tokens) {
+      if (width + token.length > 75) {
+        out += "=\r\n";
+        width = 0;
+      }
+      out += token;
+      width += token.length;
     }
-    out += chunk;
-    line += chunk.length;
-  }
-  return out;
+    return out;
+  }).join("\r\n");
 }
 
 export function decodeQuotedPrintable(text) {
@@ -153,60 +155,69 @@ export function decodeQuotedPrintable(text) {
   const bytes = [];
   for (let i = 0; i < merged.length; i++) {
     if (merged[i] === "=") {
-      bytes.push(parseInt(merged.slice(i + 1, i + 3), 16));
+      const pair = merged.slice(i + 1, i + 3);
+      if (!/^[0-9a-f]{2}$/i.test(pair)) throw new Error("Invalid quoted-printable escape");
+      bytes.push(parseInt(pair, 16));
       i += 2;
-    } else bytes.push(merged.charCodeAt(i));
+    } else {
+      const cp = merged.codePointAt(i);
+      const encoded = textToBytes(String.fromCodePoint(cp));
+      bytes.push(...encoded);
+      if (cp > 0xffff) i++;
+    }
   }
   return bytesToText(new Uint8Array(bytes));
 }
 
 export function encodePunycode(input) {
-  try {
-    return new URL("http://" + input).hostname;
-  } catch {
-    return punycodeEncode(input);
-  }
-}
-
-function punycodeEncode(input) {
-  const chars = [...input];
-  const basic = chars.filter((c) => c.codePointAt(0) < 128).join("");
-  const rest = chars.filter((c) => c.codePointAt(0) >= 128);
-  if (!rest.length) return input;
-  return "xn--" + basic + (basic ? "-" : "") + rest.map((c) => c.codePointAt(0).toString(36)).join("");
+  const value = String(input ?? "").trim();
+  if (!value || /[\s/@?#]/.test(value)) throw new Error("Invalid domain name");
+  const url = new URL(`http://${value}`);
+  if (url.username || url.password || url.port || url.pathname !== "/") throw new Error("Invalid domain name");
+  return url.hostname;
 }
 
 export function randomPassword(length, sets) {
-  const alphabet = [
+  const groups = [
     sets.lower !== false ? "abcdefghijklmnopqrstuvwxyz" : "",
     sets.upper !== false ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "",
     sets.digits !== false ? "0123456789" : "",
     sets.symbols ? "!@#$%^&*()-_=+[]{};:,.?" : "",
-  ].join("");
-  if (!alphabet) throw new Error("Select at least one character set");
-  const bytes = crypto.getRandomValues(new Uint8Array(length));
-  return [...bytes].map((b) => alphabet[b % alphabet.length]).join("");
+  ].filter(Boolean);
+  if (!groups.length) throw new Error("Select at least one character set");
+  const size = Math.trunc(Number(length));
+  if (!Number.isInteger(size) || size < groups.length) throw new Error("Password length is too short");
+  const alphabet = groups.join("");
+  const randomIndex = (max) => {
+    const limit = 256 - (256 % max);
+    const byte = new Uint8Array(1);
+    do crypto.getRandomValues(byte); while (byte[0] >= limit);
+    return byte[0] % max;
+  };
+  const chars = groups.map((group) => group[randomIndex(group.length)]);
+  while (chars.length < size) chars.push(alphabet[randomIndex(alphabet.length)]);
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomIndex(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join("");
 }
 
 export function encodeUlid() {
   const time = BigInt(Date.now());
   const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-  const bytes = new Uint8Array(16);
-  const rand = crypto.getRandomValues(new Uint8Array(10));
-  let ts = time;
-  for (let i = 5; i >= 0; i--) {
-    bytes[i] = Number(ts & 0xffn);
-    ts >>= 8n;
-  }
-  bytes.set(rand, 6);
-  let bits = "";
-  bytes.forEach((b) => {
-    bits += b.toString(2).padStart(8, "0");
-  });
-  bits = bits.slice(0, 130);
-  let out = "";
-  for (let i = 0; i < 26; i++) out += alphabet[parseInt(bits.slice(i * 5, i * 5 + 5), 2)];
-  return out;
+  const encodePart = (value, width) => {
+    let out = "";
+    for (let i = 0; i < width; i++) {
+      out = alphabet[Number(value & 31n)] + out;
+      value >>= 5n;
+    }
+    return out;
+  };
+  const random = crypto.getRandomValues(new Uint8Array(10));
+  let randomValue = 0n;
+  for (const byte of random) randomValue = (randomValue << 8n) | BigInt(byte);
+  return encodePart(time, 10) + encodePart(randomValue, 16);
 }
 
 export function nanoId(size = 21) {
@@ -215,26 +226,55 @@ export function nanoId(size = 21) {
   return [...bytes].map((b) => alphabet[b % alphabet.length]).join("");
 }
 
-export async function totp(secret, digits = 6, step = 30) {
-  const key = decodeBase32(secret.replace(/\s+/g, ""));
-  const counter = Math.floor(Date.now() / 1000 / step);
+export function parseTotpConfig(input, defaults = {}) {
+  const raw = String(input ?? "").trim();
+  const config = {
+    secret: raw,
+    digits: Number(defaults.digits) || 6,
+    step: Number(defaults.step) || 30,
+    algorithm: String(defaults.algorithm || "SHA-1").toUpperCase(),
+  };
+  if (/^otpauth:\/\//i.test(raw)) {
+    const url = new URL(raw);
+    if (url.protocol !== "otpauth:" || url.hostname.toLowerCase() !== "totp") throw new Error("Not a TOTP URI");
+    config.secret = url.searchParams.get("secret") || "";
+    if (url.searchParams.has("digits")) config.digits = Number(url.searchParams.get("digits"));
+    if (url.searchParams.has("period")) config.step = Number(url.searchParams.get("period"));
+    if (url.searchParams.has("algorithm")) config.algorithm = url.searchParams.get("algorithm").toUpperCase().replace(/^SHA(\d)/, "SHA-$1");
+  }
+  if (!config.secret) throw new Error("TOTP secret is required");
+  if (![6, 8].includes(config.digits)) throw new Error("TOTP digits must be 6 or 8");
+  if (!Number.isInteger(config.step) || config.step < 1 || config.step > 300) throw new Error("Invalid TOTP period");
+  if (!["SHA-1", "SHA-256", "SHA-512"].includes(config.algorithm)) throw new Error("Unsupported TOTP algorithm");
+  return config;
+}
+
+export async function totp(secret, digits = 6, step = 30, algorithm = "SHA-1", now = Date.now()) {
+  const config = parseTotpConfig(secret, { digits, step, algorithm });
+  const key = decodeBase32(config.secret.replace(/[\s-]+/g, ""));
+  if (!key.length) throw new Error("TOTP secret is required");
+  const counter = BigInt(Math.floor(now / 1000 / config.step));
   const buf = new ArrayBuffer(8);
   const view = new DataView(buf);
-  view.setUint32(4, counter);
-  const cryptoKey = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
+  view.setUint32(0, Number((counter >> 32n) & 0xffffffffn));
+  view.setUint32(4, Number(counter & 0xffffffffn));
+  const cryptoKey = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: config.algorithm }, false, ["sign"]);
   const sig = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, buf));
   const offset = sig[sig.length - 1] & 0xf;
   const bin = ((sig[offset] & 0x7f) << 24) | (sig[offset + 1] << 16) | (sig[offset + 2] << 8) | sig[offset + 3];
-  return String(bin % 10 ** digits).padStart(digits, "0");
+  return String(bin % 10 ** config.digits).padStart(config.digits, "0");
 }
 
-export function crc32(text) {
+export function crc32Bytes(bytes) {
   let crc = ~0 >>> 0;
-  const bytes = textToBytes(text);
   for (const b of bytes) {
     crc ^= b;
     for (let i = 0; i < 8; i++) crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
   }
   return ((~crc) >>> 0).toString(16).padStart(8, "0");
+}
+
+export function crc32(text) {
+  return crc32Bytes(textToBytes(text));
 }
 

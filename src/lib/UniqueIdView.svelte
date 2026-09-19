@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
@@ -6,7 +7,7 @@
   import { copyText } from "./clipboard.js";
   import { clampUniqueIdCount, formatUuid, generateUniqueId } from "./tools/generate.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -18,6 +19,10 @@
   let braces = $state(false);
   let raw = $state([generateUniqueId("uuid")]);
   let copiedAll = $state(false);
+  $effect(() => {
+    const requested = initialOptions.kind;
+    if (["uuid", "ulid", "nanoid"].includes(requested)) untrack(() => { kind = requested; generate(); });
+  });
   const items = $derived(
     raw.map((id) => (kind === "uuid" ? formatUuid(id, { hyphens: withHyphens, uppercase, braces }) : id)),
   );

@@ -3,10 +3,11 @@
   import KeySourceBar from "./KeySourceBar.svelte";
   import Select from "./Select.svelte";
   import { localizeError, pick } from "./i18n.js";
+  import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
   import { HMAC_ALGORITHMS, runHmac } from "./tools/encode.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -17,6 +18,7 @@
   let keyId = $state("");
   let digest = $state("");
   let error = $state("");
+  $effect(() => { if (["hmac-sha256", "hmac-sm3"].includes(initialOptions.algorithm)) algorithm = initialOptions.algorithm; });
 
   const picker = $derived(algorithm === "hmac-sm3" ? "hmac-sm3" : "hmac");
   const ctx = $derived(keyCtx(source, keyId, material));
@@ -25,7 +27,13 @@
     const text = input;
     const alg = algorithm;
     const next = ctx;
-    if (!text || !next) {
+    digest = "";
+    const limitError = inputLimitError(text, INPUT_LIMITS.hmac, t("输入", "Input"));
+    if (limitError) {
+      error = limitError;
+      return;
+    }
+    if (!next) {
       digest = "";
       error = "";
       return;
@@ -63,7 +71,7 @@
   <KeySourceBar {locale} {picker} bind:source bind:material bind:keyId />
   <label class="block">
     <span class="label">{t("输入", "Input")}</span>
-    <textarea class="dbx-textarea area" spellcheck="false" bind:value={input}></textarea>
+    <textarea class="dbx-textarea area" spellcheck="false" maxlength={INPUT_LIMITS.hmac} bind:value={input}></textarea>
   </label>
   {#if error}
     <p class="error">{error}</p>

@@ -1,23 +1,31 @@
 use std::collections::HashSet;
 use std::fs;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::fs::OpenOptions;
+use std::io::Write;
+use std::path::Path;
+use std::path::PathBuf;
 use std::sync::Mutex;
 
-use base64::{engine::general_purpose::STANDARD as B64, Engine};
 use dbx_plugin_sdk::PluginError;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use uuid::Uuid;
 
-use crate::helpers::{bad, err, opt_str, str_param};
+use crate::helpers::{bad, err};
 
 const PLUGIN_ID: &str = "io.github.aili0617.toolbox";
-const PREFS_VERSION: u32 = 1;
+const PREFS_VERSION: u32 = 3;
+const DEFAULT_VAULT_AUTO_LOCK_MINUTES: u32 = 15;
+static PREFS_LOCK: Mutex<()> = Mutex::new(());
 
 const KNOWN_TOOL_IDS: &[&str] = &[
+    "data-convert",
+    "spreadsheet",
+    "image-process",
     "json",
     "jsonpath",
     "base-convert",
+    "network-calc",
     "timestamp",
     "color",
     "cron",
@@ -32,6 +40,7 @@ const KNOWN_TOOL_IDS: &[&str] = &[
     "hmac-sha256",
     "xor",
     "rsa",
+    "jwk",
     "cert",
     "code-format",
     "hash",
@@ -59,8 +68,27 @@ const DEFAULT_ENABLED: &[&str] = &["json", "base64", "code-format", "hash", "uui
 #[derive(Serialize, Deserialize)]
 struct PrefsFile {
     version: u32,
+    #[serde(rename = "favoriteToolIds", default)]
+    favorite_tool_ids: Vec<String>,
     #[serde(rename = "enabledToolIds")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     enabled_tool_ids: Vec<String>,
+    #[serde(
+        rename = "vaultAutoLockMinutes",
+        default = "default_vault_auto_lock_minutes"
+    )]
+    vault_auto_lock_minutes: u32,
+}
+
+fn default_vault_auto_lock_minutes() -> u32 {
+    DEFAULT_VAULT_AUTO_LOCK_MINUTES
+}
+
+fn sanitize_vault_auto_lock_minutes(value: u32) -> u32 {
+    match value {
+        0 | 5 | 15 | 30 | 60 => value,
+        _ => DEFAULT_VAULT_AUTO_LOCK_MINUTES,
+    }
 }
 
 fn known_ids() -> HashSet<&'static str> {
@@ -73,9 +101,8 @@ fn default_ids() -> Vec<String> {
 
 fn canonical_id(id: String) -> String {
     match id.as_str() {
-        "json-yaml" | "json-csv" | "json-xml" | "json-toml" | "json-sql" | "json-ts" | "json-convert" => {
-            "json".to_string()
-        }
+        "json-yaml" | "json-csv" | "json-xml" | "json-toml" | "json-sql" | "json-ts"
+        | "json-convert" => "json".to_string(),
         "duration" => "timestamp".to_string(),
         "hex" | "base32" | "base58" => "base64".to_string(),
         "unicode" => "html-entities".to_string(),
@@ -87,14 +114,16 @@ fn canonical_id(id: String) -> String {
         "ulid" | "nanoid" => "uuid".to_string(),
         "random-bytes" => "password".to_string(),
         "crc32" => "hash".to_string(),
-        "naming" => "case".to_string(),
-        "lines" => "whitespace".to_string(),
+        "naming" | "case" | "stats" | "slugify" | "strip-html" | "lines" => {
+            "whitespace".to_string()
+        }
         _ => id,
     }
 }
 
 fn filter_known(ids: Vec<String>) -> Vec<String> {
-    let split_old_json_tools = ids.iter().any(|id| id == "json-convert") && ids.iter().any(|id| id == "json");
+    let split_old_json_tools =
+        ids.iter().any(|id| id == "json-convert") && ids.iter().any(|id| id == "json");
     let known = known_ids();
     let mut seen = HashSet::new();
     let mut out = Vec::new();
@@ -118,197 +147,158 @@ fn prefs_path() -> Result<PathBuf, PluginError> {
     Ok(base.join(PLUGIN_ID).join("prefs.json"))
 }
 
-fn read_ids() -> Result<Vec<String>, PluginError> {
+fn read_preferences() -> Result<(Vec<String>, u32), PluginError> {
     let path = prefs_path()?;
     if !path.exists() {
-        return Ok(default_ids());
+        let backup = path.with_extension("json.bak");
+        return if backup.exists() {
+            read_preferences_file(&backup)
+        } else {
+            Ok((default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES))
+        };
     }
-    let text = fs::read_to_string(&path).map_err(|error| err(format!("Failed to read prefs: {error}")))?;
-    let parsed: PrefsFile = serde_json::from_str(&text).map_err(|error| err(format!("Invalid prefs.json: {error}")))?;
-    let cleaned = filter_known(parsed.enabled_tool_ids);
-    Ok(if cleaned.is_empty() { default_ids() } else { cleaned })
+    match read_preferences_file(&path) {
+        Ok(preferences) => Ok(preferences),
+        Err(primary_error) => {
+            read_preferences_file(&path.with_extension("json.bak")).or(Err(primary_error))
+        }
+    }
 }
 
-fn write_ids(ids: Vec<String>) -> Result<Vec<String>, PluginError> {
+fn read_preferences_file(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
+    let text =
+        fs::read_to_string(path).map_err(|error| err(format!("Failed to read prefs: {error}")))?;
+    let parsed: PrefsFile =
+        serde_json::from_str(&text).map_err(|error| err(format!("Invalid prefs.json: {error}")))?;
+    let auto_lock_minutes = sanitize_vault_auto_lock_minutes(parsed.vault_auto_lock_minutes);
+    Ok((ids_from_file(parsed), auto_lock_minutes))
+}
+
+fn ids_from_file(parsed: PrefsFile) -> Vec<String> {
+    let ids = if parsed.version >= 2 {
+        parsed.favorite_tool_ids
+    } else {
+        parsed.enabled_tool_ids
+    };
+    filter_known(ids)
+}
+
+fn write_preferences(
+    ids: Vec<String>,
+    vault_auto_lock_minutes: u32,
+) -> Result<(Vec<String>, u32), PluginError> {
     let cleaned = filter_known(ids);
-    if cleaned.is_empty() {
-        return Err(bad("Keep at least one known tool"));
-    }
+    let auto_lock_minutes = sanitize_vault_auto_lock_minutes(vault_auto_lock_minutes);
     let path = prefs_path()?;
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| err(format!("Failed to create prefs directory: {error}")))?;
+        fs::create_dir_all(parent)
+            .map_err(|error| err(format!("Failed to create prefs directory: {error}")))?;
     }
     let payload = PrefsFile {
         version: PREFS_VERSION,
-        enabled_tool_ids: cleaned.clone(),
+        favorite_tool_ids: cleaned.clone(),
+        enabled_tool_ids: Vec::new(),
+        vault_auto_lock_minutes: auto_lock_minutes,
     };
     let text = serde_json::to_string_pretty(&payload).map_err(|error| err(error.to_string()))?;
-    fs::write(&path, text).map_err(|error| err(format!("Failed to write prefs: {error}")))?;
-    let _ = fs::remove_file(path.with_extension("json.tmp"));
-    Ok(cleaned)
+    persist_preferences(&path, text.as_bytes())?;
+    Ok((cleaned, auto_lock_minutes))
 }
 
-fn ids_from_params(params: &Value) -> Result<Vec<String>, PluginError> {
-    let raw = params
-        .get("enabledToolIds")
-        .and_then(Value::as_array)
-        .ok_or_else(|| bad("enabledToolIds must be an array"))?;
+fn persist_preferences(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+    let temp = path.with_extension(format!("json.tmp-{}", Uuid::new_v4()));
+    let backup = path.with_extension("json.bak");
+    let write_result = (|| -> std::io::Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temp)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+
+        if path.exists() {
+            if backup.exists() {
+                fs::remove_file(&backup)?;
+            }
+            fs::rename(path, &backup)?;
+        }
+        if let Err(error) = fs::rename(&temp, path) {
+            if backup.exists() && !path.exists() {
+                let _ = fs::rename(&backup, path);
+            }
+            return Err(error);
+        }
+        Ok(())
+    })();
+    if write_result.is_err() {
+        let _ = fs::remove_file(&temp);
+    }
+    write_result.map_err(|error| err(format!("Failed to write prefs: {error}")))
+}
+
+fn ids_from_params(params: &Value) -> Result<Option<Vec<String>>, PluginError> {
+    let Some(raw) = params
+        .get("favoriteToolIds")
+        .or_else(|| params.get("enabledToolIds"))
+    else {
+        return Ok(None);
+    };
+    let raw = raw
+        .as_array()
+        .ok_or_else(|| bad("favoriteToolIds must be an array"))?;
     let mut ids = Vec::new();
     for item in raw {
-        let id = item.as_str().ok_or_else(|| bad("enabledToolIds must be strings"))?;
+        let id = item
+            .as_str()
+            .ok_or_else(|| bad("favoriteToolIds must be strings"))?;
         if id.is_empty() || id.len() > 64 {
             return Err(bad("Invalid tool id"));
         }
         ids.push(id.to_string());
     }
-    Ok(ids)
+    Ok(Some(ids))
 }
 
-const MAX_EXPORT_BYTES: usize = 8 * 1024 * 1024;
-static LAST_SAVED: Mutex<Option<PathBuf>> = Mutex::new(None);
-
-fn save_file(params: Value) -> Result<Value, PluginError> {
-    let name = sanitize_export_name(str_param(&params, "fileName").unwrap_or("barcode.png"));
-    let title = opt_str(&params, "title").unwrap_or("Save PNG");
-    let bytes = decode_export_data(str_param(&params, "data")?)?;
-    let start_dir = dirs::download_dir().or_else(dirs::home_dir);
-    let Some(mut path) = pick_save_path(title, &name, start_dir.as_deref()) else {
-        return Ok(json!({ "cancelled": true }));
+fn auto_lock_from_params(params: &Value) -> Result<Option<u32>, PluginError> {
+    let Some(raw) = params.get("vaultAutoLockMinutes") else {
+        return Ok(None);
     };
-    path = ensure_png(path);
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| err(format!("Failed to create folder: {error}")))?;
+    let value = raw
+        .as_u64()
+        .and_then(|value| u32::try_from(value).ok())
+        .ok_or_else(|| bad("vaultAutoLockMinutes must be a non-negative integer"))?;
+    if !matches!(value, 0 | 5 | 15 | 30 | 60) {
+        return Err(bad("Unsupported vault auto-lock interval"));
     }
-    fs::write(&path, bytes).map_err(|error| err(format!("Failed to save file: {error}")))?;
-    if let Ok(mut last) = LAST_SAVED.lock() {
-        *last = Some(path.clone());
-    }
-    Ok(json!({
-        "cancelled": false,
-        "path": path.to_string_lossy(),
-        "fileName": path.file_name().and_then(|value| value.to_str()).unwrap_or(&name),
-    }))
-}
-
-fn reveal_file(params: Value) -> Result<Value, PluginError> {
-    let requested = PathBuf::from(str_param(&params, "path")?);
-    let last = LAST_SAVED.lock().ok().and_then(|guard| guard.clone());
-    let Some(path) = last.filter(|saved| export_paths_match(saved, &requested)) else {
-        return Err(bad("File not found"));
-    };
-    if !path.is_file() {
-        return Err(bad("File not found"));
-    }
-    open_in_folder(&path)?;
-    Ok(json!({ "ok": true }))
-}
-
-fn pick_save_path(title: &str, name: &str, start_dir: Option<&Path>) -> Option<PathBuf> {
-    let title = title.to_string();
-    let name = name.to_string();
-    let start_dir = start_dir.map(Path::to_path_buf);
-    let worker = std::thread::Builder::new()
-        .name("save-dialog".into())
-        .spawn(move || {
-            let mut dialog = rfd::FileDialog::new();
-            dialog = dialog.set_title(&title).set_file_name(&name).add_filter("PNG", &["png"]);
-            if let Some(dir) = start_dir.as_deref() {
-                dialog = dialog.set_directory(dir);
-            }
-            dialog.save_file()
-        })
-        .ok()?;
-    worker.join().ok()?
-}
-
-fn decode_export_data(data: &str) -> Result<Vec<u8>, PluginError> {
-    let raw = data.split(',').next_back().unwrap_or(data).trim();
-    let bytes = B64.decode(raw).map_err(|_| bad("Invalid file data"))?;
-    if bytes.is_empty() {
-        return Err(bad("File is empty"));
-    }
-    if bytes.len() > MAX_EXPORT_BYTES {
-        return Err(bad("File is too large"));
-    }
-    Ok(bytes)
-}
-
-fn sanitize_export_name(raw: &str) -> String {
-    let base = Path::new(raw)
-        .file_name()
-        .and_then(|value| value.to_str())
-        .unwrap_or("barcode.png");
-    let cleaned: String = base
-        .chars()
-        .map(|ch| match ch {
-            '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*' | '\0' => '_',
-            _ => ch,
-        })
-        .collect::<String>()
-        .trim()
-        .trim_start_matches('.')
-        .chars()
-        .take(120)
-        .collect();
-    if cleaned.is_empty() {
-        return "barcode.png".into();
-    }
-    if cleaned.to_ascii_lowercase().ends_with(".png") {
-        cleaned
-    } else {
-        format!("{cleaned}.png")
-    }
-}
-
-fn ensure_png(path: PathBuf) -> PathBuf {
-    match path.extension().and_then(|ext| ext.to_str()) {
-        Some(ext) if ext.eq_ignore_ascii_case("png") => path,
-        _ => path.with_extension("png"),
-    }
-}
-
-fn export_paths_match(left: &Path, right: &Path) -> bool {
-    if left == right {
-        return true;
-    }
-    match (left.canonicalize(), right.canonicalize()) {
-        (Ok(left), Ok(right)) => left == right,
-        _ => false,
-    }
-}
-
-fn open_in_folder(path: &Path) -> Result<(), PluginError> {
-    let result = {
-        #[cfg(target_os = "windows")]
-        {
-            Command::new("explorer").arg(format!("/select,{}", path.display())).spawn()
-        }
-        #[cfg(target_os = "macos")]
-        {
-            Command::new("open").args(["-R", &path.to_string_lossy()]).spawn()
-        }
-        #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
-        {
-            let folder = path.parent().unwrap_or(path);
-            Command::new("xdg-open").arg(folder).spawn()
-        }
-    };
-    result.map_err(|error| err(format!("Failed to open folder: {error}")))?;
-    Ok(())
+    Ok(Some(value))
 }
 
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
+    let _guard = PREFS_LOCK
+        .lock()
+        .map_err(|_| err("Preferences lock is poisoned"))?;
     match method {
         "toolbox/prefs/get" => {
-            let ids = read_ids()?;
-            Ok(json!({ "version": PREFS_VERSION, "enabledToolIds": ids }))
+            let (ids, auto_lock_minutes) = read_preferences()?;
+            Ok(json!({
+                "version": PREFS_VERSION,
+                "favoriteToolIds": ids,
+                "vaultAutoLockMinutes": auto_lock_minutes,
+            }))
         }
         "toolbox/prefs/set" => {
-            let ids = write_ids(ids_from_params(&params)?)?;
-            Ok(json!({ "version": PREFS_VERSION, "enabledToolIds": ids }))
+            let (current_ids, current_auto_lock_minutes) = read_preferences()?;
+            let ids = ids_from_params(&params)?.unwrap_or(current_ids);
+            let auto_lock_minutes =
+                auto_lock_from_params(&params)?.unwrap_or(current_auto_lock_minutes);
+            let (ids, auto_lock_minutes) = write_preferences(ids, auto_lock_minutes)?;
+            Ok(json!({
+                "version": PREFS_VERSION,
+                "favoriteToolIds": ids,
+                "vaultAutoLockMinutes": auto_lock_minutes,
+            }))
         }
-        "toolbox/save-file" => save_file(params),
-        "toolbox/reveal-file" => reveal_file(params),
         _ => Err(PluginError::method_not_found(method)),
     }
 }
@@ -340,8 +330,17 @@ mod tests {
     }
 
     #[test]
+    fn empty_selection_stays_empty() {
+        assert!(filter_known(Vec::new()).is_empty());
+    }
+
+    #[test]
     fn remaps_legacy_json_convert_ids() {
-        let cleaned = filter_known(vec!["json-yaml".into(), "json-csv".into(), "jsonpath".into()]);
+        let cleaned = filter_known(vec![
+            "json-yaml".into(),
+            "json-csv".into(),
+            "jsonpath".into(),
+        ]);
         assert_eq!(cleaned, vec!["json".to_string(), "jsonpath".to_string()]);
     }
 
@@ -368,5 +367,58 @@ mod tests {
                 "hash".to_string(),
             ]
         );
+    }
+
+    #[test]
+    fn migrates_v1_enabled_tools_to_v2_favorites() {
+        let parsed: PrefsFile = serde_json::from_str(
+            r#"{"version":1,"enabledToolIds":["hash","json-yaml","stats","case","missing-tool"]}"#,
+        )
+        .unwrap();
+        assert_eq!(
+            ids_from_file(parsed),
+            vec![
+                "hash".to_string(),
+                "json".to_string(),
+                "whitespace".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn v2_empty_favorites_do_not_fall_back_to_legacy_field() {
+        let parsed: PrefsFile =
+            serde_json::from_str(r#"{"version":2,"favoriteToolIds":[],"enabledToolIds":["hash"]}"#)
+                .unwrap();
+        assert!(ids_from_file(parsed).is_empty());
+    }
+
+    #[test]
+    fn auto_lock_defaults_and_rejects_unsupported_intervals() {
+        let parsed: PrefsFile =
+            serde_json::from_str(r#"{"version":2,"favoriteToolIds":["hash"]}"#).unwrap();
+        assert_eq!(
+            parsed.vault_auto_lock_minutes,
+            DEFAULT_VAULT_AUTO_LOCK_MINUTES
+        );
+        assert_eq!(
+            auto_lock_from_params(&json!({ "vaultAutoLockMinutes": 30 })).unwrap(),
+            Some(30)
+        );
+        assert!(auto_lock_from_params(&json!({ "vaultAutoLockMinutes": 10 })).is_err());
+    }
+
+    #[test]
+    fn preference_writes_keep_the_previous_file_as_backup() {
+        let directory = std::env::temp_dir().join(format!("toolbox-prefs-test-{}", Uuid::new_v4()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("prefs.json");
+
+        persist_preferences(&path, b"first").unwrap();
+        persist_preferences(&path, b"second").unwrap();
+
+        assert_eq!(fs::read(&path).unwrap(), b"second");
+        assert_eq!(fs::read(path.with_extension("json.bak")).unwrap(), b"first");
+        fs::remove_dir_all(directory).unwrap();
     }
 }

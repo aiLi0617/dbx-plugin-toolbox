@@ -5,6 +5,9 @@ export async function copyText(text) {
 }
 
 function copyWithExecCommand(value) {
+  const previous = document.activeElement;
+  const selection = previous && typeof previous.selectionStart === "number"
+    ? [previous.selectionStart, previous.selectionEnd, previous.selectionDirection] : null;
   const el = document.createElement("textarea");
   el.value = value;
   el.setAttribute("readonly", "");
@@ -21,6 +24,10 @@ function copyWithExecCommand(value) {
     ok = false;
   } finally {
     el.remove();
+    if (previous?.isConnected) {
+      previous.focus({ preventScroll: true });
+      if (selection) previous.setSelectionRange?.(...selection);
+    }
   }
   return ok;
 }

@@ -40,11 +40,13 @@
       paint(fromId, bytes);
     } catch {
       invalidId = fromId;
+      for (const field of BASE_FIELDS) if (field.id !== fromId) values[field.id] = "";
     }
   }
 </script>
 
 <div class="page">
+  {#if invalidId}<p class="dbx-hint" role="alert">{t("输入不是有效的编码，其他结果已清空。请检查字符、长度和填充。", "Invalid encoding. Other results were cleared; check the characters, length, and padding.")}</p>{/if}
   <div class="rows">
     {#each BASE_FIELDS as field (field.id)}
       <div class="row" class:stack={field.id === "text"}>
@@ -53,6 +55,8 @@
           <textarea
             class="dbx-textarea mono"
             class:invalid={invalidId === field.id}
+            aria-label={t(field.zh, field.en)}
+            aria-invalid={invalidId === field.id}
             spellcheck="false"
             value={values[field.id]}
             oninput={(event) => update(field.id, event.currentTarget.value)}
@@ -61,12 +65,14 @@
           <input
             class="dbx-input mono"
             class:invalid={invalidId === field.id}
+            aria-label={t(field.zh, field.en)}
+            aria-invalid={invalidId === field.id}
             spellcheck="false"
             value={values[field.id]}
             oninput={(event) => update(field.id, event.currentTarget.value)}
           />
         {/if}
-        <CopyButton {locale} text={values[field.id]} labelZh={`复制 ${field.zh}`} labelEn={`Copy ${field.en}`} />
+        <CopyButton {locale} text={invalidId ? "" : values[field.id]} labelZh={`复制 ${field.zh}`} labelEn={`Copy ${field.en}`} />
       </div>
     {/each}
   </div>

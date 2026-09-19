@@ -5,12 +5,14 @@
   let { locale = "zh-CN", text = "", labelZh = "复制", labelEn = "Copy" } = $props();
 
   let copied = $state(false);
+  let failed = $state(false);
 
   const t = (zh, en) => pick(locale, zh, en);
   const title = $derived(copied ? t(chrome.copied.zh, chrome.copied.en) : t(labelZh, labelEn));
 
   async function copy() {
     if (!text) return;
+    failed = false;
     try {
       await copyText(text);
       copied = true;
@@ -19,6 +21,7 @@
       }, 1200);
     } catch {
       copied = false;
+      failed = true;
     }
   }
 </script>
@@ -35,6 +38,8 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M20 6 9 17l-5-5"></path>
     </svg>
+  {:else if failed}
+    <span aria-hidden="true">!</span>
   {:else}
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
@@ -42,8 +47,12 @@
     </svg>
   {/if}
 </button>
+<span class="copy-status" role="status" aria-live="polite">{#if copied}{t(chrome.copied.zh, chrome.copied.en)}{:else if failed}{t("复制失败，请手动复制", "Copy failed; please copy manually")}{/if}</span>
+{#if failed}<span class="copy-error" role="alert">{t("复制失败，请手动复制", "Copy failed; please copy manually")}</span>{/if}
 
 <style>
+  .copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .copy-error { font-size: 11px; color: var(--color-destructive, #dc2626); grid-column: 1 / -1; }
   .copy-btn {
     width: 30px;
     padding: 0;

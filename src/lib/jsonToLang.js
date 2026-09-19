@@ -1,7 +1,7 @@
-import yaml from "js-yaml";
-import { stringify as stringifyToml } from "smol-toml";
 import { sortValue } from "./jsonOps.js";
-import { jsonToCsv, jsonToInsert, jsonToXml } from "./tools/convert.js";
+import { parseSafeJson } from "./jsonPrecision.js";
+import { jsonToInsert } from "./tools/convert.js";
+import { convertData } from "./dataConvert.js";
 
 export const jsonLanguages = [
   { value: "typescript", zh: "TypeScript", en: "TypeScript" },
@@ -26,7 +26,7 @@ export const jsonLanguages = [
 ];
 
 export function convertJsonToLang(text, lang, opts = {}) {
-  let value = JSON.parse(text);
+  let value = parseSafeJson(text);
   if (opts.sortKeys) value = sortValue(value, opts.sortKeys === true ? "asc" : opts.sortKeys);
   switch (lang) {
     case "python":
@@ -38,13 +38,10 @@ export function convertJsonToLang(text, lang, opts = {}) {
     case "query":
       return toQuery(value);
     case "yaml":
-      return yaml.dump(value);
     case "xml":
-      return jsonToXml(value);
     case "toml":
-      return stringifyToml(value && typeof value === "object" && !Array.isArray(value) ? value : { root: value });
     case "csv":
-      return jsonToCsv(value);
+      return convertData(JSON.stringify(value), "json", lang);
     case "mysql":
       return mysqlOut(value, opts.table);
     case "json-schema":
@@ -110,7 +107,7 @@ function shapeOf(value) {
   if (value === null) return { k: "null" };
   if (Array.isArray(value)) {
     if (!value.length) return { k: "array", item: { k: "any" } };
-    return { k: "array", item: shapeOf(value[0]) };
+    return { k: "array", item: value.map(shapeOf).reduce(mergeShapes) };
   }
   const type = typeof value;
   if (type === "object") {
@@ -122,6 +119,34 @@ function shapeOf(value) {
   if (type === "boolean") return { k: "bool" };
   if (type === "number") return { k: Number.isInteger(value) ? "int" : "float" };
   return { k: "string" };
+}
+
+function mergeShapes(left, right) {
+  if (left.k === right.k) {
+    if (left.k === "array") return { k: "array", item: mergeShapes(left.item, right.item) };
+    if (left.k === "object") {
+      const leftFields = new Map(left.fields.map((field) => [field.key, field]));
+      const rightFields = new Map(right.fields.map((field) => [field.key, field]));
+      const keys = [...new Set([...leftFields.keys(), ...rightFields.keys()])];
+      return {
+        k: "object",
+        fields: keys.map((key) => {
+          const l = leftFields.get(key);
+          const r = rightFields.get(key);
+          return {
+            key,
+            shape: l && r ? mergeShapes(l.shape, r.shape) : (l || r).shape,
+            optional: Boolean(l?.optional || r?.optional || !l || !r),
+          };
+        }),
+      };
+    }
+    return left;
+  }
+  if ((left.k === "int" && right.k === "float") || (left.k === "float" && right.k === "int")) return { k: "float" };
+  if (left.k === "null") return { ...right, nullable: true };
+  if (right.k === "null") return { ...left, nullable: true };
+  return { k: "any" };
 }
 
 function assignNames(shape, hint, named, used) {
@@ -209,6 +234,7 @@ function emitStruct(shape, lang) {
     key: field.key,
     ident: fieldIdent(field.key, lang),
     type: renderType(field.shape, lang),
+    optional: Boolean(field.optional || field.shape.nullable),
   }));
   if (lang === "go") {
     const body = fields.map((f) => `\t${f.ident} ${f.type} \`json:"${f.key}"\``).join("\n");
@@ -244,7 +270,7 @@ function emitStruct(shape, lang) {
     return `struct ${name} {\n${body}\n};`;
   }
   const body = fields
-    .map((f) => `  ${identOk(f.key) ? f.key : JSON.stringify(f.key)}: ${f.type};`)
+    .map((f) => `  ${identOk(f.key) ? f.key : JSON.stringify(f.key)}${f.optional ? "?" : ""}: ${f.type};`)
     .join("\n");
   return `interface ${name} {\n${body}\n}`;
 }
@@ -319,12 +345,17 @@ function toQuery(value, prefix = "") {
 function toSchema(value) {
   if (value === null) return { type: "null" };
   if (Array.isArray(value)) {
-    return { type: "array", items: value.length ? toSchema(value[0]) : {} };
+    if (!value.length) return { type: "array", items: {} };
+    const variants = [...new Map(value.map((item) => {
+      const schema = toSchema(item);
+      return [JSON.stringify(schema), schema];
+    })).values()];
+    return { type: "array", items: variants.length === 1 ? variants[0] : { anyOf: variants } };
   }
   const type = typeof value;
   if (type === "object") {
     const properties = Object.fromEntries(Object.entries(value).map(([k, v]) => [k, toSchema(v)]));
-    return { type: "object", properties };
+    return { type: "object", properties, required: Object.keys(properties) };
   }
   if (type === "number") return { type: Number.isInteger(value) ? "integer" : "number" };
   if (type === "boolean") return { type: "boolean" };
@@ -333,15 +364,20 @@ function toSchema(value) {
 
 function mysqlOut(value, table) {
   const name = table || "table_name";
-  const sample = Array.isArray(value) ? value[0] : value;
+  const records = Array.isArray(value) ? value : [value];
+  const sample = records.find((row) => row && typeof row === "object" && !Array.isArray(row));
   if (!sample || typeof sample !== "object" || Array.isArray(sample)) return jsonToInsert(value, name);
-  const cols = Object.entries(sample).map(([key, val]) => {
+  const keys = [...new Set(records.flatMap((row) => row && typeof row === "object" && !Array.isArray(row) ? Object.keys(row) : []))];
+  const cols = keys.map((key) => {
+    const values = records.map((row) => row?.[key]).filter((val) => val != null);
+    const val = values[0];
     let typ = "TEXT";
-    if (typeof val === "number") typ = Number.isInteger(val) ? "BIGINT" : "DOUBLE";
-    else if (typeof val === "boolean") typ = "TINYINT(1)";
+    if (values.length && values.every((item) => typeof item === "number")) {
+      typ = values.every(Number.isInteger) ? "BIGINT" : "DOUBLE";
+    } else if (values.length && values.every((item) => typeof item === "boolean")) typ = "TINYINT(1)";
     else if (val && typeof val === "object") typ = "JSON";
     return `  \`${String(key).replace(/`/g, "``")}\` ${typ}`;
   });
-  const safe = String(name).replace(/`/g, "``");
-  return `CREATE TABLE \`${safe}\` (\n${cols.join(",\n")}\n);\n\n${jsonToInsert(value, name)}`;
+  const safe = String(name).split(".").map((part) => `\`${part.replace(/`/g, "``")}\``).join(".");
+  return `CREATE TABLE ${safe} (\n${cols.join(",\n")}\n);\n\n${jsonToInsert(value, name)}`;
 }

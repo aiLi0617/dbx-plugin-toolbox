@@ -1,6 +1,7 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import { pick } from "./i18n.js";
+  import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { inspectCert } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
@@ -21,6 +22,10 @@
         { zh: "生效", en: "Not before", value: info.notBefore },
         { zh: "过期", en: "Not after", value: info.notAfter },
         { zh: "签名算法", en: "Signature", value: info.signatureAlgorithm },
+        { zh: "公钥算法", en: "Public key", value: info.publicKeyAlgorithm },
+        { zh: "SHA-256 指纹", en: "SHA-256 fingerprint", value: info.fingerprintSha256 },
+        { zh: "备用名称", en: "Subject alternative names", value: (info.subjectAlternativeNames || []).join(", ") },
+        { zh: "主题与颁发者相同", en: "Subject matches issuer", value: info.subjectMatchesIssuer ? t("是", "Yes") : t("否", "No") },
       ];
     }
     if (info.kind === "ssh") {
@@ -43,6 +48,12 @@
     if (!text) {
       info = null;
       error = "";
+      return;
+    }
+    const limitError = inputLimitError(text, INPUT_LIMITS.certificate, t("证书输入", "Certificate input"));
+    if (limitError) {
+      info = null;
+      error = limitError;
       return;
     }
     let cancelled = false;
@@ -78,6 +89,16 @@
   {#if error}
     <p class="error">{error}</p>
   {:else if fields.length}
+    {#if info.kind === "certificate"}
+      <div class="status" class:bad={info.status !== "valid"}>
+        {info.status === "valid"
+          ? t(`处于有效期内，剩余约 ${info.daysRemaining} 天`, `Within validity period; about ${info.daysRemaining} days remaining`)
+          : info.status === "expired"
+            ? t(`证书已过期 ${Math.abs(info.daysRemaining)} 天`, `Certificate expired ${Math.abs(info.daysRemaining)} days ago`)
+            : t("证书尚未生效", "Certificate is not valid yet")}
+      </div>
+      <p class="dbx-hint">{t("这里只检查有效期和证书字段；未验证签名、信任链或主机名。", "Inspects dates and fields; signature, trust chain, and hostname are not verified.")}</p>
+    {/if}
     <div class="rows">
       {#each fields as field (field.en)}
         <div class="row">
@@ -130,6 +151,17 @@
   }
   .error {
     margin: 0;
+    color: var(--color-destructive, #dc2626);
+  }
+  .status {
+    padding: 8px 10px;
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-success-bg, color-mix(in srgb, #16803c 12%, transparent));
+    color: var(--color-success, #16803c);
+    font-size: 12px;
+  }
+  .status.bad {
+    background: color-mix(in srgb, var(--color-destructive, #dc2626) 10%, transparent);
     color: var(--color-destructive, #dc2626);
   }
   .dbx-hint {

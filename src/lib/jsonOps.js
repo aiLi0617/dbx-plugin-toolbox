@@ -1,5 +1,7 @@
+import { isLosslessNumber, parseLosslessJson, parseSafeJson, stringifyLosslessJson } from "./jsonPrecision.js";
+
 export function isContainer(value) {
-  return value !== null && typeof value === "object";
+  return value !== null && typeof value === "object" && !isLosslessNumber(value);
 }
 
 export function childCount(value) {
@@ -41,7 +43,10 @@ export function defaultCollapsed(value) {
 export function collapseAllPaths(value) {
   const next = {};
   walkContainers(value, "", (path) => {
-    if (path) next[path] = true;
+    // The root is a real foldable node too. Keep it in the collapse map so
+    // the toolbar's "collapse all" action also handles a top-level object or
+    // array instead of leaving that node expanded.
+    next[path] = true;
   });
   return next;
 }
@@ -131,8 +136,9 @@ export function parseLeaf(text) {
   const raw = text.trim();
   if (!raw.length) return "";
   try {
-    return JSON.parse(raw);
-  } catch {
+    return parseSafeJson(raw);
+  } catch (err) {
+    if (err?.code === "UNSAFE_NUMBER") return parseLosslessJson(raw);
     return text;
   }
 }
@@ -228,13 +234,13 @@ export function sortValue(value, dir = "asc") {
   if (dir !== "asc" && dir !== "desc") return value;
   const cmp = dir === "desc" ? (a, b) => b.localeCompare(a) : (a, b) => a.localeCompare(b);
   if (Array.isArray(value)) return value.map((item) => sortValue(item, dir));
-  if (value && typeof value === "object") {
+  if (isContainer(value)) {
     return Object.keys(value)
       .sort(cmp)
       .reduce((acc, key) => {
         acc[key] = sortValue(value[key], dir);
         return acc;
-      }, {});
+      }, Object.create(null));
   }
   return value;
 }
@@ -244,7 +250,7 @@ export function restoreKeyOrder(value, original) {
     const orig = Array.isArray(original) ? original : [];
     return value.map((item, i) => restoreKeyOrder(item, orig[i]));
   }
-  if (value && typeof value === "object") {
+  if (isContainer(value)) {
     const orig = original && typeof original === "object" && !Array.isArray(original) ? original : {};
     const seen = new Set();
     const keys = [];
@@ -257,7 +263,7 @@ export function restoreKeyOrder(value, original) {
     for (const key of Object.keys(value)) {
       if (!seen.has(key)) keys.push(key);
     }
-    const next = {};
+    const next = Object.create(null);
     for (const key of keys) next[key] = restoreKeyOrder(value[key], orig[key]);
     return next;
   }
@@ -271,23 +277,23 @@ function sortDir(sortKeys) {
 }
 
 export function formatJson(text, indent = 2, sortKeys = false) {
-  let value = JSON.parse(text);
+  let value = parseLosslessJson(text);
   const dir = sortDir(sortKeys);
   if (dir) value = sortValue(value, dir);
-  return JSON.stringify(value, null, indent);
+  return stringifyLosslessJson(value, indent);
 }
 
 export function minifyJson(text, sortKeys = false) {
-  let value = JSON.parse(text);
+  let value = parseLosslessJson(text);
   const dir = sortDir(sortKeys);
   if (dir) value = sortValue(value, dir);
-  return JSON.stringify(value);
+  return stringifyLosslessJson(value);
 }
 
 export function serializeJson(value, pretty = true, sortKeys = false) {
   const dir = sortDir(sortKeys);
   const next = dir ? sortValue(value, dir) : value;
-  return pretty ? JSON.stringify(next, null, 2) : JSON.stringify(next);
+  return stringifyLosslessJson(next, pretty ? 2 : undefined);
 }
 
 export function chineseToUnicode(text) {

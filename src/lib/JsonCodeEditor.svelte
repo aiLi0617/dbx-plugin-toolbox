@@ -1,10 +1,14 @@
 <script>
+  import { indentSelection } from "./editorIndent.js";
+  let tabMovesFocus = false;
   import { jsonTextFolds, tokenizeJson, visibleTextLines } from "./jsonOps.js";
 
   let {
     value = $bindable(""),
     showLineNumbers = true,
     placeholder = "",
+    maxLength = 5_000_000,
+    locale = "zh-CN",
   } = $props();
 
   let textareaEl = $state(null);
@@ -19,6 +23,7 @@
   const shownText = $derived(visible.map((line) => line.text).join("\n"));
   const hasActiveFolds = $derived(visible.some((line) => line.folded));
   const overlayTokens = $derived(tokenizeJson(hasActiveFolds ? shownText : value));
+  const zh = $derived(String(locale || "").toLowerCase().startsWith("zh"));
 
   $effect(() => {
     const foldable = folds.foldable;
@@ -66,14 +71,16 @@
   }
 
   function onKeydown(event) {
+    if (event.key === "Escape") { tabMovesFocus = true; return; }
+    if (event.key === "Tab" && tabMovesFocus) { tabMovesFocus = false; return; }
+    tabMovesFocus = false;
     if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
     event.preventDefault();
     const ta = event.currentTarget;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    value = value.slice(0, start) + "  " + value.slice(end);
+    const next = indentSelection(value, ta.selectionStart, ta.selectionEnd, event.shiftKey);
+    value = next.value;
     queueMicrotask(() => {
-      ta.selectionStart = ta.selectionEnd = start + 2;
+      ta.setSelectionRange(next.start, next.end);
     });
   }
 
@@ -112,8 +119,8 @@
             onmousedown={(event) => event.preventDefault()}
             type="button"
             tabindex="-1"
-            title={line.folded ? "Expand" : "Collapse"}
-            aria-label={line.folded ? "Expand" : "Collapse"}
+            title={line.folded ? (zh ? "展开" : "Expand") : (zh ? "折叠" : "Collapse")}
+            aria-label={line.folded ? (zh ? "展开" : "Expand") : (zh ? "折叠" : "Collapse")}
           ></button>
         {:else}
           <span class="fold-arrow-space"></span>
@@ -130,6 +137,7 @@
         value={shownText}
         {placeholder}
         readonly
+        maxlength={maxLength}
         spellcheck="false"
         onscroll={syncScroll}
         onpointerdown={expandFolds}
@@ -141,10 +149,12 @@
         class="json-textarea"
         bind:this={textareaEl}
         bind:value
+        maxlength={maxLength}
         {placeholder}
         spellcheck="false"
         onscroll={syncScroll}
         onkeydown={onKeydown}
+        title="Tab: 缩进 / indent · Shift+Tab: 减少缩进 / outdent · Esc, Tab: 移动焦点 / move focus"
       ></textarea>
     {/if}
   </div>
@@ -155,7 +165,7 @@
   .json-code {
     --json-pad-y: 10px;
     --json-pad-x: 12px;
-    --json-pad-bottom: var(--json-pad-y);
+    --json-pad-bottom: var(--json-editor-bottom-space, var(--json-pad-y));
     position: relative;
     display: flex;
     flex: 1;
@@ -200,23 +210,41 @@
     flex: 0 0 12px;
   }
   .fold-arrow {
-    border: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 4px);
     padding: 0;
     background: transparent;
     cursor: pointer;
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: inherit;
+    line-height: 0;
+  }
+  .fold-arrow:hover {
+    border-color: var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
+  }
+  .fold-arrow:focus-visible {
+    outline: 2px solid var(--color-ring, var(--color-primary));
+    outline-offset: 1px;
   }
   .fold-arrow::before {
     content: "";
     position: absolute;
-    inset: 2px 1px 1px;
-    background: var(--color-muted-foreground, color-mix(in srgb, CanvasText 55%, transparent));
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 0 4px 6px;
+    border-color: transparent transparent transparent var(--color-muted-foreground, color-mix(in srgb, CanvasText 55%, transparent));
+    transform-origin: 35% 50%;
+    transform: translate(-35%, -50%) rotate(90deg);
   }
   .fold-arrow.closed::before {
-    inset: 1px 2px 1px 3px;
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    transform: translate(-35%, -50%) rotate(0deg);
   }
   .json-edit-stack {
     position: relative;

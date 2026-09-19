@@ -1,11 +1,13 @@
 <script>
   import Select from "./Select.svelte";
+  import UnlockVaultDialog from "./UnlockVaultDialog.svelte";
   import { pick } from "./i18n.js";
   import { loadVaultKeys, matchKey } from "./keySource.js";
 
   let {
     locale = "zh-CN",
     picker = "hmac",
+    multiline = false,
     source = $bindable("once"),
     material = $bindable(""),
     keyId = $bindable(""),
@@ -15,16 +17,36 @@
 
   let vaultKeys = $state([]);
   let vaultUnlocked = $state(false);
+  let unlockOpen = $state(false);
 
   async function refresh() {
     const next = await loadVaultKeys();
     vaultUnlocked = next.unlocked;
     vaultKeys = next.keys;
+    if (keyId && !vaultKeys.some((key) => key.id === keyId && matchKey(key, picker))) keyId = "";
+    return next;
+  }
+
+  async function onSourceChange(nextSource) {
+    if (nextSource !== "vault") return;
+    const next = await refresh();
+    if (!next.unlocked) unlockOpen = true;
+  }
+
+  async function afterUnlock() {
+    await refresh();
+    window.dispatchEvent(new Event("toolbox-vault-change"));
   }
 
   $effect(() => {
     void picker;
     refresh();
+  });
+
+  $effect(() => {
+    const onVaultChange = () => { void refresh(); };
+    window.addEventListener("toolbox-vault-change", onVaultChange);
+    return () => window.removeEventListener("toolbox-vault-change", onVaultChange);
   });
 </script>
 
@@ -37,6 +59,7 @@
         { value: "once", label: t("当次输入", "This time only") },
         { value: "vault", label: t("密钥库", "Key vault") },
       ]}
+      onchange={onSourceChange}
     />
   </label>
   {#if source === "vault"}
@@ -54,15 +77,23 @@
       />
     </label>
     {#if !vaultUnlocked}
-      <span class="dbx-hint">{t("请先点右上角解锁密钥库", "Unlock the key vault in the top right first")}</span>
+      <button class="dbx-btn dbx-btn--ghost" type="button" onclick={() => (unlockOpen = true)}>
+        {t("解锁密钥库", "Unlock key vault")}
+      </button>
     {/if}
   {:else}
     <label class="field grow">
       <span class="dbx-label">{t("密钥材料（hex/base64/PEM）", "Key material (hex/base64/PEM)")}</span>
-      <input class="dbx-input" type="password" autocomplete="off" bind:value={material} />
+      {#if multiline}
+        <textarea class="dbx-textarea key-material" rows="4" spellcheck="false" autocomplete="off" bind:value={material}></textarea>
+      {:else}
+        <input class="dbx-input" type="password" autocomplete="off" bind:value={material} />
+      {/if}
     </label>
   {/if}
 </div>
+
+<UnlockVaultDialog {locale} purpose="select" bind:open={unlockOpen} onUnlocked={afterUnlock} />
 
 <style>
   .options {
@@ -87,7 +118,10 @@
   .grow .dbx-input {
     width: 100%;
   }
-  .dbx-hint {
-    align-self: center;
+  .key-material {
+    width: 100%;
+    min-height: 88px;
+    resize: vertical;
+    font-family: var(--font-mono);
   }
 </style>

@@ -1,4 +1,5 @@
 <script>
+  import CopyButton from "./CopyButton.svelte";
   import { chrome, pick } from "./i18n.js";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
@@ -17,6 +18,7 @@
     matchQrStyle,
     dataUrlToBlob,
     renderBarcode,
+    renderQrSvg,
     typeLabel,
   } from "./qrRender.js";
   import { invoke } from "./host.js";
@@ -31,7 +33,7 @@
   let sizePreset = $state("400");
   let customPx = $state(800);
   let version = $state("auto");
-  let margin = $state("2");
+  let margin = $state("4");
   let moduleStyle = $state("square");
   let dark = $state("#111111");
   let light = $state("#ffffff");
@@ -45,6 +47,11 @@
   let savedPath = $state("");
   let saving = $state(false);
   let logoInput = $state(null);
+  let scanText = $state("");
+  let scanError = $state("");
+  let scanning = $state(false);
+  let scanSeq = 0;
+  const MAX_SCAN_FILE_BYTES = 10 * 1024 * 1024;
 
   const isQr = $derived(codeType === "qr");
   const showEcc = $derived(codeType !== "datamatrix");
@@ -72,6 +79,9 @@
   );
   const versionLabel = $derived(
     isQr && meta?.version ? `v${meta.version} (${meta.modules}×${meta.modules})` : "",
+  );
+  const versionCapacityError = $derived(
+    Boolean(error) && version !== "auto" && /容量|capacity|too small|invalid size/i.test(error),
   );
 
   function onTypeChange(next) {
@@ -140,9 +150,11 @@
     if (/failed to fetch|dynamically imported module|loading chunk|load.*module/i.test(msg)) {
       return t("无法加载该码制。", "Could not load this barcode type.");
     }
-    if (/too big|too large|too long|cannot contain|cannot be encoded|overflow|insufficient.?capacity/i.test(msg)) {
+    if (/too big|too large|too long|maximum length|cannot contain|cannot be encoded|overflow|insufficient.?capacity|invalid size/i.test(msg)) {
       return version !== "auto"
-        ? t("数据超出当前码版本容量，请改成「自动」或降低容错率。", "Data exceeds this version. Switch version to Auto or lower error correction.")
+        ? codeType === "datamatrix"
+          ? t(`内容超出 ${version.replace("x", "×")} Data Matrix 的容量，请使用「自动」或选择更大的码版本。`, `Content exceeds the ${version} Data Matrix capacity. Use Auto or choose a larger version.`)
+          : t("数据超出当前码版本容量，请改成「自动」或降低容错率。", "Data exceeds this version. Switch version to Auto or lower error correction.")
         : t("数据太长，请降低容错率或缩短内容。", "Data is too long. Lower error correction or shorten the text.");
     }
     return msg;
@@ -189,6 +201,28 @@
     return comma >= 0 ? image.slice(comma + 1) : image;
   }
 
+  function svgPayloadBase64(svg) {
+    const bytes = new TextEncoder().encode(svg);
+    let binary = "";
+    for (let index = 0; index < bytes.length; index += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+    }
+    return btoa(binary);
+  }
+
+  function renderOptions() {
+    return {
+      errorCorrectionLevel: ecc,
+      width: pixelSize,
+      version: version === "auto" || !versionOptions.some((item) => item.id === version) ? undefined : version,
+      margin: Number(margin),
+      moduleStyle,
+      dark,
+      light,
+      logoSrc,
+    };
+  }
+
   function inPluginHost() {
     return Boolean(window.dbxPlugin?.invoke);
   }
@@ -232,6 +266,11 @@
   async function copyPng() {
     if (!image) return;
     try {
+      if (inPluginHost()) {
+        await invoke("toolbox/copy-image", { data: payloadBase64() }, 30000);
+        flash("copied");
+        return;
+      }
       const blob = pngBlob();
       const type = blob.type || "image/png";
       if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
@@ -301,6 +340,191 @@
   function versionOptionLabel(item) {
     if (codeType === "datamatrix") return `${item.modules}×${item.modules}`;
     return `${item.id} (${item.modules}×${item.modules})`;
+  }
+
+  async function decodeImageBlob(blob) {
+    const seq = ++scanSeq;
+    scanText = "";
+    scanError = "";
+    if (!blob || blob.size > MAX_SCAN_FILE_BYTES) {
+      scanError = t("图片不能超过 10 MB。", "Images are limited to 10 MB.");
+      scanning = false;
+      return;
+    }
+    scanning = true;
+    try {
+      if (typeof BarcodeDetector !== "undefined") {
+        const supported = await BarcodeDetector.getSupportedFormats();
+        const wanted = ["qr_code", "data_matrix", "pdf417"].filter((format) => supported.includes(format));
+        if (wanted.length) {
+          const detector = new BarcodeDetector({ formats: wanted });
+          const bitmap = await createImageBitmap(blob);
+          try {
+            const hits = await detector.detect(bitmap);
+            const detected = hits.map((hit) => hit.rawValue).filter(Boolean).join("\n");
+            if (detected) {
+              if (seq === scanSeq) scanText = detected;
+              return detected;
+            }
+          } finally {
+            bitmap.close?.();
+          }
+        }
+      }
+      const decoded = await decodeWithZxing(blob);
+      if (seq === scanSeq) scanText = decoded;
+      return decoded;
+    } catch (err) {
+      if (seq !== scanSeq) return;
+      const message = err?.message || String(err);
+      scanError = /notfound|no multiformat readers|no barcode/i.test(message)
+        ? t("图片中未识别到 QR、Data Matrix 或 PDF417。汉信码暂不支持图片识别；请使用清晰、完整且边缘留白的图片。", "No QR, Data Matrix, or PDF417 code was found. Han Xin image decoding is not yet supported; use a clear, complete image with a quiet zone.")
+        : message;
+    } finally {
+      if (seq === scanSeq) scanning = false;
+    }
+  }
+
+  async function downloadSvg() {
+    if (!image || saving || !isQr) return;
+    saving = true;
+    try {
+      const result = await renderQrSvg(input, renderOptions());
+      const name = fileName().replace(/\.png$/i, ".svg");
+      if (inPluginHost()) {
+        const saved = await invoke("toolbox/save-file", {
+          fileName: name,
+          mimeType: "image/svg+xml",
+          data: svgPayloadBase64(result.svg),
+          title: t("保存 SVG", "Save SVG"),
+        }, 120000);
+        if (saved?.cancelled) return;
+        savedPath = saved?.path || "";
+      } else {
+        triggerDownload(new Blob([result.svg], { type: "image/svg+xml;charset=utf-8" }), name);
+        savedPath = "";
+      }
+      flash("downloaded");
+    } catch {
+      savedPath = "";
+      flash("download-failed");
+    } finally {
+      saving = false;
+    }
+  }
+
+  async function decodeWithZxing(blob) {
+    const [{ BarcodeFormat, BrowserMultiFormatReader }, { DecodeHintType }] = await Promise.all([
+      import("@zxing/browser"),
+      import("@zxing/library"),
+    ]);
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.QR_CODE,
+      BarcodeFormat.DATA_MATRIX,
+      BarcodeFormat.PDF_417,
+    ]);
+    hints.set(DecodeHintType.TRY_HARDER, true);
+    const reader = new BrowserMultiFormatReader(hints);
+    const url = URL.createObjectURL(blob);
+    let imageElement;
+    try {
+      imageElement = new Image();
+      imageElement.src = url;
+      await imageElement.decode();
+      const sourceWidth = imageElement.naturalWidth || imageElement.width;
+      const sourceHeight = imageElement.naturalHeight || imageElement.height;
+      if (!sourceWidth || !sourceHeight) throw new Error("invalid image dimensions");
+
+      // A QR exported at a size that is not an exact multiple of its module grid
+      // can be visually perfect but still fail ZXing's detector. Try a small set
+      // of deterministic, lossless variants before reporting that no code exists.
+      const variants = [];
+      const addVariant = (scale, quietModules, threshold = false) => {
+        const scaledWidth = Math.max(1, Math.round(sourceWidth * scale));
+        const scaledHeight = Math.max(1, Math.round(sourceHeight * scale));
+        const quiet = Math.max(0, Math.round(Math.min(scaledWidth, scaledHeight) * quietModules));
+        const width = scaledWidth + quiet * 2;
+        const height = scaledHeight + quiet * 2;
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d", { willReadFrequently: threshold });
+        ctx.imageSmoothingEnabled = false;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(
+          imageElement,
+          quiet,
+          quiet,
+          scaledWidth,
+          scaledHeight,
+        );
+        if (threshold) {
+          const pixels = ctx.getImageData(0, 0, width, height);
+          for (let index = 0; index < pixels.data.length; index += 4) {
+            const luminance = pixels.data[index] * 0.299 + pixels.data[index + 1] * 0.587 + pixels.data[index + 2] * 0.114;
+            const value = luminance < 180 ? 0 : 255;
+            pixels.data[index] = value;
+            pixels.data[index + 1] = value;
+            pixels.data[index + 2] = value;
+            pixels.data[index + 3] = 255;
+          }
+          ctx.putImageData(pixels, 0, 0);
+        }
+        variants.push(canvas);
+      };
+
+      const maxSide = Math.max(sourceWidth, sourceHeight);
+      const scales = [...new Set([
+        Math.min(1, 2048 / maxSide),
+        Math.min(2, 2048 / maxSide),
+        Math.min(3, 2048 / maxSide),
+      ].map((value) => Number(value.toFixed(4))))];
+      for (const scale of scales) addVariant(scale, 0);
+      const strongestScale = scales[scales.length - 1];
+      addVariant(strongestScale, 0.03);
+      addVariant(strongestScale, 0.03, true);
+
+      let lastError;
+      for (const canvas of variants) {
+        try {
+          const result = reader.decodeFromCanvas(canvas);
+          if (result?.getText()) return result.getText();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error("No barcode found");
+    } finally {
+      if (imageElement) imageElement.src = "";
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function decodeImageFiles(files) {
+    const values = [];
+    for (const file of files) {
+      const value = await decodeImageBlob(file);
+      if (value) values.push(value.trim());
+    }
+    const unique = [...new Set(values.filter(Boolean))];
+    if (unique.length > 1) scanText = unique.join("\n");
+    if (unique.length) scanError = "";
+  }
+
+  function onScanFile(event) {
+    const files = [...(event.currentTarget.files || [])];
+    if (files.length) void decodeImageFiles(files);
+    event.currentTarget.value = "";
+  }
+
+  function onScanPaste(event) {
+    const file = [...(event.clipboardData?.files || [])].find((item) => item.type.startsWith("image/"));
+    if (file) {
+      event.preventDefault();
+      decodeImageBlob(file);
+    }
   }
 </script>
 
@@ -409,6 +633,29 @@
         </label>
       </div>
     {/if}
+
+    <div class="scan" onpaste={onScanPaste} role="group" aria-label={t("图片识码", "Decode image") }>
+      <div class="scan-head">
+        <strong>{t("图片识码", "Decode image")}</strong>
+        <label class="dbx-btn file-button">
+          {scanning ? t("识别中…", "Detecting…") : t("选择或粘贴图片（可多选）", "Choose or paste images")}
+          <input type="file" accept="image/*" multiple onchange={onScanFile} disabled={scanning} />
+        </label>
+      </div>
+      {#if scanText}
+        <div class="scan-result">
+          <textarea class="dbx-textarea" readonly value={scanText}></textarea>
+          <div class="scan-actions">
+            <button class="dbx-btn" type="button" onclick={() => (input = scanText)}>{t("作为生成内容", "Use as content")}</button>
+            <CopyButton {locale} text={scanText} labelZh="复制识别结果" labelEn="Copy decoded value" />
+          </div>
+        </div>
+      {:else if scanError}
+        <p class="dbx-hint fail">{scanError}</p>
+      {:else}
+        <p class="dbx-hint">{t("离线识别 QR、Data Matrix 与 PDF417，不上传图片；暂不支持汉信码识别。", "Decodes QR, Data Matrix, and PDF417 locally without uploading the image. Han Xin image decoding is not yet supported.")}</p>
+      {/if}
+    </div>
   </section>
 
   <section class="dbx-card qr-card">
@@ -421,6 +668,11 @@
 
     {#if error}
       <p class="dbx-hint fail">{error}</p>
+      {#if versionCapacityError}
+        <button class="dbx-btn dbx-btn--primary" type="button" onclick={() => (version = "auto")}>
+          {t("改用自动尺寸", "Use automatic size")}
+        </button>
+      {/if}
     {:else if image}
       <div class="frame" style:background={light}>
         <img alt={typeName} src={image} />
@@ -434,6 +686,7 @@
               : t("已下载", "Downloaded")
             : t("下载 PNG", "Download PNG")}
         </button>
+        {#if isQr}<button class="dbx-btn" onclick={downloadSvg} type="button" disabled={saving}>{t("下载 SVG", "Download SVG")}</button>{/if}
         <button class="dbx-btn" onclick={copyPng} type="button">{copyLabel()}</button>
       </div>
       {#if savedPath}
@@ -535,6 +788,13 @@
   .file {
     display: none;
   }
+  .file-button { position: relative; overflow: hidden; cursor: pointer; }
+  .file-button input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .scan { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-border); }
+  .scan-head, .scan-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .scan-head strong { font-size: 12px; }
+  .scan-result { display: flex; flex-direction: column; gap: 8px; }
+  .scan-result textarea { min-height: 64px; resize: vertical; }
   .logo-chip {
     display: flex;
     align-items: center;

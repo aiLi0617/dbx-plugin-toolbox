@@ -1,10 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="工具箱">
   <defs>
-    <linearGradient id="g" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#6d5dfc"/>
-      <stop offset="1" stop-color="#2cc9a7"/>
+    <linearGradient id="bg" x1="9" y1="7" x2="57" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#765CF6"/>
+      <stop offset="0.5" stop-color="#596FEF"/>
+      <stop offset="1" stop-color="#22C7A5"/>
     </linearGradient>
+    <linearGradient id="shine" x1="13" y1="9" x2="48" y2="51" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="8" y="10" width="48" height="46" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#253A83" flood-opacity="0.3"/>
+    </filter>
   </defs>
-  <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <path fill="#fff" d="M20 18h18a10 10 0 0 1 0 20H28v8h-8V18Zm8 8v4h10a2 2 0 1 0 0-4H28Z"/>
+
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <path d="M15 4h22c11.6 0 21 9.4 21 21v17c0 9.9-8.1 18-18 18H22C12.1 60 4 51.9 4 42V15C4 8.9 8.9 4 15 4Z" fill="url(#shine)"/>
+
+  <g filter="url(#shadow)" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 21v-2.5a4.5 4.5 0 0 1 4.5-4.5h7a4.5 4.5 0 0 1 4.5 4.5V21" stroke-width="4"/>
+    <rect x="12" y="21" width="40" height="31" rx="7" fill="#FFFFFF" stroke="none"/>
+    <path d="M12 31.5h40" stroke="url(#bg)" stroke-width="3" opacity="0.28"/>
+    <path d="m26.5 35-4.5 4 4.5 4M37.5 35l4.5 4-4.5 4M34 33l-4 12" stroke="url(#bg)" stroke-width="3.2"/>
+  </g>
 </svg>

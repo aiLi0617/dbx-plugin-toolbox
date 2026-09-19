@@ -1,5 +1,8 @@
+use std::collections::HashSet;
 use std::fs;
-use std::path::PathBuf;
+use std::fs::OpenOptions;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 
 use aes_gcm::aead::{Aead, KeyInit};
 use aes_gcm::{Aes256Gcm, Nonce};
@@ -7,17 +10,24 @@ use argon2::{Algorithm, Argon2, Params, Version};
 use base64::{engine::general_purpose::STANDARD as B64, Engine};
 use dbx_plugin_sdk::PluginError;
 use rand::RngCore;
+use rsa::pkcs1::{DecodeRsaPrivateKey, DecodeRsaPublicKey};
+use rsa::pkcs8::{DecodePrivateKey, DecodePublicKey};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
-use zeroize::Zeroize;
+use zeroize::{Zeroize, Zeroizing};
 
 use crate::helpers::{bad, bool_param, err, opt_str, str_param};
 
 const MAGIC: &[u8; 4] = b"DBXK";
 const VERSION: u8 = 1;
 const PLUGIN_ID: &str = "io.github.aili0617.toolbox";
+const MAX_KEYS: usize = 512;
+const MAX_NAME_CHARS: usize = 128;
+const MAX_KEY_MATERIAL_BYTES: usize = 1024 * 1024;
+const MAX_VAULT_BYTES: usize = 16 * 1024 * 1024;
+const VAULT_FILE_OVERHEAD: usize = 4 + 1 + 16 + 12 + 4 + 16;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct StoredKey {
@@ -28,6 +38,12 @@ pub struct StoredKey {
     pub material: String,
     #[serde(rename = "createdAt")]
     pub created_at: String,
+}
+
+impl Drop for StoredKey {
+    fn drop(&mut self) {
+        self.material.zeroize();
+    }
 }
 
 #[derive(Default, Serialize, Deserialize)]
@@ -79,7 +95,10 @@ impl Vault {
     }
 
     pub fn material(&self, key_id: &str) -> Result<&StoredKey, PluginError> {
-        let unlocked = self.unlocked.as_ref().ok_or_else(|| err("Key vault is locked"))?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
         unlocked
             .keys
             .iter()
@@ -89,39 +108,38 @@ impl Vault {
 
     fn status(&self) -> Result<Value, PluginError> {
         Ok(json!({
-            "exists": vault_path()?.exists(),
+            "exists": vault_exists()?,
             "unlocked": self.unlocked.is_some(),
             "pathHint": "appdata/io.github.aili0617.toolbox/keystore"
         }))
     }
 
     fn setup(&mut self, params: Value) -> Result<Value, PluginError> {
-        if vault_path()?.exists() {
+        if vault_exists()? {
             return Err(bad("Key vault already exists"));
         }
-        let password = require_password(&params, "password")?;
+        let password = Zeroizing::new(require_password(&params, "password")?);
         if self.unlocked.is_some() {
             return Err(bad("Key vault is already unlocked"));
         }
         let (kek, salt) = derive_kek(&password)?;
-        self.unlocked = Some(Unlocked { kek, salt, keys: Vec::new() });
-        self.persist()?;
+        let unlocked = Unlocked {
+            kek,
+            salt,
+            keys: Vec::new(),
+        };
+        persist_contents(&unlocked.kek, &unlocked.salt, &unlocked.keys)?;
+        self.unlocked = Some(unlocked);
         Ok(json!({ "ok": true, "unlocked": true }))
     }
 
     fn unlock(&mut self, params: Value) -> Result<Value, PluginError> {
-        let password = require_password(&params, "password")?;
-        let bytes = fs::read(vault_path()?).map_err(|_| err("Key vault not found"))?;
-        let parsed = parse_file(&bytes)?;
-        let kek = derive_kek_with_salt(&password, &parsed.salt)?;
-        let cipher = Aes256Gcm::new_from_slice(&kek).map_err(|_| err("Failed to init vault cipher"))?;
-        let nonce = Nonce::from_slice(&parsed.nonce);
-        let plain = cipher
-            .decrypt(nonce, parsed.ciphertext.as_ref())
-            .map_err(|_| err("Wrong master password"))?;
-        let file: VaultFile = serde_json::from_slice(&plain).map_err(|_| err("Vault data is corrupt"))?;
-        self.unlocked = Some(Unlocked { kek, salt: parsed.salt, keys: file.keys });
-        Ok(json!({ "ok": true, "unlocked": true, "count": self.unlocked.as_ref().map(|u| u.keys.len()).unwrap_or(0) }))
+        let password = Zeroizing::new(require_password(&params, "password")?);
+        let path = vault_path()?;
+        self.unlocked = Some(read_unlocked_vault(&path, &password)?);
+        Ok(
+            json!({ "ok": true, "unlocked": true, "count": self.unlocked.as_ref().map(|u| u.keys.len()).unwrap_or(0) }),
+        )
     }
 
     fn lock(&mut self) {
@@ -129,17 +147,22 @@ impl Vault {
     }
 
     fn list(&self) -> Result<Value, PluginError> {
-        let unlocked = self.unlocked.as_ref().ok_or_else(|| err("Key vault is locked"))?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
         let keys: Vec<Value> = unlocked.keys.iter().map(metadata).collect();
         Ok(json!({ "keys": keys }))
     }
 
     fn create(&mut self, params: Value) -> Result<Value, PluginError> {
-        let unlocked = self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
         let name = str_param(&params, "name")?.trim();
-        if name.is_empty() {
-            return Err(bad("Name is required"));
-        }
+        validate_name(name)?;
+        ensure_key_capacity(unlocked.keys.len())?;
         let algorithm = canonical_algorithm(str_param(&params, "algorithm")?)?;
         let generate = bool_param(&params, "generate", true);
         let material = if generate {
@@ -157,25 +180,29 @@ impl Vault {
             created_at: now_iso(),
         };
         let meta = metadata(&key);
-        unlocked.keys.push(key);
-        self.persist()?;
+        let mut keys = unlocked.keys.clone();
+        keys.push(key);
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true, "key": meta }))
     }
 
     fn rename(&mut self, params: Value) -> Result<Value, PluginError> {
         let id = str_param(&params, "id")?;
         let name = str_param(&params, "name")?.trim();
-        if name.is_empty() {
-            return Err(bad("Name is required"));
-        }
-        let unlocked = self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?;
-        let key = unlocked
-            .keys
+        validate_name(name)?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let mut keys = unlocked.keys.clone();
+        let key = keys
             .iter_mut()
             .find(|key| key.id == id)
             .ok_or_else(|| bad("Unknown key id"))?;
         key.name = name.to_string();
-        self.persist()?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
     }
 
@@ -184,23 +211,32 @@ impl Vault {
         if !bool_param(&params, "confirm", false) {
             return Err(bad("Deletion requires confirm=true"));
         }
-        let unlocked = self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?;
-        let before = unlocked.keys.len();
-        unlocked.keys.retain(|key| key.id != id);
-        if unlocked.keys.len() == before {
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let mut keys = unlocked.keys.clone();
+        let before = keys.len();
+        keys.retain(|key| key.id != id);
+        if keys.len() == before {
             return Err(bad("Unknown key id"));
         }
-        self.persist()?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
     }
 
     fn import_pem(&mut self, params: Value) -> Result<Value, PluginError> {
         let name = str_param(&params, "name")?.trim();
-        if name.is_empty() {
-            return Err(bad("Name is required"));
-        }
+        validate_name(name)?;
         let pem = str_param(&params, "pem")?;
+        validate_material_size(pem)?;
         let algorithm = infer_pem_algorithm(pem)?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        ensure_key_capacity(unlocked.keys.len())?;
         let key = StoredKey {
             id: Uuid::new_v4().to_string(),
             name: name.to_string(),
@@ -210,8 +246,10 @@ impl Vault {
             created_at: now_iso(),
         };
         let meta = metadata(&key);
-        self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?.keys.push(key);
-        self.persist()?;
+        let mut keys = unlocked.keys.clone();
+        keys.push(key);
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true, "key": meta }))
     }
 
@@ -219,8 +257,21 @@ impl Vault {
         if !bool_param(&params, "confirm", false) {
             return Err(bad("Export requires confirm=true"));
         }
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let password = Zeroizing::new(require_password(&params, "password")?);
+        let candidate = derive_kek_with_salt(&password, &unlocked.salt)?;
+        if candidate != unlocked.kek {
+            return Err(err("Master password is wrong"));
+        }
         let id = str_param(&params, "id")?;
-        let key = self.material(id)?;
+        let key = unlocked
+            .keys
+            .iter()
+            .find(|key| key.id == id)
+            .ok_or_else(|| bad("Key not found"))?;
         Ok(json!({
             "id": key.id,
             "name": key.name,
@@ -230,17 +281,30 @@ impl Vault {
     }
 
     fn change_password(&mut self, params: Value) -> Result<Value, PluginError> {
-        let unlocked = self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?;
-        let current = require_password(&params, "currentPassword")?;
-        let next = require_password(&params, "newPassword")?;
-        let current_kek = derive_kek_with_salt(&current, &unlocked.salt)?;
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let current = Zeroizing::new(require_password(&params, "currentPassword")?);
+        let next = Zeroizing::new(require_password(&params, "newPassword")?);
+        let mut current_kek = derive_kek_with_salt(&current, &unlocked.salt)?;
         if current_kek != unlocked.kek {
+            current_kek.zeroize();
             return Err(err("Current master password is wrong"));
         }
+        current_kek.zeroize();
         let (kek, salt) = derive_kek(&next)?;
+        persist_contents(&kek, &salt, &unlocked.keys)?;
+        // The regular atomic writer keeps the previous vault as a recovery
+        // copy. After password rotation that copy is encrypted with the old
+        // password, so remove it once the new primary is durable.
+        if let Ok(path) = vault_path() {
+            let _ = fs::remove_file(vault_backup_path(&path));
+        }
+        let unlocked = self.unlocked.as_mut().expect("vault checked above");
+        unlocked.kek.zeroize();
         unlocked.kek = kek;
         unlocked.salt = salt;
-        self.persist()?;
         Ok(json!({ "ok": true }))
     }
 
@@ -251,15 +315,24 @@ impl Vault {
         }
         let save = bool_param(&params, "save", false);
         let name = opt_str(&params, "name").unwrap_or("key").trim();
+        if save {
+            validate_name(name)?;
+            let unlocked = self
+                .unlocked
+                .as_ref()
+                .ok_or_else(|| err("Key vault is locked"))?;
+            ensure_key_capacity(unlocked.keys.len())?;
+        }
         let material = generate_material(algorithm, &params)?;
         let mut response = json!({
             "algorithm": algorithm,
             "saved": false
         });
         if save {
-            if name.is_empty() {
-                return Err(bad("Name is required to save"));
-            }
+            let unlocked = self
+                .unlocked
+                .as_ref()
+                .ok_or_else(|| err("Key vault is locked"))?;
             let key = StoredKey {
                 id: Uuid::new_v4().to_string(),
                 name: name.to_string(),
@@ -269,8 +342,10 @@ impl Vault {
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
-            self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?.keys.push(key);
-            self.persist()?;
+            let mut keys = unlocked.keys.clone();
+            keys.push(key);
+            persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+            self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
         } else {
@@ -283,6 +358,14 @@ impl Vault {
         let algorithm = str_param(&params, "algorithm")?;
         let save = bool_param(&params, "save", false);
         let name = opt_str(&params, "name").unwrap_or("keypair").trim();
+        if save {
+            validate_name(name)?;
+            let unlocked = self
+                .unlocked
+                .as_ref()
+                .ok_or_else(|| err("Key vault is locked"))?;
+            ensure_key_capacity(unlocked.keys.len())?;
+        }
         let mut bits_out: Option<usize> = None;
         let mut format_out: Option<&str> = None;
         let (public, private, stored_alg) = match algorithm {
@@ -312,9 +395,10 @@ impl Vault {
             response["format"] = json!(format);
         }
         if save {
-            if name.is_empty() {
-                return Err(bad("Name is required to save"));
-            }
+            let unlocked = self
+                .unlocked
+                .as_ref()
+                .ok_or_else(|| err("Key vault is locked"))?;
             let key = StoredKey {
                 id: Uuid::new_v4().to_string(),
                 name: name.to_string(),
@@ -324,8 +408,10 @@ impl Vault {
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
-            self.unlocked.as_mut().ok_or_else(|| err("Key vault is locked"))?.keys.push(key);
-            self.persist()?;
+            let mut keys = unlocked.keys.clone();
+            keys.push(key);
+            persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+            self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
         } else {
@@ -333,29 +419,54 @@ impl Vault {
         }
         Ok(response)
     }
+}
 
-    fn persist(&self) -> Result<(), PluginError> {
-        let unlocked = self.unlocked.as_ref().ok_or_else(|| err("Key vault is locked"))?;
-        let path = vault_path()?;
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).map_err(|error| err(error.to_string()))?;
-        }
-        let file = VaultFile { keys: unlocked.keys.clone() };
-        let plain = serde_json::to_vec(&file).map_err(|error| err(error.to_string()))?;
-        let cipher = Aes256Gcm::new_from_slice(&unlocked.kek).map_err(|_| err("Failed to init vault cipher"))?;
-        let mut nonce_bytes = [0u8; 12];
-        rand::thread_rng().fill_bytes(&mut nonce_bytes);
-        let nonce = Nonce::from_slice(&nonce_bytes);
-        let ciphertext = cipher.encrypt(nonce, plain.as_ref()).map_err(|_| err("Failed to encrypt vault"))?;
-        let mut out = Vec::with_capacity(4 + 1 + 16 + 12 + 4 + ciphertext.len());
-        out.extend_from_slice(MAGIC);
-        out.push(VERSION);
-        out.extend_from_slice(&unlocked.salt);
-        out.extend_from_slice(&nonce_bytes);
-        out.extend_from_slice(&(ciphertext.len() as u32).to_be_bytes());
-        out.extend_from_slice(&ciphertext);
-        fs::write(&path, out).map_err(|error| err(error.to_string()))
+#[derive(Serialize)]
+struct VaultFileRef<'a> {
+    keys: &'a [StoredKey],
+}
+
+fn persist_contents(
+    kek: &[u8; 32],
+    salt: &[u8; 16],
+    keys: &[StoredKey],
+) -> Result<(), PluginError> {
+    let path = vault_path()?;
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|error| err(error.to_string()))?;
     }
+    let out = encode_vault_file(kek, salt, keys)?;
+    persist_atomically(&path, &out)
+}
+
+fn encode_vault_file(
+    kek: &[u8; 32],
+    salt: &[u8; 16],
+    keys: &[StoredKey],
+) -> Result<Vec<u8>, PluginError> {
+    let mut plain =
+        serde_json::to_vec(&VaultFileRef { keys }).map_err(|error| err(error.to_string()))?;
+    if plain.len() > MAX_VAULT_BYTES - VAULT_FILE_OVERHEAD {
+        plain.zeroize();
+        return Err(bad("Key vault is too large"));
+    }
+    let cipher = Aes256Gcm::new_from_slice(kek).map_err(|_| err("Failed to init vault cipher"))?;
+    let mut nonce_bytes = [0u8; 12];
+    rand::thread_rng().fill_bytes(&mut nonce_bytes);
+    let nonce = Nonce::from_slice(&nonce_bytes);
+    let encrypted = cipher.encrypt(nonce, plain.as_ref());
+    plain.zeroize();
+    let ciphertext = encrypted.map_err(|_| err("Failed to encrypt vault"))?;
+    let ciphertext_len =
+        u32::try_from(ciphertext.len()).map_err(|_| bad("Key vault is too large"))?;
+    let mut out = Vec::with_capacity(4 + 1 + 16 + 12 + 4 + ciphertext.len());
+    out.extend_from_slice(MAGIC);
+    out.push(VERSION);
+    out.extend_from_slice(salt);
+    out.extend_from_slice(&nonce_bytes);
+    out.extend_from_slice(&ciphertext_len.to_be_bytes());
+    out.extend_from_slice(&ciphertext);
+    Ok(out)
 }
 
 struct ParsedFile {
@@ -365,6 +476,9 @@ struct ParsedFile {
 }
 
 fn parse_file(bytes: &[u8]) -> Result<ParsedFile, PluginError> {
+    if bytes.len() > MAX_VAULT_BYTES {
+        return Err(err("Vault file is too large"));
+    }
     if bytes.len() < 4 + 1 + 16 + 12 + 4 {
         return Err(err("Vault file is truncated"));
     }
@@ -380,10 +494,84 @@ fn parse_file(bytes: &[u8]) -> Result<ParsedFile, PluginError> {
     nonce.copy_from_slice(&bytes[21..33]);
     let len = u32::from_be_bytes(bytes[33..37].try_into().unwrap()) as usize;
     let rest = &bytes[37..];
-    if rest.len() != len {
+    if rest.len() != len || len < 16 {
         return Err(err("Vault ciphertext length mismatch"));
     }
-    Ok(ParsedFile { salt, nonce, ciphertext: rest.to_vec() })
+    Ok(ParsedFile {
+        salt,
+        nonce,
+        ciphertext: rest.to_vec(),
+    })
+}
+
+fn read_limited(path: &Path) -> Result<Vec<u8>, PluginError> {
+    let metadata = fs::metadata(path).map_err(|_| err("Key vault not found"))?;
+    if metadata.len() > MAX_VAULT_BYTES as u64 {
+        return Err(err("Vault file is too large"));
+    }
+    let bytes = fs::read(path).map_err(|_| err("Key vault not found"))?;
+    if bytes.len() > MAX_VAULT_BYTES {
+        return Err(err("Vault file is too large"));
+    }
+    Ok(bytes)
+}
+
+fn decrypt_vault_bytes(bytes: &[u8], password: &str) -> Result<Unlocked, PluginError> {
+    let parsed = parse_file(bytes)?;
+    let kek = Zeroizing::new(derive_kek_with_salt(password, &parsed.salt)?);
+    let cipher =
+        Aes256Gcm::new_from_slice(kek.as_ref()).map_err(|_| err("Failed to init vault cipher"))?;
+    let nonce = Nonce::from_slice(&parsed.nonce);
+    let mut plain = cipher
+        .decrypt(nonce, parsed.ciphertext.as_ref())
+        .map_err(|_| err("Wrong master password or vault data is corrupt"))?;
+    let parsed_file = serde_json::from_slice::<VaultFile>(&plain);
+    plain.zeroize();
+    let file = parsed_file.map_err(|_| err("Vault data is corrupt"))?;
+    validate_loaded_keys(&file.keys)?;
+    Ok(Unlocked {
+        kek: *kek,
+        salt: parsed.salt,
+        keys: file.keys,
+    })
+}
+
+fn read_unlocked_vault(path: &Path, password: &str) -> Result<Unlocked, PluginError> {
+    let backup = vault_backup_path(path);
+    match read_limited(path) {
+        Ok(bytes) => match decrypt_vault_bytes(&bytes, password) {
+            Ok(unlocked) => Ok(unlocked),
+            Err(primary_error) => {
+                match read_limited(&backup).and_then(|bytes| decrypt_vault_bytes(&bytes, password))
+                {
+                    Ok(unlocked) => Ok(unlocked),
+                    Err(_) => Err(primary_error),
+                }
+            }
+        },
+        Err(_) => read_limited(&backup).and_then(|bytes| decrypt_vault_bytes(&bytes, password)),
+    }
+}
+
+fn validate_loaded_keys(keys: &[StoredKey]) -> Result<(), PluginError> {
+    if keys.len() > MAX_KEYS {
+        return Err(err("Vault contains too many keys"));
+    }
+    let mut ids = HashSet::new();
+    for key in keys {
+        if key.id.is_empty() || key.id.len() > 128 || !ids.insert(key.id.as_str()) {
+            return Err(err("Vault contains an invalid key id"));
+        }
+        let name_chars = key.name.chars().count();
+        if name_chars == 0 || name_chars > MAX_NAME_CHARS {
+            return Err(err("Vault contains an invalid key name"));
+        }
+        validate_material_size(&key.material)
+            .map_err(|_| err("Vault contains oversized key material"))?;
+        canonical_algorithm(&key.algorithm)
+            .map_err(|_| err("Vault contains an unsupported key algorithm"))?;
+    }
+    Ok(())
 }
 
 fn vault_path() -> Result<PathBuf, PluginError> {
@@ -391,12 +579,83 @@ fn vault_path() -> Result<PathBuf, PluginError> {
     Ok(base.join(PLUGIN_ID).join("keystore"))
 }
 
+fn vault_backup_path(path: &std::path::Path) -> PathBuf {
+    path.with_extension("bak")
+}
+
+fn vault_exists() -> Result<bool, PluginError> {
+    let path = vault_path()?;
+    Ok(path.exists() || vault_backup_path(&path).exists())
+}
+
+fn persist_atomically(path: &std::path::Path, bytes: &[u8]) -> Result<(), PluginError> {
+    let temp = path.with_extension(format!("tmp-{}", Uuid::new_v4()));
+    let backup = vault_backup_path(path);
+    let write_result = (|| -> std::io::Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temp)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+
+        if path.exists() {
+            if backup.exists() {
+                fs::remove_file(&backup)?;
+            }
+            fs::rename(path, &backup)?;
+        }
+        if let Err(error) = fs::rename(&temp, path) {
+            if backup.exists() && !path.exists() {
+                let _ = fs::rename(&backup, path);
+            }
+            return Err(error);
+        }
+        Ok(())
+    })();
+    if write_result.is_err() {
+        let _ = fs::remove_file(&temp);
+    }
+    write_result.map_err(|error| err(format!("Failed to save key vault: {error}")))
+}
+
 fn require_password(params: &Value, key: &str) -> Result<String, PluginError> {
     let password = str_param(params, key)?;
     if password.chars().count() < 8 {
         return Err(bad("Master password must be at least 8 characters"));
     }
+    if password.len() > 1024 {
+        return Err(bad("Master password is too long"));
+    }
     Ok(password.to_string())
+}
+
+fn validate_name(name: &str) -> Result<(), PluginError> {
+    let count = name.chars().count();
+    if count == 0 {
+        return Err(bad("Name is required"));
+    }
+    if count > MAX_NAME_CHARS || name.chars().any(char::is_control) {
+        return Err(bad(
+            "Name must be at most 128 characters and contain no control characters",
+        ));
+    }
+    Ok(())
+}
+
+fn validate_material_size(material: &str) -> Result<(), PluginError> {
+    if material.len() > MAX_KEY_MATERIAL_BYTES {
+        return Err(bad("Key material is too large"));
+    }
+    Ok(())
+}
+
+fn ensure_key_capacity(current: usize) -> Result<(), PluginError> {
+    if current >= MAX_KEYS {
+        return Err(bad("Key vault is full"));
+    }
+    Ok(())
 }
 
 fn derive_kek(password: &str) -> Result<([u8; 32], [u8; 16]), PluginError> {
@@ -432,16 +691,25 @@ fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
 fn rsa_bits(params: &Value) -> Result<usize, PluginError> {
     let bits = params
         .get("bits")
-        .and_then(|value| value.as_u64().or_else(|| value.as_str().and_then(|s| s.parse().ok())))
+        .and_then(|value| {
+            value
+                .as_u64()
+                .or_else(|| value.as_str().and_then(|s| s.parse().ok()))
+        })
         .unwrap_or(2048) as usize;
     match bits {
-        1024 | 2048 | 3072 | 4096 => Ok(bits),
-        _ => Err(bad("RSA bits must be 1024, 2048, 3072, or 4096")),
+        2048 | 3072 | 4096 => Ok(bits),
+        _ => Err(bad("RSA bits must be 2048, 3072, or 4096")),
     }
 }
 
 fn rsa_pem_format(params: &Value) -> Result<&'static str, PluginError> {
-    match opt_str(params, "format").unwrap_or("pkcs8").trim().to_ascii_lowercase().as_str() {
+    match opt_str(params, "format")
+        .unwrap_or("pkcs8")
+        .trim()
+        .to_ascii_lowercase()
+        .as_str()
+    {
         "pkcs8" | "pkcs#8" | "spki" => Ok("pkcs8"),
         "pkcs1" | "pkcs#1" | "openssl" => Ok("pkcs1"),
         _ => Err(bad("RSA format must be pkcs8 or pkcs1")),
@@ -450,7 +718,8 @@ fn rsa_pem_format(params: &Value) -> Result<&'static str, PluginError> {
 
 fn generate_rsa_pem(bits: usize, format: &str) -> Result<(String, String), PluginError> {
     let mut rng = rand::thread_rng();
-    let private_key = rsa::RsaPrivateKey::new(&mut rng, bits).map_err(|error| err(error.to_string()))?;
+    let private_key =
+        rsa::RsaPrivateKey::new(&mut rng, bits).map_err(|error| err(error.to_string()))?;
     let public_key = rsa::RsaPublicKey::from(&private_key);
     if format == "pkcs1" {
         use rsa::pkcs1::{EncodeRsaPrivateKey, EncodeRsaPublicKey, LineEnding};
@@ -484,23 +753,28 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
     let mut rng = rand::thread_rng();
     match algorithm {
         "aes-128" | "sm4-128" => {
-            let mut bytes = vec![0u8; 16];
-            rng.fill_bytes(&mut bytes);
-            Ok(hex::encode(bytes))
+            let mut bytes = Zeroizing::new(vec![0u8; 16]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
         }
         "aes-256" | "hmac" | "hmac-sha256" | "hmac-sm3" => {
-            let mut bytes = vec![0u8; 32];
-            rng.fill_bytes(&mut bytes);
-            Ok(hex::encode(bytes))
+            let mut bytes = Zeroizing::new(vec![0u8; 32]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
         }
-        "rsa" | "rsa-pem" | "rsa-2048" => Ok(generate_rsa_pem(rsa_bits(params)?, rsa_pem_format(params)?)?.1),
+        "rsa" | "rsa-pem" | "rsa-2048" => {
+            Ok(generate_rsa_pem(rsa_bits(params)?, rsa_pem_format(params)?)?.1)
+        }
         "sm2" => Ok(generate_sm2_pair().1),
-        _ => Err(bad("Cannot generate this algorithm; import material instead")),
+        _ => Err(bad(
+            "Cannot generate this algorithm; import material instead",
+        )),
     }
 }
 
 fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError> {
     let trimmed = raw.trim();
+    validate_material_size(trimmed)?;
     if matches!(algorithm, "rsa-pem" | "sm2") {
         if trimmed.is_empty() {
             return Err(bad("Material is required"));
@@ -510,7 +784,7 @@ fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError>
         }
         return Ok(trimmed.to_string());
     }
-    let bytes = decode_key_bytes(trimmed)?;
+    let bytes = Zeroizing::new(decode_key_bytes(trimmed)?);
     let expected = match algorithm {
         "aes-128" | "sm4-128" => 16,
         "aes-256" => 32,
@@ -523,29 +797,41 @@ fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError>
     if bytes.is_empty() {
         return Err(bad("Material is required"));
     }
-    Ok(hex::encode(bytes))
+    Ok(hex::encode(bytes.as_slice()))
 }
 
 pub fn decode_key_bytes(raw: &str) -> Result<Vec<u8>, PluginError> {
     let trimmed = raw.trim();
+    validate_material_size(trimmed)?;
     if let Ok(bytes) = hex::decode(trimmed) {
         if !bytes.is_empty() {
             return Ok(bytes);
         }
     }
-    B64.decode(trimmed.as_bytes()).map_err(|_| bad("Key material must be hex or base64"))
+    B64.decode(trimmed.as_bytes())
+        .map_err(|_| bad("Key material must be hex or base64"))
 }
 
 fn infer_pem_algorithm(pem: &str) -> Result<&'static str, PluginError> {
     let parsed = pem::parse(pem.as_bytes()).map_err(|_| bad("Invalid PEM"))?;
     let tag = parsed.tag();
     if tag.contains("CERTIFICATE") {
-        return Err(bad("Do not store certificates in the key vault; use the cert tool"));
+        return Err(bad(
+            "Do not store certificates in the key vault; use the cert tool",
+        ));
     }
-    if tag.contains("PRIVATE KEY") || tag.contains("RSA PRIVATE") || tag.contains("PUBLIC KEY") {
+    let rsa_key = rsa::RsaPrivateKey::from_pkcs8_pem(pem)
+        .or_else(|_| rsa::RsaPrivateKey::from_pkcs1_pem(pem))
+        .map(|_| ())
+        .or_else(|_| rsa::RsaPublicKey::from_public_key_pem(pem).map(|_| ()))
+        .or_else(|_| rsa::RsaPublicKey::from_pkcs1_pem(pem).map(|_| ()))
+        .is_ok();
+    if rsa_key {
         return Ok("rsa-pem");
     }
-    Err(bad("PEM must be an RSA private or public key for the asymmetric cipher tool"))
+    Err(bad(
+        "PEM must be an RSA private or public key for the asymmetric cipher tool",
+    ))
 }
 
 fn kind_for(algorithm: &str) -> &'static str {
@@ -568,12 +854,20 @@ fn metadata(key: &StoredKey) -> Value {
 
 fn fingerprint(material: &str) -> String {
     let digest = Sha256::digest(material.as_bytes());
-    digest.iter().take(8).map(|byte| format!("{byte:02x}")).collect::<Vec<_>>().join(":")
+    digest
+        .iter()
+        .take(8)
+        .map(|byte| format!("{byte:02x}"))
+        .collect::<Vec<_>>()
+        .join(":")
 }
 
 fn now_iso() -> String {
     use std::time::{SystemTime, UNIX_EPOCH};
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
+    let secs = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
     format!("{secs}")
 }
 
@@ -585,7 +879,7 @@ mod tests {
     #[test]
     fn rsa_bits_accepts_common_sizes() {
         assert_eq!(rsa_bits(&json!({})).unwrap(), 2048);
-        assert_eq!(rsa_bits(&json!({ "bits": 1024 })).unwrap(), 1024);
+        assert!(rsa_bits(&json!({ "bits": 1024 })).is_err());
         assert_eq!(rsa_bits(&json!({ "bits": "4096" })).unwrap(), 4096);
         assert!(rsa_bits(&json!({ "bits": 512 })).is_err());
     }
@@ -593,19 +887,25 @@ mod tests {
     #[test]
     fn rsa_pem_format_accepts_aliases() {
         assert_eq!(rsa_pem_format(&json!({})).unwrap(), "pkcs8");
-        assert_eq!(rsa_pem_format(&json!({ "format": "PKCS#1" })).unwrap(), "pkcs1");
-        assert_eq!(rsa_pem_format(&json!({ "format": "openssl" })).unwrap(), "pkcs1");
+        assert_eq!(
+            rsa_pem_format(&json!({ "format": "PKCS#1" })).unwrap(),
+            "pkcs1"
+        );
+        assert_eq!(
+            rsa_pem_format(&json!({ "format": "openssl" })).unwrap(),
+            "pkcs1"
+        );
         assert!(rsa_pem_format(&json!({ "format": "der" })).is_err());
     }
 
     #[test]
     fn generate_rsa_pem_uses_requested_headers() {
-        let (public, private) = generate_rsa_pem(1024, "pkcs8").unwrap();
+        let (public, private) = generate_rsa_pem(2048, "pkcs8").unwrap();
         assert!(private.contains("BEGIN PRIVATE KEY"));
         assert!(!private.contains("BEGIN RSA PRIVATE KEY"));
         assert!(public.contains("BEGIN PUBLIC KEY"));
 
-        let (public, private) = generate_rsa_pem(1024, "pkcs1").unwrap();
+        let (public, private) = generate_rsa_pem(2048, "pkcs1").unwrap();
         assert!(private.contains("BEGIN RSA PRIVATE KEY"));
         assert!(public.contains("BEGIN RSA PUBLIC KEY"));
     }
@@ -619,5 +919,49 @@ mod tests {
         assert_eq!(generate_material("hmac-sha256", &empty).unwrap().len(), 64);
         assert_eq!(generate_material("hmac-sm3", &empty).unwrap().len(), 64);
         assert!(canonical_algorithm("rsa").ok().is_some());
+    }
+
+    #[test]
+    fn validates_names_material_limits_and_real_rsa_pem() {
+        assert!(validate_name("").is_err());
+        assert!(validate_name("bad\nname").is_err());
+        assert!(decode_key_bytes(&"A".repeat(MAX_KEY_MATERIAL_BYTES + 1)).is_err());
+        assert!(
+            infer_pem_algorithm("-----BEGIN PUBLIC KEY-----\nAA==\n-----END PUBLIC KEY-----")
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn rejects_truncated_and_mismatched_vault_envelopes() {
+        assert!(parse_file(b"DBXK").is_err());
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(MAGIC);
+        bytes.push(VERSION);
+        bytes.extend_from_slice(&[0u8; 16 + 12]);
+        bytes.extend_from_slice(&16u32.to_be_bytes());
+        bytes.extend_from_slice(&[0u8; 15]);
+        assert!(parse_file(&bytes).is_err());
+    }
+
+    #[test]
+    fn falls_back_to_backup_when_primary_authentication_fails() {
+        let directory = std::env::temp_dir().join(format!("toolbox-vault-test-{}", Uuid::new_v4()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("keystore");
+        let backup = vault_backup_path(&path);
+        let password = "correct horse battery staple";
+        let salt = [7u8; 16];
+        let kek = derive_kek_with_salt(password, &salt).unwrap();
+        let valid = encode_vault_file(&kek, &salt, &[]).unwrap();
+        let mut corrupt = valid.clone();
+        *corrupt.last_mut().unwrap() ^= 1;
+        fs::write(&path, corrupt).unwrap();
+        fs::write(&backup, valid).unwrap();
+
+        let unlocked = read_unlocked_vault(&path, password).unwrap();
+        assert!(unlocked.keys.is_empty());
+
+        fs::remove_dir_all(directory).unwrap();
     }
 }

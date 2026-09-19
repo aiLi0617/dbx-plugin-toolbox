@@ -1,8 +1,10 @@
-import yaml from "js-yaml";
-import { XMLParser, XMLBuilder, XMLValidator } from "fast-xml-parser";
+import { XMLValidator } from "fast-xml-parser";
 import { format as formatSql } from "sql-formatter";
 import beautify from "js-beautify";
 import { jsonConvertModes, runJsonConvert } from "./convert.js";
+import { parseYamlDocument } from "../dataConvert.js";
+import { formatXmlPreservingText } from "../xmlFormat.js";
+export { formatXmlPreservingText } from "../xmlFormat.js";
 
 export const CODE_LANGUAGES = [
   { value: "sql", zh: "SQL", en: "SQL" },
@@ -10,13 +12,29 @@ export const CODE_LANGUAGES = [
   { value: "yaml", zh: "YAML", en: "YAML" },
   { value: "html", zh: "HTML", en: "HTML" },
   { value: "css", zh: "CSS", en: "CSS" },
+  { value: "javascript", zh: "JavaScript", en: "JavaScript" },
+  { value: "typescript", zh: "TypeScript", en: "TypeScript" },
 ];
 
-export function formatCode(input, language = "sql", action = "format") {
-  if (language === "sql") return formatSql(input, { language: "sql" });
-  if (language === "yaml") return yaml.dump(yaml.load(input));
-  if (language === "html") return beautify.html(input, { indent_size: 2 });
-  if (language === "css") return beautify.css(input, { indent_size: 2 });
+export const SQL_DIALECTS = [
+  { value: "sql", label: "Standard SQL" },
+  { value: "mysql", label: "MySQL" },
+  { value: "postgresql", label: "PostgreSQL" },
+  { value: "transactsql", label: "SQL Server" },
+  { value: "sqlite", label: "SQLite" },
+  { value: "plsql", label: "Oracle PL/SQL" },
+  { value: "bigquery", label: "BigQuery" },
+];
+
+export function formatCode(input, language = "sql", action = "format", sqlDialect = "sql", indent = 2) {
+  if (String(input ?? "").length > 2_000_000) throw new Error("Formatting input is limited to 2 MB");
+  const indentSize = [2, 4, 8].includes(Number(indent)) ? Number(indent) : 2;
+  if (language === "sql") return formatSql(input, { language: SQL_DIALECTS.some((item) => item.value === sqlDialect) ? sqlDialect : "sql", tabWidth: indentSize });
+  if (language === "yaml") return parseYamlDocument(input).toString({ indent: indentSize });
+  if (language === "html") return beautify.html(input, { indent_size: indentSize });
+  if (language === "css") return beautify.css(input, { indent_size: indentSize });
+  if (language === "javascript" || language === "typescript" || language === "js" || language === "ts") return formatScript(input, language, indentSize);
+  if (language !== "xml") throw new Error("Unsupported formatting language");
   const check = XMLValidator.validate(input);
   if (check !== true) {
     const msg = typeof check === "object" ? JSON.stringify(check) : String(check);
@@ -24,48 +42,14 @@ export function formatCode(input, language = "sql", action = "format") {
     throw new Error(msg);
   }
   if (action === "validate") return { ok: true, text: "Valid XML" };
-  const parser = new XMLParser({ ignoreAttributes: false, preserveOrder: true });
-  const builder = new XMLBuilder({ ignoreAttributes: false, preserveOrder: true, format: true, indentBy: "  " });
-  return builder.build(parser.parse(input));
+  return formatXmlPreservingText(input, indentSize);
 }
 
-export const formatTools = [
-  {
-    id: "json",
-    category: "format",
-    phase: "p0",
-    view: "json-workbench",
-    name: { zh: "JSON 格式化", en: "JSON format" },
-    aliases: [
-      "json-convert", "json-yaml", "json-csv", "json-xml", "json-toml", "json-sql", "json-ts",
-      "yaml", "csv", "xml", "toml", "sql", "typescript", "python", "go", "java",
-      "format", "minify", "validate", "tree", "unicode", "escape", "sort",
-      "行号", "树形", "压缩", "转义", "校验", "转换", "语言",
-    ],
-    options: [
-      {
-        key: "mode",
-        type: "select",
-        label: { zh: "转换", en: "Convert" },
-        values: jsonConvertModes,
-      },
-      {
-        key: "table",
-        type: "text",
-        placeholder: "users",
-        visibleWhen: { key: "mode", values: ["json-sql"] },
-      },
-    ],
-    defaults: { mode: "json-yaml" },
-    run: runJsonConvert,
-  },
-  {
-    id: "code-format",
-    category: "format",
-    phase: "p0",
-    name: { zh: "代码格式化", en: "Code format" },
-    aliases: ["sql", "xml", "yaml", "html", "css", "minify", "validate", "beautify"],
-    defaults: { language: "sql", action: "format" },
-    view: "code-format",
-  },
-];
+async function formatScript(input, language, indent) {
+  const [prettier, estree, parser] = await Promise.all([
+    import("prettier/standalone"),
+    import("prettier/plugins/estree"),
+    language === "typescript" || language === "ts" ? import("prettier/plugins/typescript") : import("prettier/plugins/babel"),
+  ]);
+  return prettier.format(input, { parser: language === "typescript" || language === "ts" ? "typescript" : "babel", plugins: [estree, parser], tabWidth: indent });
+}

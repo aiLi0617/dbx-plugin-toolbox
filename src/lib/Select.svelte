@@ -180,6 +180,7 @@
   $effect(() => {
     if (!open) return;
     const onWin = () => place();
+    const closeOverlay = () => closeMenu(false);
     const onDown = (event) => {
       const path = event.composedPath();
       if (triggerEl && path.includes(triggerEl)) return;
@@ -187,10 +188,12 @@
       closeMenu(false);
     };
     window.addEventListener("resize", onWin);
+    window.addEventListener("toolbox-close-overlays", closeOverlay);
     window.addEventListener("scroll", onWin, true);
     document.addEventListener("pointerdown", onDown, true);
     return () => {
       window.removeEventListener("resize", onWin);
+      window.removeEventListener("toolbox-close-overlays", closeOverlay);
       window.removeEventListener("scroll", onWin, true);
       document.removeEventListener("pointerdown", onDown, true);
     };
@@ -232,7 +235,7 @@
   >
     {#each rows as row, i (`${row.type}-${row.index ?? i}`)}
       {#if row.type === "group"}
-        <div class="group">{row.label}</div>
+        <div class="group" role="presentation">{row.label}</div>
       {:else}
         <div
           class="item"
@@ -341,19 +344,37 @@
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .group {
-    padding: 6px 8px 4px 28px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 9px 4px 3px;
+    padding: 5px 8px 5px 9px;
+    border-top: 1px solid color-mix(in srgb, var(--color-primary, CanvasText) 22%, transparent);
+    border-left: 3px solid var(--color-primary, CanvasText);
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    line-height: 1.2;
+    color: var(--color-primary, var(--color-foreground, CanvasText));
+    white-space: nowrap;
+  }
+  .group:first-child {
+    margin-top: 3px;
+  }
+  .group::after {
+    content: "";
+    flex: 1;
+    min-width: 12px;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-primary, CanvasText) 22%, transparent);
   }
   .item {
     display: flex;
     align-items: center;
     gap: 6px;
     min-height: 28px;
-    padding: 4px 8px;
+    margin: 0 4px;
+    padding: 4px 8px 4px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 13px;

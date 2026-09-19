@@ -1,15 +1,18 @@
 <script>
   import { tokenizeCode } from "./codeHighlight.js";
+  import { indentSelection } from "./editorIndent.js";
 
   let {
     value = $bindable(""),
     language = "sql",
     placeholder = "",
     readonly = false,
+    label = "",
   } = $props();
 
   let textareaEl = $state(null);
   let highlightEl = $state(null);
+  let tabMovesFocus = false;
 
   const overlayTokens = $derived(tokenizeCode(value, language));
 
@@ -21,14 +24,16 @@
   }
 
   function onKeydown(event) {
+    if (event.key === "Escape") { tabMovesFocus = true; return; }
+    if (event.key === "Tab" && tabMovesFocus) { tabMovesFocus = false; return; }
+    tabMovesFocus = false;
     if (readonly || event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
     event.preventDefault();
     const ta = event.currentTarget;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    value = value.slice(0, start) + "  " + value.slice(end);
+    const next = indentSelection(value, ta.selectionStart, ta.selectionEnd, event.shiftKey);
+    value = next.value;
     queueMicrotask(() => {
-      ta.selectionStart = ta.selectionEnd = start + 2;
+      ta.setSelectionRange(next.start, next.end);
     });
   }
 </script>
@@ -41,6 +46,7 @@
       bind:this={textareaEl}
       value={value}
       {placeholder}
+      aria-label={label || undefined}
       readonly
       spellcheck="false"
       onscroll={syncScroll}
@@ -51,9 +57,11 @@
       bind:this={textareaEl}
       bind:value
       {placeholder}
+      aria-label={label || undefined}
       spellcheck="false"
       onscroll={syncScroll}
       onkeydown={onKeydown}
+      title="Tab: 缩进 / indent · Shift+Tab: 减少缩进 / outdent · Esc, Tab: 移动焦点 / move focus"
     ></textarea>
   {/if}
 </div>

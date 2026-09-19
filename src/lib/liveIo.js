@@ -1,6 +1,5 @@
 import { quotedPrintable } from "./tools/encode.js";
-import { sqlEscape } from "./tools/convert.js";
-import { slugify, stripHtml } from "./tools/text.js";
+import { slugify, sqlEscape, stripHtml } from "./simpleTransforms.js";
 
 export const LIVE_IO_TOOLS = {
   "quoted-printable": {

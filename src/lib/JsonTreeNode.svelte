@@ -157,7 +157,7 @@
           <span class="json-count" title={isArray ? `${count} items` : `${count} keys`}>{openBrace} {count}</span>
         {/if}
       </span>
-      <button class="json-plus" onclick={() => onAdd?.(path)} type="button" title={addTitle}>+</button>
+      <button class="json-plus" onclick={() => onAdd?.(path)} type="button" title={addTitle} aria-label={addTitle}>+</button>
       {#if folded || count === 0}
         <span class="json-brace">{closeBrace}</span>
         {#if !isLast}<span class="json-comma">,</span>{/if}
@@ -228,13 +228,13 @@
 <style>
   .json-node {
     min-width: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-node.hover-fill {
     background: color-mix(
       in srgb,
-      var(--json-ink, var(--color-foreground, CanvasText)) calc(var(--hover-tint, 4) * 1%),
-      var(--json-surface, var(--color-card, var(--color-background, Canvas)))
+      var(--color-accent, var(--color-muted, var(--json-ink, CanvasText))) calc(var(--hover-tint, 4) * 1%),
+      transparent
     );
   }
   .json-line {
@@ -242,30 +242,27 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0 2px;
-    min-height: 22px;
-    padding-right: 4px;
-    border-radius: 4px;
+    min-height: 24px;
+    padding: 1px 4px 1px 0;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-children {
     padding-left: 18px;
-    border-left: 1px dashed color-mix(in srgb, var(--color-foreground, CanvasText) 12%, transparent);
-    margin-left: 6px;
+    border-left: 1px solid color-mix(in srgb, var(--color-border, CanvasText) 72%, transparent);
+    margin-left: 7px;
   }
   .json-key {
     border: 0;
     background: transparent;
     padding: 0;
     font: inherit;
-    color: #986801;
+    color: var(--color-warning, #b45309);
     font-weight: 500;
     cursor: text;
-    border-radius: 3px;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-key:hover {
-    outline: 1px dashed color-mix(in srgb, var(--color-foreground, CanvasText) 22%, transparent);
-  }
-  :global([data-dbx-theme="dark"]) .json-key {
-    color: #e3b341;
+    background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .json-colon,
   .json-comma,
@@ -276,11 +273,11 @@
     font-variant-numeric: tabular-nums;
   }
   .json-twist {
-    flex: 0 0 12px;
-    width: 12px;
-    height: 16px;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
     margin-right: 2px;
-    border: 0;
+    border: 1px solid transparent;
     padding: 0;
     background: transparent;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 55%, transparent));
@@ -288,10 +285,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 3px;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-twist:hover {
-    background: var(--color-muted, var(--color-accent, color-mix(in srgb, var(--color-foreground, CanvasText) 8%, transparent)));
+    border-color: var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
+  }
+  .json-twist:focus-visible,
+  .json-plus:focus-visible,
+  .json-val:focus-visible,
+  .json-key:focus-visible,
+  .json-del:focus-visible {
+    outline: 2px solid var(--color-ring, var(--color-primary));
+    outline-offset: 1px;
   }
   .json-twist-icon {
     width: 0;
@@ -306,19 +312,26 @@
     transform: rotate(0deg);
   }
   .json-plus {
-    border: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid transparent;
     background: transparent;
-    padding: 0 4px;
+    padding: 0;
     margin: 0;
-    font: inherit;
-    font-weight: 700;
+    color: var(--color-primary, var(--color-foreground, CanvasText));
+    font-size: 16px;
+    font-weight: 500;
     line-height: 1;
-    color: var(--color-primary, #2563eb);
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-plus:hover {
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 16%, transparent);
+    border-color: var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
   }
   .json-val {
     border: 0;
@@ -330,30 +343,20 @@
     max-width: 100%;
     word-break: break-word;
     white-space: pre-wrap;
-    border-radius: 3px;
+    border-radius: var(--radius-sm, 4px);
   }
   .json-val:hover {
-    outline: 1px dashed color-mix(in srgb, var(--color-foreground, CanvasText) 22%, transparent);
+    background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .json-val--string {
-    color: #1a7f37;
+    color: var(--color-success, #15803d);
   }
   .json-val--number {
-    color: #0550ae;
+    color: var(--color-info, #2563eb);
   }
   .json-val--boolean,
   .json-val--null {
-    color: #cf222e;
-  }
-  :global([data-dbx-theme="dark"]) .json-val--string {
-    color: #7ee787;
-  }
-  :global([data-dbx-theme="dark"]) .json-val--number {
-    color: #79c0ff;
-  }
-  :global([data-dbx-theme="dark"]) .json-val--boolean,
-  :global([data-dbx-theme="dark"]) .json-val--null {
-    color: #ff7b72;
+    color: var(--color-destructive, #dc2626);
   }
   .json-edit {
     min-width: 8em;
@@ -361,28 +364,28 @@
     height: 22px;
     padding: 0 6px;
     border: 1px solid var(--color-ring, var(--color-primary, #93c5fd));
-    border-radius: 4px;
+    border-radius: var(--radius-sm, 4px);
     background: var(--color-background, Canvas);
     color: inherit;
     font: inherit;
   }
   .json-edit-key {
     min-width: 6em;
-    color: #986801;
+    color: var(--color-warning, #b45309);
     font-weight: 500;
   }
   .json-del {
     opacity: 0;
     pointer-events: none;
     margin-left: auto;
-    height: 18px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 9px;
-    background: color-mix(in srgb, var(--color-destructive, #dc2626) 16%, transparent);
+    height: 20px;
+    padding: 0 7px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 4px);
+    background: transparent;
     color: var(--color-destructive, #dc2626);
-    font-size: 11px;
-    line-height: 18px;
+    font-size: 12px;
+    line-height: 20px;
   }
   .json-node.hover-fill > .json-line .json-del,
   .json-node.hover-self > .json-line .json-del,
@@ -391,7 +394,7 @@
     pointer-events: auto;
   }
   .json-del:hover {
-    background: var(--color-destructive, #dc2626);
-    color: var(--color-destructive-foreground, #fff);
+    border-color: color-mix(in srgb, var(--color-destructive, #dc2626) 40%, transparent);
+    background: color-mix(in srgb, var(--color-destructive, #dc2626) 12%, transparent);
   }
 </style>

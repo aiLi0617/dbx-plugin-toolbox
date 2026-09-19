@@ -1,5 +1,6 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
+  import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { pick } from "./i18n.js";
   import { renderMarkdown } from "./tools/text.js";
 
@@ -8,7 +9,16 @@
   const t = (zh, en) => pick(locale, zh, en);
 
   let input = $state("");
-  const html = $derived(renderMarkdown(input));
+  const inputError = $derived(inputLimitError(input, INPUT_LIMITS.markdown, t("Markdown 输入", "Markdown input")));
+  const rendered = $derived.by(() => {
+    if (inputError) return { html: "", error: inputError };
+    try {
+      return { html: renderMarkdown(input), error: "" };
+    } catch (err) {
+      return { html: "", error: err?.message || String(err) };
+    }
+  });
+  const html = $derived(rendered.html);
   const empty = $derived(!input.trim());
 </script>
 
@@ -21,6 +31,7 @@
       class="dbx-textarea area"
       spellcheck="false"
       placeholder={"# Title\n\n**bold** and `code`"}
+      maxlength={INPUT_LIMITS.markdown}
       bind:value={input}
     ></textarea>
   </label>
@@ -31,7 +42,9 @@
       <CopyButton {locale} text={html} labelZh="复制 HTML" labelEn="Copy HTML" />
     </div>
     <div class="preview" class:empty>
-      {#if empty}
+      {#if rendered.error}
+        <p class="error">{rendered.error}</p>
+      {:else if empty}
         <p class="hint">{t("在左侧输入，右侧即时渲染", "Type on the left; the preview updates as you type")}</p>
       {:else}
         {@html html}
@@ -84,6 +97,7 @@
     margin: 0;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
+  .error { margin: 0; color: var(--color-destructive, #dc2626); }
   .preview :global(:first-child) {
     margin-top: 0;
   }

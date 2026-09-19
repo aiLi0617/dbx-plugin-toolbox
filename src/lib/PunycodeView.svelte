@@ -8,7 +8,10 @@
   const t = (zh, en) => pick(locale, zh, en);
 
   let input = $state("");
-  const pair = $derived(punycodePair(input));
+  const pair = $derived.by(() => {
+    try { return { ...punycodePair(input), error: "" }; }
+    catch { return { unicode: "", ace: "", error: t("请输入有效域名（Unicode 或 xn-- 编码）", "Enter a valid Unicode or xn-- domain") }; }
+  });
 </script>
 
 <div class="page">
@@ -16,6 +19,7 @@
     <span class="label">{t("域名", "Domain")}</span>
     <input class="dbx-input mono" spellcheck="false" placeholder="例子.example" bind:value={input} />
   </label>
+  {#if pair.error}<p class="dbx-hint" role="alert">{pair.error}</p>{/if}
   <div class="rows">
     <div class="row">
       <span class="name">Unicode</span>

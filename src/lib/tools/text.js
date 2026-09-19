@@ -1,5 +1,6 @@
-import { diffLines } from "diff";
+import { diffChars, diffLines, diffWordsWithSpace } from "diff";
 import { marked } from "marked";
+export { slugify, stripHtml } from "../simpleTransforms.js";
 
 export function toCase(text, mode) {
   if (mode === "upper") return text.toUpperCase();
@@ -10,12 +11,12 @@ export function toCase(text, mode) {
 
 export function naming(text, style) {
   const parts = text
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/[_\-\s]+/g, " ")
+    .replace(/([\p{Ll}\p{N}])([\p{Lu}])/gu, "$1 $2")
+    .replace(/[^\p{Letter}\p{Number}]+/gu, " ")
     .trim()
     .split(/\s+/)
     .filter(Boolean)
-    .map((p) => p.toLowerCase());
+    .map((p) => p.toLocaleLowerCase());
   if (!parts.length) return "";
   if (style === "camel") return parts.map((p, i) => (i ? p[0].toUpperCase() + p.slice(1) : p)).join("");
   if (style === "pascal") return parts.map((p) => p[0].toUpperCase() + p.slice(1)).join("");
@@ -58,20 +59,50 @@ function countWords(value) {
 
 export function textStats(text) {
   const value = String(text ?? "");
-  const chars = [...value].length;
+  const chars = typeof Intl.Segmenter === "function"
+    ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(value)].length
+    : [...value].length;
   const bytes = new TextEncoder().encode(value).length;
   const words = countWords(value);
   const lines = value ? value.split(/\r?\n/).length : 0;
   return { chars, bytes, words, lines };
 }
 
-export function lineOps(text, mode, affix) {
+export function lineOps(text, mode, opts = {}) {
   let lines = text.split(/\r?\n/);
   if (mode === "sort") lines = [...lines].sort((a, b) => a.localeCompare(b));
   if (mode === "unique") lines = [...new Set(lines)];
-  if (mode === "prefix") lines = lines.map((l) => (affix || "") + l);
-  if (mode === "suffix") lines = lines.map((l) => l + (affix || ""));
+  if (mode === "prefix") lines = lines.map((l) => (opts.affix || "") + l);
+  if (mode === "suffix") lines = lines.map((l) => l + (opts.affix || ""));
   if (mode === "reverse") lines = [...lines].reverse();
+  if (mode === "shuffle") {
+    lines = [...lines];
+    for (let i = lines.length - 1; i > 0; i -= 1) {
+      const j = Math.floor((opts.random?.() ?? Math.random()) * (i + 1));
+      [lines[i], lines[j]] = [lines[j], lines[i]];
+    }
+  }
+  if (mode === "number") {
+    const start = Number.isFinite(Number(opts.start)) ? Math.trunc(Number(opts.start)) : 1;
+    const width = Math.max(0, Math.min(12, Math.trunc(Number(opts.width) || 0)));
+    const separator = opts.separator ?? ". ";
+    lines = lines.map((line, index) => `${String(start + index).padStart(width, "0")}${separator}${line}`);
+  }
+  if (mode === "unnumber") lines = lines.map((line) => line.replace(/^\s*\d+\s*(?:[.)、:：_-]\s*|\s+)/u, ""));
+  if (mode === "column") {
+    const column = Math.max(1, Math.trunc(Number(opts.column) || 1)) - 1;
+    const delimiter = String(opts.delimiter ?? "");
+    lines = lines.map((line) => (delimiter ? line.split(delimiter) : line.trim().split(/\s+/))[column] ?? "");
+  }
+  if (mode === "filter-length") {
+    const min = Math.max(0, Math.trunc(Number(opts.minLength) || 0));
+    const rawMax = Number(opts.maxLength);
+    const max = Number.isFinite(rawMax) && rawMax >= 0 ? Math.trunc(rawMax) : Infinity;
+    const lengthOf = (line) => typeof Intl.Segmenter === "function"
+      ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(line)].length
+      : [...line].length;
+    lines = lines.filter((line) => lengthOf(line) >= min && lengthOf(line) <= max);
+  }
   return lines.join("\n");
 }
 
@@ -105,19 +136,6 @@ export function punct(text, mode) {
   });
 }
 
-export function slugify(text) {
-  return text
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-export function stripHtml(text) {
-  return text.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "").replace(/<[^>]+>/g, "");
-}
-
 export function inspectUnicodeRows(text) {
   return [...String(text ?? "")].map((ch) => {
     const cp = ch.codePointAt(0);
@@ -140,8 +158,8 @@ const MARKDOWN_KEEP_TAGS = new Set([
 ]);
 
 const MARKDOWN_ATTRS = {
-  A: new Set(["href", "title", "rel"]),
-  IMG: new Set(["src", "alt", "title"]),
+  A: new Set(["href", "title", "rel", "target"]),
+  IMG: new Set(["src", "alt", "title", "loading", "referrerpolicy"]),
   TH: new Set(["colspan", "rowspan", "align"]),
   TD: new Set(["colspan", "rowspan", "align"]),
   OL: new Set(["start"]),
@@ -157,7 +175,9 @@ function safeUrl(value, kind) {
   if (url.startsWith("#")) return url;
   const lower = url.toLowerCase();
   if (lower.startsWith("javascript:") || lower.startsWith("vbscript:")) return "";
-  if (kind === "img") return /^(https?:|data:image\/)/i.test(url) ? url : "";
+  // SVG is active XML in several embedding/navigation contexts. Markdown
+  // previews only need inert raster images, so keep the allowlist explicit.
+  if (kind === "img") return /^data:image\/(?:png|jpe?g|gif|webp|avif);/i.test(url) ? url : "";
   return /^(https?:|mailto:)/i.test(url) ? url : "";
 }
 
@@ -196,6 +216,7 @@ function sanitizeElement(el) {
     if (href) {
       el.setAttribute("href", href);
       el.setAttribute("rel", "noopener noreferrer");
+      el.setAttribute("target", "_blank");
     } else {
       const parent = el.parentNode;
       if (parent) {
@@ -205,7 +226,11 @@ function sanitizeElement(el) {
     }
   } else if (tag === "IMG") {
     const src = safeUrl(el.getAttribute("src"), "img");
-    if (src) el.setAttribute("src", src);
+    if (src) {
+      el.setAttribute("src", src);
+      el.setAttribute("loading", "lazy");
+      el.setAttribute("referrerpolicy", "no-referrer");
+    }
     else el.remove();
   } else if (tag === "INPUT") {
     if (el.getAttribute("type") !== "checkbox") {
@@ -230,6 +255,7 @@ function sanitizeHtml(html) {
 export function renderMarkdown(source) {
   const text = String(source ?? "");
   if (!text) return "";
+  if (text.length > 1_000_000) throw new Error("Markdown input is limited to 1 MB");
   return sanitizeHtml(marked.parse(text, { async: false, gfm: true }));
 }
 
@@ -264,8 +290,8 @@ export function applyWhitespace(text, mode, opts = {}) {
   const options = typeof opts === "string" ? { affix: opts } : opts || {};
   if (kind === "replace") return findReplace(text, options.find, options.replace);
   if (kind === "full" || kind === "half") return punct(text, kind);
-  if (["sort", "unique", "prefix", "suffix", "reverse"].includes(kind)) {
-    return lineOps(text, kind, options.affix);
+  if (["sort", "unique", "prefix", "suffix", "reverse", "shuffle", "number", "unnumber", "column", "filter-length"].includes(kind)) {
+    return lineOps(text, kind, options);
   }
   return whitespace(text, kind);
 }
@@ -276,13 +302,15 @@ export function findReplace(text, find, replace) {
 }
 
 export function testRegex(input, pattern, flags) {
+  if (String(pattern ?? "").length > 10_000) throw new Error("Regex pattern is too large");
+  if (String(input ?? "").length > 1_000_000) throw new Error("Regex input is limited to 1 MB");
   const re = new RegExp(pattern || ".*", flags || "");
   const text = String(input ?? "");
   const matches = [];
   if (re.global) {
     for (const m of text.matchAll(re)) {
       matches.push({ index: m.index ?? 0, text: m[0], groups: m.slice(1) });
-      if (!m[0]) break;
+      if (matches.length >= 10_000) break;
     }
   } else {
     const m = text.match(re);
@@ -316,70 +344,24 @@ export function lineDiffParts(left, right) {
   });
 }
 
-export const textTools = [
-  {
-    id: "whitespace",
-    category: "text",
-    phase: "p0",
-    name: { zh: "文本整理", en: "Text cleanup" },
-    aliases: ["空白与行", "查找替换", "全半角"],
-    view: "whitespace",
-  },
-  {
-    id: "case",
-    category: "text",
-    phase: "p0",
-    name: { zh: "大小写与命名", en: "Case & naming" },
-    aliases: ["naming"],
-    view: "case",
-  },
-  {
-    id: "stats",
-    category: "text",
-    phase: "p0",
-    name: { zh: "字数统计", en: "Word count" },
-    view: "stats",
-  },
-  {
-    id: "regex",
-    category: "text",
-    phase: "p0",
-    name: { zh: "Regex 测试", en: "Regex tester" },
-    view: "regex",
-  },
-  {
-    id: "diff",
-    category: "text",
-    phase: "p0",
-    name: { zh: "行级 Diff", en: "Line diff" },
-    view: "diff",
-  },
-  {
-    id: "markdown",
-    category: "text",
-    phase: "p0",
-    name: { zh: "Markdown 预览", en: "Markdown preview" },
-    view: "markdown",
-  },
-  {
-    id: "slugify",
-    category: "text",
-    phase: "p1",
-    name: { zh: "Slugify", en: "Slugify" },
-    view: "live-io",
-  },
-  {
-    id: "strip-html",
-    category: "text",
-    phase: "p1",
-    name: { zh: "去 HTML 标签", en: "Strip HTML" },
-    view: "live-io",
-  },
-  {
-    id: "unicode-inspect",
-    category: "text",
-    phase: "p1",
-    name: { zh: "Unicode 码位检查器", en: "Unicode inspector" },
-    view: "unicode-inspect",
-  },
-];
+export function diffParts(left, right, opts = {}) {
+  const normalize = (value) => {
+    let text = String(value ?? "");
+    if (opts.ignoreWhitespace) text = text.replace(/[ \t]+/g, " ").replace(/\s+$/gm, "");
+    if (opts.ignoreCase) text = text.toLocaleLowerCase();
+    return text;
+  };
+  const before = normalize(left);
+  const after = normalize(right);
+  const mode = opts.mode || "lines";
+  const parts = mode === "chars"
+    ? diffChars(before, after)
+    : mode === "words"
+      ? diffWordsWithSpace(before, after)
+      : diffLines(before, after);
+  return parts.map((part) => ({
+    mark: part.added ? "add" : part.removed ? "del" : "same",
+    value: part.value,
+    count: part.count || 0,
+  }));
+}

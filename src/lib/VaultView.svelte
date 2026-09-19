@@ -1,12 +1,18 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
   import { invoke, ready } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
+  import { VAULT_AUTO_LOCK_MINUTES } from "./prefs.js";
   import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, rsaGenerateTimeoutMs } from "./tools/generate.js";
 
-  let { locale = "zh-CN", onKeysChange = () => {} } = $props();
+  let {
+    locale = "zh-CN",
+    autoLockMinutes = 15,
+    onAutoLockChange = () => {},
+    onKeysChange = () => {},
+  } = $props();
 
   let status = $state({ exists: false, unlocked: false });
   let keys = $state([]);
@@ -28,9 +34,14 @@
   let pendingDelete = $state(null);
   let renameId = $state("");
   let renameName = $state("");
+  let renameInput = $state(null);
   let panel = $state("create");
 
   const t = (zh, en) => pick(locale, zh, en);
+  const autoLockOptions = $derived(VAULT_AUTO_LOCK_MINUTES.map((minutes) => ({
+    value: minutes,
+    label: minutes === 0 ? t("从不", "Never") : t(`${minutes} 分钟`, `${minutes} min`),
+  })));
   const pasteExisting = $derived(createMode === "paste");
   const generatingAsym = $derived(!pasteExisting && (createAlg === "rsa-pem" || createAlg === "sm2"));
 
@@ -66,8 +77,7 @@
   function resetSensitive() {
     reveal = null;
     pendingDelete = null;
-    renameId = "";
-    renameName = "";
+    cancelRename();
     password = "";
     confirmPassword = "";
     currentPassword = "";
@@ -152,7 +162,7 @@
     }
   }
 
-  async function refresh() {
+  async function refresh(announce = true) {
     status = await invoke("toolbox/keys/status");
     if (status.unlocked) {
       const listed = await invoke("toolbox/keys/list");
@@ -160,7 +170,7 @@
     } else {
       keys = [];
     }
-    notify();
+    if (announce) notify();
   }
 
   async function setup() {
@@ -247,20 +257,49 @@
     });
   }
 
-  function startRename(key) {
+  async function startRename(key) {
     closeDialogs();
     renameId = key.id;
     renameName = key.name;
+    error = "";
+    await tick();
+    renameInput?.focus();
+    renameInput?.select();
+  }
+
+  function cancelRename() {
+    if (busy) return;
+    renameId = "";
+    renameName = "";
+    error = "";
+  }
+
+  function onRenameKeydown(event) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      cancelRename();
+      return;
+    }
+    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+      event.preventDefault();
+      void renameKey();
+    }
   }
 
   async function renameKey() {
+    const id = renameId;
     const name = renameName.trim();
     if (!name) {
       fail({ message: t("请填写名称", "Enter a name") });
       return;
     }
+    const current = keys.find((key) => key.id === id);
+    if (current?.name === name) {
+      cancelRename();
+      return;
+    }
     await run(async () => {
-      await invoke("toolbox/keys/rename", { id: renameId, name });
+      await invoke("toolbox/keys/rename", { id, name });
       renameId = "";
       renameName = "";
       ok(t("已重命名", "Renamed"));
@@ -269,25 +308,35 @@
   }
 
   function askDelete(key) {
-    renameId = "";
+    cancelRename();
     reveal = null;
     pendingDelete = key;
   }
 
-  async function askExport(key) {
-    renameId = "";
+  function askExport(key) {
+    cancelRename();
     pendingDelete = null;
-    reveal = { key, material: "", loading: true };
+    reveal = { key, material: "", password: "", loading: false };
+  }
+
+  async function exportSecret() {
+    const current = reveal;
+    if (!current?.key) return;
+    if (passwordTooShort(current.password)) {
+      fail({ message: t("请输入当前主密码", "Enter the current master password") });
+      return;
+    }
+    reveal = { ...current, loading: true };
     await run(async () => {
-      const result = await invoke("toolbox/keys/export", { id: key.id, confirm: true });
-      if (reveal?.key?.id !== key.id) return;
-      reveal = {
-        key,
-        material: result.material || "",
-        loading: false,
-      };
+      const result = await invoke("toolbox/keys/export", {
+        id: current.key.id,
+        confirm: true,
+        password: current.password,
+      }, 60000);
+      if (reveal?.key?.id !== current.key.id) return;
+      reveal = { key: current.key, material: result.material || "", password: "", loading: false };
     });
-    if (reveal?.loading && reveal?.key?.id === key.id) reveal = null;
+    if (reveal?.key?.id === current.key.id) reveal = { ...reveal, password: "", loading: false };
   }
 
   async function confirmDelete() {
@@ -320,6 +369,12 @@
 
   onMount(() => {
     let cancelled = false;
+    const onVaultChange = () => {
+      if (cancelled) return;
+      reveal = null;
+      void refresh(false).catch(fail);
+    };
+    window.addEventListener("toolbox-vault-change", onVaultChange);
     (async () => {
       try {
         await ready();
@@ -330,6 +385,7 @@
     })();
     return () => {
       cancelled = true;
+      window.removeEventListener("toolbox-vault-change", onVaultChange);
     };
   });
 </script>
@@ -381,7 +437,17 @@
           {t("对称加密、HMAC、JWT、XOR、非对称加密都从这里选用密钥。", "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.")}
         </p>
       </div>
-      <button class="dbx-btn" disabled={busy} onclick={lock} type="button">{t("锁定", "Lock")}</button>
+      <div class="status-actions">
+        <label class="field auto-lock">
+          <span>{t("自动锁定", "Auto-lock")}</span>
+          <Select
+            value={autoLockMinutes}
+            options={autoLockOptions}
+            onchange={(value) => onAutoLockChange(Number(value))}
+          />
+        </label>
+        <button class="dbx-btn" disabled={busy} onclick={lock} type="button">{t("锁定", "Lock")}</button>
+      </div>
     </div>
     {#if error}<div class="banner">{error}</div>{/if}
     {#if notice}<p class="dbx-hint notice">{notice}</p>{/if}
@@ -406,11 +472,13 @@
               <tr>
                 <td>
                   {#if renameId === key.id}
-                    <div class="inline">
-                      <input class="dbx-input" bind:value={renameName} onkeydown={(event) => event.key === "Enter" && renameKey()} />
-                      <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">{t("保存", "Save")}</button>
-                      <button class="dbx-btn dbx-btn--ghost" onclick={() => (renameId = "")} type="button">{t("取消", "Cancel")}</button>
-                    </div>
+                    <input
+                      class="dbx-input rename-input"
+                      bind:this={renameInput}
+                      bind:value={renameName}
+                      aria-label={t("密钥名称", "Key name")}
+                      onkeydown={onRenameKeydown}
+                    />
                   {:else}
                     {key.name}
                   {/if}
@@ -420,9 +488,16 @@
                 <td class="mono" title={key.fingerprint}>{key.fingerprint}</td>
                 <td class="muted">{formatCreated(key.createdAt)}</td>
                 <td class="actions">
-                  <button class="dbx-btn dbx-btn--ghost" onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
-                  <button class="dbx-btn dbx-btn--ghost" onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
-                  <button class="dbx-btn dbx-btn--danger" onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
+                  {#if renameId === key.id}
+                    <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">
+                      {busy ? t("保存中…", "Saving…") : t("保存", "Save")}
+                    </button>
+                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={cancelRename} type="button">{t("取消", "Cancel")}</button>
+                  {:else}
+                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
+                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
+                    <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
+                  {/if}
                 </td>
               </tr>
             {/each}
@@ -547,6 +622,15 @@
           </div>
           {#if reveal.loading}
             <p class="lead">{t("读取中…", "Reading…")}</p>
+          {:else if !reveal.material}
+            <label class="field">
+              <span>{t("再次验证主密码", "Verify master password again")}</span>
+              <input class="dbx-input" type="password" bind:value={reveal.password} autocomplete="current-password" onkeydown={(event) => onEnter(event, exportSecret)} />
+            </label>
+            <div class="inline">
+              <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={exportSecret} type="button">{busy ? t("验证中…", "Verifying…") : t("显示原文", "Show secret")}</button>
+              <button class="dbx-btn dbx-btn--ghost" onclick={closeDialogs} type="button">{t("取消", "Cancel")}</button>
+            </div>
           {:else}
             <textarea class="dbx-textarea pem" readonly value={reveal.material}></textarea>
           {/if}
@@ -633,6 +717,14 @@
     justify-content: space-between;
     align-items: flex-start;
   }
+  .status-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .auto-lock :global(.dbx-select) {
+    min-width: 112px;
+  }
   .export-head { align-items: center; }
   .field {
     display: flex;
@@ -660,8 +752,8 @@
     white-space: nowrap;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .actions { justify-content: flex-end; white-space: nowrap; }
-  .inline .dbx-input { min-width: 140px; }
+  .actions { justify-content: flex-end; flex-wrap: nowrap; white-space: nowrap; }
+  .rename-input { min-width: 180px; }
   .seg {
     display: inline-flex;
     flex-wrap: wrap;

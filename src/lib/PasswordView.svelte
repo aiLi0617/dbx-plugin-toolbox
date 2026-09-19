@@ -1,11 +1,12 @@
 <script>
+  import { untrack } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
   import { chrome, pick } from "./i18n.js";
   import { generateSecret } from "./tools/generate.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -13,6 +14,10 @@
   let length = $state(16);
   let symbols = $state("yes");
   let value = $state(generateSecret("password", 16, "yes"));
+  $effect(() => {
+    const requested = initialOptions.kind;
+    if (["password", "bytes"].includes(requested)) untrack(() => { kind = requested; generate(); });
+  });
 
   function generate() {
     value = generateSecret(kind, length, symbols);

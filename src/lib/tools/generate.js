@@ -1,5 +1,5 @@
 import { invoke } from "../host.js";
-import { crc32, encodeUlid, nanoId, randomPassword, shaDigest } from "../codec.js";
+import { crc32, crc32Bytes, encodeUlid, nanoId, randomPassword, shaDigest, toBase64 } from "../codec.js";
 
 export const HASH_ALGORITHMS = [
   { id: "md5", label: "MD5" },
@@ -21,6 +21,21 @@ export async function hashText(algorithm, text) {
   const web = WEB_HASH[algorithm];
   if (!web) throw new Error("unsupported hash");
   return shaDigest(web, text);
+}
+
+export async function hashBytes(algorithm, bytes) {
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  if (algorithm === "crc32") return crc32Bytes(data);
+  const web = WEB_HASH[algorithm];
+  if (web) {
+    const result = await crypto.subtle.digest(web, data);
+    return [...new Uint8Array(result)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  if (algorithm === "md5" || algorithm === "sm3") {
+    const result = await invoke("toolbox/hash", { algorithm, dataBase64: toBase64(data) }, 120000);
+    return result.digest;
+  }
+  throw new Error("unsupported hash");
 }
 
 export function formatUuid(id, options = {}) {
@@ -55,7 +70,7 @@ export function generateSecret(kind, length, symbols) {
   return randomPassword(Number(length) || 16, { symbols: symbols === "yes" });
 }
 
-export const RSA_BIT_OPTIONS = ["1024", "2048", "3072", "4096"];
+export const RSA_BIT_OPTIONS = ["2048", "3072", "4096"];
 export const RSA_PEM_FORMATS = [
   { value: "pkcs8", zh: "PKCS#8 PEM", en: "PKCS#8 PEM" },
   { value: "pkcs1", zh: "PKCS#1 PEM", en: "PKCS#1 PEM" },
@@ -74,68 +89,4 @@ export const SYMMETRIC_KEY_ALGORITHMS = [
   { id: "sm4-128", label: "SM4", bytes: 16, groupZh: "对称加密 / XOR", groupEn: "Symmetric / XOR" },
   { id: "hmac-sha256", label: "HMAC-SHA256", bytes: 32, groupZh: "HMAC / JWT", groupEn: "HMAC / JWT" },
   { id: "hmac-sm3", label: "HMAC-SM3", bytes: 32, groupZh: "HMAC / JWT", groupEn: "HMAC / JWT" },
-];
-
-export const generateTools = [
-  {
-    id: "hash",
-    category: "generate",
-    phase: "p0",
-    name: { zh: "Hash", en: "Hash" },
-    view: "hash",
-  },
-  {
-    id: "uuid",
-    category: "generate",
-    phase: "p0",
-    name: { zh: "唯一 ID", en: "Unique ID" },
-    aliases: ["ulid", "nanoid"],
-    view: "unique-id",
-  },
-  {
-    id: "password",
-    category: "generate",
-    phase: "p0",
-    name: { zh: "随机密码 / 字节", en: "Random password / bytes" },
-    aliases: ["random-bytes"],
-    view: "password",
-  },
-  {
-    id: "symmetric-key",
-    category: "generate",
-    phase: "p1",
-    name: { zh: "对称密钥", en: "Symmetric key" },
-    aliases: ["aes-key", "hmac-key", "生成密钥"],
-    view: "symmetric-key",
-  },
-  {
-    id: "key-pair",
-    category: "generate",
-    phase: "p1",
-    name: { zh: "非对称密钥", en: "Asymmetric key" },
-    aliases: ["keypair", "rsa", "sm2", "生成密钥对"],
-    view: "keypair",
-  },
-  {
-    id: "qrcode",
-    category: "generate",
-    phase: "p0",
-    name: { zh: "QR 码", en: "QR code" },
-    view: "qrcode",
-  },
-  {
-    id: "lorem",
-    category: "generate",
-    phase: "p1",
-    name: { zh: "Lorem", en: "Lorem" },
-    aliases: ["ipsum", "placeholder", "dbx"],
-    view: "lorem",
-  },
-  {
-    id: "totp",
-    category: "generate",
-    phase: "p1",
-    name: { zh: "TOTP 口令", en: "TOTP" },
-    view: "totp",
-  },
 ];

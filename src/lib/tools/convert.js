@@ -2,23 +2,29 @@ import yaml from "js-yaml";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 import { JSONPath } from "jsonpath-plus";
+import { sqlEscape } from "../simpleTransforms.js";
+import { parseSafeJson } from "../jsonPrecision.js";
+
+export { sqlEscape } from "../simpleTransforms.js";
 
 export function parseJson(text) {
-  return JSON.parse(text);
+  if (String(text ?? "").length > 5_000_000) throw new Error("JSON input is limited to 5 MB");
+  return parseSafeJson(text);
 }
 
 export function runJsonPath(input, path) {
   const data = parseJson(input);
-  return JSON.stringify(JSONPath({ path: path || "$", json: data }), null, 2);
+  return JSON.stringify(JSONPath({ path: path || "$", json: data, eval: false }), null, 2);
 }
 
-function csvToJson(text) {
-  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter((l) => l.length);
-  if (!lines.length) return [];
-  const headers = splitCsvLine(lines[0]);
-  return lines.slice(1).map((line) => {
-    const cols = splitCsvLine(line);
-    const row = {};
+export function csvToJson(text) {
+  const records = splitCsv(text.replace(/^\uFEFF/, ""));
+  if (!records.length || (records.length === 1 && records[0].every((cell) => cell === ""))) return [];
+  const headers = records[0];
+  if (new Set(headers).size !== headers.length) throw new Error("CSV headers must be unique");
+  return records.slice(1).map((cols) => {
+    if (cols.length !== headers.length) throw new Error("CSV rows must have the same number of fields as the header");
+    const row = Object.create(null);
     headers.forEach((h, i) => {
       row[h] = cols[i] ?? "";
     });
@@ -26,37 +32,55 @@ function csvToJson(text) {
   });
 }
 
-function splitCsvLine(line) {
-  const out = [];
+function splitCsv(text) {
+  const rows = [];
+  let row = [];
   let cur = "";
   let quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
+  let closedQuote = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
     if (quoted) {
-      if (ch === '"' && line[i + 1] === '"') {
+      if (ch === '"' && text[i + 1] === '"') {
         cur += '"';
         i++;
-      } else if (ch === '"') quoted = false;
+      } else if (ch === '"') { quoted = false; closedQuote = true; }
       else cur += ch;
-    } else if (ch === '"') quoted = true;
+    } else if (closedQuote && ch !== "," && ch !== "\r" && ch !== "\n") throw new Error("Unexpected character after quoted CSV field");
+    else if (ch === '"' && cur === "") quoted = true;
+    else if (ch === '"') throw new Error("Unexpected quote in CSV field");
     else if (ch === ",") {
-      out.push(cur);
+      row.push(cur);
       cur = "";
+      closedQuote = false;
+    } else if (ch === "\r" || ch === "\n") {
+      if (ch === "\r" && text[i + 1] === "\n") i++;
+      row.push(cur);
+      rows.push(row);
+      row = [];
+      cur = "";
+      closedQuote = false;
     } else cur += ch;
   }
-  out.push(cur);
-  return out;
+  if (quoted) throw new Error("Unclosed quoted CSV field");
+  if (cur !== "" || row.length || !rows.length) {
+    row.push(cur);
+    rows.push(row);
+  }
+  return rows;
 }
 
 export function jsonToCsv(value) {
-  const rows = Array.isArray(value) ? value : [value];
+  const rows = (Array.isArray(value) ? value : [value]).map((row) =>
+    row && typeof row === "object" && !Array.isArray(row) ? row : { value: row },
+  );
   if (!rows.length) return "";
-  const headers = [...new Set(rows.flatMap((row) => (row && typeof row === "object" ? Object.keys(row) : ["value"])))];
+  const headers = [...new Set(rows.flatMap((row) => Object.keys(row)))];
   const esc = (v) => {
-    const s = v == null ? "" : String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    const s = v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
+    return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  return [headers.join(","), ...rows.map((row) => headers.map((h) => esc(row?.[h])).join(","))].join("\n");
+  return [headers.map(esc).join(","), ...rows.map((row) => headers.map((h) => esc(row?.[h])).join(","))].join("\n");
 }
 
 function xmlToJson(text) {
@@ -72,11 +96,14 @@ export function jsonToXml(value) {
 
 export function jsonToInsert(value, table) {
   const rows = Array.isArray(value) ? value : [value];
-  const name = table || "table_name";
+  const name = sqlIdentifier(table || "table_name");
   return rows
     .map((row) => {
-      if (!row || typeof row !== "object") return `INSERT INTO ${name} (value) VALUES (${sqlLit(row)});`;
+      if (!row || typeof row !== "object" || Array.isArray(row)) {
+        return `INSERT INTO ${name} (\`value\`) VALUES (${sqlLit(row)});`;
+      }
       const keys = Object.keys(row);
+      if (!keys.length) throw new Error("SQL rows must contain at least one column");
       const cols = keys.map((k) => `\`${k.replace(/`/g, "``")}\``).join(", ");
       const vals = keys.map((k) => sqlLit(row[k])).join(", ");
       return `INSERT INTO ${name} (${cols}) VALUES (${vals});`;
@@ -86,21 +113,20 @@ export function jsonToInsert(value, table) {
 
 function sqlLit(v) {
   if (v == null) return "NULL";
-  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (typeof v === "number") return String(v);
+  if (typeof v === "boolean") return v ? "1" : "0";
+  if (typeof v === "object") return sqlQuote(JSON.stringify(v));
   return sqlQuote(String(v));
+}
+
+function sqlIdentifier(name) {
+  const parts = String(name ?? "").trim().split(".");
+  if (!parts.length || parts.some((part) => !part)) throw new Error("Invalid SQL table name");
+  return parts.map((part) => `\`${part.replace(/`/g, "``")}\``).join(".");
 }
 
 function sqlQuote(text) {
   return `'${String(text ?? "").replace(/'/g, "''")}'`;
-}
-
-export function sqlEscape(text, opts = {}) {
-  const raw = String(text ?? "");
-  if (!raw) return "";
-  const lines = raw.split(/\r?\n/);
-  if (lines.at(-1) === "") lines.pop();
-  const quoted = lines.map((line) => sqlQuote(line));
-  return quoted.join(opts.comma ? ",\n" : "\n");
 }
 
 export const NUMBER_BASES = [
@@ -223,7 +249,6 @@ export function parseHexColor(text) {
       b: parseInt(raw[2] + raw[2], 16),
     };
   }
-  if (/^[0-9a-f]{8}$/i.test(raw)) raw = raw.slice(0, 6);
   if (/^[0-9a-f]{6}$/i.test(raw)) {
     return {
       r: parseInt(raw.slice(0, 2), 16),
@@ -435,7 +460,7 @@ export function formatUnix(ms, unit = "s") {
   return unit === "ms" ? String(Math.trunc(n)) : String(Math.trunc(n / 1000));
 }
 
-export function parseUnixToMs(text) {
+export function parseUnixToMs(text, unit = "auto") {
   const raw = String(text ?? "").trim();
   if (!raw) throw new Error("empty");
   if (!/^-?\d+$/.test(raw)) throw new Error("invalid timestamp");
@@ -443,6 +468,8 @@ export function parseUnixToMs(text) {
   if (!digits) throw new Error("invalid timestamp");
   const n = Number(raw);
   if (!Number.isSafeInteger(n)) throw new Error("invalid timestamp");
+  if (unit === "ms") return n;
+  if (unit === "s") return n * 1000;
   return digits.length >= 13 ? n : n * 1000;
 }
 
@@ -580,53 +607,6 @@ export function runJsonConvert(input, opts) {
   }
 }
 
-export const convertTools = [
-  {
-    id: "jsonpath",
-    category: "convert",
-    phase: "p1",
-    name: { zh: "JSONPath 提取", en: "JSONPath" },
-    view: "jsonpath",
-  },
-  {
-    id: "base-convert",
-    category: "convert",
-    phase: "p0",
-    name: { zh: "进制转换", en: "Number base" },
-    view: "base-convert",
-  },
-  {
-    id: "timestamp",
-    category: "convert",
-    phase: "p0",
-    name: { zh: "时间转换", en: "Time convert" },
-    aliases: ["duration", "unix", "time", "beijing"],
-    view: "time-convert",
-  },
-  {
-    id: "color",
-    category: "convert",
-    phase: "p0",
-    name: { zh: "颜色转换", en: "Color convert" },
-    aliases: ["hex", "rgb", "hsl", "hsv", "cmyk", "colour", "eyedropper", "picker"],
-    view: "color-convert",
-  },
-  {
-    id: "cron",
-    category: "convert",
-    phase: "p0",
-    name: { zh: "Cron 解释", en: "Cron" },
-    view: "cron",
-  },
-  {
-    id: "sql-escape",
-    category: "convert",
-    phase: "p1",
-    name: { zh: "SQL 字符串转义", en: "SQL string escape" },
-    aliases: ["sql", "in", "quote"],
-    view: "live-io",
-  },
-];
 
 function inferTs(value, name = "Root") {
   const walk = (v) => {

@@ -2,7 +2,7 @@ import { CronExpressionParser } from "cron-parser";
 
 export const CRON_FLAVORS = [
   { id: "quartz", zh: "Quartz", en: "Quartz", keys: ["second", "minute", "hour", "day", "month", "weekday", "year"], quartz: true },
-  { id: "spring", zh: "Spring", en: "Spring", keys: ["second", "minute", "hour", "day", "month", "weekday", "year"], quartz: true },
+  { id: "spring", zh: "Spring", en: "Spring", keys: ["second", "minute", "hour", "day", "month", "weekday"], quartz: true },
   { id: "linux", zh: "Linux", en: "Linux", keys: ["minute", "hour", "day", "month", "weekday"], quartz: false },
   { id: "node", zh: "Node", en: "Node", keys: ["second", "minute", "hour", "day", "month", "weekday"], quartz: false },
 ];
@@ -75,6 +75,7 @@ export function isQuartzFlavor(id) {
 
 export function presetExpression(preset, flavorId) {
   const id = preset.forceFlavor || flavorId;
+  if (id === "spring") return preset.quartz.split(/\s+/).slice(0, 6).join(" ");
   if (flavorById(id).quartz) return preset.quartz;
   if (id === "node") return preset.node;
   return preset.linux;
@@ -271,7 +272,23 @@ function convertWeekValue(n, fromQuartz, toQuartz) {
 
 function convertWeekToken(token, fromQuartz, toQuartz) {
   if (!token || token === "*" || token === "?") return token;
-  return String(token).replace(/\d+/g, (part) => String(convertWeekValue(Number(part), fromQuartz, toQuartz)));
+  const convertAtom = (atom) => {
+    if (/^\d+$/.test(atom)) return String(convertWeekValue(Number(atom), fromQuartz, toQuartz));
+    const range = atom.match(/^(\d+)-(\d+)$/);
+    if (range) {
+      return `${convertWeekValue(Number(range[1]), fromQuartz, toQuartz)}-${convertWeekValue(Number(range[2]), fromQuartz, toQuartz)}`;
+    }
+    return atom;
+  };
+  return String(token).split(",").map((item) => {
+    const nth = item.match(/^(.+)#(\d+)$/);
+    if (nth) return `${convertAtom(nth[1])}#${nth[2]}`;
+    const step = item.match(/^(.+)\/(\d+)$/);
+    if (step) return `${convertAtom(step[1])}/${step[2]}`;
+    const last = item.match(/^(\d+)(L)$/i);
+    if (last) return `${convertAtom(last[1])}${last[2]}`;
+    return convertAtom(item);
+  }).join(",");
 }
 
 function yearsFromToken(token) {
@@ -299,6 +316,57 @@ function yearOfIso(iso, tz) {
   const opts = { year: "numeric" };
   if (tz) opts.timeZone = tz;
   return Number(new Intl.DateTimeFormat("en-US", opts).format(new Date(iso)));
+}
+
+function calendarParts(date, tz) {
+  const options = { year: "numeric", month: "numeric", day: "numeric" };
+  if (tz) options.timeZone = tz;
+  const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(date);
+  const get = (type) => Number(parts.find((part) => part.type === type)?.value);
+  return { year: get("year"), month: get("month"), day: get("day") };
+}
+
+function nearestWeekday(year, month, requested, last) {
+  const end = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  let day = last ? end : Math.min(end, Math.max(1, requested));
+  const weekday = new Date(Date.UTC(year, month - 1, day, 12)).getUTCDay();
+  if (weekday === 6) day += day === 1 ? 2 : -1;
+  else if (weekday === 0) day += day === end ? -2 : 1;
+  return day;
+}
+
+function quartzNearestRuns(body, dayToken, yearToken, tz) {
+  const match = dayToken.match(/^(?:(\d{1,2})W|LW)$/i);
+  if (!match) return null;
+  const now = new Date();
+  const start = calendarParts(now, tz);
+  const years = yearsFromToken(yearToken);
+  const results = [];
+  for (let offset = 0; offset < 240 && results.length < 5; offset++) {
+    const zeroBased = start.month - 1 + offset;
+    const year = start.year + Math.floor(zeroBased / 12);
+    const month = ((zeroBased % 12) + 12) % 12 + 1;
+    if (years && !years.has(year)) continue;
+    const beforeMonth = new Date(Date.UTC(year, month - 1, 1) - 2 * 86400000);
+    const options = { currentDate: beforeMonth };
+    if (tz) options.tz = tz;
+    const monthProbe = CronExpressionParser.parse(`0 0 0 1 ${body[4]} *`, options).next().toISOString();
+    const allowedMonth = calendarParts(new Date(monthProbe), tz);
+    if (allowedMonth.year !== year || allowedMonth.month !== month) continue;
+    const day = nearestWeekday(year, month, Number(match[1] || 1), !match[1]);
+    const tokens = [...body];
+    tokens[3] = String(day);
+    tokens[4] = String(month);
+    tokens[5] = "*";
+    const interval = CronExpressionParser.parse(tokens.join(" "), { ...options, currentDate: offset === 0 ? now : beforeMonth });
+    for (let i = 0; i < 5 - results.length; i++) {
+      const iso = interval.next().toISOString();
+      const parts = calendarParts(new Date(iso), tz);
+      if (parts.year !== year || parts.month !== month || parts.day !== day) break;
+      results.push(iso);
+    }
+  }
+  return results.sort().slice(0, 5);
 }
 
 function convertWeekState(state, fromQuartz, toQuartz) {
@@ -346,6 +414,8 @@ export function explainCron(expr, { tz, flavorId } = {}) {
   if (flavor.quartz && body.length >= 6) {
     body[5] = convertWeekToken(body[5], true, false);
   }
+  const specialRuns = flavor.quartz ? quartzNearestRuns(body, atoms[3], yearToken, tz) : null;
+  if (specialRuns) return { expression, fields: atoms, next: specialRuns };
   const options = { currentDate: new Date() };
   if (tz) options.tz = tz;
   const interval = CronExpressionParser.parse(body.join(" "), options);

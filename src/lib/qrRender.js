@@ -1,6 +1,3 @@
-import QRCode from "qrcode";
-import { toCanvas } from "@bwip-js/browser";
-
 export const CODE_TYPES = [
   { id: "qr", zh: "QR Code", en: "QR Code" },
   { id: "hanxin", zh: "汉信码", en: "Han Xin" },
@@ -28,7 +25,7 @@ export const PDF417_ECC_LEVELS = Array.from({ length: 9 }, (_, id) => ({
 }));
 
 export const QR_SIZES = [300, 400, 500, 600];
-export const QR_MARGINS = [0, 1, 2, 4];
+export const QR_MARGINS = [1, 2, 4, 8];
 export const QR_VERSIONS = Array.from({ length: 40 }, (_, i) => {
   const id = i + 1;
   return { id: String(id), modules: id * 4 + 17 };
@@ -130,7 +127,66 @@ function scaleCanvas(source, targetW, targetH) {
   return out;
 }
 
+function xmlEscape(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
+function svgDataUrl(svg) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+/** Render a QR code as a self-contained SVG for lossless export. */
+export async function renderQrSvg(text, options = {}) {
+  const { default: QRCode } = await import("qrcode");
+  const ecc = options.errorCorrectionLevel || "M";
+  const margin = Math.max(0, Number(options.margin) || 0);
+  const requested = clampQrSize(options.width);
+  const moduleStyle = options.moduleStyle || "square";
+  const dark = options.dark || "#111111";
+  const light = options.light || "#ffffff";
+  const createOpts = { errorCorrectionLevel: ecc };
+  if (options.version) createOpts.version = Number(options.version);
+  const qr = QRCode.create(text, createOpts);
+  const size = qr.modules.size;
+  const n = size + margin * 2;
+  const width = Math.max(requested, n * 2);
+  const cell = width / n;
+  const rects = [];
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      if (!qr.modules.get(row, col)) continue;
+      const x = (col + margin) * cell;
+      const y = (row + margin) * cell;
+      const rigid = qr.modules.isReserved(row, col);
+      const style = rigid ? "square" : moduleStyle;
+      const inset = style === "square" ? 0 : cell * 0.08;
+      const radius = style === "dots" ? cell / 2 : style === "rounded" ? cell * 0.32 : 0;
+      rects.push(`<rect x="${x + inset}" y="${y + inset}" width="${Math.max(0, cell - inset * 2)}" height="${Math.max(0, cell - inset * 2)}" rx="${radius}" fill="${xmlEscape(dark)}"/>`);
+    }
+  }
+  const logo = options.logoSrc
+    ? `<image href="${xmlEscape(options.logoSrc)}" x="${width * 0.39}" y="${width * 0.39}" width="${width * 0.22}" height="${width * 0.22}" preserveAspectRatio="xMidYMid meet"/>`
+    : "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${width}" viewBox="0 0 ${width} ${width}" role="img"><rect width="100%" height="100%" fill="${xmlEscape(light)}"/>${rects.join("")}${logo}</svg>`;
+  return {
+    svg,
+    dataUrl: svgDataUrl(svg),
+    version: qr.version,
+    modules: size,
+    errorCorrectionLevel: ecc,
+    width,
+    height: width,
+    type: "qr",
+  };
+}
+
 export async function renderQr(text, options = {}) {
+  const { default: QRCode } = await import("qrcode");
   const ecc = options.errorCorrectionLevel || "M";
   const margin = Math.max(0, Number(options.margin) || 0);
   const requested = clampQrSize(options.width);
@@ -187,6 +243,7 @@ export async function renderQr(text, options = {}) {
 }
 
 async function renderBwip(type, text, options = {}) {
+  const { toCanvas } = await import("@bwip-js/browser");
   const requested = clampQrSize(options.width);
   const dark = options.dark || "#111111";
   const light = options.light || "#ffffff";
@@ -206,7 +263,8 @@ async function renderBwip(type, text, options = {}) {
     opts.eclevel = `L${Number(options.errorCorrectionLevel) || 2}`;
     if (options.version) opts.version = Number(options.version);
   } else if (type === "pdf417") {
-    opts.securitylevel = Number(options.errorCorrectionLevel) || 2;
+    const level = Number(options.errorCorrectionLevel ?? 2);
+    opts.securitylevel = Number.isInteger(level) && level >= 0 && level <= 8 ? level : 2;
   } else if (type === "datamatrix" && options.version) {
     opts.version = String(options.version);
   }

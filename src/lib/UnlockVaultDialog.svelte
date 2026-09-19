@@ -2,7 +2,7 @@
   import { invoke } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
 
-  let { locale = "zh-CN", open = $bindable(false), onUnlocked = () => {} } = $props();
+  let { locale = "zh-CN", purpose = "save", open = $bindable(false), onUnlocked = () => {} } = $props();
 
   let exists = $state(true);
   let password = $state("");
@@ -103,7 +103,9 @@
         </strong>
         <p>
           {exists
-            ? t("写入密钥前需要先解锁。", "Unlock the vault before saving a key.")
+            ? purpose === "select"
+              ? t("解锁后即可选择已保存的密钥。", "Unlock the vault to choose a saved key.")
+              : t("写入密钥前需要先解锁。", "Unlock the vault before saving a key.")
             : t("还没有密钥库。设置主密码（至少 8 位）后即可保存。", "No vault yet. Set a master password (8+ characters) to save the key.")}
         </p>
       </div>
