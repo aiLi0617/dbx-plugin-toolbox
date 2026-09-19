@@ -119,7 +119,7 @@
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .code-row {
     display: flex;
@@ -144,7 +144,7 @@
     height: 100%;
     width: 100%;
     transform-origin: left center;
-    background: var(--color-primary, #2563eb);
+    background: var(--color-primary);
     transition: transform 200ms linear;
   }
   .remain {

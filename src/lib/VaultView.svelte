@@ -507,8 +507,8 @@
     {/if}
 
     <div class="seg" role="tablist">
-      <button class:active={panel === "create"} onclick={() => (panel = "create")} role="tab" type="button">{t("添加密钥", "Add key")}</button>
-      <button class:active={panel === "password"} onclick={() => (panel = "password")} role="tab" type="button">{t("主密码", "Master password")}</button>
+      <button class:active={panel === "create"} aria-selected={panel === "create"} onclick={() => (panel = "create")} role="tab" type="button">{t("添加密钥", "Add key")}</button>
+      <button class:active={panel === "password"} aria-selected={panel === "password"} onclick={() => (panel = "password")} role="tab" type="button">{t("主密码", "Master password")}</button>
     </div>
 
     {#if panel === "create"}
@@ -772,7 +772,9 @@
   }
   .seg button:last-child { border-right: 0; }
   .seg button.active {
-    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 10%, transparent)));
+    background: var(--dbx-selection-background);
+    border-color: var(--dbx-selection-border);
+    color: var(--dbx-selection-foreground);
     font-weight: 600;
   }
   .pem {
@@ -805,7 +807,7 @@
   }
   .dialog.danger {
     width: min(420px, 100%);
-    border-color: color-mix(in srgb, var(--color-destructive, #dc2626) 28%, transparent);
+    border-color: color-mix(in srgb, var(--color-destructive) 28%, transparent);
   }
   .sheet-copy {
     display: flex;

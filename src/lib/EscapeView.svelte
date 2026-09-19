@@ -43,6 +43,7 @@
   <textarea
     class="dbx-textarea area"
     spellcheck="false"
+    aria-label={t("待转义文本", "Text to escape")}
     placeholder={mode === "decode" ? "&lt;tag&gt; 或 \\u4e2d" : "<tag> 中文"}
     bind:value={input}
   ></textarea>
@@ -50,7 +51,7 @@
     {#each rows as row (row.id)}
       <div class="row">
         <span class="name">{t(row.zh, row.en)}</span>
-        <input class="dbx-input mono" class:invalid={Boolean(row.error)} readonly value={row.error || row.value} />
+        <input class="dbx-input mono" class:invalid={Boolean(row.error)} readonly aria-label={t(`${row.zh} 输出`, `${row.en} output`)} value={row.error || row.value} />
         <CopyButton {locale} text={row.value} labelZh={`复制${row.zh}`} labelEn={`Copy ${row.en}`} />
       </div>
     {/each}
@@ -93,8 +94,8 @@
     align-items: center;
   }
   .invalid {
-    border-color: var(--color-destructive, #dc2626);
-    color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
   }
 
   @media (max-width: 560px) {

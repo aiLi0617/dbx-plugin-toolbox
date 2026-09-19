@@ -455,7 +455,7 @@
         </div>
       </div>
       <div class="json-editor-wrap" style:--json-editor-bottom-space="{textActionsHeight + 24}px">
-        <JsonCodeEditor bind:value={jsonText} {showLineNumbers} {locale} maxLength={INPUT_LIMITS.json} placeholder={'{ "name": "dbx" }'} />
+        <JsonCodeEditor bind:value={jsonText} {showLineNumbers} {locale} ariaLabel={t("JSON 文本编辑器", "JSON text editor")} maxLength={INPUT_LIMITS.json} placeholder={'{ "name": "dbx" }'} />
         <div class="json-text-actions" bind:clientHeight={textActionsHeight} role="group" aria-label={t("中文与转义", "Unicode and escaping")}>
           {#each [[toUnicode, "中文转 Unicode", "Chinese → Unicode"], [fromUnicode, "Unicode 转中文", "Unicode → Chinese"], [escapeText, "添加转义", "Escape"], [unescapeText, "去除转义", "Unescape"]] as [action, labelZh, labelEn]}
             <button class="dbx-btn" onclick={action} type="button">{t(labelZh, labelEn)}</button>
@@ -545,7 +545,7 @@
 
 <style>
   .json-modes { display: flex; flex-wrap: wrap; gap: 6px; }
-  .json-modes .active { background: var(--color-primary); color: var(--color-primary-foreground); }
+  .json-modes .active { background: var(--dbx-selection-background); border-color: var(--dbx-selection-border); color: var(--dbx-selection-foreground); }
   .json-workbench {
     flex: 1;
     min-height: 0;
@@ -608,10 +608,10 @@
   .json-resizer:hover::after,
   .json-resizer:focus-visible::after,
   .json-resizer.dragging::after {
-    background: var(--color-primary, #2563eb);
+    background: var(--color-primary);
   }
   .json-resizer:focus-visible {
-    outline: 2px solid var(--color-ring, var(--color-primary, #93c5fd));
+    outline: 2px solid var(--color-ring, var(--color-primary));
     outline-offset: 1px;
   }
   .json-pane-bar {
@@ -640,9 +640,9 @@
     padding: 0;
   }
   .json-pane-bar :global(.dbx-btn.active) {
-    background: var(--color-primary, #2563eb);
-    border-color: var(--color-primary, #2563eb);
-    color: var(--color-primary-foreground, #fff);
+    background: var(--dbx-selection-background);
+    border-color: var(--dbx-selection-border);
+    color: var(--dbx-selection-foreground);
   }
   .json-pane-bar :global(.json-lang-select) {
     width: auto;
@@ -718,7 +718,7 @@
     overflow-wrap: anywhere;
     font-size: 13px;
     line-height: 1.6;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .json-convert-out {
     flex: 1;

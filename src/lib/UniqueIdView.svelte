@@ -75,12 +75,12 @@
     {#if kind === "nanoid"}
       <label class="field">
         <span>{t("长度", "Length")}</span>
-        <NumberInput class="size" min="4" max="64" bind:value={size} />
+        <NumberInput class="size" min="4" max="64" ariaLabel={t("长度", "Length")} bind:value={size} />
       </label>
     {/if}
     <label class="field">
       <span>{t("数量", "Count")}</span>
-      <NumberInput class="size" min="1" max="100" bind:value={count} />
+      <NumberInput class="size" min="1" max="100" ariaLabel={t("数量", "Count")} bind:value={count} />
     </label>
     {#if kind === "uuid"}
       <label class="check">
@@ -110,7 +110,7 @@
         {#if items.length > 1}
           <span class="idx">{i + 1}</span>
         {/if}
-        <input class="dbx-input mono" readonly value={id} />
+        <input class="dbx-input mono" readonly aria-label={t(items.length > 1 ? `第 ${i + 1} 条唯一 ID` : "唯一 ID 输出", items.length > 1 ? `Unique ID #${i + 1}` : "Generated unique ID")} value={id} />
         <CopyButton
           {locale}
           text={id}

@@ -136,7 +136,7 @@
         <span class="caption">{t("公钥", "Public key")}</span>
         <CopyButton {locale} text={publicKey} labelZh="复制公钥" labelEn="Copy public key" />
       </div>
-      <textarea class="dbx-textarea area" value={publicKey} readonly placeholder={t("生成后显示", "Appears after generate")}></textarea>
+      <textarea class="dbx-textarea area" value={publicKey} readonly aria-label={t("生成的公钥", "Generated public key")} placeholder={t("生成后显示", "Appears after generate")}></textarea>
     </label>
     <label class="block">
       <div class="caption-row">
@@ -146,7 +146,7 @@
         {/if}
         <CopyButton {locale} text={privateKey} labelZh="复制私钥" labelEn="Copy private key" />
       </div>
-      <textarea class="dbx-textarea area" value={privateKey} readonly placeholder={t("生成后显示", "Appears after generate")}></textarea>
+      <textarea class="dbx-textarea area" value={privateKey} readonly aria-label={t("生成的私钥", "Generated private key")} placeholder={t("生成后显示", "Appears after generate")}></textarea>
     </label>
   </div>
 </div>
@@ -193,7 +193,7 @@
     gap: var(--ui-field-gap, 6px);
   }
   .clear-btn {
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .area {
     flex: 1;

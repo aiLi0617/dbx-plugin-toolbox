@@ -7,6 +7,7 @@
     value = $bindable(""),
     showLineNumbers = true,
     placeholder = "",
+    ariaLabel = "",
     maxLength = 5_000_000,
     locale = "zh-CN",
   } = $props();
@@ -136,6 +137,7 @@
         bind:this={textareaEl}
         value={shownText}
         {placeholder}
+        aria-label={ariaLabel || undefined}
         readonly
         maxlength={maxLength}
         spellcheck="false"
@@ -151,6 +153,7 @@
         bind:value
         maxlength={maxLength}
         {placeholder}
+        aria-label={ariaLabel || undefined}
         spellcheck="false"
         onscroll={syncScroll}
         onkeydown={onKeydown}
@@ -290,7 +293,7 @@
   }
   .json-textarea::selection {
     color: transparent;
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 28%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 28%, transparent);
   }
   .tok-key,
   .tok-string {

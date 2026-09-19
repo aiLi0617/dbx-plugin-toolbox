@@ -118,7 +118,7 @@
       {/if}
       <CopyButton {locale} text={material} labelZh="复制密钥" labelEn="Copy key" />
     </div>
-    <textarea class="dbx-textarea area" value={material} readonly placeholder={t("生成后显示", "Appears after generate")}></textarea>
+    <textarea class="dbx-textarea area" value={material} readonly aria-label={t("生成的对称密钥", "Generated symmetric key")} placeholder={t("生成后显示", "Appears after generate")}></textarea>
   </label>
 </div>
 
@@ -157,7 +157,7 @@
     gap: var(--ui-field-gap, 6px);
   }
   .clear-btn {
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .area {
     flex: 1;

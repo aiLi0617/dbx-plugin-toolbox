@@ -138,7 +138,7 @@
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .dbx-hint {
     margin: 0;

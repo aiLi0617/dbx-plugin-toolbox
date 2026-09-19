@@ -52,7 +52,7 @@
 
 <style>
   .copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-  .copy-error { font-size: 11px; color: var(--color-destructive, #dc2626); grid-column: 1 / -1; }
+  .copy-error { font-size: 11px; color: var(--color-destructive); grid-column: 1 / -1; }
   .copy-btn {
     width: 30px;
     padding: 0;

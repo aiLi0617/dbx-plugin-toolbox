@@ -39,7 +39,7 @@
     </label>
     <label class="field">
       <span>{t("长度", "Length")}</span>
-      <NumberInput class="size" min="4" max="1024" bind:value={length} />
+      <NumberInput class="size" min="4" max="1024" ariaLabel={t("长度", "Length")} bind:value={length} />
     </label>
     {#if kind === "password"}
       <label class="field">
@@ -58,7 +58,7 @@
   </div>
 
   <div class="row">
-    <input class="dbx-input mono" readonly value={value} />
+    <input class="dbx-input mono" readonly aria-label={t("生成结果", "Generated value")} value={value} />
     <CopyButton {locale} text={value} labelZh={chrome.copy.zh} labelEn={chrome.copy.en} />
   </div>
 </div>

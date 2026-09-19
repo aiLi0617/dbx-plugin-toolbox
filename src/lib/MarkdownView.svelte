@@ -97,7 +97,7 @@
     margin: 0;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .error { margin: 0; color: var(--color-destructive, #dc2626); }
+  .error { margin: 0; color: var(--color-destructive); }
   .preview :global(:first-child) {
     margin-top: 0;
   }
@@ -152,7 +152,7 @@
     background: transparent;
   }
   .preview :global(a) {
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
   }
   .preview :global(img) {
     max-width: 100%;

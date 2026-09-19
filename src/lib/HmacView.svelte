@@ -80,7 +80,7 @@
   {/if}
   <div class="row">
     <span class="name">{t("摘要", "Digest")}</span>
-    <input class="dbx-input mono" class:invalid={Boolean(error)} readonly value={digest} />
+    <input class="dbx-input mono" class:invalid={Boolean(error)} readonly aria-label={t("摘要", "Digest")} value={digest} />
     <CopyButton {locale} text={digest} labelZh="复制摘要" labelEn="Copy digest" />
   </div>
 </div>
@@ -126,11 +126,11 @@
     align-items: center;
   }
   .invalid {
-    border-color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .dbx-hint {
     margin: 0;

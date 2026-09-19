@@ -150,8 +150,9 @@
     background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
   }
   .seg button.active {
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
+    background: var(--dbx-selection-background);
+    border-color: var(--dbx-selection-border);
+    color: var(--dbx-selection-foreground);
     font-weight: 600;
   }
 </style>

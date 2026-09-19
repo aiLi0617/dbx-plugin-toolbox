@@ -42,6 +42,11 @@
   --color-info: rgb(37 99 235);
   --color-info-foreground: rgb(239 246 255);
   --color-info-bg: color-mix(in srgb, var(--color-info) 12%, transparent);
+  /* Persistent choices use the DBX primary pair. The host's inline tokens
+     replace --color-primary/--color-primary-foreground at runtime. */
+  --dbx-selection-background: var(--color-primary);
+  --dbx-selection-foreground: var(--color-primary-foreground);
+  --dbx-selection-border: var(--color-primary);
   --ui-gap: 12px;
   --ui-field-gap: 6px;
   --ui-caption: 20px;
@@ -182,10 +187,18 @@ code, kbd, samp, pre, .mono {
   color: var(--color-primary-foreground);
 }
 :where(.dbx-btn--primary:hover) { opacity: 0.9; }
+:where(.dbx-btn--selected),
+:where(.dbx-btn[aria-pressed="true"]) {
+  background: var(--dbx-selection-background);
+  border-color: var(--dbx-selection-border);
+  color: var(--dbx-selection-foreground);
+}
+:where(.dbx-btn--selected:hover),
+:where(.dbx-btn[aria-pressed="true"]:hover) { opacity: 0.9; }
 :where(.dbx-btn--danger) {
   background: var(--color-destructive);
   border-color: var(--color-destructive);
-  color: var(--color-destructive-foreground, #fff);
+  color: var(--color-destructive-foreground);
 }
 :where(.dbx-btn--ghost) { border-color: transparent; background: transparent; }
 :where(.dbx-btn:disabled) { opacity: 0.5; cursor: not-allowed; }
@@ -410,7 +423,7 @@ code, kbd, samp, pre, .mono {
   font-weight: 600;
 }
 .cat.active::before {
-  background: var(--color-sidebar-primary, var(--color-primary, #2563eb));
+  background: var(--color-sidebar-primary, var(--color-primary));
 }
 .cat-name {
   min-width: 0;
@@ -519,7 +532,7 @@ code, kbd, samp, pre, .mono {
 .tool-pin:hover,
 .tool-pin.pinned {
   background: var(--color-sidebar-accent, var(--color-accent, var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent))));
-  color: var(--color-sidebar-primary, var(--color-primary, #2563eb));
+  color: var(--color-sidebar-primary, var(--color-primary));
 }
 .tool-pin:disabled { opacity: 0.5; }
 .tool.with-summary {
@@ -572,7 +585,7 @@ code, kbd, samp, pre, .mono {
   flex-shrink: 0;
   font-size: 11px;
   font-weight: 500;
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
 }
 .nav-empty {
   padding: 12px 8px;
@@ -624,8 +637,8 @@ code, kbd, samp, pre, .mono {
   opacity: 0.5;
 }
 .catalog-card.drag-over {
-  border-color: var(--color-primary, #2563eb);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary, #2563eb) 18%, transparent);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
 }
 .catalog-drag {
   display: inline-flex;
@@ -686,7 +699,7 @@ code, kbd, samp, pre, .mono {
 .catalog-pin:hover,
 .catalog-pin.pinned {
   background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 6%, transparent)));
-  color: var(--color-primary, #2563eb);
+  color: var(--color-primary);
 }
 .catalog-pin:disabled { opacity: 0.5; }
 
@@ -741,7 +754,7 @@ code, kbd, samp, pre, .mono {
   color: var(--color-muted-foreground);
   font-size: 18px;
 }
-.favorite-action.active { color: #d49a00; }
+.favorite-action.active { color: var(--color-warning); }
 .app-banner { margin: 8px 16px 0; }
 .field {
   display: flex;
@@ -839,9 +852,9 @@ code, kbd, samp, pre, .mono {
 .banner {
   padding: 8px 12px;
   border-radius: var(--radius-md, 8px);
-  border: 1px solid color-mix(in srgb, var(--color-destructive, #dc2626) 28%, transparent);
-  background: color-mix(in srgb, var(--color-destructive, #dc2626) 12%, var(--color-background, Canvas));
-  color: var(--color-destructive, #dc2626);
+  border: 1px solid color-mix(in srgb, var(--color-destructive) 28%, transparent);
+  background: color-mix(in srgb, var(--color-destructive) 12%, var(--color-background, Canvas));
+  color: var(--color-destructive);
 }
 .io .preview { overflow: auto; }
 .io .preview img { max-width: 240px; }

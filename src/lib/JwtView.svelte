@@ -293,7 +293,7 @@
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .verify-actions, .claims {
     align-items: center;
@@ -301,8 +301,8 @@
   .status, .claims span {
     font-size: 12px;
   }
-  .valid { color: var(--color-success, #16803c); }
-  .invalid, .bad { color: var(--color-destructive, #dc2626); }
+  .valid { color: var(--color-success); }
+  .invalid, .bad { color: var(--color-destructive); }
   .claims {
     display: flex;
     flex-wrap: wrap;

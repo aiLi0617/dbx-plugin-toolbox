@@ -88,7 +88,7 @@
   <section class="panel split-panel">
     <h3>{t("子网切分", "Subnet splitting")}</h3>
     <div class="compact-fields split-fields">
-      <div class="field grow"><span>{t("目标前缀", "Target prefix")}</span><input class="dbx-input" type="number" min="0" max={addressFamily === "ipv6" ? 128 : 32} bind:value={splitPrefix} /></div>
+      <div class="field grow"><span>{t("目标前缀", "Target prefix")}</span><input class="dbx-input" type="number" min="0" max={addressFamily === "ipv6" ? 128 : 32} aria-label={t("目标前缀", "Target prefix")} bind:value={splitPrefix} /></div>
       <div class="field result-field"><span>{t("子网数量", "Subnet count")}</span><output class:empty={!splitResult.value.length}>{splitResult.value.length ? splitResult.value.length : "—"}</output></div>
     </div>
     {#if splitResult.error}<p class="error">{splitResult.error}</p>{/if}
@@ -138,9 +138,9 @@
   .subnet-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; max-height: 180px; overflow: auto; }
   .subnet-list code { border: 1px solid var(--color-border); border-radius: 5px; padding: 6px 8px; background: var(--color-muted); font-family: var(--font-mono, ui-monospace, monospace); font-size: 12px; }
   h3 { margin: 0; font-size: 14px; }
-  .error { margin: 0; color: var(--color-destructive, #d14343); font-size: 12px; }
+  .error { margin: 0; color: var(--color-destructive); font-size: 12px; }
   .notice { margin: 0; border: 1px solid var(--color-border); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
-  .notice.warning { border-color: color-mix(in srgb, #d99a20 45%, var(--color-border)); background: color-mix(in srgb, #d99a20 9%, var(--color-background)); }
+  .notice.warning { border-color: color-mix(in srgb, var(--color-warning) 45%, var(--color-border)); background: color-mix(in srgb, var(--color-warning) 9%, var(--color-background)); }
   details { font-size: 13px; } summary { cursor: pointer; color: var(--color-muted-foreground); }
   dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; margin: 12px 0 0; }
   dt, dd { margin: 0; } dd { overflow-wrap: anywhere; }

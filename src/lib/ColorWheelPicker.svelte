@@ -189,7 +189,7 @@
   }
   .wheel-wrap:focus-visible {
     border-radius: 50%;
-    box-shadow: 0 0 0 2px var(--color-ring, var(--color-primary, #93c5fd));
+    box-shadow: 0 0 0 2px var(--color-ring, var(--color-primary));
   }
   .wheel {
     width: 100%;
@@ -241,7 +241,7 @@
     pointer-events: none;
   }
   .value-track:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-ring, var(--color-primary, #93c5fd));
+    box-shadow: 0 0 0 2px var(--color-ring, var(--color-primary));
   }
   .value-thumb {
     position: absolute;

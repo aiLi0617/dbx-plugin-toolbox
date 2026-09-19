@@ -119,6 +119,6 @@
   }
   .ok {
     margin: 0;
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
   }
 </style>

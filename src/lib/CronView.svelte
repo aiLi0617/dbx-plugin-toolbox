@@ -272,7 +272,7 @@
   <nav class="flavors" aria-label={t("表达式类型", "Expression type")}>
     <p class="eyebrow">{t("表达式类型", "Type")}</p>
     {#each CRON_FLAVORS as item}
-      <button class="flavor" class:active={flavorId === item.id} onclick={() => setFlavor(item.id)} type="button">
+      <button class="flavor" class:active={flavorId === item.id} aria-pressed={flavorId === item.id} onclick={() => setFlavor(item.id)} type="button">
         {item.en}
       </button>
     {/each}
@@ -317,9 +317,9 @@
               <span class="mode-name">{t("范围", "Range")}</span>
               <span class="mode-desc mode-controls">
                 {t("从", "From")}
-                <NumberInput class="num" min={def.min} max={def.max} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
+                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("范围起始", "Range start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
                 {t("到", "to")}
-                <NumberInput class="num" min={def.min} max={def.max} value={active.to} oninput={(n) => num(activeKey, "to", n, def.max)} />
+                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("范围结束", "Range end")} value={active.to} oninput={(n) => num(activeKey, "to", n, def.max)} />
                 {t(def.unitZh, def.unitEn)}
               </span>
             </label>
@@ -329,9 +329,9 @@
               <span class="mode-name">{t("周期", "Step")}</span>
               <span class="mode-desc mode-controls">
                 {t("从", "From")}
-                <NumberInput class="num" min={def.min} max={def.max} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
+                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("周期起始", "Step start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
                 {t("开始，每", "every")}
-                <NumberInput class="num" min="1" max={def.max} value={active.interval} oninput={(n) => num(activeKey, "interval", n, 1)} />
+                <NumberInput class="num" min="1" max={def.max} ariaLabel={t("周期间隔", "Step interval")} value={active.interval} oninput={(n) => num(activeKey, "interval", n, 1)} />
                 {t(`${def.unitZh}执行一次`, `${def.unitEn}s`)}
               </span>
             </label>
@@ -342,7 +342,7 @@
                 <span class="mode-name">{t("最近工作日", "Nearest weekday")}</span>
                 <span class="mode-desc mode-controls">
                   {t("每月", "On")}
-                  <NumberInput class="num" min={def.min} max={def.max} value={active.from} oninput={(n) => num(activeKey, "from", n, 1)} />
+                  <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("最近工作日日期", "Nearest weekday day")} value={active.from} oninput={(n) => num(activeKey, "from", n, 1)} />
                   {t("号最近的工作日", "nearest weekday")}
                 </span>
               </label>
@@ -433,6 +433,7 @@
           class="dbx-input mono"
           spellcheck="false"
           autocomplete="off"
+          aria-label={t("Cron 表达式", "Cron expression")}
           placeholder="*/5 * * * *"
           bind:value={expression}
           oninput={queueParse}
@@ -527,8 +528,8 @@
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .flavor.active {
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 12%, transparent);
-    color: var(--color-primary, #2563eb);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
     font-weight: 600;
   }
   .editor {
@@ -565,10 +566,10 @@
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .tab.active {
-    background: var(--color-card, var(--color-background, Canvas));
-    color: var(--color-primary, #2563eb);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
     font-weight: 600;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary, #2563eb) 18%, transparent);
+    box-shadow: 0 0 0 1px var(--dbx-selection-border);
   }
   .modes {
     display: flex;
@@ -589,7 +590,7 @@
     align-items: start;
   }
   .mode.on {
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 8%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
   .mode input[type="radio"] {
     margin: 0;
@@ -645,7 +646,7 @@
   .link {
     border: 0;
     background: transparent;
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
     font-size: 12px;
     padding: 0;
   }
@@ -693,9 +694,9 @@
   }
   .pick.on,
   .pick.on:hover {
-    border-color: var(--color-primary, #2563eb);
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 12%, transparent);
-    color: var(--color-primary, #2563eb);
+    border-color: var(--dbx-selection-border);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
   }
   .custom {
     grid-column: 2 / -1;
@@ -741,8 +742,13 @@
     font-weight: 600;
   }
   .token.active {
-    border-color: var(--color-primary, #2563eb);
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 10%, transparent);
+    border-color: var(--dbx-selection-border);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
+  }
+  .token.active span {
+    color: var(--dbx-selection-foreground);
+    opacity: 0.78;
   }
   .expr-row {
     display: grid;
@@ -777,7 +783,7 @@
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: 999px;
     background: var(--color-card, var(--color-background, Canvas));
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
     font-size: 12px;
   }
   .chevron {
@@ -808,13 +814,13 @@
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .preset.active {
-    border-color: var(--color-primary, #2563eb);
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 12%, transparent);
-    color: var(--color-primary, #2563eb);
+    border-color: var(--dbx-selection-border);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .next {
     padding: 12px 14px;
@@ -841,7 +847,7 @@
   }
   .idx {
     font-size: 12px;
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
   }
   .when {
     font-size: 12px;

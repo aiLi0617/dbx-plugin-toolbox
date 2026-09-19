@@ -292,9 +292,9 @@
   .ghost-copy { display:flex; min-width:0; flex-direction:column; gap:4px; padding:10px 5px; }
   .ghost-copy strong { font-size:13px; }
   .ghost-copy small { overflow:hidden; color:var(--color-muted-foreground); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
-  .ghost-star { color:#d49a00; font-size:16px; text-align:center; }
+  .ghost-star { color:var(--color-warning); font-size:16px; text-align:center; }
   .drag,.star { position:relative; z-index:2; height:32px; padding:0; border:0; background:transparent; color:var(--color-muted-foreground); }
-  .drag { grid-column:1; cursor:grab; opacity:.45; }.tool-card:hover .drag,.drag:focus-visible{opacity:1}.star{grid-column:3}.star.active{color:#d49a00;font-size:16px}
+  .drag { grid-column:1; cursor:grab; opacity:.45; }.tool-card:hover .drag,.drag:focus-visible{opacity:1}.star{grid-column:3}.star.active{color:var(--color-warning);font-size:16px}
   .card-open { position:absolute; z-index:1; inset:0; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; padding:11px 36px 11px 30px; border:0; border-radius:inherit; background:transparent; text-align:left; }
   .card-open strong { font-size:13px; }.card-open span { overflow:hidden; color:var(--color-muted-foreground); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
   .recent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:7px; }

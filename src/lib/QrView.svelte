@@ -593,7 +593,7 @@
 
     <div class="pair">
       <button class="dbx-btn" onclick={pickLogo} type="button">{logoSrc ? t("更换 Logo", "Change logo") : t("上传 Logo", "Upload logo")}</button>
-      <button class="dbx-btn" class:active={beautyOpen} onclick={() => (beautyOpen = !beautyOpen)} type="button">{t("二维码美化", "Style")}</button>
+      <button class="dbx-btn" class:active={beautyOpen} aria-pressed={beautyOpen} onclick={() => (beautyOpen = !beautyOpen)} type="button">{t("二维码美化", "Style")}</button>
     </div>
     <input bind:this={logoInput} class="file" type="file" accept="image/*" onchange={onLogo} />
 
@@ -782,8 +782,9 @@
     gap: 8px;
   }
   .pair .active {
-    border-color: var(--color-primary, #2563eb);
-    color: var(--color-primary, #2563eb);
+    border-color: var(--dbx-selection-border);
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
   }
   .file {
     display: none;
@@ -856,7 +857,7 @@
   .switch {
     height: 26px;
     padding: 0 8px;
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
   }
   .frame {
     display: flex;
@@ -896,7 +897,7 @@
   }
   .fail {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .dbx-hint {
     margin: 0;
@@ -912,7 +913,7 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--color-primary, #2563eb);
+    color: var(--color-primary);
     font: inherit;
     text-align: left;
     cursor: pointer;

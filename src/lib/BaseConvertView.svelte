@@ -425,7 +425,7 @@
     background: var(--color-background, Canvas);
   }
   .base-radix-group:focus-within {
-    outline: 2px solid var(--color-ring, var(--color-primary, #93c5fd));
+    outline: 2px solid var(--color-ring, var(--color-primary));
     outline-offset: -1px;
   }
   .base-radix {
@@ -476,7 +476,7 @@
     font-family: var(--font-mono);
   }
   .base-input.invalid {
-    border-color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
   }
   .base-copy {
     width: 30px;
@@ -485,7 +485,7 @@
   }
   .base-error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
 
   @media (max-width: 560px) {

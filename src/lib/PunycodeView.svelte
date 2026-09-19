@@ -23,12 +23,12 @@
   <div class="rows">
     <div class="row">
       <span class="name">Unicode</span>
-      <input class="dbx-input mono" readonly value={pair.unicode} />
+      <input class="dbx-input mono" readonly aria-label={t("Unicode 输出", "Unicode output")} value={pair.unicode} />
       <CopyButton {locale} text={pair.unicode} labelZh="复制 Unicode" labelEn="Copy Unicode" />
     </div>
     <div class="row">
       <span class="name">ACE</span>
-      <input class="dbx-input mono" readonly value={pair.ace} />
+      <input class="dbx-input mono" readonly aria-label={t("ACE 输出", "ACE output")} value={pair.ace} />
       <CopyButton {locale} text={pair.ace} labelZh="复制 ACE" labelEn="Copy ACE" />
     </div>
   </div>

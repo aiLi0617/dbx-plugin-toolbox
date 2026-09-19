@@ -178,7 +178,7 @@
   }
   .banner {
     font-size: 12px;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .field {
     display: flex;

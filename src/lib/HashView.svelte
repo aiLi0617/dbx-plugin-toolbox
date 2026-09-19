@@ -144,6 +144,7 @@
           readonly
           placeholder={errors[alg.id] || ""}
           title={errors[alg.id] || ""}
+          aria-label={t(`${alg.label} 摘要`, `${alg.label} digest`)}
           value={digests[alg.id]}
         />
         <CopyButton {locale} text={digests[alg.id]} labelZh={`复制 ${alg.label}`} labelEn={`Copy ${alg.label}`} />
@@ -199,8 +200,8 @@
   .file-button { position: relative; overflow: hidden; cursor: pointer; }
   .file-button input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .expected { flex: 1 1 100%; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-  .match { color: var(--color-success, #16803c); font-size: 12px; }
-  .mismatch { color: var(--color-destructive, #dc2626); font-size: 12px; }
+  .match { color: var(--color-success); font-size: 12px; }
+  .mismatch { color: var(--color-destructive); font-size: 12px; }
   .row {
     display: grid;
     grid-template-columns: 5.5rem minmax(0, 1fr) 30px;
@@ -212,8 +213,8 @@
     font-weight: 500;
   }
   .invalid {
-    border-color: var(--color-destructive, #dc2626);
-    color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
   }
 
   @media (max-width: 560px) {

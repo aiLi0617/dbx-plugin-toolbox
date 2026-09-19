@@ -136,7 +136,7 @@
   }
   .code-textarea::selection {
     color: transparent;
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 28%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 28%, transparent);
   }
   .code-textarea.readonly {
     cursor: default;

@@ -112,8 +112,8 @@
     resize: vertical;
   }
   .invalid {
-    border-color: var(--color-destructive, #dc2626);
-    color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
   }
 
   @media (max-width: 560px) {

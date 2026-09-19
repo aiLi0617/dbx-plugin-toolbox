@@ -151,18 +151,18 @@
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .status {
     padding: 8px 10px;
     border-radius: var(--radius-md, 8px);
-    background: var(--color-success-bg, color-mix(in srgb, #16803c 12%, transparent));
-    color: var(--color-success, #16803c);
+    background: var(--color-success-bg);
+    color: var(--color-success);
     font-size: 12px;
   }
   .status.bad {
-    background: color-mix(in srgb, var(--color-destructive, #dc2626) 10%, transparent);
-    color: var(--color-destructive, #dc2626);
+    background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+    color: var(--color-destructive);
   }
   .dbx-hint {
     margin: 0;

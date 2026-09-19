@@ -117,8 +117,8 @@
   .groups, .actions, .history-actions { display: flex; flex-wrap: wrap; gap: 6px; }
   .groups button { border: 0; border-radius: 6px; background: transparent; color: var(--color-muted-foreground); font: inherit; font-size: 13px; padding: 7px 12px; cursor: pointer; }
   .groups button:hover { background: var(--color-muted); color: var(--color-foreground); }
-  .groups button.active { background: var(--color-primary); color: var(--color-primary-foreground); }
-  .actions .selected { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background)); color: var(--color-primary); }
+  .groups button.active { background: var(--dbx-selection-background); border-color: var(--dbx-selection-border); color: var(--dbx-selection-foreground); }
+  .actions .selected { border-color: var(--dbx-selection-border); background: var(--dbx-selection-background); color: var(--dbx-selection-foreground); }
   .hint { font-size: 12px; color: var(--color-muted-foreground); }
   .options { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
   .field { min-width: 180px; }

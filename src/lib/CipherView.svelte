@@ -372,13 +372,14 @@
     background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
   }
   .seg button.active {
-    background: var(--color-primary);
-    color: var(--color-primary-foreground);
+    background: var(--dbx-selection-background);
+    border-color: var(--dbx-selection-border);
+    color: var(--dbx-selection-foreground);
     font-weight: 600;
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 12px; }
   .advanced-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -388,9 +389,9 @@
   .security-warning {
     margin: 0;
     padding: 7px 10px;
-    border-left: 3px solid var(--color-warning, #d97706);
-    background: var(--color-warning-bg, #fffbeb);
-    color: var(--color-foreground, #292524);
+    border-left: 3px solid var(--color-warning);
+    background: var(--color-warning-bg);
+    color: var(--color-foreground);
     font-size: 12px;
   }
   .dbx-hint {

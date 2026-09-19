@@ -310,6 +310,7 @@
                 class="hex-input"
                 spellcheck="false"
                 autocomplete="off"
+                aria-label={t("十六进制颜色值", "HEX color value")}
                 value={hex}
                 onfocus={(event) => event.currentTarget.select()}
                 oninput={(event) => updateHex(event.currentTarget.value)}
@@ -490,7 +491,7 @@
     flex-direction: column;
   }
   .color-card.invalid {
-    border-color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
   }
   .card-head {
     position: relative;
@@ -547,12 +548,12 @@
     background: var(--color-background, Canvas);
   }
   .hex-field:focus-within {
-    outline: 2px solid var(--color-ring, var(--color-primary, #93c5fd));
+    outline: 2px solid var(--color-ring, var(--color-primary));
     outline-offset: 1px;
-    border-color: var(--color-ring, var(--color-primary, #93c5fd));
+    border-color: var(--color-ring, var(--color-primary));
   }
   .hex-field.invalid {
-    border-color: var(--color-destructive, #dc2626);
+    border-color: var(--color-destructive);
   }
   .hex-prefix {
     flex-shrink: 0;

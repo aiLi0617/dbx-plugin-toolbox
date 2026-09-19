@@ -116,7 +116,7 @@
         <span class="caption">{t("替换结果", "Replacement result")}</span>
         <CopyButton {locale} text={result.replaced || ""} labelZh="复制结果" labelEn="Copy result" />
       </div>
-      <textarea class="dbx-textarea replaced mono" readonly value={result.replaced || ""}></textarea>
+      <textarea class="dbx-textarea replaced mono" readonly aria-label={t("替换结果", "Replacement result")} value={result.replaced || ""}></textarea>
     </div>
     {#if result.matches.length}
       <div class="table-wrap">
@@ -217,7 +217,7 @@
     display: flex;
   }
   .preview mark {
-    background: color-mix(in srgb, var(--color-primary, #2563eb) 28%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 28%, transparent);
     color: inherit;
     border-radius: 2px;
   }
@@ -247,6 +247,6 @@
   }
   .error {
     margin: 0;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
 </style>

@@ -256,7 +256,7 @@
     background: transparent;
     padding: 0;
     font: inherit;
-    color: var(--color-warning, #b45309);
+    color: var(--color-warning);
     font-weight: 500;
     cursor: text;
     border-radius: var(--radius-sm, 4px);
@@ -349,21 +349,21 @@
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .json-val--string {
-    color: var(--color-success, #15803d);
+    color: var(--color-success);
   }
   .json-val--number {
-    color: var(--color-info, #2563eb);
+    color: var(--color-info);
   }
   .json-val--boolean,
   .json-val--null {
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
   }
   .json-edit {
     min-width: 8em;
     max-width: 100%;
     height: 22px;
     padding: 0 6px;
-    border: 1px solid var(--color-ring, var(--color-primary, #93c5fd));
+    border: 1px solid var(--color-ring, var(--color-primary));
     border-radius: var(--radius-sm, 4px);
     background: var(--color-background, Canvas);
     color: inherit;
@@ -371,7 +371,7 @@
   }
   .json-edit-key {
     min-width: 6em;
-    color: var(--color-warning, #b45309);
+    color: var(--color-warning);
     font-weight: 500;
   }
   .json-del {
@@ -383,7 +383,7 @@
     border: 1px solid transparent;
     border-radius: var(--radius-sm, 4px);
     background: transparent;
-    color: var(--color-destructive, #dc2626);
+    color: var(--color-destructive);
     font-size: 12px;
     line-height: 20px;
   }
@@ -394,7 +394,7 @@
     pointer-events: auto;
   }
   .json-del:hover {
-    border-color: color-mix(in srgb, var(--color-destructive, #dc2626) 40%, transparent);
-    background: color-mix(in srgb, var(--color-destructive, #dc2626) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-destructive) 40%, transparent);
+    background: color-mix(in srgb, var(--color-destructive) 12%, transparent);
   }
 </style>
