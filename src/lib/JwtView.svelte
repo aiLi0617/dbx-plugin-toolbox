@@ -322,7 +322,7 @@
     align-items: center;
     flex-shrink: 0;
   }
-  .mode-bar :global(.dbx-select) {
+  .mode-bar :global(.dbx-custom-select) {
     width: auto;
     min-width: 140px;
   }

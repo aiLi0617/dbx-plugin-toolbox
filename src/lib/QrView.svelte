@@ -761,7 +761,7 @@
     gap: 8px 10px;
     align-items: center;
   }
-  .opts :global(.dbx-select) {
+  .opts :global(.dbx-custom-select) {
     width: 100%;
     min-width: 0;
   }
@@ -836,7 +836,7 @@
     gap: 8px 12px;
     align-items: end;
   }
-  .beauty :global(.dbx-select) {
+  .beauty :global(.dbx-custom-select) {
     width: 100%;
     min-width: 0;
   }

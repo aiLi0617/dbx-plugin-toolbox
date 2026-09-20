@@ -122,7 +122,7 @@
   .opts :global(.copy-btn) {
     align-self: flex-end;
   }
-  .field :global(.dbx-select) {
+  .field :global(.dbx-custom-select) {
     width: auto;
     min-width: 140px;
   }

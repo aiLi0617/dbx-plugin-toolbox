@@ -111,7 +111,7 @@
     gap: 6px;
   }
   .totp-options { display: flex; flex-wrap: wrap; gap: 8px; }
-  .totp-options :global(.dbx-select) { width: auto; min-width: 100px; }
+  .totp-options :global(.dbx-custom-select) { width: auto; min-width: 100px; }
   .label {
     font-size: 12px;
     font-weight: 500;

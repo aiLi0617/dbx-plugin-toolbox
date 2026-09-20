@@ -76,7 +76,7 @@
     gap: var(--ui-gap, 12px);
     align-items: flex-end;
   }
-  .field :global(.dbx-select) {
+  .field :global(.dbx-custom-select) {
     width: auto;
     min-width: 140px;
   }

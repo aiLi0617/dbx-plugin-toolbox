@@ -451,9 +451,9 @@
     min-height: 30px;
   }
   .field :global(.dbx-number.size) { width: 5.75rem; }
-  .field :global(.dbx-select) { width: auto; min-width: 96px; }
+  .field :global(.dbx-custom-select) { width: auto; min-width: 96px; }
   .target-row { display: flex; gap: 6px; align-items: center; }
-  .target-row :global(.dbx-select) { min-width: 72px; }
+  .target-row :global(.dbx-custom-select) { min-width: 72px; }
   .color-input {
     width: 3.25rem;
     min-height: 30px;

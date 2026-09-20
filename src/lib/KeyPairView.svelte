@@ -222,7 +222,7 @@
   .options--actions .generate {
     margin-left: auto;
   }
-  .field :global(.dbx-select),
+  .field :global(.dbx-custom-select),
   .field .dbx-input {
     width: auto;
     min-width: 140px;

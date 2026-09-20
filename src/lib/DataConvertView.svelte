@@ -61,6 +61,6 @@
   .page { display: flex; flex: 1; min-height: 0; flex-direction: column; gap: 12px; }
   .options { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field :global(.dbx-select) { min-width: 120px; }
+  .field :global(.dbx-custom-select) { min-width: 120px; }
   p { margin: 0; }
 </style>

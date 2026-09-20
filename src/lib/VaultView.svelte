@@ -964,7 +964,7 @@
     align-items: flex-end;
     gap: 8px;
   }
-  .auto-lock :global(.dbx-select) {
+  .auto-lock :global(.dbx-custom-select) {
     min-width: 112px;
   }
   .export-head { align-items: center; }
@@ -974,7 +974,7 @@
     gap: 4px;
     min-width: 0;
   }
-  .field :global(.dbx-select) {
+  .field :global(.dbx-custom-select) {
     width: auto;
     min-width: 160px;
   }

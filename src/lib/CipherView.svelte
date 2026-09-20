@@ -504,7 +504,7 @@
     font-size: 12px;
     font-weight: 500;
   }
-  .field :global(.dbx-select) {
+  .field :global(.dbx-custom-select) {
     width: auto;
     min-width: 140px;
   }

@@ -168,7 +168,7 @@
     align-items: flex-end;
     flex-shrink: 0;
   }
-  .field :global(.dbx-select),
+  .field :global(.dbx-custom-select),
   .field .dbx-input {
     width: auto;
     min-width: 140px;

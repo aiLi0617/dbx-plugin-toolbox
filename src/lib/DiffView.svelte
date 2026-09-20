@@ -91,7 +91,7 @@
   .diff-controls { display: grid; grid-template-columns: 160px minmax(0, 1fr); align-items: end; gap: 12px; flex-shrink: 0; min-width: 0; }
   .diff-mode { display: flex; flex-direction: column; gap: var(--ui-field-gap, 6px); min-width: 0; }
   .diff-mode > .dbx-label { min-height: var(--ui-caption, 20px); color: var(--color-muted-foreground); }
-  .diff-mode :global(.dbx-select) { width: 100%; min-width: 0; }
+  .diff-mode :global(.dbx-custom-select) { width: 100%; min-width: 0; }
   .diff-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-width: 0; }
   .diff-check { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 6px; min-height: 30px; font-size: 12px; white-space: nowrap; }
   .editors { flex: 1 1 46%; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--ui-gap, 12px); align-items: stretch; }

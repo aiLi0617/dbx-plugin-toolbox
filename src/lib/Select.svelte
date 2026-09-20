@@ -208,7 +208,8 @@
   });
 </script>
 
-<div class="dbx-select {className}" class:open>
+<!-- Avoid the host kit's `.dbx-select` styles: this is a custom combobox, not a native select. -->
+<div class="dbx-custom-select {className}" class:open>
   <button
     bind:this={triggerEl}
     class="trigger"
@@ -282,7 +283,7 @@
 {/if}
 
 <style>
-  .dbx-select {
+  .dbx-custom-select {
     display: inline-flex;
     width: 100%;
     min-width: 8.5rem;

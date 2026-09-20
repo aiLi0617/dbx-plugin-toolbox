@@ -439,7 +439,7 @@
     font-weight: 500;
     color: var(--color-muted-foreground);
   }
-  .field :global(.dbx-select) { min-width: 140px; }
+  .field :global(.dbx-custom-select) { min-width: 140px; }
   .search {
     display: flex;
     flex-direction: column;

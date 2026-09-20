@@ -110,7 +110,7 @@
     font-weight: 500;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .field :global(.dbx-select) {
+  .field :global(.dbx-custom-select) {
     width: auto;
     min-width: 160px;
   }

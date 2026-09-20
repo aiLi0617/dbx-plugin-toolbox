@@ -122,7 +122,7 @@
   .field :global(.dbx-label) {
     color: var(--color-muted-foreground);
   }
-  .field :global(.dbx-select),
+  .field :global(.dbx-custom-select),
   .field .dbx-input {
     width: auto;
     min-width: 160px;

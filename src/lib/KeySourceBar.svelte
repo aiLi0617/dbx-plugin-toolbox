@@ -121,7 +121,7 @@
   .field :global(.dbx-label) {
     color: var(--color-muted-foreground);
   }
-  .field :global(.dbx-select),
+  .field :global(.dbx-custom-select),
   .field .dbx-input {
     width: auto;
     min-width: 160px;
@@ -131,7 +131,7 @@
     min-width: 220px;
   }
   .grow .dbx-input,
-  .grow :global(.dbx-select) {
+  .grow :global(.dbx-custom-select) {
     width: 100%;
   }
   .unlock {

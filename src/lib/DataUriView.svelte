@@ -596,7 +596,7 @@
     height: 32px;
     overflow: hidden;
   }
-  .strip :global(.dbx-select) {
+  .strip :global(.dbx-custom-select) {
     width: 10.5rem;
     min-width: 0;
     flex: 0 0 auto;
