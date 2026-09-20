@@ -1,69 +1,114 @@
-# 工具箱（Toolbox）
+# DBX 工具箱
 
-[DBX](https://github.com/t8y2/dbx) 工作台插件：本地开发常用小工具 + 加密密钥库。全部在本机处理，工作台不声明网络权限。
+> 面向开发者的本地工具集合与加密密钥库。数据格式转换、文本处理、编码编解码、图片处理与密码学操作均在本机完成。
 
-| | |
+DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench 插件。它将日常开发中分散的小工具整合在一个工作台里，并提供由 Rust Sidecar 支持的本地加密密钥库；插件不声明网络权限，也不会主动上传处理内容。
+
+| 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 版本 | `0.1.0` |
-| 要求 | DBX `>=0.5.68`，Host API `1` |
-| 源码 / 主页 | https://github.com/aiLi0617/dbx-plugin-toolbox |
-| 许可证 | Apache-2.0 |
+| 当前版本 | `0.1.0` |
+| 运行要求 | DBX `>= 0.5.68`、Host API `1` |
+| 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
+| 许可证 | [Apache-2.0](LICENSE) |
 
-## 功能一览
+## 目录
 
-共 7 类、约 38 个工具页；首页支持搜索、收藏、最近使用与分类筛选。
+- [核心特点](#核心特点)
+- [安装与使用](#安装与使用)
+- [功能概览](#功能概览)
+- [隐私与安全](#隐私与安全)
+- [架构](#架构)
+- [本地开发](#本地开发)
+- [打包与发布](#打包与发布)
+- [项目结构](#项目结构)
+
+## 核心特点
+
+- **本地优先**：工作台不声明网络权限；格式转换、图像处理和密码学运算均在本机执行。
+- **覆盖高频场景**：提供 7 类、约 38 个工具页，支持搜索、收藏、最近使用与分类筛选。
+- **精度与边界明确**：数据转换设有 5 MB 输入上限；可能造成结构或数字精度丢失的操作会给出明确提示或拒绝执行。
+- **密钥不离开 Sidecar**：密钥库通过 `keyId` 引用密钥，避免将明文密钥放入 UI 持久化存储或 Workbench context。
+- **适合桌面工作流**：支持本地文件导入导出、二维码/条码生成与识别、批量图片处理和电子表格编辑。
+
+## 安装与使用
+
+### 通过 DBX 插件中心
+
+在 DBX 中打开“插件中心”，搜索“工具箱”或 “Toolbox”，然后完成安装。安装后，从工作台打开“DBX 工具箱”。
+
+### 安装本地开发包
+
+从源码打包后，在 DBX 中依次打开“插件中心 → 设置 → 第三方与开发者选项”，启用未签名开发包安装，再选择生成的 `.dbxp` 文件。
+
+> 未签名包仅用于本地开发和验证。正式发布版本及版本更新说明以 DBX 插件中心为准。
+
+### 使用提示
+
+- 首页搜索可直接定位到匹配的工具或子功能。
+- 编辑器支持 Tab 缩进与 Shift+Tab 减少缩进；先按 Esc 再按 Tab 可将焦点移出编辑器。
+- 普通工具的输入只在当前工作台会话中保留。加密、JWT、TOTP、口令与密钥生成页面会在离开时清除敏感输入。
+- 保存二维码后，“打开所在文件夹”会调用系统文件管理器定位文件。
+
+## 功能概览
 
 ### 数据与代码
 
-| 工具 | 说明 |
+| 工具 | 能力 |
 | --- | --- |
-| JSON 工作台 | 格式化 / 压缩 / 校验、树形编辑、JSONPath、导出 TypeScript / SQL 等 |
-| 数据格式转换 | JSON / YAML / CSV / TSV / NDJSON / XML / TOML 互转（输入上限 5 MB；结构或精度可能丢失时会明确报错） |
+| JSON 工作台 | 格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript、SQL 等 |
+| 数据格式转换 | JSON、YAML、CSV、TSV、NDJSON、XML、TOML 互转 |
 | 代码格式化 | SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript |
-| 电子表格 | 本地打开 / 编辑 / 导出 XLSX、CSV、TSV、JSON；支持批量粘贴、撤销重做、工作表管理、搜索筛选。导入 XLSX 只保留单元格值，不保留公式、样式、图片或合并单元格 |
+| 电子表格 | 本地打开、编辑与导出 XLSX、CSV、TSV、JSON；支持批量粘贴、撤销重做、工作表管理、搜索和筛选 |
 
-### 编码与转义
+> XLSX 导入只保留单元格值；公式、样式、图片和合并单元格不会保留。
 
-Base64 / Base32 / Base58 / Hex、URL、HTML / Unicode / JS / JSON / CSS 转义、SQL 字符串转义、Data URI、Punycode / IDN、Quoted-Printable。
+### 编码、转换与计算
 
-### 转换与计算
+- **编码与转义**：Base64 / Base32 / Base58 / Hex、URL、HTML、Unicode、JavaScript、JSON、CSS、SQL 字符串、Data URI、Punycode / IDN、Quoted-Printable。
+- **时间与颜色**：Unix 时间戳与日期互转、时区与时间差计算；HEX / RGB / CMYK / HSV 转换、色环与屏幕取色。
+- **开发计算**：Cron 表达式可视化与下次触发预览、2–36 进制转换、IPv4 / IPv6 CIDR 计算及受限子网切分。
 
-Unix 时间戳与日期互转（含时区、加减与时间差）、颜色（HEX / RGB / CMYK / HSV，色环与屏幕取色）、Cron 可视化与下次触发预览、2–36 进制转换、IPv4 / IPv6 CIDR 与受限子网切分（不会枚举超大网段）。
+> CIDR 工具不会枚举超大网段，以避免无意中耗尽本机资源。
 
-### 文本工具
+### 文本与内容
 
-空白与行处理、去重排序、命名风格、字数统计、正则测试、文本 Diff、Markdown 预览、Unicode 码位检查。
+- 空白和行处理、去重排序、命名风格转换、字数统计。
+- 正则表达式测试、文本 Diff、Markdown 预览、Unicode 码位检查。
+- UUID / ULID / NanoID、随机密码和随机字节生成。
+- 可重复的占位文本与推广文案生成。
 
-### 安全与校验
+### 图像与码制
 
-| 工具 | 说明 |
+| 工具 | 能力 |
 | --- | --- |
-| 哈希 | MD5 / SHA / SM3 / CRC32（文本或文件） |
-| JWT | 解码、签发、验签（HS / RS / PS） |
-| 对称加密 | AES / SM4（GCM / CBC / ECB） |
-| HMAC | SHA-1 / SHA-256 / SHA-384 / SHA-512 / SM3 |
-| 非对称加密 | RSA（OAEP / PKCS#1）、SM2；解密输出可选 UTF-8 / Hex / Base64 |
-| TOTP | 根据密钥生成当前动态口令 |
-| 证书与 SSH | X.509 有效期 / SAN / 指纹，SSH 公钥指纹 |
-| JWK / JWKS | 校验；RSA JWK ↔ PKCS#8 / SPKI PEM |
-| 密钥生成 | AES / SM4 / HMAC 对称密钥，RSA / SM2 密钥对（可写入密钥库） |
-| XOR | 仅供调试对照 |
+| 二维码与条码 | 生成 QR 与条码并导出 PNG / SVG；本地批量识别 QR、Data Matrix、PDF417；汉信码目前仅支持生成 |
+| 图片处理 | 裁剪、缩放、旋转、翻转和水印；输出 PNG、JPEG、WebP；最多可处理 20 张本地图片 |
+| 占位图 | 按像素尺寸和目标文件体积生成占位图 |
 
-### 生成工具
+### 安全与加密
 
-UUID / ULID / NanoID、随机密码与随机字节、二维码与条码（PNG / SVG 导出；本机批量识别 QR / Data Matrix / PDF417；汉信码目前只支持生成）、可重复的占位 / 推广文案。
-
-### 图片
-
-| 工具 | 说明 |
+| 工具 | 能力 |
 | --- | --- |
-| 图片处理 | 裁剪、缩放、旋转、翻转、水印；输出 PNG / JPEG / WebP；最多 20 张本地批处理 |
-| 占位图 | 按像素尺寸与目标体积生成占位图 |
+| 哈希与 HMAC | MD5、SHA、SM3、CRC32；HMAC-SHA-1 / SHA-256 / SHA-384 / SHA-512 / SM3，支持文本或文件 |
+| JWT | 解码、签发与验签，覆盖 HS、RS、PS 算法族 |
+| 对称加密 | AES / SM4，支持 GCM、CBC、ECB 模式 |
+| 非对称加密 | RSA（OAEP / PKCS#1）与 SM2；解密结果可按 UTF-8、Hex、Base64 显示 |
+| 密钥与证书 | AES / SM4 / HMAC 对称密钥、RSA / SM2 密钥对生成；X.509、SSH 公钥、JWK / JWKS 检查与转换 |
+| 其他 | TOTP 动态口令与仅用于调试对照的 XOR |
 
-### 密钥库
+### 加密密钥库
 
-Sidecar 侧本机加密保管密钥材料（用户数据目录 `io.github.aili0617.toolbox/keystore`）。主密码使用 Argon2id + AES-GCM；界面只显示名称、算法与指纹。AES / SM4 / HMAC 运算可选用密钥库（只传 `keyId`）或当次输入。
+密钥库由 Sidecar 在本机用户数据目录 `io.github.aili0617.toolbox/keystore` 中保存。主密码采用 **Argon2id + AES-GCM** 保护密钥材料；界面只显示密钥名称、算法和指纹。
+
+AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。选择密钥库条目时，前端仅传递 `keyId`，由 Sidecar 完成密钥读取与运算。
+
+## 隐私与安全
+
+- 插件不主动联网，且 `manifest.json` 中的 `permissions` 为空。
+- 敏感操作由本地 Rust Sidecar 执行；明文密钥不会写入 `localStorage`、Workbench context 或日志。
+- 加密相关页面离开后会清除输入，降低屏幕共享和会话残留风险。
+- 密钥库是本地保护机制，不替代组织级密钥管理、备份策略或安全审计。请妥善保管主密码，并勿将真实生产密钥用于不受信任的环境。
 
 ## 架构
 
@@ -80,60 +125,46 @@ Sidecar 侧本机加密保管密钥材料（用户数据目录 `io.github.aili06
                                           └──────────────────┘
 ```
 
-- **前端**：`src/`（Svelte 5），构建产物写入被 gitignore 的 `ui/`
-- **后端**：`backend/`（Rust），打包为 `bin/dbx-plugin-toolbox`
-- **贡献点**：单个 `workbench` 入口；`permissions` 为空
-- **Sidecar 方法**：`toolbox/json`、`toolbox/hash`、`toolbox/crypto`、`toolbox/cert`、`toolbox/keys/*`、`toolbox/prefs/*`、`toolbox/save-file`、`toolbox/reveal-file`、`toolbox/copy-image`
+- **前端**：Svelte 5 + Vite，源码位于 `src/`；构建产物写入已忽略的 `ui/`。
+- **后端**：Rust Sidecar 位于 `backend/`，打包为 `bin/dbx-plugin-toolbox`。
+- **贡献点**：一个 `workbench` 入口，无运行时网络权限。
+- **Sidecar 接口**：包括 `toolbox/json`、`toolbox/hash`、`toolbox/crypto`、`toolbox/cert`、`toolbox/keys/*`、`toolbox/prefs/*` 与本地文件相关接口。
 
-## 使用注意
+## 本地开发
 
-- 普通工具的输入与选项仅在本次工作台会话内保留；关闭或刷新后清除。加密、JWT、TOTP、口令与密钥生成页离开时清除输入。
-- 搜索可直接进入匹配的子功能。
-- 编辑器使用 Tab 缩进、Shift+Tab 减少缩进；先按 Esc 再按 Tab 可移出编辑器。
-- 保存二维码后选择「打开所在文件夹」会调用系统文件管理器定位该文件。
-- 不要把密钥写入 `localStorage`、Workbench context 或日志。
+### 环境要求
 
-## 开发
+- Node.js 22+
+- Rust stable
+- DBX 插件 CLI（`dbx-plugin`）
 
-需要 **Node.js 22+** 与 **Rust**（stable）。
+### 安装、测试与调试
 
 ```bash
 npm install
 npm test          # Node 内置 test runner
-npm run build     # Vite → ui/
+npm run build     # Vite 构建到 ui/
 npm run check     # test + build
 
-# 在 DBX 插件调试宿主中热重载
+# 在 DBX 插件调试宿主中启动并热重载
 dbx-plugin dev --path . --port 5190
 ```
 
-改 UI 后 watch 构建会打印 `DBX_UI_BUILD_SUCCESS` 并重载。密钥材料只存在 Sidecar 加密文件中，不要提交、不要打进 `.dbxp`。
+修改 UI 后，watch 构建成功会输出 `DBX_UI_BUILD_SUCCESS` 并触发重载。密钥材料只应存在于 Sidecar 加密文件中；不要将其提交到仓库，也不要打进 `.dbxp`。
 
-### Windows 注意事项
+### Windows 说明
 
-若 `dbx-plugin package` 报 `os error 216`，把当前工具链的 `bin` 目录放到 PATH 里 rustup 的 `cargo.exe` shim 之前，例如：
+若 `dbx-plugin package` 出现 `os error 216`，请让当前 Rust toolchain 的 `bin` 目录在 `PATH` 中位于 rustup 的 `cargo.exe` shim 之前，例如：
 
-`%USERPROFILE%\.rustup\toolchains\stable-x86_64-pc-windows-msvc\bin`
-
-`dbx-plugin dev` 会把工作目录规范成 `\\?\D:\...`，因此 `[dev]` 里不用 `npm.cmd`，而是先切回普通盘符路径再跑 Vite（见 `dbx-plugin.toml`）。
-
-### 目录结构
-
+```text
+%USERPROFILE%\.rustup\toolchains\stable-x86_64-pc-windows-msvc\bin
 ```
-├── assets/              # 图标等静态资源
-├── backend/             # Rust Sidecar
-├── src/                 # Svelte UI 源码
-├── tests/               # 前端单测
-├── manifest.json        # 插件清单（运行时契约）
-├── dbx-plugin.toml      # 打包 / dev 构建配置（不进入包）
-└── package.json
-```
+
+DBX 调试命令会把工作目录规范为 `\\?\D:\...`。因此项目在 `dbx-plugin.toml` 中通过 Node 先切回普通盘符路径，再启动 Vite；请勿将该配置简单替换为 `npm.cmd`。
 
 ## 打包与发布
 
-发版、写入商店更新说明（`releaseNotes`）、以及在 DBX 插件中心查看的完整步骤，见 [docs/release-notes-ops.md](docs/release-notes-ops.md)。
-
-本地打未签名候选包：
+在干净依赖环境中构建未签名候选包：
 
 ```bash
 npm ci
@@ -141,14 +172,36 @@ npm run build
 dbx-plugin package .
 ```
 
-产物在 `dist/`（`<id>-<ver>-<target>.dbxp` 与 `.artifact.json`）。构建产物全部位于被忽略的 `ui/`；发布流程会在打包前重新构建，干净 checkout 不必提交生成文件。
+产物位于 `dist/`，包括 `<id>-<version>-<target>.dbxp` 及对应的 `.artifact.json`。`ui/` 是可再生构建产物，干净 checkout 不需要提交它。
 
-未签名包仅供本地开发：插件中心 → 设置 → 第三方与开发者选项 → 允许安装未签名开发包。
+本仓库只包含插件源码；商店上架通过 [t8y2/dbx-store](https://github.com/t8y2/dbx-store) 完成。GitHub Release 会触发 [`.github/workflows/plugin-release.yml`](.github/workflows/plugin-release.yml) 打包流程。
 
-源码仓库与商店仓库分离：本仓库只放插件源码；上架走 [`t8y2/dbx-store`](https://github.com/t8y2/dbx-store)。GitHub Release 触发 `.github/workflows/plugin-release.yml` 调用官方可复用工作流打包。
+完整的版本号、候选包、`releaseNotes` 和商店发布操作，请参阅 [发版与更新说明手册](docs/release-notes-ops.md)。
 
-## 安全摘要
+## 项目结构
 
-- 工作台不主动联网；敏感运算在本地 Sidecar 完成。
-- 密钥库用主密码加密；明文密钥不落 UI 持久化存储。
-- 加密相关页面离开即清输入，降低屏幕共享与会话残留风险。
+```
+├── assets/              # 图标等静态资源
+├── backend/             # Rust Sidecar 与密钥库实现
+├── docs/                # 发布和测试文档
+├── shared/              # 随插件 CLI 对齐的本地 SDK
+├── src/                 # Svelte UI 源码
+├── tests/               # 前端单元测试
+├── manifest.json        # 插件运行时清单与权限契约
+├── dbx-plugin.toml      # 打包与开发构建配置
+└── package.json         # 前端依赖与脚本
+```
+
+## 贡献
+
+欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告问题或提出建议。提交改动前，请至少运行：
+
+```bash
+npm run check
+```
+
+涉及密钥、密码学或本地文件访问的修改，请同时说明安全影响、测试范围与兼容性考虑。
+
+## 许可证
+
+本项目采用 [Apache License 2.0](LICENSE) 发布。
