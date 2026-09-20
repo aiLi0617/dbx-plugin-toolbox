@@ -204,7 +204,9 @@ pub fn cert_op(params: Value) -> Result<Value, PluginError> {
                     }
                     GeneralName::IPAddress(value) if value.len() == 16 => {
                         let chunks = value
-                            .chunks_exact(2)
+                            .as_chunks::<2>()
+                            .0
+                            .iter()
                             .map(|chunk| format!("{:x}", u16::from_be_bytes([chunk[0], chunk[1]])))
                             .collect::<Vec<_>>();
                         format!("IP:{}", chunks.join(":"))
