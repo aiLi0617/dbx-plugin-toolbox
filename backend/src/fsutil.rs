@@ -240,7 +240,8 @@ fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError>
     let name = sanitize_file_name(raw_name, &extension);
     let title = opt_str(&params, "title").unwrap_or("Save file");
     let start_dir = download_dir().ok();
-    let Some(mut path) = pick_save_path_binary(title, &name, start_dir.as_deref(), &extension) else {
+    let Some(mut path) = pick_save_path_binary(title, &name, start_dir.as_deref(), &extension)
+    else {
         return Ok(json!({ "cancelled": true }));
     };
     path = ensure_extension(path, &extension);
@@ -603,13 +604,22 @@ mod tests {
 
     #[test]
     fn resolves_save_extension_from_file_name_before_mime_fallback() {
-        assert_eq!(resolve_save_extension(None, "Sheet1.csv", "application/octet-stream"), "csv");
-        assert_eq!(resolve_save_extension(None, "Sheet1.tsv", "text/plain"), "tsv");
+        assert_eq!(
+            resolve_save_extension(None, "Sheet1.csv", "application/octet-stream"),
+            "csv"
+        );
+        assert_eq!(
+            resolve_save_extension(None, "Sheet1.tsv", "text/plain"),
+            "tsv"
+        );
         assert_eq!(
             resolve_save_extension(None, "table.xlsx", "application/octet-stream"),
             "xlsx"
         );
-        assert_eq!(resolve_save_extension(Some("CSV"), "download", "application/octet-stream"), "csv");
+        assert_eq!(
+            resolve_save_extension(Some("CSV"), "download", "application/octet-stream"),
+            "csv"
+        );
         assert_eq!(extension_for_mime("text/csv"), "csv");
         assert_eq!(
             extension_for_mime("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),

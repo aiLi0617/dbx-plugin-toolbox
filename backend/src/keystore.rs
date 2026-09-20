@@ -989,8 +989,7 @@ fn companion_public(algorithm: &str, material: &str) -> Result<String, PluginErr
 fn backfill_public_material(keys: &mut [StoredKey]) -> bool {
     let mut changed = false;
     for key in keys {
-        if !matches!(key.algorithm.as_str(), "rsa-pem" | "sm2") || !key.public_material.is_empty()
-        {
+        if !matches!(key.algorithm.as_str(), "rsa-pem" | "sm2") || !key.public_material.is_empty() {
             continue;
         }
         if let Ok(public) = companion_public(&key.algorithm, &key.material) {
@@ -1116,7 +1115,10 @@ mod tests {
         let keys = vec![sample("a"), sample("b"), sample("c")];
         let ordered = apply_reorder(&keys, &["c".into(), "a".into(), "b".into()]).unwrap();
         assert_eq!(
-            ordered.iter().map(|key| key.id.as_str()).collect::<Vec<_>>(),
+            ordered
+                .iter()
+                .map(|key| key.id.as_str())
+                .collect::<Vec<_>>(),
             vec!["c", "a", "b"]
         );
         assert!(apply_reorder(&keys, &["a".into(), "b".into()]).is_err());
