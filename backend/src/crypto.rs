@@ -248,7 +248,7 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
     } else {
         "gcm"
     });
-    let key = resolve_key(vault, &params, &algorithm)?;
+    let key = resolve_key(vault, &params, algorithm)?;
     if opt_str(&params, "payloadFormat").unwrap_or("packed") == "separate" {
         return symmetric_separate(&key, algorithm, mode, action, &params);
     }

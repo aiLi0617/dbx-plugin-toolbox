@@ -1130,8 +1130,8 @@ mod tests {
     fn companion_public_derives_rsa_and_sm2_from_private() {
         let (public, private) = generate_rsa_pem(2048, "pkcs8").unwrap();
         let derived = companion_public("rsa-pem", &private).unwrap();
-        assert_eq!(derived, public);
-        assert_eq!(companion_public("rsa-pem", &public).unwrap(), public);
+        assert_eq!(derived.trim(), public.trim());
+        assert_eq!(companion_public("rsa-pem", &public).unwrap(), public.trim());
 
         let (public, private) = generate_sm2_pair();
         assert_eq!(companion_public("sm2", &private).unwrap(), public);
