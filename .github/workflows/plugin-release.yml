@@ -16,7 +16,7 @@ jobs:
         if [ "$RUNNER_OS" = "Linux" ]; then
           sudo apt-get update && sudo apt-get install -y libwayland-dev;
         fi;
-        npm ci && npm test && npm run build && dbx-plugin package .
+        npm ci && npm test && npm run build && npx --yes --package=@dbx-app/plugin-cli@0.1.6 dbx-plugin package .
       package-path: dist/*.dbxp
       metadata-path: dist/*.artifact.json
       plugin-cli-version: 0.1.6
