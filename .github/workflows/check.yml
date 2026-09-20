@@ -27,6 +27,8 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
+      - name: Install Linux native dialog dependencies
+        run: sudo apt-get update && sudo apt-get install -y libwayland-dev
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
