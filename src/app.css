@@ -98,11 +98,18 @@ html.dark {
 html, body, #app {
   margin: 0;
   height: 100%;
+  max-height: 100%;
+  overflow: hidden;
   background: var(--color-background, Canvas);
   color: var(--color-foreground, CanvasText);
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.5;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* Match DBX overlay thumbs: thin, pill, foreground-on-transparent. */
@@ -227,8 +234,9 @@ code, kbd, samp, pre, .mono {
   font-family: var(--font-mono);
 }
 :where(.dbx-input:focus), :where(select.dbx-select:focus), :where(.dbx-textarea:focus) {
+  /* Inset ring so parents with overflow:auto/hidden do not clip the top/side edges. */
   outline: 2px solid var(--color-ring, var(--color-primary));
-  outline-offset: 1px;
+  outline-offset: -2px;
   border-color: var(--color-ring, var(--color-primary));
 }
 
@@ -317,7 +325,10 @@ code, kbd, samp, pre, .mono {
 .app {
   display: grid;
   grid-template-columns: 232px minmax(0, 1fr);
+  flex: 1 1 auto;
+  min-height: 0;
   height: 100%;
+  max-height: 100%;
   overflow: hidden;
   background: var(--color-background, Canvas);
 }
@@ -708,6 +719,7 @@ code, kbd, samp, pre, .mono {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
   background: var(--color-background, Canvas);
 }
 .toolbar {
@@ -742,9 +754,11 @@ code, kbd, samp, pre, .mono {
 .pane.pane-fill {
   overflow: hidden;
 }
-.pane.pane-fill > :first-child {
-  flex: 1;
+.pane.pane-fill > :first-child,
+.pane.pane-fill > .tool-session.fill {
+  flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
 }
 .pane.shell-page {
   padding: 0;

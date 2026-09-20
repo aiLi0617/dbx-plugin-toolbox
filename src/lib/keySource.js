@@ -3,7 +3,9 @@ import { invoke } from "./host.js";
 export function matchKey(key, picker) {
   if (!picker) return true;
   if (picker === "aes") return key.algorithm === "aes-128" || key.algorithm === "aes-256";
-  if (picker === "hmac") return key.algorithm === "hmac" || key.algorithm === "hmac-sha256";
+  if (picker === "hmac") {
+    return ["hmac", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512"].includes(key.algorithm);
+  }
   if (picker === "xor") {
     return key.algorithm !== "rsa-pem" && key.algorithm !== "sm2";
   }

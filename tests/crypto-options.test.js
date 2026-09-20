@@ -21,8 +21,36 @@ test("query parsing accepts naked, prefixed, absolute and relative query strings
   for (const text of ["a=1&a=2&label=hello+world&empty=", "?a=1&a=2&label=hello+world&empty=", "https://example.com/p?a=1&a=2&label=hello+world&empty=", "/p?a=1&a=2&label=hello+world&empty="]) {
     assert.deepEqual(parseQuery(text).rows, rows);
   }
-  assert.deepEqual(parseQuery("a=%26%3D#section"), { href: "", hash: "#section", rows: [["a", "&="]] });
+  assert.deepEqual(parseQuery("a=%26%3D#section"), {
+    href: "",
+    protocol: "",
+    host: "",
+    pathname: "",
+    search: "?a=%26%3D",
+    hash: "#section",
+    hashPath: "#section",
+    rows: [["a", "&="]],
+    hashRows: [],
+  });
   assert.equal(parseQuery("/relative/path").href, "/relative/path");
+});
+
+test("query parsing unwraps encoded URLs and expands hash query params", () => {
+  const encoded =
+    "https%3A%2F%2Fconsole.example.com%2Fapp%2F%3Flocale%3Dzh-cn%26region%3Dcn-south-1%23%2Fcce%2Fcluster%3Fnamespace%3Dpre-cicd%26category%3Dcce";
+  const parsed = parseQuery(encoded);
+  assert.equal(parsed.protocol, "https:");
+  assert.equal(parsed.host, "console.example.com");
+  assert.equal(parsed.pathname, "/app/");
+  assert.equal(parsed.href, "https://console.example.com/app/");
+  assert.equal(parsed.hashPath, "#/cce/cluster");
+  assert.deepEqual(parsed.rows, [["locale", "zh-cn"], ["region", "cn-south-1"]]);
+  assert.deepEqual(parsed.hashRows, [["namespace", "pre-cicd"], ["category", "cce"]]);
+
+  const plain =
+    "https://console.example.com/app/?locale=zh-cn&region=cn-south-1#/cce/cluster?namespace=pre-cicd&category=cce";
+  assert.deepEqual(parseQuery(plain).hashRows, [["namespace", "pre-cicd"], ["category", "cce"]]);
+  assert.deepEqual(parseQuery("#/x?y=1&z=2").hashRows, [["y", "1"], ["z", "2"]]);
 });
 
 test("JWT time inspection rejects invalid claims without crashing", () => {

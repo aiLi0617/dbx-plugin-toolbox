@@ -26,7 +26,6 @@ export const VIEW_LOADERS = {
   jwt: () => import("./JwtView.svelte"),
   hmac: () => import("./HmacView.svelte"),
   cert: () => import("./CertView.svelte"),
-  jsonpath: () => import("./JsonPathView.svelte"),
   "code-format": () => import("./CodeFormatView.svelte"),
   lorem: () => import("./LoremView.svelte"),
   whitespace: () => import("./TextWorkbench.svelte"),
@@ -35,6 +34,7 @@ export const VIEW_LOADERS = {
   "data-convert": () => import("./DataConvertView.svelte"),
   spreadsheet: () => import("./SpreadsheetView.svelte"),
   "image-process": () => import("./ImageProcessView.svelte"),
+  "image-generate": () => import("./ImageGenerateView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
   "live-io": () => import("./LiveIoView.svelte"),
   aes: loadCipherView,
@@ -47,8 +47,8 @@ export const VIEW_LOADERS = {
 
 export const FILL_VIEWS = new Set([
   "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa",
-  "jsonpath", "code-format", "data-convert", "spreadsheet", "image-process", "lorem",
-  "whitespace", "regex", "diff", "keypair", "symmetric-key",
+  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "lorem",
+  "whitespace", "regex", "diff", "keypair", "symmetric-key", "unicode-inspect",
 ]);
 
 export const EPHEMERAL_TOOL_IDS = new Set([

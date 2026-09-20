@@ -81,13 +81,14 @@ test("navigation sanitizes legacy ids and preserves favorite order", () => {
   );
   assert.deepEqual(navigation.moveToolId(["json", "hash", "uuid"], "uuid", "json"), ["uuid", "json", "hash"]);
   assert.deepEqual(navigation.moveToolId(["json", "hash", "uuid"], "json", "hash", true), ["hash", "json", "uuid"]);
+  assert.deepEqual(navigation.moveId(["a", "b", "c"], "c", "a"), ["c", "a", "b"]);
+  assert.deepEqual(navigation.moveId(["a", "b", "c"], "a", "b", true), ["b", "a", "c"]);
 });
 
-test("recent tools are unique, capped, and can exclude favorites", () => {
+test("recent tools are unique and capped", () => {
   let recent = [];
   for (const id of ["json", "hash", "uuid", "json", "color"]) recent = navigation.pushRecent(recent, id, 3);
   assert.deepEqual(recent, ["color", "json", "uuid"]);
-  assert.deepEqual(navigation.recentWithoutFavorites(recent, ["json"], 5), ["color", "uuid"]);
 });
 
 test("Base58 preserves empty and leading-zero byte arrays", () => {
@@ -112,6 +113,19 @@ test("quoted-printable preserves lines and encodes trailing whitespace", () => {
   assert.match(encoded, /=20=20\r\n/);
   assert.match(encoded, /=09$/);
   assert.equal(codec.decodeQuotedPrintable(encoded), input.replace(/\n/g, "\r\n"));
+});
+
+test("text escape formats round-trip common developer strings", () => {
+  const sample = `<tag>中文 "hi"\n`;
+  assert.equal(encode.unescapeHtml(encode.escapeHtml(sample)), sample);
+  assert.equal(encode.unescapeUnicode(encode.escapeUnicode("中文")), "中文");
+  assert.equal(encode.unescapeJsUnicode(encode.escapeJsUnicode("中文😀")), "中文😀");
+  assert.equal(encode.unescapeJson(encode.escapeJson(sample)), sample);
+  assert.equal(encode.unescapeJson('"hi\\n"'), "hi\n");
+  assert.throws(() => encode.unescapeJson("\\"), /json string escape/i);
+  const css = encode.escapeCssIdent("a b");
+  assert.match(css, /\\/);
+  assert.equal(encode.unescapeCssIdent(css), "a b");
 });
 
 test("ULID has a valid timestamp prefix and alphabet", () => {
@@ -203,6 +217,21 @@ test("text line tools number, unnumber, extract, filter, and shuffle", () => {
   assert.equal(textTools.applyWhitespace("a,b,c\nd,e,f", "column", { column: 2, delimiter: "," }), "b\ne");
   assert.equal(textTools.applyWhitespace("a\n👨‍👩‍👧‍👦\nlong", "filter-length", { minLength: 1, maxLength: 1 }), "a\n👨‍👩‍👧‍👦");
   assert.equal(textTools.applyWhitespace("a\nb\nc", "shuffle", { random: () => 0 }), "b\nc\na");
+  const seeded = textTools.applyWhitespace("a\nb\nc\nd", "shuffle", { seed: 42 });
+  assert.equal(textTools.applyWhitespace("a\nb\nc\nd", "shuffle", { seed: 42 }), seeded);
+  assert.notEqual(textTools.applyWhitespace("a\nb\nc\nd", "shuffle", { seed: 43 }), seeded);
+});
+
+test("findReplace supports regex, first-only, and ignore-case", () => {
+  assert.equal(textTools.findReplace("AaAa", "a", "x"), "AxAx");
+  assert.equal(textTools.findReplace("AaAa", "a", "x", { firstOnly: true }), "AxAa");
+  assert.equal(textTools.findReplace("AaAa", "a", "x", { ignoreCase: true }), "xxxx");
+  assert.equal(textTools.findReplace("AaAa", "a", "x", { ignoreCase: true, firstOnly: true }), "xaAa");
+  assert.equal(textTools.findReplace("a1 a22", "a(\\d+)", "N$1", { regex: true }), "N1 N22");
+  assert.equal(textTools.findReplace("a1 a22", "a(\\d+)", "N$1", { regex: true, firstOnly: true }), "N1 a22");
+  assert.equal(textTools.findReplace("Hello $world", "$", "_"), "Hello _world");
+  assert.equal(textTools.applyWhitespace("Foo foo", "replace", { find: "foo", replace: "bar", ignoreCase: true }), "bar bar");
+  assert.throws(() => textTools.findReplace("abc", "(", "x", { regex: true }), /regular expression/i);
 });
 
 test("IPv4 calculator validates masks and derives subnet boundaries", async () => {
@@ -230,6 +259,21 @@ test("Data URI supports base64 and percent-encoded round trips", () => {
   assert.equal(parsed.charset.toLowerCase(), "utf-8");
   assert.equal(parsed.text, "你好");
   assert.equal(parsed.base64, true);
+
+  const percent = encode.toDataUri("hello world", "text/plain;charset=utf-8", { encoding: "percent" });
+  assert.equal(percent, "data:text/plain;charset=utf-8,hello%20world");
+  const percentParsed = encode.parseDataUri(percent);
+  assert.equal(percentParsed.text, "hello world");
+  assert.equal(percentParsed.base64, false);
+
+  const percentBytes = encode.dataUriFromBytes(new TextEncoder().encode("hi"), "text/plain", { encoding: "percent" });
+  assert.equal(percentBytes, "data:text/plain,hi");
+  assert.equal(encode.parseDataUri(percentBytes).text, "hi");
+
+
+  const zhPercent = encode.toDataUri("你好", "text/plain;charset=utf-8", { encoding: "percent" });
+  assert.match(zhPercent, /^data:text\/plain;charset=utf-8,%/);
+  assert.equal(encode.parseDataUri(zhPercent).text, "你好");
 
   const plain = encode.parseDataUri("data:text/plain,hello%20world");
   assert.equal(plain.text, "hello world");
@@ -259,6 +303,28 @@ test("diff supports word granularity and ignore options", () => {
   });
   assert.ok(parts.some((part) => part.mark === "add" && part.value.includes("!")));
   assert.ok(!parts.some((part) => part.mark === "del"));
+});
+
+test("line diff keeps replacements adjacent when lines repeat", () => {
+  const left = ["asd", "asd", "asd", "asd", "asd", "as", "da", "sd", "as"].join("\n");
+  const right = ["as", "asd", "asd", "as", "asd", "as", "da", "sd", "as"].join("\n");
+  const rows = textTools.lineDiffParts(left, right);
+  assert.deepEqual(
+    rows.map((row) => [row.mark, row.line]),
+    [
+      ["del", "asd"],
+      ["add", "as"],
+      ["same", "asd"],
+      ["same", "asd"],
+      ["del", "asd"],
+      ["add", "as"],
+      ["same", "asd"],
+      ["same", "as"],
+      ["same", "da"],
+      ["same", "sd"],
+      ["same", "as"],
+    ],
+  );
 });
 
 test("code formatting respects indentation", () => {

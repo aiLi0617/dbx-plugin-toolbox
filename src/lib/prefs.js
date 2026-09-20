@@ -23,6 +23,20 @@ function sanitize(ids) {
   return next;
 }
 
+// Older sidecars silently drop newly catalogued tool ids from the allow-list.
+// Keep any requested (or locally stored) favorites the current UI still knows.
+function retainKnownExtras(primary, extras) {
+  const base = sanitize(primary);
+  const seen = new Set(base);
+  const out = [...base];
+  for (const id of sanitize(extras)) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+  }
+  return out;
+}
+
 const LOCAL_KEY = "toolbox.favoriteToolIds";
 const LEGACY_LOCAL_KEY = "toolbox.enabledToolIds";
 const VAULT_AUTO_LOCK_KEY = "toolbox.vaultAutoLockMinutes";
@@ -35,20 +49,27 @@ export function sanitizeVaultAutoLockMinutes(value) {
   return VAULT_AUTO_LOCK_MINUTES.includes(minutes) ? minutes : DEFAULT_VAULT_AUTO_LOCK_MINUTES;
 }
 
-function readLocal() {
+function readLocalStored() {
   try {
     const raw = localStorage.getItem(LOCAL_KEY) ?? localStorage.getItem(LEGACY_LOCAL_KEY);
-    return raw === null ? [...DEFAULT_ENABLED_IDS] : sanitize(JSON.parse(raw));
+    if (raw === null) return null;
+    return sanitize(JSON.parse(raw));
   } catch {
-    return [...DEFAULT_ENABLED_IDS];
+    return null;
   }
+}
+
+function readLocal() {
+  return readLocalStored() ?? [...DEFAULT_ENABLED_IDS];
 }
 
 export async function getFavoriteToolIds() {
   try {
     const result = await invoke("toolbox/prefs/get");
     const ids = result?.favoriteToolIds ?? result?.enabledToolIds;
-    return Array.isArray(ids) ? sanitize(ids) : [...DEFAULT_ENABLED_IDS];
+    if (!Array.isArray(ids)) return [...DEFAULT_ENABLED_IDS];
+    const local = readLocalStored();
+    return local ? retainKnownExtras(ids, local) : sanitize(ids);
   } catch {
     return readLocal();
   }
@@ -68,7 +89,7 @@ export async function setFavoriteToolIds(ids) {
     // Send both names during the v1 → v2 transition. New backends prefer
     // favoriteToolIds; an already-running v1 backend can still save the order.
     const result = await invoke("toolbox/prefs/set", { favoriteToolIds: next, enabledToolIds: next });
-    const saved = sanitize(result?.favoriteToolIds ?? result?.enabledToolIds ?? next);
+    const saved = retainKnownExtras(result?.favoriteToolIds ?? result?.enabledToolIds ?? next, next);
     writeLocal(saved);
     return saved;
   } catch (err) {

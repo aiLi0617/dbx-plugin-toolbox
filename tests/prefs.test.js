@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   DEFAULT_VAULT_AUTO_LOCK_MINUTES,
+  getFavoriteToolIds,
   getVaultAutoLockMinutes,
   sanitizeVaultAutoLockMinutes,
   setFavoriteToolIds,
@@ -97,4 +98,33 @@ test("failed favorite saves do not overwrite the local fallback", async (t) => {
 
   await assert.rejects(() => setFavoriteToolIds(["json"]), /disk full/);
   assert.equal(values.get("toolbox.favoriteToolIds"), '["hash"]');
+});
+
+test("favorites dropped by an older sidecar allow-list stay in the UI", async (t) => {
+  const values = new Map();
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  globalThis.localStorage = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+  globalThis.window = {
+    dbxPlugin: {
+      invoke: async (_method, params) => ({
+        // Pretend the running sidecar predates image-generate.
+        favoriteToolIds: (params?.favoriteToolIds || []).filter((id) => id !== "image-generate"),
+      }),
+    },
+  };
+  t.after(() => {
+    globalThis.window = originalWindow;
+    globalThis.localStorage = originalStorage;
+  });
+
+  const saved = await setFavoriteToolIds(["hash", "image-generate"]);
+  assert.deepEqual(saved, ["hash", "image-generate"]);
+  assert.equal(values.get("toolbox.favoriteToolIds"), '["hash","image-generate"]');
+
+  window.dbxPlugin.invoke = async () => ({ favoriteToolIds: ["hash"] });
+  assert.deepEqual(await getFavoriteToolIds(), ["hash", "image-generate"]);
 });

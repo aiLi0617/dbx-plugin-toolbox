@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/t8y2/dbx/main/plugins/manifest.schema.json",
   "manifest_version": 1,
   "id": "io.github.aili0617.toolbox",
-  "name": "工具箱",
+  "name": "Toolbox",
   "version": "0.1.0",
   "publisher": "aili0617",
   "description": "Conversion, encoding, formatting, generators, text tools, and a local key vault.",
@@ -40,6 +40,56 @@
         "io.github.aili0617.toolbox.workbench": {
           "label": "工具箱",
           "description": "本地开发小工具与加密密钥库。"
+        }
+      }
+    },
+    "zh-TW": {
+      "name": "工具箱",
+      "description": "轉換、編解碼、格式化、產生、文字工具與本機金鑰庫。",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "工具箱",
+          "description": "本機開發小工具與加密金鑰庫。"
+        }
+      }
+    },
+    "es": {
+      "name": "Caja de herramientas",
+      "description": "Conversión, codificación, formato, generadores, texto y un almacén de claves local.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "Caja de herramientas",
+          "description": "Utilidades locales para desarrolladores y un almacén de claves cifrado."
+        }
+      }
+    },
+    "it": {
+      "name": "Toolbox",
+      "description": "Conversione, codifica, formattazione, generatori, testo e un archivio chiavi locale.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "Toolbox",
+          "description": "Utilità locali per sviluppatori e un archivio chiavi crittografato."
+        }
+      }
+    },
+    "ja": {
+      "name": "ツールボックス",
+      "description": "変換・エンコード・整形・生成・テキストツールとローカル鍵保管庫。",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "ツールボックス",
+          "description": "ローカル開発ツールと暗号化キー保管庫。"
+        }
+      }
+    },
+    "pt-BR": {
+      "name": "Caixa de ferramentas",
+      "description": "Conversão, codificação, formatação, geradores, texto e um cofre de chaves local.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "Caixa de ferramentas",
+          "description": "Utilitários locais para desenvolvedores e um cofre de chaves criptografado."
         }
       }
     }

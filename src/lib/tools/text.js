@@ -77,8 +77,10 @@ export function lineOps(text, mode, opts = {}) {
   if (mode === "reverse") lines = [...lines].reverse();
   if (mode === "shuffle") {
     lines = [...lines];
+    const random = opts.random
+      ?? (opts.seed != null ? mulberry32(Number(opts.seed) || 0) : Math.random.bind(Math));
     for (let i = lines.length - 1; i > 0; i -= 1) {
-      const j = Math.floor((opts.random?.() ?? Math.random()) * (i + 1));
+      const j = Math.floor(random() * (i + 1));
       [lines[i], lines[j]] = [lines[j], lines[i]];
     }
   }
@@ -288,7 +290,7 @@ export const PUNCT_MODES = [
 export function applyWhitespace(text, mode, opts = {}) {
   const kind = mode || "trim";
   const options = typeof opts === "string" ? { affix: opts } : opts || {};
-  if (kind === "replace") return findReplace(text, options.find, options.replace);
+  if (kind === "replace") return findReplace(text, options.find, options.replace, options);
   if (kind === "full" || kind === "half") return punct(text, kind);
   if (["sort", "unique", "prefix", "suffix", "reverse", "shuffle", "number", "unnumber", "column", "filter-length"].includes(kind)) {
     return lineOps(text, kind, options);
@@ -296,9 +298,60 @@ export function applyWhitespace(text, mode, opts = {}) {
   return whitespace(text, kind);
 }
 
-export function findReplace(text, find, replace) {
-  if (!find) return text;
-  return String(text ?? "").split(find).join(replace || "");
+/** Deterministic PRNG for stable shuffle across derived recalcs. */
+export function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * @param {string} text
+ * @param {string} find
+ * @param {string} [replace]
+ * @param {{ regex?: boolean, firstOnly?: boolean, ignoreCase?: boolean }} [opts]
+ */
+export function findReplace(text, find, replace, opts = {}) {
+  const source = String(text ?? "");
+  const pattern = String(find ?? "");
+  if (!pattern) return source;
+  if (pattern.length > 10_000) throw new Error("Find pattern is too large");
+  if (source.length > 1_000_000) throw new Error("Replace input is limited to 1 MB");
+
+  const replacement = replace ?? "";
+  const firstOnly = Boolean(opts.firstOnly);
+  const ignoreCase = Boolean(opts.ignoreCase);
+  const useRegex = Boolean(opts.regex);
+
+  if (!useRegex && !ignoreCase) {
+    if (firstOnly) {
+      const index = source.indexOf(pattern);
+      if (index < 0) return source;
+      return source.slice(0, index) + replacement + source.slice(index + pattern.length);
+    }
+    return source.split(pattern).join(replacement);
+  }
+
+  const flags = `${firstOnly ? "" : "g"}${ignoreCase ? "i" : ""}`;
+  let re;
+  try {
+    re = new RegExp(useRegex ? pattern : escapeRegExp(pattern), flags);
+  } catch (error) {
+    throw new Error(error?.message || "Invalid regular expression");
+  }
+
+  // Function replacer avoids `$` expansion in literal / ignore-case modes.
+  if (!useRegex) return source.replace(re, () => replacement);
+  return source.replace(re, replacement);
 }
 
 export function testRegex(input, pattern, flags) {
@@ -334,13 +387,135 @@ export function regexSegments(text, matches) {
   return segs;
 }
 
+const LINE_ALIGN_CELL_LIMIT = 1_000_000;
+
+function splitDiffLines(text) {
+  const value = String(text ?? "");
+  if (!value) return [];
+  return value.split("\n");
+}
+
+/**
+ * Align two line arrays with edit-distance DP.
+ * Prefers in-place replace over distant insert/delete when costs tie, so repeated
+ * identical lines (e.g. many "asd") don't scatter +/− far apart.
+ */
+export function alignLineOps(leftLines, rightLines) {
+  const n = leftLines.length;
+  const m = rightLines.length;
+  const dp = Array.from({ length: n + 1 }, () => new Int32Array(m + 1));
+  // 0 match, 1 replace, 2 del, 3 ins
+  const pr = Array.from({ length: n + 1 }, () => new Uint8Array(m + 1));
+  for (let i = 1; i <= n; i++) {
+    dp[i][0] = i;
+    pr[i][0] = 2;
+  }
+  for (let j = 1; j <= m; j++) {
+    dp[0][j] = j;
+    pr[0][j] = 3;
+  }
+  for (let i = 1; i <= n; i++) {
+    const left = leftLines[i - 1];
+    const row = dp[i];
+    const prev = dp[i - 1];
+    const prow = pr[i];
+    for (let j = 1; j <= m; j++) {
+      const same = left === rightLines[j - 1];
+      const sub = prev[j - 1] + (same ? 0 : 1);
+      const del = prev[j] + 1;
+      const ins = row[j - 1] + 1;
+      let best = sub;
+      let op = same ? 0 : 1;
+      if (del < best) {
+        best = del;
+        op = 2;
+      }
+      if (ins < best) {
+        best = ins;
+        op = 3;
+      }
+      row[j] = best;
+      prow[j] = op;
+    }
+  }
+  const ops = [];
+  let i = n;
+  let j = m;
+  while (i > 0 || j > 0) {
+    const op = pr[i][j];
+    if (op === 0) {
+      ops.push({ type: "same", left: leftLines[i - 1], right: rightLines[j - 1] });
+      i -= 1;
+      j -= 1;
+    } else if (op === 1) {
+      ops.push({ type: "replace", left: leftLines[i - 1], right: rightLines[j - 1] });
+      i -= 1;
+      j -= 1;
+    } else if (op === 2) {
+      ops.push({ type: "del", left: leftLines[i - 1] });
+      i -= 1;
+    } else {
+      ops.push({ type: "add", right: rightLines[j - 1] });
+      j -= 1;
+    }
+  }
+  ops.reverse();
+  return ops;
+}
+
+function lineValue(line, isLast, endsWithNewline) {
+  if (isLast && !endsWithNewline) return line;
+  return `${line}\n`;
+}
+
+function partsFromLineOps(ops, leftEndsWithNewline, rightEndsWithNewline) {
+  const parts = [];
+  const push = (mark, value) => {
+    const last = parts[parts.length - 1];
+    if (last && last.mark === mark) {
+      last.value += value;
+      last.count += 1;
+      return;
+    }
+    parts.push({ mark, value, count: 1 });
+  };
+  for (let index = 0; index < ops.length; index++) {
+    const op = ops[index];
+    const isLast = index === ops.length - 1;
+    if (op.type === "same") {
+      push("same", lineValue(op.left, isLast, leftEndsWithNewline || rightEndsWithNewline));
+    } else if (op.type === "replace") {
+      push("del", lineValue(op.left, false, true));
+      push("add", lineValue(op.right, isLast, rightEndsWithNewline));
+    } else if (op.type === "del") {
+      push("del", lineValue(op.left, isLast, leftEndsWithNewline));
+    } else {
+      push("add", lineValue(op.right, isLast, rightEndsWithNewline));
+    }
+  }
+  return parts;
+}
+
+function diffLineParts(before, after) {
+  const leftText = String(before ?? "");
+  const rightText = String(after ?? "");
+  const leftLines = splitDiffLines(leftText);
+  const rightLines = splitDiffLines(rightText);
+  if (leftLines.length * rightLines.length > LINE_ALIGN_CELL_LIMIT) {
+    return diffLines(leftText, rightText).map((part) => ({
+      mark: part.added ? "add" : part.removed ? "del" : "same",
+      value: part.value,
+      count: part.count || 0,
+    }));
+  }
+  const ops = alignLineOps(leftLines, rightLines);
+  return partsFromLineOps(ops, leftText.endsWith("\n"), rightText.endsWith("\n"));
+}
+
 export function lineDiffParts(left, right) {
-  return diffLines(String(left ?? ""), String(right ?? "")).flatMap((part) => {
-    const mark = part.added ? "add" : part.removed ? "del" : "same";
-    return part.value
-      .replace(/\n$/, "")
-      .split("\n")
-      .map((line) => ({ mark, line }));
+  return diffLineParts(left, right).flatMap((part) => {
+    const lines = part.value.replace(/\n$/, "").split("\n");
+    return lines.map((line) => ({ mark: part.mark, line }));
   });
 }
 
@@ -354,14 +529,19 @@ export function diffParts(left, right, opts = {}) {
   const before = normalize(left);
   const after = normalize(right);
   const mode = opts.mode || "lines";
-  const parts = mode === "chars"
-    ? diffChars(before, after)
-    : mode === "words"
-      ? diffWordsWithSpace(before, after)
-      : diffLines(before, after);
-  return parts.map((part) => ({
-    mark: part.added ? "add" : part.removed ? "del" : "same",
-    value: part.value,
-    count: part.count || 0,
-  }));
+  if (mode === "chars") {
+    return diffChars(before, after).map((part) => ({
+      mark: part.added ? "add" : part.removed ? "del" : "same",
+      value: part.value,
+      count: part.count || 0,
+    }));
+  }
+  if (mode === "words") {
+    return diffWordsWithSpace(before, after).map((part) => ({
+      mark: part.added ? "add" : part.removed ? "del" : "same",
+      value: part.value,
+      count: part.count || 0,
+    }));
+  }
+  return diffLineParts(before, after);
 }

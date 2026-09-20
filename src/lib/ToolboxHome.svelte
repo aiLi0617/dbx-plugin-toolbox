@@ -1,7 +1,8 @@
 <script>
   import { CATEGORY_ORDER, searchTools } from "./catalog.js";
   import { categories, pick } from "./i18n.js";
-  import { toolOptionsForQuery } from "./navigation.js";
+  import { intentLabelForTool } from "./navigation.js";
+  import ClipTip from "./ClipTip.svelte";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], categoryCounts = {}, onCatalog, onTool, onToggleFavorite, onMoveFavorite } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -24,7 +25,7 @@
   $effect(() => { searchQuery; searchSelected = 0; });
 
   function searchDestination(item) {
-    return Object.values(toolOptionsForQuery(item.id, searchQuery)).join(" → ");
+    return intentLabelForTool(item.id, searchQuery);
   }
   function chooseSearchResult(item) {
     if (!item) return;
@@ -166,8 +167,8 @@
               onmousedown={(event) => event.preventDefault()}
               onclick={() => chooseSearchResult(item)}
             >
-              <span><strong>{pick(locale, item.name.zh, item.name.en)}{#if searchDestination(item)} · {searchDestination(item)}{/if}</strong><small>{pick(locale, item.summary.zh, item.summary.en)}</small></span>
-              <em>{pick(locale, categories[item.category].zh, categories[item.category].en)}</em>
+              <span><strong>{pick(locale, item.name)}{#if searchDestination(item)} · {searchDestination(item)}{/if}</strong><small>{pick(locale, item.summary)}</small></span>
+              <em>{pick(locale, categories[item.category])}</em>
             </button>
           {:else}
             <p class="search-empty">{t("没有匹配的工具", "No matching tools")}</p>
@@ -207,10 +208,10 @@
               class="drag"
               type="button"
               onkeydown={(event) => keyMove(event, item)}
-              aria-label={t(`调整 ${item.name.zh} 顺序`, `Reorder ${item.name.en}`)}
+              aria-label={t(`调整 ${pick(locale, item.name)} 顺序`, `Reorder ${pick(locale, item.name)}`)}
               title={t("拖动整张卡片排序，或使用方向键调整", "Drag the card to reorder, or use arrow keys")}
             >⠿</button>
-            <button class="card-open" type="button" onclick={(event) => openItem(event, item)}><strong>{pick(locale, item.name.zh, item.name.en)}</strong><span>{pick(locale, item.summary.zh, item.summary.en)}</span></button>
+            <button class="card-open" type="button" onclick={(event) => openItem(event, item)}><strong>{pick(locale, item.name)}</strong><span class="summary"><ClipTip text={pick(locale, item.summary)} /></span></button>
             <button class="star active" type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={t("从常用移除", "Remove favorite")} title={t("从常用移除", "Remove favorite")}>★</button>
           </article>
         {/each}
@@ -222,10 +223,10 @@
 
   {#if recents.length}
     <section class="home-section">
-      <div class="section-head"><div><h3>{t("最近使用", "Recent")}</h3><p>{t("自动记录最近打开的非常用工具", "Recently opened tools not already in favorites")}</p></div></div>
+      <div class="section-head"><div><h3>{t("最近使用", "Recent")}</h3><p>{t("自动记录最近打开的工具", "Recently opened tools")}</p></div></div>
       <div class="recent-grid">
         {#each recents.slice(0, 8) as item (item.id)}
-          <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name.zh, item.name.en)}</strong><span>{pick(locale, categories[item.category].zh, categories[item.category].en)}</span></button>
+          <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
         {/each}
       </div>
     </section>
@@ -235,7 +236,7 @@
     <div class="section-head"><div><h3>{t("按分类浏览", "Browse by category")}</h3></div></div>
     <div class="category-grid">
       {#each CATEGORY_ORDER as id}
-        <button type="button" onclick={() => onCatalog?.(id)}><span>{pick(locale, categories[id].zh, categories[id].en)}</span><small>{categoryCounts[id] || 0}</small></button>
+        <button type="button" onclick={() => onCatalog?.(id)}><span>{pick(locale, categories[id])}</span><small>{categoryCounts[id] || 0}</small></button>
       {/each}
     </div>
   </section>
@@ -251,7 +252,7 @@
     aria-hidden="true"
   >
     <span class="ghost-handle">⠿</span>
-    <span class="ghost-copy"><strong>{pick(locale, draggingTool.name.zh, draggingTool.name.en)}</strong><small>{pick(locale, draggingTool.summary.zh, draggingTool.summary.en)}</small></span>
+    <span class="ghost-copy"><strong>{pick(locale, draggingTool.name)}</strong><small>{pick(locale, draggingTool.summary)}</small></span>
     <span class="ghost-star">★</span>
   </div>
 {/if}
@@ -284,7 +285,7 @@
   .text-btn { border:0; background:transparent; color:var(--color-primary); font-size:12px; }
   .tool-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:9px; }
   .tool-card { position:relative; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; min-height:70px; border:1px solid var(--color-border); border-radius:9px; background:var(--color-card); cursor:grab; user-select:none; transition:opacity 120ms,border-color 120ms,transform 120ms; }
-  .tool-card:hover { border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); }
+  .tool-card:hover,.tool-card:focus-within { z-index:2; border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); }
   .tool-card.dragging { opacity:.5; cursor:grabbing; transform:scale(.985); }
   .tool-card.drop-target { border-color:var(--color-primary); box-shadow:0 0 0 2px color-mix(in srgb,var(--color-primary) 18%,transparent); }
   .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:0 14px 34px rgba(0,0,0,.22); transform:scale(1.02); }
@@ -296,7 +297,7 @@
   .drag,.star { position:relative; z-index:2; height:32px; padding:0; border:0; background:transparent; color:var(--color-muted-foreground); }
   .drag { grid-column:1; cursor:grab; opacity:.45; }.tool-card:hover .drag,.drag:focus-visible{opacity:1}.star{grid-column:3}.star.active{color:var(--color-warning);font-size:16px}
   .card-open { position:absolute; z-index:1; inset:0; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; padding:11px 36px 11px 30px; border:0; border-radius:inherit; background:transparent; text-align:left; }
-  .card-open strong { font-size:13px; }.card-open span { overflow:hidden; color:var(--color-muted-foreground); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+  .card-open strong { font-size:13px; }.card-open .summary { min-width:0; color:var(--color-muted-foreground); font-size:11px; }
   .recent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:7px; }
   .recent-grid button,.category-grid button { display:flex; align-items:center; justify-content:space-between; gap:8px; height:42px; padding:0 12px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-card); text-align:left; }
   .recent-grid button:hover,.category-grid button:hover { background:var(--color-muted); }.recent-grid strong{font-size:12px}.recent-grid span,.category-grid small{color:var(--color-muted-foreground);font-size:10px}

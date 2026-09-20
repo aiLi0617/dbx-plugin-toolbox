@@ -1,13 +1,18 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import IoSplit from "./IoSplit.svelte";
-  import Select from "./Select.svelte";
   import { pick } from "./i18n.js";
   import { decodeUrl, encodeUrl, parseQuery } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
+
+  const MODES = [
+    { value: "encode", zh: "编码", en: "Encode" },
+    { value: "decode", zh: "解码", en: "Decode" },
+    { value: "query", zh: "参数表", en: "Params" },
+  ];
 
   let mode = $state("encode");
   let input = $state("");
@@ -22,68 +27,127 @@
     }
   });
 
+  const structureRows = $derived.by(() => {
+    const q = result.query;
+    if (!q) return [];
+    const rows = [];
+    if (q.protocol) rows.push(["protocol", q.protocol]);
+    if (q.host) rows.push(["host", q.host]);
+    if (q.pathname) rows.push(["path", q.pathname]);
+    if (q.href) rows.push(["href", q.href]);
+    if (q.hashPath) rows.push(["hash", q.hashPath]);
+    else if (q.hash) rows.push(["hash", q.hash]);
+    return rows;
+  });
+
+  const hasQuery = $derived.by(() => {
+    const q = result.query;
+    if (!q) return false;
+    return structureRows.length > 0 || q.rows.length > 0 || q.hashRows.length > 0;
+  });
+
   const tableText = $derived.by(() => {
     const q = result.query;
     if (!q) return "";
     const lines = [];
-    if (q.href) lines.push(`href\t${q.href}`);
-    if (q.hash) lines.push(`hash\t${q.hash}`);
+    for (const [k, v] of structureRows) lines.push(`${k}\t${v}`);
     for (const [k, v] of q.rows) lines.push(`${k}\t${v}`);
+    for (const [k, v] of q.hashRows) lines.push(`hash.${k}\t${v}`);
     return lines.join("\n");
   });
+
+  function clearInput() {
+    input = "";
+  }
 </script>
 
 <div class="page">
-  <div class="options">
-    <label class="field">
-      <span>{t("模式", "Mode")}</span>
-      <Select
-        bind:value={mode}
-        options={[
-          { value: "encode", label: t("编码", "Encode") },
-          { value: "decode", label: t("解码", "Decode") },
-          { value: "query", label: t("Query 表", "Query table") },
-        ]}
-      />
-    </label>
+  <div class="seg" role="tablist" aria-label={t("模式", "Mode")}>
+    {#each MODES as item}
+      <button
+        class:active={mode === item.value}
+        aria-selected={mode === item.value}
+        onclick={() => (mode = item.value)}
+        role="tab"
+        type="button"
+      >{t(item.zh, item.en)}</button>
+    {/each}
   </div>
 
   {#if mode === "query"}
     <label class="block">
-      <span class="caption">{t("URL 或查询串", "URL or query string")}</span>
-      <textarea class="dbx-textarea area" spellcheck="false" bind:value={input} placeholder="https://example.com/path?q=1#hash"></textarea>
+      <span class="caption-row">
+        <span class="caption">{t("URL 或查询串", "URL or query string")}</span>
+        <button class="dbx-btn dbx-btn--ghost small-action" type="button" disabled={!input} onclick={clearInput}>{t("清空", "Clear")}</button>
+      </span>
+      <textarea
+        class="dbx-textarea area"
+        spellcheck="false"
+        bind:value={input}
+        placeholder="https://example.com/path?q=1#/app?x=1"
+        aria-label={t("URL 或查询串", "URL or query string")}
+      ></textarea>
     </label>
     {#if result.error}
       <p class="error">{result.error}</p>
     {:else}
       <div class="caption-row">
-        <span class="caption">{t("参数", "Params")}</span>
+        <span class="caption">{t("解析结果", "Parsed")}</span>
         <CopyButton {locale} text={tableText} labelZh="复制表" labelEn="Copy table" />
       </div>
-      {#if result.query && (result.query.href || result.query.hash || result.query.rows.length)}
+      {#if hasQuery}
         <div class="table-wrap">
-          <table class="dbx-table">
-            <thead>
-              <tr>
-                <th>{t("键", "Key")}</th>
-                <th>{t("值", "Value")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#if result.query.href}
-                <tr><td class="mono">href</td><td class="mono">{result.query.href}</td></tr>
-              {/if}
-              {#if result.query.hash}
-                <tr><td class="mono">hash</td><td class="mono">{result.query.hash}</td></tr>
-              {/if}
-              {#each result.query.rows as row, i (`${row[0]}-${i}`)}
-                <tr><td class="mono">{row[0]}</td><td class="mono">{row[1]}</td></tr>
-              {/each}
-            </tbody>
-          </table>
+          {#if structureRows.length}
+            <p class="section">{t("结构", "Structure")}</p>
+            <table class="dbx-table">
+              <thead>
+                <tr>
+                  <th>{t("键", "Key")}</th>
+                  <th>{t("值", "Value")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each structureRows as row, i (`s-${row[0]}-${i}`)}
+                  <tr><td class="mono key">{row[0]}</td><td class="mono">{row[1]}</td></tr>
+                {/each}
+              </tbody>
+            </table>
+          {/if}
+          {#if result.query.rows.length}
+            <p class="section">{t("查询参数", "Query")}</p>
+            <table class="dbx-table">
+              <thead>
+                <tr>
+                  <th>{t("键", "Key")}</th>
+                  <th>{t("值", "Value")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each result.query.rows as row, i (`q-${row[0]}-${i}`)}
+                  <tr><td class="mono key">{row[0]}</td><td class="mono">{row[1]}</td></tr>
+                {/each}
+              </tbody>
+            </table>
+          {/if}
+          {#if result.query.hashRows.length}
+            <p class="section">{t("Hash 参数", "Hash query")}</p>
+            <table class="dbx-table">
+              <thead>
+                <tr>
+                  <th>{t("键", "Key")}</th>
+                  <th>{t("值", "Value")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each result.query.hashRows as row, i (`h-${row[0]}-${i}`)}
+                  <tr><td class="mono key">{row[0]}</td><td class="mono">{row[1]}</td></tr>
+                {/each}
+              </tbody>
+            </table>
+          {/if}
         </div>
       {:else}
-        <p class="dbx-hint">{t("粘贴带查询参数的 URL。", "Paste a URL with query parameters.")}</p>
+        <p class="dbx-hint">{t("粘贴 URL、编码后的 URL，或查询串。", "Paste a URL, encoded URL, or query string.")}</p>
       {/if}
     {/if}
   {:else}
@@ -92,8 +156,10 @@
       bind:input
       output={result.text}
       error={result.error}
+      orientation="vertical"
       inputLabel={t("原文", "Source")}
-      outputLabel={mode === "decode" ? t("解码", "Decoded") : t("编码", "Encoded")}
+      outputLabel={t("结果", "Result")}
+      inputPlaceholder={mode === "decode" ? "https%3A%2F%2F…" : "https://…"}
     />
   {/if}
 </div>
@@ -106,22 +172,52 @@
     flex-direction: column;
     gap: var(--ui-gap, 12px);
   }
-  .options {
-    display: flex;
+  .seg {
+    display: inline-flex;
     flex-wrap: wrap;
-    gap: var(--ui-gap, 12px);
-    align-items: flex-end;
     flex-shrink: 0;
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    width: fit-content;
   }
-  .field :global(.dbx-select) {
-    width: auto;
-    min-width: 160px;
+  .seg button {
+    height: 28px;
+    padding: 0 12px;
+    border: 0;
+    border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button.active {
+    background: var(--dbx-selection-background);
+    border-color: var(--dbx-selection-border);
+    color: var(--dbx-selection-foreground);
+    font-weight: 600;
   }
   .block {
     display: flex;
     flex-direction: column;
     gap: var(--ui-field-gap, 6px);
     flex-shrink: 0;
+  }
+  .caption-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 20px;
+  }
+  .caption {
+    color: var(--color-muted-foreground);
+  }
+  .small-action {
+    margin-left: auto;
+    min-height: 20px;
+    height: 20px;
+    padding: 0 5px;
+    font-size: 11px;
   }
   .area {
     min-height: 88px;
@@ -131,6 +227,20 @@
     flex: 1;
     min-height: 0;
     overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .section {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted-foreground);
+  }
+  .key {
+    width: 28%;
+    max-width: 220px;
+    white-space: nowrap;
   }
   .mono {
     font-family: var(--font-mono);

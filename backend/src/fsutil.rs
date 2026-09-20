@@ -9,7 +9,7 @@ use serde_json::{json, Value};
 
 use crate::helpers::{bad, err, opt_str, str_param};
 
-const MAX_BYTES: usize = 8 * 1024 * 1024;
+const MAX_BYTES: usize = 10 * 1024 * 1024;
 const MAX_BASE64_BYTES: usize = MAX_BYTES.div_ceil(3) * 4;
 const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
 
@@ -140,32 +140,147 @@ fn copy_png_to_clipboard(_bytes: &[u8]) -> Result<(), PluginError> {
 }
 
 fn save_file(params: Value) -> Result<Value, PluginError> {
+    let bytes = decode_data(str_param(&params, "data")?)?;
+    let binary = params
+        .get("binary")
+        .and_then(|value| value.as_bool())
+        .unwrap_or(false);
+
+    if binary {
+        return save_binary_file(params, bytes);
+    }
+
     let format = image_format(opt_str(&params, "mimeType").unwrap_or(PNG_FORMAT.mime))?;
     let name = sanitize_file_name(
         str_param(&params, "fileName").unwrap_or("barcode"),
         format.extension,
     );
     let title = opt_str(&params, "title").unwrap_or("Save image");
-    let bytes = decode_data(str_param(&params, "data")?)?;
     validate_image(&bytes, format)?;
     let start_dir = download_dir().ok();
     let Some(mut path) = pick_save_path(title, &name, start_dir.as_deref(), format) else {
         return Ok(json!({ "cancelled": true }));
     };
     path = ensure_extension(path, format.extension);
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .map_err(|error| err(format!("Failed to create folder: {error}")))?;
-    }
-    fs::write(&path, bytes).map_err(|error| err(format!("Failed to save file: {error}")))?;
-    if let Ok(mut last) = LAST_SAVED.lock() {
-        *last = Some(path.clone());
-    }
+    write_saved_file(&path, &bytes)?;
     Ok(json!({
         "cancelled": false,
         "path": path.to_string_lossy(),
         "fileName": path.file_name().and_then(|value| value.to_str()).unwrap_or(&name),
     }))
+}
+
+fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError> {
+    let mime = opt_str(&params, "mimeType").unwrap_or("application/octet-stream");
+    let raw_name = str_param(&params, "fileName").unwrap_or("download");
+    let extension = resolve_save_extension(opt_str(&params, "extension"), raw_name, mime);
+    let name = sanitize_file_name(raw_name, &extension);
+    let title = opt_str(&params, "title").unwrap_or("Save file");
+    let start_dir = download_dir().ok();
+    let Some(mut path) = pick_save_path_binary(title, &name, start_dir.as_deref(), &extension) else {
+        return Ok(json!({ "cancelled": true }));
+    };
+    path = ensure_extension(path, &extension);
+    write_saved_file(&path, &bytes)?;
+    Ok(json!({
+        "cancelled": false,
+        "path": path.to_string_lossy(),
+        "fileName": path.file_name().and_then(|value| value.to_str()).unwrap_or(&name),
+    }))
+}
+
+fn write_saved_file(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|error| err(format!("Failed to create folder: {error}")))?;
+    }
+    fs::write(path, bytes).map_err(|error| err(format!("Failed to save file: {error}")))?;
+    if let Ok(mut last) = LAST_SAVED.lock() {
+        *last = Some(path.to_path_buf());
+    }
+    Ok(())
+}
+
+fn resolve_save_extension(explicit: Option<&str>, file_name: &str, mime: &str) -> String {
+    if let Some(ext) = explicit
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(|value| value.trim_start_matches('.').to_ascii_lowercase())
+        .filter(|value| !value.is_empty())
+    {
+        return ext;
+    }
+    if let Some(ext) = Path::new(file_name)
+        .extension()
+        .and_then(|value| value.to_str())
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(|value| value.to_ascii_lowercase())
+    {
+        return ext;
+    }
+    extension_for_mime(mime).to_string()
+}
+
+fn extension_for_mime(mime: &str) -> &'static str {
+    match mime
+        .split(';')
+        .next()
+        .unwrap_or(mime)
+        .trim()
+        .to_ascii_lowercase()
+        .as_str()
+    {
+        "image/png" => "png",
+        "image/jpeg" | "image/jpg" => "jpg",
+        "image/gif" => "gif",
+        "image/webp" => "webp",
+        "image/bmp" | "image/x-ms-bmp" => "bmp",
+        "image/svg+xml" => "svg",
+        "image/x-icon" | "image/vnd.microsoft.icon" => "ico",
+        "image/tiff" | "image/tif" => "tiff",
+        "image/avif" => "avif",
+        "text/plain" => "txt",
+        "text/csv" => "csv",
+        "text/tab-separated-values" => "tsv",
+        "text/html" => "html",
+        "text/css" => "css",
+        "text/javascript" | "application/javascript" => "js",
+        "application/json" => "json",
+        "application/xml" | "text/xml" => "xml",
+        "application/pdf" => "pdf",
+        "application/zip" => "zip",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => "xlsx",
+        _ => "bin",
+    }
+}
+
+fn pick_save_path_binary(
+    title: &str,
+    name: &str,
+    start_dir: Option<&Path>,
+    extension: &str,
+) -> Option<PathBuf> {
+    let title = title.to_string();
+    let name = name.to_string();
+    let start_dir = start_dir.map(Path::to_path_buf);
+    let extension = extension.to_string();
+    let worker = std::thread::Builder::new()
+        .name("save-dialog".into())
+        .spawn(move || {
+            let mut dialog = rfd::FileDialog::new();
+            dialog = dialog
+                .set_title(&title)
+                .set_file_name(&name)
+                .add_filter("File", &[&extension])
+                .add_filter("All files", &["*"]);
+            if let Some(dir) = start_dir.as_deref() {
+                dialog = dialog.set_directory(dir);
+            }
+            dialog.save_file()
+        })
+        .ok()?;
+    worker.join().ok()?
 }
 
 fn reveal_file(params: Value) -> Result<Value, PluginError> {
@@ -397,5 +512,23 @@ mod tests {
         assert_eq!(sanitize_file_name("../bad:name", "jpg"), "bad_name.jpg");
         assert_eq!(sanitize_file_name("...", "png"), "barcode.png");
         assert_eq!(sanitize_file_name("code.PNG", "png"), "code.PNG");
+    }
+
+    #[test]
+    fn resolves_save_extension_from_file_name_before_mime_fallback() {
+        assert_eq!(resolve_save_extension(None, "Sheet1.csv", "application/octet-stream"), "csv");
+        assert_eq!(resolve_save_extension(None, "Sheet1.tsv", "text/plain"), "tsv");
+        assert_eq!(
+            resolve_save_extension(None, "table.xlsx", "application/octet-stream"),
+            "xlsx"
+        );
+        assert_eq!(resolve_save_extension(Some("CSV"), "download", "application/octet-stream"), "csv");
+        assert_eq!(extension_for_mime("text/csv"), "csv");
+        assert_eq!(
+            extension_for_mime("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+            "xlsx"
+        );
+        assert_eq!(sanitize_file_name("Sheet1.csv", "csv"), "Sheet1.csv");
+        assert_ne!(sanitize_file_name("Sheet1.csv", "bin"), "Sheet1.csv");
     }
 }

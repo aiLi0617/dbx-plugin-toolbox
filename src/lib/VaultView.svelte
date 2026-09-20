@@ -4,8 +4,9 @@
   import Select from "./Select.svelte";
   import { invoke, ready } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
+  import { moveId } from "./navigation.js";
   import { VAULT_AUTO_LOCK_MINUTES } from "./prefs.js";
-  import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, rsaGenerateTimeoutMs } from "./tools/generate.js";
+  import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem, generateSymmetricKeyMaterial } from "./tools/generate.js";
 
   let {
     locale = "zh-CN",
@@ -16,6 +17,8 @@
 
   let status = $state({ exists: false, unlocked: false });
   let keys = $state([]);
+  let listQuery = $state("");
+  let pointerDrag = $state(null);
   let password = $state("");
   let confirmPassword = $state("");
   let newPassword = $state("");
@@ -44,6 +47,17 @@
   })));
   const pasteExisting = $derived(createMode === "paste");
   const generatingAsym = $derived(!pasteExisting && (createAlg === "rsa-pem" || createAlg === "sm2"));
+  const filteredKeys = $derived((() => {
+    const query = listQuery.trim().toLowerCase();
+    if (!query) return keys;
+    return keys.filter((key) => {
+      const hay = `${key.name} ${key.algorithm} ${key.fingerprint || ""}`.toLowerCase();
+      return hay.includes(query);
+    });
+  })());
+  const filtering = $derived(Boolean(listQuery.trim()));
+  const canReorder = $derived(!filtering && !busy && !renameId && keys.length > 1);
+  const draggingKey = $derived(pointerDrag ? keys.find((key) => key.id === pointerDrag.sourceId) : null);
 
   function notify() {
     onKeysChange();
@@ -78,6 +92,8 @@
     reveal = null;
     pendingDelete = null;
     cancelRename();
+    pointerDrag = null;
+    listQuery = "";
     password = "";
     confirmPassword = "";
     currentPassword = "";
@@ -115,11 +131,11 @@
     if (algorithm === "aes-256" || algorithm === "aes-128" || algorithm === "sm4-128") {
       return t("对称加密 · XOR", "Symmetric · XOR");
     }
-    if (algorithm === "hmac-sha256" || algorithm === "hmac") {
-      return t("HMAC · JWT · XOR", "HMAC · JWT · XOR");
-    }
     if (algorithm === "hmac-sm3") {
       return t("HMAC · XOR", "HMAC · XOR");
+    }
+    if (String(algorithm || "").startsWith("hmac")) {
+      return t("HMAC · JWT · XOR", "HMAC · JWT · XOR");
     }
     if (algorithm === "rsa-pem" || algorithm === "sm2") {
       return t("非对称加密", "Asymmetric cipher");
@@ -134,11 +150,11 @@
     if (algorithm === "sm4-128") {
       return t("给「对称加密」选用，也可给 XOR 当字节密钥。", "For Symmetric cipher; XOR can reuse these byte keys.");
     }
-    if (algorithm === "hmac-sha256" || algorithm === "hmac") {
-      return t("给 HMAC、JWT 选用，也可给 XOR 当字节密钥。", "For HMAC and JWT; XOR can reuse these byte keys.");
-    }
     if (algorithm === "hmac-sm3") {
       return t("给 HMAC 选用，也可给 XOR 当字节密钥。", "For HMAC; XOR can reuse these byte keys.");
+    }
+    if (String(algorithm || "").startsWith("hmac")) {
+      return t("给 HMAC、JWT 选用，也可给 XOR 当字节密钥。", "For HMAC and JWT; XOR can reuse these byte keys.");
     }
     if (algorithm === "rsa-pem") {
       return t("给「非对称加密」的 RSA 选用。随机生成可选位数和 PEM 格式。", "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.");
@@ -241,14 +257,26 @@
       return;
     }
     await run(async () => {
+      let material = createMaterial;
+      let generate = !pasteExisting;
+      if (!pasteExisting && createAlg === "rsa-pem") {
+        // RSA via WebCrypto locally — backend pure-Rust keygen is too slow for the UI.
+        const pair = await generateRsaKeyPairPem(createBits, createFormat);
+        material = pair.privateKey;
+        generate = false;
+      } else if (!pasteExisting && createAlg !== "sm2") {
+        // AES / SM4 / HMAC: CSPRNG on the frontend; backend only validates + stores.
+        material = generateSymmetricKeyMaterial(createAlg).material;
+        generate = false;
+      }
       await invoke("toolbox/keys/create", {
         name,
         algorithm: createAlg,
-        generate: !pasteExisting,
-        material: createMaterial,
+        generate,
+        material,
         bits: createAlg === "rsa-pem" ? Number(createBits) : undefined,
         format: createAlg === "rsa-pem" ? createFormat : undefined,
-      }, createAlg === "rsa-pem" ? rsaGenerateTimeoutMs(createBits) : 30000);
+      }, 30000);
       createName = "";
       createMaterial = "";
       createMode = "generate";
@@ -307,6 +335,101 @@
     });
   }
 
+  function moveKeyLocal(sourceId, targetId, after) {
+    const snapshot = keys.slice();
+    const previous = keys.map((key) => key.id);
+    const nextIds = moveId(previous, sourceId, targetId, after);
+    if (nextIds.join("\0") === previous.join("\0")) return null;
+    const byId = new Map(keys.map((key) => [key.id, key]));
+    keys = nextIds.map((id) => byId.get(id)).filter(Boolean);
+    return { nextIds, snapshot };
+  }
+
+  async function persistOrder(ids, snapshot) {
+    await run(async () => {
+      try {
+        await invoke("toolbox/keys/reorder", { ids });
+        notify();
+      } catch (err) {
+        keys = snapshot;
+        throw err;
+      }
+    });
+  }
+
+  function pointerDown(event, key) {
+    if (!canReorder || event.button !== 0) return;
+    const row = event.currentTarget.closest("tr");
+    const rect = (row || event.currentTarget).getBoundingClientRect();
+    pointerDrag = {
+      pointerId: event.pointerId,
+      sourceId: key.id,
+      startX: event.clientX,
+      startY: event.clientY,
+      targetId: key.id,
+      after: false,
+      active: false,
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top,
+    };
+  }
+
+  function pointerMove(event) {
+    if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+    if (!(event.buttons & 1)) {
+      pointerDrag = null;
+      return;
+    }
+    const distance = Math.hypot(event.clientX - pointerDrag.startX, event.clientY - pointerDrag.startY);
+    if (!pointerDrag.active && distance < 5) return;
+    if (!pointerDrag.active) event.currentTarget.setPointerCapture?.(event.pointerId);
+    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("[data-key-id]");
+    const rect = hit?.getBoundingClientRect();
+    pointerDrag = {
+      ...pointerDrag,
+      active: true,
+      x: event.clientX - pointerDrag.offsetX,
+      y: event.clientY - pointerDrag.offsetY,
+      targetId: hit?.dataset.keyId || pointerDrag.targetId,
+      after: rect ? event.clientY > rect.top + rect.height / 2 : pointerDrag.after,
+    };
+    document.getSelection()?.removeAllRanges();
+    event.preventDefault();
+  }
+
+  function pointerEnd(event) {
+    if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+    const current = pointerDrag;
+    pointerDrag = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    if (!current.active || !current.targetId || current.targetId === current.sourceId) return;
+    const moved = moveKeyLocal(current.sourceId, current.targetId, current.after);
+    if (moved) void persistOrder(moved.nextIds, moved.snapshot);
+  }
+
+  function pointerCancel(event) {
+    if (pointerDrag?.pointerId === event.pointerId) pointerDrag = null;
+  }
+
+  function pointerLeave() {
+    if (pointerDrag && !pointerDrag.active) pointerDrag = null;
+  }
+
+  function keyMove(event, key) {
+    if (!canReorder) return;
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+    const at = keys.findIndex((entry) => entry.id === key.id);
+    const target = keys[at + (event.key === "ArrowUp" ? -1 : 1)];
+    if (!target) return;
+    event.preventDefault();
+    const moved = moveKeyLocal(key.id, target.id, event.key === "ArrowDown");
+    if (moved) void persistOrder(moved.nextIds, moved.snapshot);
+  }
+
   function askDelete(key) {
     cancelRename();
     reveal = null;
@@ -316,12 +439,33 @@
   function askExport(key) {
     cancelRename();
     pendingDelete = null;
-    reveal = { key, material: "", password: "", loading: false };
+    reveal = { key, material: "", publicKey: "", password: "", loading: false, mode: "secret" };
+  }
+
+  async function showPublic(key) {
+    cancelRename();
+    pendingDelete = null;
+    reveal = { key, material: "", publicKey: "", password: "", loading: true, mode: "public" };
+    await run(async () => {
+      const result = await invoke("toolbox/keys/public", { id: key.id });
+      if (reveal?.key?.id !== key.id || reveal?.mode !== "public") return;
+      reveal = {
+        key,
+        material: "",
+        publicKey: result.publicKey || "",
+        password: "",
+        loading: false,
+        mode: "public",
+      };
+    });
+    if (reveal?.key?.id === key.id && reveal?.mode === "public" && reveal.loading) {
+      reveal = null;
+    }
   }
 
   async function exportSecret() {
     const current = reveal;
-    if (!current?.key) return;
+    if (!current?.key || current.mode === "public") return;
     if (passwordTooShort(current.password)) {
       fail({ message: t("请输入当前主密码", "Enter the current master password") });
       return;
@@ -334,7 +478,14 @@
         password: current.password,
       }, 60000);
       if (reveal?.key?.id !== current.key.id) return;
-      reveal = { key: current.key, material: result.material || "", password: "", loading: false };
+      reveal = {
+        key: current.key,
+        material: result.material || "",
+        publicKey: result.publicMaterial || "",
+        password: "",
+        loading: false,
+        mode: "secret",
+      };
     });
     if (reveal?.key?.id === current.key.id) reveal = { ...reveal, password: "", loading: false };
   }
@@ -455,55 +606,106 @@
     {#if keys.length === 0}
       <p class="dbx-hint">{t("还没有密钥。添加 AES / SM4、HMAC、RSA / SM2，供加密、签名和 XOR 选用。", "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.")}</p>
     {:else}
-      <div class="table-wrap">
-        <table class="dbx-table">
-          <thead>
-            <tr>
-              <th>{t("名称", "Name")}</th>
-              <th>{t("算法", "Algorithm")}</th>
-              <th>{t("用途", "Used by")}</th>
-              <th>{t("指纹", "Fingerprint")}</th>
-              <th>{t("创建时间", "Created")}</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each keys as key (key.id)}
-              <tr>
-                <td>
-                  {#if renameId === key.id}
-                    <input
-                      class="dbx-input rename-input"
-                      bind:this={renameInput}
-                      bind:value={renameName}
-                      aria-label={t("密钥名称", "Key name")}
-                      onkeydown={onRenameKeydown}
-                    />
-                  {:else}
-                    {key.name}
-                  {/if}
-                </td>
-                <td>{key.algorithm}</td>
-                <td class="uses">{usesFor(key.algorithm)}</td>
-                <td class="mono" title={key.fingerprint}>{key.fingerprint}</td>
-                <td class="muted">{formatCreated(key.createdAt)}</td>
-                <td class="actions">
-                  {#if renameId === key.id}
-                    <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">
-                      {busy ? t("保存中…", "Saving…") : t("保存", "Save")}
-                    </button>
-                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={cancelRename} type="button">{t("取消", "Cancel")}</button>
-                  {:else}
-                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
-                    <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
-                    <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
-                  {/if}
-                </td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
+      <div class="list-toolbar">
+        <label class="field list-filter">
+          <span>{t("筛选", "Filter")}</span>
+          <input
+            class="dbx-input"
+            bind:value={listQuery}
+            placeholder={t("按名称、算法或指纹筛选", "Filter by name, algorithm, or fingerprint")}
+            aria-label={t("筛选密钥", "Filter keys")}
+          />
+        </label>
+        <p class="dbx-hint list-meta">
+          {#if filtering}
+            {t(`显示 ${filteredKeys.length} / ${keys.length}`, `Showing ${filteredKeys.length} / ${keys.length}`)}
+          {:else if canReorder}
+            {t("拖动手柄或用 ↑↓ 调整顺序", "Drag the handle or use ↑↓ to reorder")}
+          {:else}
+            {t(`${keys.length} 把密钥`, `${keys.length} key${keys.length === 1 ? "" : "s"}`)}
+          {/if}
+        </p>
       </div>
+      {#if filteredKeys.length === 0}
+        <p class="dbx-hint">{t("没有匹配的密钥", "No matching keys")}</p>
+      {:else}
+        <div class="table-wrap" class:dragging={pointerDrag?.active}>
+          <table class="dbx-table">
+            <thead>
+              <tr>
+                <th class="drag-col" aria-hidden="true"></th>
+                <th>{t("名称", "Name")}</th>
+                <th>{t("算法", "Algorithm")}</th>
+                <th>{t("用途", "Used by")}</th>
+                <th>{t("指纹", "Fingerprint")}</th>
+                <th>{t("创建时间", "Created")}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each filteredKeys as key (key.id)}
+                <tr
+                  data-key-id={key.id}
+                  class:dragging={pointerDrag?.active && pointerDrag.sourceId === key.id}
+                  class:drop-target={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id}
+                  class:drop-after={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && pointerDrag.after}
+                  class:drop-before={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && !pointerDrag.after}
+                >
+                  <td class="drag-col">
+                    <button
+                      class="drag"
+                      type="button"
+                      disabled={!canReorder}
+                      onpointerdown={(event) => pointerDown(event, key)}
+                      onpointermove={pointerMove}
+                      onpointerup={pointerEnd}
+                      onpointercancel={pointerCancel}
+                      onpointerleave={pointerLeave}
+                      onkeydown={(event) => keyMove(event, key)}
+                      aria-label={t(`调整「${key.name}」顺序`, `Reorder “${key.name}”`)}
+                      title={filtering
+                        ? t("筛选时不能排序", "Clear the filter to reorder")
+                        : t("拖动或使用上下方向键排序", "Drag or use Up/Down to reorder")}
+                    >⠿</button>
+                  </td>
+                  <td>
+                    {#if renameId === key.id}
+                      <input
+                        class="dbx-input rename-input"
+                        bind:this={renameInput}
+                        bind:value={renameName}
+                        aria-label={t("密钥名称", "Key name")}
+                        onkeydown={onRenameKeydown}
+                      />
+                    {:else}
+                      {key.name}
+                    {/if}
+                  </td>
+                  <td>{key.algorithm}</td>
+                  <td class="uses">{usesFor(key.algorithm)}</td>
+                  <td class="mono" title={key.fingerprint}>{key.fingerprint}</td>
+                  <td class="muted">{formatCreated(key.createdAt)}</td>
+                  <td class="actions">
+                    {#if renameId === key.id}
+                      <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">
+                        {busy ? t("保存中…", "Saving…") : t("保存", "Save")}
+                      </button>
+                      <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={cancelRename} type="button">{t("取消", "Cancel")}</button>
+                    {:else}
+                      {#if key.kind === "asymmetric" || key.algorithm === "rsa-pem" || key.algorithm === "sm2"}
+                        <button class="dbx-btn" disabled={busy} onclick={() => showPublic(key)} type="button">{t("公钥", "Public")}</button>
+                      {/if}
+                      <button class="dbx-btn" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
+                      <button class="dbx-btn" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
+                      <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {/if}
     {/if}
 
     <div class="seg" role="tablist">
@@ -526,8 +728,11 @@
                 { value: "aes-256", label: "AES-256", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "aes-128", label: "AES-128", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "sm4-128", label: "SM4", group: t("对称加密 / XOR", "Symmetric / XOR") },
-                { value: "hmac-sha256", label: "HMAC-SHA256", group: t("HMAC / JWT", "HMAC / JWT") },
-                { value: "hmac-sm3", label: "HMAC-SM3", group: t("HMAC / JWT", "HMAC / JWT") },
+                { value: "hmac-sha1", label: "SHA-1", group: t("HMAC / JWT", "HMAC / JWT") },
+                { value: "hmac-sha256", label: "SHA-256", group: t("HMAC / JWT", "HMAC / JWT") },
+                { value: "hmac-sha384", label: "SHA-384", group: t("HMAC / JWT", "HMAC / JWT") },
+                { value: "hmac-sha512", label: "SHA-512", group: t("HMAC / JWT", "HMAC / JWT") },
+                { value: "hmac-sm3", label: "SM3", group: t("HMAC / JWT", "HMAC / JWT") },
                 { value: "rsa-pem", label: "RSA", group: t("非对称加密", "Asymmetric cipher") },
                 { value: "sm2", label: "SM2", group: t("非对称加密", "Asymmetric cipher") },
               ]}
@@ -612,16 +817,30 @@
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="vault-reveal-title">
           <div class="export-head">
             <div class="sheet-copy">
-              <strong id="vault-reveal-title">{t(`原文 · ${reveal.key.name}`, `Secret · ${reveal.key.name}`)}</strong>
-              <p>{t("关闭后会从界面清除。不要把原文留在屏幕上。", "Closing clears it from the UI. Do not leave the secret on screen.")}</p>
+              <strong id="vault-reveal-title">
+                {#if reveal.mode === "public"}
+                  {t(`公钥 · ${reveal.key.name}`, `Public · ${reveal.key.name}`)}
+                {:else}
+                  {t(`原文 · ${reveal.key.name}`, `Secret · ${reveal.key.name}`)}
+                {/if}
+              </strong>
+              <p>
+                {#if reveal.mode === "public"}
+                  {t("公钥可安全分享；关闭后会从界面清除。", "Public keys are safe to share. Closing clears them from the UI.")}
+                {:else}
+                  {t("关闭后会从界面清除。不要把原文留在屏幕上。", "Closing clears it from the UI. Do not leave the secret on screen.")}
+                {/if}
+              </p>
             </div>
-            {#if reveal.material}
-              <CopyButton {locale} text={reveal.material} />
+            {#if reveal.mode === "public" ? reveal.publicKey : reveal.material}
+              <CopyButton {locale} text={reveal.mode === "public" ? reveal.publicKey : reveal.material} />
             {/if}
             <button class="dbx-btn" onclick={closeDialogs} type="button">{t("关闭", "Close")}</button>
           </div>
           {#if reveal.loading}
             <p class="lead">{t("读取中…", "Reading…")}</p>
+          {:else if reveal.mode === "public"}
+            <textarea class="dbx-textarea pem" readonly value={reveal.publicKey}></textarea>
           {:else if !reveal.material}
             <label class="field">
               <span>{t("再次验证主密码", "Verify master password again")}</span>
@@ -633,6 +852,15 @@
             </div>
           {:else}
             <textarea class="dbx-textarea pem" readonly value={reveal.material}></textarea>
+            {#if reveal.publicKey}
+              <label class="field material">
+                <div class="caption-row">
+                  <span>{t("对应公钥", "Public key")}</span>
+                  <CopyButton {locale} text={reveal.publicKey} labelZh="复制公钥" labelEn="Copy public key" />
+                </div>
+                <textarea class="dbx-textarea pem" readonly value={reveal.publicKey}></textarea>
+              </label>
+            {/if}
           {/if}
         </div>
       {:else if pendingDelete}
@@ -651,6 +879,20 @@
           </div>
         </div>
       {/if}
+    </div>
+  {/if}
+
+  {#if pointerDrag?.active && draggingKey}
+    <div
+      class="drag-ghost"
+      style:left={`${pointerDrag.x}px`}
+      style:top={`${pointerDrag.y}px`}
+      style:width={`${pointerDrag.width}px`}
+      style:height={`${pointerDrag.height}px`}
+    >
+      <span>⠿</span>
+      <strong>{draggingKey.name}</strong>
+      <small>{draggingKey.algorithm}</small>
     </div>
   {/if}
 </div>
@@ -743,7 +985,98 @@
   }
   .save { flex-shrink: 0; }
   .material { width: 100%; }
-  .table-wrap { overflow-x: auto; }
+  .caption-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .table-wrap {
+    overflow: auto;
+    max-height: min(52vh, 480px);
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+    border-radius: var(--radius-md, 8px);
+  }
+  .table-wrap.dragging { cursor: grabbing; user-select: none; }
+  .table-wrap :global(.dbx-table) { margin: 0; }
+  .table-wrap :global(thead th) {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--color-card, var(--color-background, Canvas));
+    box-shadow: 0 1px 0 var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+  }
+  .list-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .list-filter {
+    flex: 1 1 240px;
+    max-width: 360px;
+  }
+  .list-meta {
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .drag-col {
+    width: 28px;
+    padding-left: 4px !important;
+    padding-right: 0 !important;
+  }
+  .drag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    opacity: 0.45;
+    cursor: grab;
+    font: inherit;
+  }
+  .drag:hover:not(:disabled),
+  .drag:focus-visible {
+    opacity: 1;
+    background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
+  }
+  .drag:disabled {
+    cursor: default;
+    opacity: 0.25;
+  }
+  .drag:active:not(:disabled) { cursor: grabbing; }
+  tr.dragging { opacity: 0.4; }
+  tr.drop-before td { box-shadow: inset 0 2px 0 var(--color-primary, Highlight); }
+  tr.drop-after td { box-shadow: inset 0 -2px 0 var(--color-primary, Highlight); }
+  .drag-ghost {
+    position: fixed;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    pointer-events: none;
+    border: 1px solid var(--color-primary, Highlight);
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-card, var(--color-background, Canvas));
+    box-shadow: 0 12px 28px color-mix(in srgb, CanvasText 18%, transparent);
+    font-size: 12px;
+  }
+  .drag-ghost strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .drag-ghost small {
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+  }
   .mono {
     font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
     white-space: nowrap;
@@ -753,6 +1086,11 @@
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
   .actions { justify-content: flex-end; flex-wrap: nowrap; white-space: nowrap; }
+  .actions :global(.dbx-btn) {
+    height: 26px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
   .rename-input { min-width: 180px; }
   .seg {
     display: inline-flex;

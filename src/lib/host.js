@@ -1,3 +1,5 @@
+import { normalizeLocale } from "./locale.js";
+
 export async function ready() {
   if (window.dbxPlugin?.ready) await window.dbxPlugin.ready;
 }
@@ -50,7 +52,7 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
 }
 
 export function locale() {
-  return window.dbxPlugin?.locale || navigator.language || "en";
+  return normalizeLocale(window.dbxPlugin?.locale || navigator.language || "en");
 }
 
 export function theme() {

@@ -283,11 +283,6 @@
     }
   }
 
-  function copyLabel() {
-    if (notice === "copied") return t(chrome.copied.zh, chrome.copied.en);
-    return t("复制图片", "Copy image");
-  }
-
   function applyPreset(preset) {
     moduleStyle = preset.moduleStyle;
     dark = preset.dark;
@@ -687,7 +682,24 @@
             : t("下载 PNG", "Download PNG")}
         </button>
         {#if isQr}<button class="dbx-btn" onclick={downloadSvg} type="button" disabled={saving}>{t("下载 SVG", "Download SVG")}</button>{/if}
-        <button class="dbx-btn" onclick={copyPng} type="button">{copyLabel()}</button>
+        <button
+          class="dbx-btn dbx-btn--ghost copy-image-btn"
+          onclick={copyPng}
+          type="button"
+          title={notice === "copied" ? t(chrome.copied.zh, chrome.copied.en) : t("复制图片", "Copy image")}
+          aria-label={notice === "copied" ? t(chrome.copied.zh, chrome.copied.en) : t("复制图片", "Copy image")}
+        >
+          {#if notice === "copied"}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          {:else}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+          {/if}
+        </button>
       </div>
       {#if savedPath}
         <p class="dbx-hint saved-path">
@@ -894,6 +906,10 @@
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
+  }
+  .copy-image-btn {
+    width: 30px;
+    padding: 0;
   }
   .fail {
     margin: 0;

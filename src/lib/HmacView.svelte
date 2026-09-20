@@ -18,7 +18,11 @@
   let keyId = $state("");
   let digest = $state("");
   let error = $state("");
-  $effect(() => { if (["hmac-sha256", "hmac-sm3"].includes(initialOptions.algorithm)) algorithm = initialOptions.algorithm; });
+  $effect(() => {
+    if (HMAC_ALGORITHMS.some((item) => item.value === initialOptions.algorithm)) {
+      algorithm = initialOptions.algorithm;
+    }
+  });
 
   const picker = $derived(algorithm === "hmac-sm3" ? "hmac-sm3" : "hmac");
   const ctx = $derived(keyCtx(source, keyId, material));

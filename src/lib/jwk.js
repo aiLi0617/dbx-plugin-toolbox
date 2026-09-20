@@ -80,8 +80,15 @@ export function validateJwk(input, index = 0) {
     oct: ["k"],
   }[key.kty];
   if (!required) throw bad(`Unsupported JWK kty: ${key.kty}`);
-  for (const field of required)
+  for (const field of required) {
+    // crv is a named curve (e.g. P-256 / Ed25519), not base64url material.
+    if (field === "crv") {
+      if (typeof key.crv !== "string" || !key.crv.trim())
+        throw bad(`JWK ${index + 1} is missing crv`);
+      continue;
+    }
     decodeBase64Url(key[field], `JWK ${index + 1} ${field}`);
+  }
   for (const field of RSA_FIELDS) {
     if (key[field] !== undefined && field !== "oth")
       decodeBase64Url(key[field], `JWK ${index + 1} ${field}`);

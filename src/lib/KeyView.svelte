@@ -4,7 +4,7 @@
   import Select from "./Select.svelte";
   import { invoke } from "./host.js";
   import { errorMessage, localizeError, pick } from "./i18n.js";
-  import { SYMMETRIC_KEY_ALGORITHMS } from "./tools/generate.js";
+  import { SYMMETRIC_KEY_ALGORITHMS, generateSymmetricKeyMaterial } from "./tools/generate.js";
 
   let { locale = "zh-CN", onVaultChange = () => {} } = $props();
   let algorithm = $state("aes-256");
@@ -50,16 +50,14 @@
     busy = true;
     error = "";
     try {
-      const result = await invoke("toolbox/keys/generate", {
-        algorithm,
-        save: save === "yes",
-        name,
-      });
-      material = result.material || "";
-      notice = result.saved
-        ? t("密钥已写入密钥库，界面不保留原文", "Key saved to vault; not kept in the UI")
-        : t("请立即保存；锁定工作台前请清空", "Save the key now; clear it before leaving");
-      if (result.saved) onVaultChange();
+      const generated = generateSymmetricKeyMaterial(algorithm);
+      material = generated.material;
+      if (save === "yes") {
+        await saveToVault(generated.material);
+        notice = t("密钥已写入密钥库；请确认后清除界面原文", "Key saved to vault; clear it from the UI when done");
+      } else {
+        notice = t("请立即保存；锁定工作台前请清空", "Save the key now; clear it before leaving");
+      }
     } catch (err) {
       if (save === "yes" && isLockedError(err)) {
         unlockOpen = true;
@@ -71,8 +69,35 @@
     }
   }
 
+  async function saveToVault(keyMaterial) {
+    await invoke("toolbox/keys/create", {
+      name,
+      algorithm,
+      generate: false,
+      material: keyMaterial,
+    });
+    onVaultChange();
+  }
+
   async function afterUnlock() {
     onVaultChange();
+    if (save === "yes" && material) {
+      busy = true;
+      error = "";
+      try {
+        await saveToVault(material);
+        notice = t("密钥已写入密钥库；请确认后清除界面原文", "Key saved to vault; clear it from the UI when done");
+      } catch (err) {
+        if (isLockedError(err)) {
+          unlockOpen = true;
+          return;
+        }
+        error = localizeError(locale, err);
+      } finally {
+        busy = false;
+      }
+      return;
+    }
     await runGenerate();
   }
 </script>

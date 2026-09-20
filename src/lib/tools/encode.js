@@ -80,6 +80,70 @@ export function unescapeHtml(text) {
 
 export { escapeUnicode, unescapeUnicode };
 
+/** JS / Java style `\uXXXX` (surrogate pairs for astral planes). */
+export function escapeJsUnicode(text) {
+  return [...String(text ?? "")]
+    .map((ch) => {
+      const cp = ch.codePointAt(0);
+      if (cp < 0x80) return ch;
+      if (cp > 0xffff) {
+        const hi = 0xd800 + ((cp - 0x10000) >> 10);
+        const lo = 0xdc00 + ((cp - 0x10000) & 0x3ff);
+        return `\\u${hi.toString(16).padStart(4, "0")}\\u${lo.toString(16).padStart(4, "0")}`;
+      }
+      return `\\u${cp.toString(16).padStart(4, "0")}`;
+    })
+    .join("");
+}
+
+export function unescapeJsUnicode(text) {
+  return String(text ?? "").replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
+/** JSON string body escapes (`\"`, `\\`, `\n`, `\uXXXX`, …), without surrounding quotes. */
+export function escapeJson(text) {
+  return JSON.stringify(String(text ?? "")).slice(1, -1);
+}
+
+export function unescapeJson(text) {
+  const raw = String(text ?? "");
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (typeof parsed === "string") return parsed;
+  } catch {
+    /* wrap as a JSON string body */
+  }
+  try {
+    return JSON.parse(`"${trimmed}"`);
+  } catch {
+    throw new Error("Text is not a valid JSON string escape");
+  }
+}
+
+/** CSS identifier escape (encode only; decode is best-effort). */
+export function escapeCssIdent(text) {
+  const value = String(text ?? "");
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") return CSS.escape(value);
+  return [...value]
+    .map((ch) => {
+      const cp = ch.codePointAt(0);
+      if ((cp >= 0x30 && cp <= 0x39) || (cp >= 0x41 && cp <= 0x5a) || (cp >= 0x61 && cp <= 0x7a) || cp === 0x2d || cp === 0x5f) {
+        return ch;
+      }
+      return `\\${cp.toString(16)} `;
+    })
+    .join("");
+}
+
+export function unescapeCssIdent(text) {
+  return String(text ?? "").replace(/\\([0-9a-fA-F]{1,6})[ \t\n\r\f]?|\\(.)/g, (_, hex, ch) => {
+    if (hex) return String.fromCodePoint(parseInt(hex, 16));
+    return ch;
+  });
+}
+
 export function encodeUrl(text) {
   return encodeURIComponent(text);
 }
@@ -88,26 +152,103 @@ export function decodeUrl(text) {
   return decodeURIComponent(text);
 }
 
+function looksLikeUrlOrQuery(raw) {
+  if (/^[a-z][a-z\d+.-]*:\/\//i.test(raw)) return true;
+  if (raw.startsWith("?") || raw.startsWith("/") || raw.startsWith("#")) return true;
+  // Naked query: must contain a literal = or & (encoded URLs use %3D / %26).
+  if (/^[^/?#]*[=&]/.test(raw)) return true;
+  return false;
+}
+
+/** Decode outer percent-encoding when the whole string is an encoded URL/query. */
+function unwrapEncodedUrl(text) {
+  let raw = String(text ?? "").trim();
+  if (!raw) return raw;
+  for (let i = 0; i < 3; i++) {
+    if (looksLikeUrlOrQuery(raw)) return raw;
+    if (!/%[0-9A-Fa-f]{2}/.test(raw)) return raw;
+    try {
+      const next = decodeURIComponent(raw);
+      if (next === raw) return raw;
+      raw = next;
+    } catch {
+      return raw;
+    }
+  }
+  return raw;
+}
+
+function parseHashFragment(hash) {
+  if (!hash) return { hashPath: "", hashRows: [] };
+  const body = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (!body) return { hashPath: "", hashRows: [] };
+  const q = body.indexOf("?");
+  if (q < 0) {
+    if (body.includes("=") && !body.startsWith("/")) {
+      return { hashPath: "", hashRows: [...new URLSearchParams(body).entries()] };
+    }
+    return { hashPath: `#${body}`, hashRows: [] };
+  }
+  const path = body.slice(0, q);
+  return {
+    hashPath: path ? `#${path}` : "#",
+    hashRows: [...new URLSearchParams(body.slice(q + 1)).entries()],
+  };
+}
+
+function emptyQuery() {
+  return {
+    href: "",
+    protocol: "",
+    host: "",
+    pathname: "",
+    search: "",
+    hash: "",
+    hashPath: "",
+    rows: [],
+    hashRows: [],
+  };
+}
+
 export function parseQuery(text) {
-  const raw = String(text ?? "").trim();
-  if (!raw) return { href: "", hash: "", rows: [] };
+  const raw = unwrapEncodedUrl(text);
+  if (!raw) return emptyQuery();
+  if (raw.startsWith("#")) {
+    const { hashPath, hashRows } = parseHashFragment(raw);
+    return { ...emptyQuery(), hash: raw, hashPath, hashRows };
+  }
   const absolute = /^[a-z][a-z\d+.-]*:\/\//i.test(raw);
-  if (raw.startsWith("?") || (!absolute && /^[^/?#=]+(?:=|&|$)/.test(raw))) {
+  if (raw.startsWith("?") || (!absolute && /^[^/?#]*[=&]/.test(raw))) {
     const hashAt = raw.indexOf("#");
     const query = hashAt < 0 ? raw : raw.slice(0, hashAt);
-    return { href: "", hash: hashAt < 0 ? "" : raw.slice(hashAt), rows: [...new URLSearchParams(query.replace(/^\?/, "")).entries()] };
+    const hash = hashAt < 0 ? "" : raw.slice(hashAt);
+    const { hashPath, hashRows } = parseHashFragment(hash);
+    return {
+      ...emptyQuery(),
+      hash,
+      hashPath,
+      search: query.startsWith("?") ? query : query ? `?${query.replace(/^\?/, "")}` : "",
+      rows: [...new URLSearchParams(query.replace(/^\?/, "")).entries()],
+      hashRows,
+    };
   }
   try {
     const url = new URL(raw, "https://dbx.invalid");
+    const { hashPath, hashRows } = parseHashFragment(url.hash);
     return {
       href: absolute ? `${url.origin}${url.pathname}` : url.pathname,
+      protocol: absolute ? url.protocol : "",
+      host: absolute ? url.host : "",
+      pathname: url.pathname,
+      search: url.search,
       hash: url.hash,
+      hashPath,
       rows: [...url.searchParams.entries()],
+      hashRows,
     };
   } catch {
     return {
-      href: "",
-      hash: "",
+      ...emptyQuery(),
       rows: [...new URLSearchParams(raw.startsWith("?") ? raw.slice(1) : raw).entries()],
     };
   }
@@ -159,11 +300,42 @@ function decodePunycodeLabel(input) {
   return String.fromCodePoint(...points);
 }
 
-export function toDataUri(text, mime = "text/plain;charset=utf-8") {
+export function toDataUri(text, mime = "text/plain;charset=utf-8", options = {}) {
+  return dataUriFromBytes(textToBytes(text), mime, options);
+}
+
+/** Build a Data URI from raw bytes (base64 or percent-encoded). */
+export function dataUriFromBytes(bytes, mime = "text/plain;charset=utf-8", options = {}) {
   const type = String(mime || "text/plain;charset=utf-8").trim() || "text/plain;charset=utf-8";
-  const bytes = textToBytes(text);
-  if (bytes.length > MAX_DATA_URI_BYTES) throw new Error("Data URI payload exceeds 10 MB");
-  return `data:${type};base64,${toBase64(bytes)}`;
+  const payload = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes || []);
+  if (payload.length > MAX_DATA_URI_BYTES) throw new Error("Data URI payload exceeds 10 MB");
+  const encoding = options.encoding === "percent" ? "percent" : "base64";
+  if (encoding === "percent") {
+    return `data:${type},${encodeDataUriPercent(payload)}`;
+  }
+  return `data:${type};base64,${toBase64(payload)}`;
+}
+
+/** Percent-encode data URI body bytes (RFC 2397 / URL encoding). */
+function encodeDataUriPercent(bytes) {
+  let out = "";
+  for (let i = 0; i < bytes.length; i += 1) {
+    const b = bytes[i];
+    if (
+      (b >= 0x30 && b <= 0x39) ||
+      (b >= 0x41 && b <= 0x5a) ||
+      (b >= 0x61 && b <= 0x7a) ||
+      b === 0x2d ||
+      b === 0x2e ||
+      b === 0x5f ||
+      b === 0x7e
+    ) {
+      out += String.fromCharCode(b);
+    } else {
+      out += `%${b.toString(16).toUpperCase().padStart(2, "0")}`;
+    }
+  }
+  return out;
 }
 
 export function parseDataUri(value) {
@@ -355,7 +527,10 @@ export async function inspectCert(pem) {
 }
 
 export const HMAC_ALGORITHMS = [
+  { value: "hmac-sha1", zh: "HMAC-SHA1", en: "HMAC-SHA1" },
   { value: "hmac-sha256", zh: "HMAC-SHA256", en: "HMAC-SHA256" },
+  { value: "hmac-sha384", zh: "HMAC-SHA384", en: "HMAC-SHA384" },
+  { value: "hmac-sha512", zh: "HMAC-SHA512", en: "HMAC-SHA512" },
   { value: "hmac-sm3", zh: "HMAC-SM3", en: "HMAC-SM3" },
 ];
 

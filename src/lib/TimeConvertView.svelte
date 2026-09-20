@@ -173,7 +173,7 @@
     <p class="section-label">{t("时间戳 → 北京时间", "Timestamp → Beijing time")}</p>
     <div class="time-line">
       <input class="dbx-input time-mono" spellcheck="false" autocomplete="off" inputmode="numeric" aria-label={t("待转换的 Unix 时间戳", "Unix timestamp to convert")} placeholder={unit === "ms" ? "1789726849000" : "1789726849"} bind:value={timestampInput} onkeydown={onEnter(convertTimestamp)} />
-      <button class="dbx-btn" onclick={convertTimestamp} type="button">{t("转换", "Convert")}</button>
+      <button class="dbx-btn dbx-btn--primary" onclick={convertTimestamp} type="button">{t("转换", "Convert")}</button>
     </div>
     <div class="time-line"><input class="dbx-input time-mono" readonly aria-label={t("转换后的北京时间", "Converted Beijing time")} placeholder={t("转换后的北京时间", "Converted Beijing time")} value={timestampOutput} /><CopyButton {locale} text={timestampOutput} labelZh="复制转换后的北京时间" labelEn="Copy converted Beijing time" /></div>
     {#if timestampError}<p class="dbx-hint time-error" role="alert">{timestampError}</p>{/if}
@@ -198,7 +198,7 @@
           </label>
         {/each}
       </div>
-      <button class="dbx-btn" onclick={convertParts} type="button">{t("转换", "Convert")}</button>
+      <button class="dbx-btn dbx-btn--primary" onclick={convertParts} type="button">{t("转换", "Convert")}</button>
     </div>
     <div class="time-line"><input class="dbx-input time-mono" readonly aria-label={t("逐项输入转换后的时间戳", "Timestamp from fields")} placeholder={t("转换后的时间戳", "Converted timestamp")} value={partsOutput} /><CopyButton {locale} text={partsOutput} labelZh="复制转换后的时间戳" labelEn="Copy converted timestamp" /></div>
     {#if partsError}<p class="dbx-hint time-error" role="alert">{partsError}</p>{/if}
@@ -209,7 +209,7 @@
     <p class="format-hint">{t("也支持 2026-09-18 20:31:17、2026/09/18 20:31:17 和 ISO 8601。", "Also accepts 2026-09-18 20:31:17, 2026/09/18 20:31:17, and ISO 8601.")}</p>
     <div class="time-line">
       <input class="dbx-input time-mono" spellcheck="false" autocomplete="off" aria-label={t("快速时间输入", "Quick date-time input")} placeholder="20260918203117" bind:value={compactInput} onkeydown={onEnter(convertCompact)} />
-      <button class="dbx-btn" onclick={convertCompact} type="button">{t("转换", "Convert")}</button>
+      <button class="dbx-btn dbx-btn--primary" onclick={convertCompact} type="button">{t("转换", "Convert")}</button>
     </div>
     <div class="time-line"><input class="dbx-input time-mono" readonly aria-label={t("快速输入转换后的时间戳", "Timestamp from quick input")} placeholder={t("转换后的时间戳", "Converted timestamp")} value={compactOutput} /><CopyButton {locale} text={compactOutput} labelZh="复制转换后的时间戳" labelEn="Copy converted timestamp" /></div>
     {#if compactError}<p class="dbx-hint time-error" role="alert">{compactError}</p>{/if}
@@ -224,18 +224,7 @@
   .time-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   .unit-radios { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent)); font-size: 12px; }
   .unit-radios label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
-  .unit-radios input {
-    margin: 0;
-    border-color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
-  }
-  .unit-radios input:hover,
-  .unit-radios input:focus-visible {
-    border-color: var(--color-foreground, CanvasText);
-  }
-  .unit-radios input:checked {
-    border-color: var(--color-foreground, CanvasText);
-    box-shadow: inset 0 0 0 4px var(--color-background, Canvas), inset 0 0 0 8px var(--color-foreground, CanvasText);
-  }
+  .unit-radios input { margin: 0; }
   .parts-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
   .time-parts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; min-width: 0; }
   .time-parts.has-ms { grid-template-columns: repeat(7, minmax(0, 1fr)); }

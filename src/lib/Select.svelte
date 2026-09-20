@@ -67,7 +67,15 @@
     const rect = triggerEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const width = Math.min(Math.max(rect.width, 128), vw - 16);
+    const triggerWidth = Math.max(rect.width, 128);
+    let contentWidth = triggerWidth;
+    if (menuEl) {
+      const prevWidth = menuEl.style.width;
+      menuEl.style.width = "max-content";
+      contentWidth = Math.ceil(menuEl.getBoundingClientRect().width);
+      menuEl.style.width = prevWidth;
+    }
+    const width = Math.min(Math.max(triggerWidth, contentWidth), vw - 16);
     const left = Math.min(Math.max(8, rect.left), Math.max(8, vw - width - 8));
     const gap = 4;
     const below = vh - rect.bottom - 8;
@@ -305,7 +313,7 @@
   .trigger:focus-visible,
   .open .trigger {
     outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+    outline-offset: -2px;
     border-color: var(--color-ring, var(--color-primary));
   }
   .trigger:disabled {

@@ -7,7 +7,7 @@ use cbc::{Decryptor as CbcDecryptor, Encryptor as CbcEncryptor};
 use cipher::{block_padding::Pkcs7, BlockDecryptMut, BlockEncryptMut, KeyIvInit};
 use crc32fast::Hasher as Crc32;
 use dbx_plugin_sdk::PluginError;
-use hmac::{Hmac, Mac as HmacMac};
+use hmac::{digest::KeyInit as HmacKeyInit, Hmac, Mac as HmacMac};
 use md5::Md5;
 use rand::RngCore;
 use rsa::pkcs1::{DecodeRsaPrivateKey, DecodeRsaPublicKey};
@@ -23,6 +23,7 @@ use zeroize::Zeroizing;
 use crate::helpers::{bad, bool_param, err, opt_str, str_param, u32_param};
 use crate::keystore::{decode_key_bytes, Vault};
 
+type HmacSha1 = Hmac<Sha1>;
 type HmacSha256 = Hmac<Sha256>;
 type HmacSha384 = Hmac<Sha384>;
 type HmacSha512 = Hmac<Sha512>;
@@ -504,7 +505,7 @@ fn hmac_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
         .to_ascii_lowercase();
     if !matches!(
         algorithm.as_str(),
-        "hmac" | "hmac-sha256" | "hmac-sm3" | "sm3"
+        "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" | "sm3"
     ) {
         return Err(bad("Unsupported HMAC algorithm"));
     }
@@ -513,20 +514,19 @@ fn hmac_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
     ensure_input_size(text, "Crypto input", MAX_CRYPTO_INPUT_BYTES)?;
     let text = text.as_bytes();
     let digest = match algorithm.as_str() {
-        "hmac-sm3" | "sm3" => {
-            let mut mac: HmacSm3 =
-                HmacMac::new_from_slice(&key).map_err(|_| bad("Invalid HMAC key"))?;
-            mac.update(text);
-            hex::encode(mac.finalize().into_bytes())
-        }
-        _ => {
-            let mut mac: HmacSha256 =
-                HmacMac::new_from_slice(&key).map_err(|_| bad("Invalid HMAC key"))?;
-            mac.update(text);
-            hex::encode(mac.finalize().into_bytes())
-        }
+        "hmac-sha1" => hmac_hex::<HmacSha1>(&key, text)?,
+        "hmac-sha384" => hmac_hex::<HmacSha384>(&key, text)?,
+        "hmac-sha512" => hmac_hex::<HmacSha512>(&key, text)?,
+        "hmac-sm3" | "sm3" => hmac_hex::<HmacSm3>(&key, text)?,
+        _ => hmac_hex::<HmacSha256>(&key, text)?,
     };
     Ok(json!({ "ok": true, "digest": digest }))
+}
+
+fn hmac_hex<M: HmacMac + HmacKeyInit>(key: &[u8], text: &[u8]) -> Result<String, PluginError> {
+    let mut mac = <M as HmacMac>::new_from_slice(key).map_err(|_| bad("Invalid HMAC key"))?;
+    mac.update(text);
+    Ok(hex::encode(mac.finalize().into_bytes()))
 }
 
 fn xor_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
@@ -1308,9 +1308,42 @@ mod crypto_tests {
     fn hmac_rejects_unknown_algorithms() {
         assert!(hmac_op(
             &Vault::default(),
-            json!({ "algorithm": "hmac-sha512", "text": "hello" }),
+            json!({ "algorithm": "hmac-blake2", "text": "hello", "keyMaterial": "0b".repeat(32) }),
         )
         .is_err());
+    }
+
+    #[test]
+    fn hmac_sha_family_matches_rfc4231_case1() {
+        // RFC 4231 test case 1
+        let key = "0b".repeat(20);
+        let text = "Hi There";
+        let digest = |algorithm: &str| {
+            hmac_op(
+                &Vault::default(),
+                json!({ "algorithm": algorithm, "text": text, "keyMaterial": key }),
+            )
+            .unwrap()["digest"]
+                .as_str()
+                .unwrap()
+                .to_string()
+        };
+        assert_eq!(
+            digest("hmac-sha256"),
+            "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7"
+        );
+        assert_eq!(
+            digest("hmac-sha384"),
+            "afd03944d84895626b0825f4ab46907f15f9dadbe4101ec682aa034c7cebc59cfaea9ea9076ede7f4af152e8b2fa9cb6"
+        );
+        assert_eq!(
+            digest("hmac-sha512"),
+            "87aa7cdea5ef619d4ff0b4241a1d6cb02379f4e2ce4ec2787ad0b30545e17cdedaa833b7d6b8a702038b274eaea3f4e4be9d914eeb61f1702e696c203a126854"
+        );
+        assert_eq!(
+            digest("hmac-sha1"),
+            "b617318655057264e28bc0b6fb378c8ef146be00"
+        );
     }
 
     #[test]

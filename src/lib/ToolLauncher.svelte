@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { searchTools } from "./catalog.js";
   import { categories, pick } from "./i18n.js";
-  import { toolOptionsForQuery } from "./navigation.js";
+  import { intentLabelForTool } from "./navigation.js";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], onClose, onTool } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -27,7 +27,7 @@
     dialogEl?.querySelectorAll('[role="option"]')[index]?.scrollIntoView({ block: "nearest" });
   });
   function destination(item) {
-    return Object.values(toolOptionsForQuery(item.id, query)).join(" → ");
+    return intentLabelForTool(item.id, query);
   }
   function moveSelection(delta) {
     selected = Math.max(0, Math.min(results.length - 1, selected + delta));
@@ -61,8 +61,8 @@
       <div class="result-label">{query.trim() ? t("搜索结果", "Results") : t("常用与最近", "Favorites and recent")}</div>
       {#each results as item, index (item.id)}
         <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmouseenter={() => (selected = index)} onclick={() => choose(item)}>
-          <span><strong>{pick(locale,item.name.zh,item.name.en)}{#if destination(item)} · {destination(item)}{/if}</strong><small>{pick(locale,item.summary.zh,item.summary.en)}</small></span>
-          <em>{pick(locale,categories[item.category].zh,categories[item.category].en)}</em>
+              <span><strong>{pick(locale,item.name)}{#if destination(item)} · {destination(item)}{/if}</strong><small>{pick(locale,item.summary)}</small></span>
+          <em>{pick(locale,categories[item.category])}</em>
         </button>
       {:else}<p class="empty">{t("没有匹配的工具", "No matching tools")}</p>{/each}
     </div>

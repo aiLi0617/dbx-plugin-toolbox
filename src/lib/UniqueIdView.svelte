@@ -4,7 +4,6 @@
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
   import { chrome, pick } from "./i18n.js";
-  import { copyText } from "./clipboard.js";
   import { clampUniqueIdCount, formatUuid, generateUniqueId } from "./tools/generate.js";
 
   let { locale = "zh-CN", initialOptions = {} } = $props();
@@ -18,7 +17,6 @@
   let uppercase = $state(false);
   let braces = $state(false);
   let raw = $state([generateUniqueId("uuid")]);
-  let copiedAll = $state(false);
   $effect(() => {
     const requested = initialOptions.kind;
     if (["uuid", "ulid", "nanoid"].includes(requested)) untrack(() => { kind = requested; generate(); });
@@ -44,18 +42,6 @@
     raw = [...raw, ...Array.from({ length: n - raw.length }, () => generateUniqueId(kind, size))];
   });
 
-  async function copyAll() {
-    if (!allText) return;
-    try {
-      await copyText(allText);
-      copiedAll = true;
-      setTimeout(() => {
-        copiedAll = false;
-      }, 1200);
-    } catch {
-      copiedAll = false;
-    }
-  }
 </script>
 
 <div class="page">
@@ -98,9 +84,7 @@
     {/if}
     <button class="dbx-btn dbx-btn--primary" onclick={generate} type="button">{t("生成", "Generate")}</button>
     {#if items.length > 1}
-      <button class="dbx-btn dbx-btn--ghost" onclick={copyAll} type="button">
-        {copiedAll ? t(chrome.copied.zh, chrome.copied.en) : t("复制全部", "Copy all")}
-      </button>
+      <CopyButton {locale} text={allText} labelZh="复制全部" labelEn="Copy all" />
     {/if}
   </div>
 
@@ -134,6 +118,9 @@
     flex-wrap: wrap;
     gap: var(--ui-gap, 12px);
     align-items: flex-end;
+  }
+  .opts :global(.copy-btn) {
+    align-self: flex-end;
   }
   .field :global(.dbx-select) {
     width: auto;

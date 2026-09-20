@@ -36,6 +36,9 @@ pub struct StoredKey {
     pub kind: String,
     pub algorithm: String,
     pub material: String,
+    /// Public half for asymmetric keys (RSA PEM / SM2 hex). Empty for symmetric.
+    #[serde(default, rename = "publicMaterial")]
+    pub public_material: String,
     #[serde(rename = "createdAt")]
     pub created_at: String,
 }
@@ -43,6 +46,7 @@ pub struct StoredKey {
 impl Drop for StoredKey {
     fn drop(&mut self) {
         self.material.zeroize();
+        self.public_material.zeroize();
     }
 }
 
@@ -62,6 +66,7 @@ impl Drop for Unlocked {
         self.kek.zeroize();
         for key in &mut self.keys {
             key.material.zeroize();
+            key.public_material.zeroize();
         }
     }
 }
@@ -84,9 +89,11 @@ impl Vault {
             "toolbox/keys/list" => self.list(),
             "toolbox/keys/create" => self.create(params),
             "toolbox/keys/rename" => self.rename(params),
+            "toolbox/keys/reorder" => self.reorder(params),
             "toolbox/keys/delete" => self.delete(params),
             "toolbox/keys/import" => self.import_pem(params),
             "toolbox/keys/export" => self.export(params),
+            "toolbox/keys/public" => self.export_public(params),
             "toolbox/keys/change-password" => self.change_password(params),
             "toolbox/keys/generate" => self.generate_key(params),
             "toolbox/keys/generate-keypair" => self.generate_keypair(params),
@@ -165,11 +172,13 @@ impl Vault {
         ensure_key_capacity(unlocked.keys.len())?;
         let algorithm = canonical_algorithm(str_param(&params, "algorithm")?)?;
         let generate = bool_param(&params, "generate", true);
-        let material = if generate {
-            generate_material(algorithm, &params)?
+        let (material, public_material) = if generate {
+            pair_material(algorithm, &params)?
         } else {
             let raw = str_param(&params, "material")?;
-            normalize_material(algorithm, raw)?
+            let material = normalize_material(algorithm, raw)?;
+            let public_material = companion_public(algorithm, &material)?;
+            (material, public_material)
         };
         let key = StoredKey {
             id: Uuid::new_v4().to_string(),
@@ -177,6 +186,7 @@ impl Vault {
             kind: kind_for(algorithm).to_string(),
             algorithm: algorithm.to_string(),
             material,
+            public_material,
             created_at: now_iso(),
         };
         let meta = metadata(&key);
@@ -203,6 +213,30 @@ impl Vault {
         key.name = name.to_string();
         persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
+        Ok(json!({ "ok": true }))
+    }
+
+    fn reorder(&mut self, params: Value) -> Result<Value, PluginError> {
+        let unlocked = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let ids = params
+            .get("ids")
+            .and_then(Value::as_array)
+            .ok_or_else(|| bad("Missing ids"))?;
+        let id_list: Vec<String> = ids
+            .iter()
+            .map(|value| {
+                value
+                    .as_str()
+                    .map(str::to_string)
+                    .ok_or_else(|| bad("Reorder ids must be strings"))
+            })
+            .collect::<Result<_, _>>()?;
+        let ordered = apply_reorder(&unlocked.keys, &id_list)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &ordered)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = ordered;
         Ok(json!({ "ok": true }))
     }
 
@@ -237,12 +271,15 @@ impl Vault {
             .as_ref()
             .ok_or_else(|| err("Key vault is locked"))?;
         ensure_key_capacity(unlocked.keys.len())?;
+        let material = pem.trim().to_string();
+        let public_material = companion_public(algorithm, &material)?;
         let key = StoredKey {
             id: Uuid::new_v4().to_string(),
             name: name.to_string(),
             kind: kind_for(algorithm).to_string(),
             algorithm: algorithm.to_string(),
-            material: pem.trim().to_string(),
+            material,
+            public_material,
             created_at: now_iso(),
         };
         let meta = metadata(&key);
@@ -276,7 +313,30 @@ impl Vault {
             "id": key.id,
             "name": key.name,
             "algorithm": key.algorithm,
-            "material": key.material
+            "material": key.material,
+            "publicMaterial": key.public_material,
+        }))
+    }
+
+    fn export_public(&self, params: Value) -> Result<Value, PluginError> {
+        let id = str_param(&params, "id")?;
+        let key = self.material(id)?;
+        if key.kind != "asymmetric" {
+            return Err(bad("Only asymmetric keys have a public half"));
+        }
+        let public = if key.public_material.is_empty() {
+            companion_public(&key.algorithm, &key.material)?
+        } else {
+            key.public_material.clone()
+        };
+        if public.is_empty() {
+            return Err(bad("Public key is not available for this entry"));
+        }
+        Ok(json!({
+            "id": key.id,
+            "name": key.name,
+            "algorithm": key.algorithm,
+            "publicKey": public,
         }))
     }
 
@@ -338,7 +398,8 @@ impl Vault {
                 name: name.to_string(),
                 kind: kind_for(algorithm).to_string(),
                 algorithm: algorithm.to_string(),
-                material,
+                material: material.clone(),
+                public_material: String::new(),
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
@@ -348,9 +409,8 @@ impl Vault {
             self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
-        } else {
-            response["material"] = json!(material);
         }
+        response["material"] = json!(material);
         Ok(response)
     }
 
@@ -404,7 +464,8 @@ impl Vault {
                 name: name.to_string(),
                 kind: kind_for(stored_alg).to_string(),
                 algorithm: stored_alg.to_string(),
-                material: private,
+                material: private.clone(),
+                public_material: public.clone(),
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
@@ -414,9 +475,8 @@ impl Vault {
             self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
-        } else {
-            response["privateKey"] = json!(private);
         }
+        response["privateKey"] = json!(private);
         Ok(response)
     }
 }
@@ -529,11 +589,17 @@ fn decrypt_vault_bytes(bytes: &[u8], password: &str) -> Result<Unlocked, PluginE
     plain.zeroize();
     let file = parsed_file.map_err(|_| err("Vault data is corrupt"))?;
     validate_loaded_keys(&file.keys)?;
-    Ok(Unlocked {
+    let mut keys = file.keys;
+    let filled = backfill_public_material(&mut keys);
+    let unlocked = Unlocked {
         kek: *kek,
         salt: parsed.salt,
-        keys: file.keys,
-    })
+        keys,
+    };
+    if filled {
+        let _ = persist_contents(&unlocked.kek, &unlocked.salt, &unlocked.keys);
+    }
+    Ok(unlocked)
 }
 
 fn read_unlocked_vault(path: &Path, password: &str) -> Result<Unlocked, PluginError> {
@@ -567,6 +633,8 @@ fn validate_loaded_keys(keys: &[StoredKey]) -> Result<(), PluginError> {
             return Err(err("Vault contains an invalid key name"));
         }
         validate_material_size(&key.material)
+            .map_err(|_| err("Vault contains oversized key material"))?;
+        validate_material_size(&key.public_material)
             .map_err(|_| err("Vault contains oversized key material"))?;
         canonical_algorithm(&key.algorithm)
             .map_err(|_| err("Vault contains an unsupported key algorithm"))?;
@@ -658,6 +726,25 @@ fn ensure_key_capacity(current: usize) -> Result<(), PluginError> {
     Ok(())
 }
 
+fn apply_reorder(keys: &[StoredKey], ids: &[String]) -> Result<Vec<StoredKey>, PluginError> {
+    if ids.len() != keys.len() {
+        return Err(bad("Reorder ids must include every key exactly once"));
+    }
+    let mut seen = HashSet::with_capacity(ids.len());
+    let mut ordered = Vec::with_capacity(ids.len());
+    for id in ids {
+        if id.is_empty() || !seen.insert(id.as_str()) {
+            return Err(bad("Reorder ids must include every key exactly once"));
+        }
+        let key = keys
+            .iter()
+            .find(|key| key.id == *id)
+            .ok_or_else(|| bad("Unknown key id"))?;
+        ordered.push(key.clone());
+    }
+    Ok(ordered)
+}
+
 fn derive_kek(password: &str) -> Result<([u8; 32], [u8; 16]), PluginError> {
     let mut salt = [0u8; 16];
     rand::thread_rng().fill_bytes(&mut salt);
@@ -681,6 +768,9 @@ fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
         "aes-256" => "aes-256",
         "sm4-128" => "sm4-128",
         "hmac" | "hmac-sha256" => "hmac-sha256",
+        "hmac-sha1" => "hmac-sha1",
+        "hmac-sha384" => "hmac-sha384",
+        "hmac-sha512" => "hmac-sha512",
         "hmac-sm3" => "hmac-sm3",
         "rsa" | "rsa-pem" | "rsa-2048" => "rsa-pem",
         "sm2" => "sm2",
@@ -757,8 +847,23 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
         }
+        "hmac-sha1" => {
+            let mut bytes = Zeroizing::new(vec![0u8; 20]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
+        }
         "aes-256" | "hmac" | "hmac-sha256" | "hmac-sm3" => {
             let mut bytes = Zeroizing::new(vec![0u8; 32]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
+        }
+        "hmac-sha384" => {
+            let mut bytes = Zeroizing::new(vec![0u8; 48]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
+        }
+        "hmac-sha512" => {
+            let mut bytes = Zeroizing::new(vec![0u8; 64]);
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
         }
@@ -788,7 +893,7 @@ fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError>
     let expected = match algorithm {
         "aes-128" | "sm4-128" => 16,
         "aes-256" => 32,
-        "hmac" | "hmac-sha256" | "hmac-sm3" => 0,
+        "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" => 0,
         _ => return Err(bad("Unsupported algorithm")),
     };
     if expected != 0 && bytes.len() != expected {
@@ -842,14 +947,101 @@ fn kind_for(algorithm: &str) -> &'static str {
 }
 
 fn metadata(key: &StoredKey) -> Value {
-    json!({
+    let mut meta = json!({
         "id": key.id,
         "name": key.name,
         "kind": key.kind,
         "algorithm": key.algorithm,
         "fingerprint": fingerprint(&key.material),
+        "hasPublic": !key.public_material.is_empty(),
         "createdAt": key.created_at
-    })
+    });
+    if !key.public_material.is_empty() {
+        meta["publicFingerprint"] = json!(fingerprint(&key.public_material));
+    }
+    meta
+}
+
+/// Returns (private_or_secret, public). Public is empty for symmetric algorithms.
+fn pair_material(algorithm: &str, params: &Value) -> Result<(String, String), PluginError> {
+    match algorithm {
+        "rsa-pem" => {
+            let (public, private) = generate_rsa_pem(rsa_bits(params)?, rsa_pem_format(params)?)?;
+            Ok((private, public))
+        }
+        "sm2" => {
+            let (public, private) = generate_sm2_pair();
+            Ok((private, public))
+        }
+        _ => Ok((generate_material(algorithm, params)?, String::new())),
+    }
+}
+
+/// Derive or normalize the public half for an asymmetric material blob.
+fn companion_public(algorithm: &str, material: &str) -> Result<String, PluginError> {
+    match algorithm {
+        "rsa-pem" => derive_rsa_public_pem(material),
+        "sm2" => derive_sm2_public(material),
+        _ => Ok(String::new()),
+    }
+}
+
+fn backfill_public_material(keys: &mut [StoredKey]) -> bool {
+    let mut changed = false;
+    for key in keys {
+        if !matches!(key.algorithm.as_str(), "rsa-pem" | "sm2") || !key.public_material.is_empty()
+        {
+            continue;
+        }
+        if let Ok(public) = companion_public(&key.algorithm, &key.material) {
+            if !public.is_empty() {
+                key.public_material = public;
+                changed = true;
+            }
+        }
+    }
+    changed
+}
+
+fn derive_rsa_public_pem(pem: &str) -> Result<String, PluginError> {
+    let trimmed = pem.trim();
+    if let Ok(private) = rsa::RsaPrivateKey::from_pkcs8_pem(trimmed) {
+        use rsa::pkcs8::{EncodePublicKey, LineEnding};
+        let public = rsa::RsaPublicKey::from(&private);
+        return public
+            .to_public_key_pem(LineEnding::LF)
+            .map_err(|error| err(error.to_string()));
+    }
+    if let Ok(private) = rsa::RsaPrivateKey::from_pkcs1_pem(trimmed) {
+        use rsa::pkcs1::{EncodeRsaPublicKey, LineEnding};
+        let public = rsa::RsaPublicKey::from(&private);
+        return public
+            .to_pkcs1_pem(LineEnding::LF)
+            .map_err(|error| err(error.to_string()));
+    }
+    if rsa::RsaPublicKey::from_public_key_pem(trimmed).is_ok()
+        || rsa::RsaPublicKey::from_pkcs1_pem(trimmed).is_ok()
+    {
+        return Ok(trimmed.to_string());
+    }
+    Err(bad("Invalid RSA private or public key PEM"))
+}
+
+fn derive_sm2_public(material: &str) -> Result<String, PluginError> {
+    let value = material.trim();
+    if smcrypto::sm2::pubkey_valid(value) {
+        return Ok(value.to_string());
+    }
+    if smcrypto::sm2::privkey_valid(value) && !value.bytes().all(|byte| byte == b'0') {
+        let public = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            smcrypto::sm2::pk_from_sk(value)
+        }))
+        .map_err(|_| bad("Invalid SM2 private key"))?;
+        if smcrypto::sm2::pubkey_valid(&public) {
+            return Ok(public);
+        }
+    }
+    Err(bad("Invalid SM2 private or public key"))
 }
 
 fn fingerprint(material: &str) -> String {
@@ -911,12 +1103,67 @@ mod tests {
     }
 
     #[test]
+    fn apply_reorder_permutes_and_rejects_bad_id_lists() {
+        let sample = |id: &str| StoredKey {
+            id: id.into(),
+            name: id.into(),
+            kind: "symmetric".into(),
+            algorithm: "aes-256".into(),
+            material: "aa".into(),
+            public_material: String::new(),
+            created_at: now_iso(),
+        };
+        let keys = vec![sample("a"), sample("b"), sample("c")];
+        let ordered = apply_reorder(&keys, &["c".into(), "a".into(), "b".into()]).unwrap();
+        assert_eq!(
+            ordered.iter().map(|key| key.id.as_str()).collect::<Vec<_>>(),
+            vec!["c", "a", "b"]
+        );
+        assert!(apply_reorder(&keys, &["a".into(), "b".into()]).is_err());
+        assert!(apply_reorder(&keys, &["a".into(), "b".into(), "a".into()]).is_err());
+        assert!(apply_reorder(&keys, &["a".into(), "b".into(), "x".into()]).is_err());
+    }
+
+    #[test]
+    fn companion_public_derives_rsa_and_sm2_from_private() {
+        let (public, private) = generate_rsa_pem(2048, "pkcs8").unwrap();
+        let derived = companion_public("rsa-pem", &private).unwrap();
+        assert_eq!(derived, public);
+        assert_eq!(companion_public("rsa-pem", &public).unwrap(), public);
+
+        let (public, private) = generate_sm2_pair();
+        assert_eq!(companion_public("sm2", &private).unwrap(), public);
+        assert_eq!(companion_public("sm2", &public).unwrap(), public);
+        assert!(companion_public("aes-256", "aabb").unwrap().is_empty());
+    }
+
+    #[test]
+    fn backfill_fills_missing_asymmetric_public_material() {
+        let (public, private) = generate_rsa_pem(2048, "pkcs8").unwrap();
+        let mut keys = vec![StoredKey {
+            id: "1".into(),
+            name: "rsa".into(),
+            kind: "asymmetric".into(),
+            algorithm: "rsa-pem".into(),
+            material: private,
+            public_material: String::new(),
+            created_at: now_iso(),
+        }];
+        assert!(backfill_public_material(&mut keys));
+        assert_eq!(keys[0].public_material, public);
+        assert!(!backfill_public_material(&mut keys));
+    }
+
+    #[test]
     fn generate_material_symmetric_hex_lengths() {
         let empty = json!({});
         assert_eq!(generate_material("aes-128", &empty).unwrap().len(), 32);
         assert_eq!(generate_material("sm4-128", &empty).unwrap().len(), 32);
         assert_eq!(generate_material("aes-256", &empty).unwrap().len(), 64);
         assert_eq!(generate_material("hmac-sha256", &empty).unwrap().len(), 64);
+        assert_eq!(generate_material("hmac-sha1", &empty).unwrap().len(), 40);
+        assert_eq!(generate_material("hmac-sha384", &empty).unwrap().len(), 96);
+        assert_eq!(generate_material("hmac-sha512", &empty).unwrap().len(), 128);
         assert_eq!(generate_material("hmac-sm3", &empty).unwrap().len(), 64);
         assert!(canonical_algorithm("rsa").ok().is_some());
     }

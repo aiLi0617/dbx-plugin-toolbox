@@ -1,14 +1,22 @@
 <script>
-  import { chrome, pick } from "./i18n.js";
+  import { chrome, L, pick } from "./i18n.js";
   import { copyText } from "./clipboard.js";
 
-  let { locale = "zh-CN", text = "", labelZh = "复制", labelEn = "Copy" } = $props();
+  let {
+    locale = "zh-CN",
+    text = "",
+    labelZh = "复制",
+    labelEn = "Copy",
+    label = null,
+  } = $props();
 
   let copied = $state(false);
   let failed = $state(false);
 
   const t = (zh, en) => pick(locale, zh, en);
-  const title = $derived(copied ? t(chrome.copied.zh, chrome.copied.en) : t(labelZh, labelEn));
+  const defaultLabel = L("Copy", "复制", "複製", "Copiar", "Copia", "コピー", "Copiar");
+  const labelText = $derived(label ? pick(locale, label) : (labelZh !== "复制" || labelEn !== "Copy" ? t(labelZh, labelEn) : pick(locale, defaultLabel)));
+  const title = $derived(copied ? pick(locale, chrome.copied) : labelText);
 
   async function copy() {
     if (!text) return;
@@ -47,8 +55,8 @@
     </svg>
   {/if}
 </button>
-<span class="copy-status" role="status" aria-live="polite">{#if copied}{t(chrome.copied.zh, chrome.copied.en)}{:else if failed}{t("复制失败，请手动复制", "Copy failed; please copy manually")}{/if}</span>
-{#if failed}<span class="copy-error" role="alert">{t("复制失败，请手动复制", "Copy failed; please copy manually")}</span>{/if}
+<span class="copy-status" role="status" aria-live="polite">{#if copied}{pick(locale, chrome.copied)}{:else if failed}{pick(locale, chrome.copyFailed)}{/if}</span>
+{#if failed}<span class="copy-error" role="alert">{pick(locale, chrome.copyFailed)}</span>{/if}
 
 <style>
   .copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }

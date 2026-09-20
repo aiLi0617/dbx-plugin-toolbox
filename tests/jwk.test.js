@@ -39,6 +39,27 @@ test("JWK validation rejects unsupported key types and duplicate JWKS kids", () 
   );
 });
 
+test("EC and OKP accept named crv without treating it as base64url", () => {
+  const ec = parseJwkDocument({
+    kty: "EC",
+    crv: "P-256",
+    x: "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+    y: "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+    kid: "ec-1",
+  });
+  assert.equal(ec.keys[0].crv, "P-256");
+  const okp = parseJwkDocument({
+    kty: "OKP",
+    crv: "Ed25519",
+    x: "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo",
+  });
+  assert.equal(okp.keys[0].crv, "Ed25519");
+  assert.throws(
+    () => parseJwkDocument({ kty: "EC", x: "AQ", y: "AQ" }),
+    /missing crv/,
+  );
+});
+
 test("RSA PKCS#8/SPKI PEM round trips through WebCrypto JWK", async () => {
   const { publicKey } = generateKeyPairSync("rsa", {
     modulusLength: 2048,

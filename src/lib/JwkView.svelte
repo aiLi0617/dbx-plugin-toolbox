@@ -26,13 +26,6 @@
   })));
 
   $effect(() => {
-    input;
-    operation;
-    error = "";
-    output = "";
-  });
-
-  $effect(() => {
     if (!parsed.document) { selectedKid = ""; return; }
     const keys = parsed.document.keys || [];
     if (!keys.some((key, index) => (key.kid || String(index)) === selectedKid)) {
@@ -40,19 +33,49 @@
     }
   });
 
-  async function convert() {
+  $effect(() => {
+    const text = input;
+    const op = operation;
+    const kid = selectedKid;
+    const doc = parsed.document;
+    const parseError = parsed.error;
+
     output = "";
-    error = parsed.error || "";
-    if (!parsed.document || error) return;
-    busy = true;
-    try {
-      if (operation === "normalize") output = serializeJwkDocument(parsed.document);
-      else if (operation === "pem-to-jwk") output = JSON.stringify(await pemToJwk(input), null, 2);
-      else output = await jwkToPem(selectJwk(parsed.document, selectedKid));
-    } catch (err) {
-      error = localizeError(locale, err);
-    } finally { busy = false; }
-  }
+    error = "";
+    busy = false;
+
+    if (!text.trim()) return;
+    if (parseError) {
+      error = parseError;
+      return;
+    }
+    if (!doc) return;
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      busy = true;
+      try {
+        let next = "";
+        if (op === "normalize") next = serializeJwkDocument(doc);
+        else if (op === "pem-to-jwk") next = JSON.stringify(await pemToJwk(text), null, 2);
+        else next = await jwkToPem(selectJwk(doc, kid));
+        if (cancelled) return;
+        output = next;
+        error = "";
+      } catch (err) {
+        if (cancelled) return;
+        output = "";
+        error = localizeError(locale, err);
+      } finally {
+        if (!cancelled) busy = false;
+      }
+    }, 160);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  });
 </script>
 
 <div class="page">
@@ -65,15 +88,12 @@
         { value: "pem-to-jwk", label: t("RSA PEM → JWK", "RSA PEM → JWK") },
       ]} />
     </label>
-    {#if parsed.document?.keys?.length > 1}
+    {#if parsed.document?.keys?.length > 1 && operation === "pem"}
       <label class="field">
         <span>{t("选择密钥", "Select key")}</span>
         <Select bind:value={selectedKid} options={keyOptions} />
       </label>
     {/if}
-    <button class="dbx-btn dbx-btn--primary" type="button" disabled={busy || !input.trim()} onclick={convert}>
-      {busy ? t("转换中…", "Converting…") : t("转换", "Convert")}
-    </button>
   </div>
 
   <p class="hint">{t("支持 JWK 对象和 JWKS（keys 数组）。RSA 密钥可在标准 PKCS#8 / SPKI PEM 间转换；本地处理，不上传内容。", "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.")}</p>
@@ -81,10 +101,13 @@
     <div class="caption-row"><span class="caption">{t("输入 JWK / JWKS", "Input JWK / JWKS")}</span><span class="counter">{new TextEncoder().encode(input).length} / {INPUT_LIMITS.jwk} B</span></div>
     <textarea class="dbx-textarea area mono" maxlength={INPUT_LIMITS.jwk} spellcheck="false" bind:value={input} placeholder={'{"kty":"RSA","n":"…","e":"AQAB"}' }></textarea>
   </label>
-  {#if parsed.error}<p class="error" role="alert">{parsed.error}</p>{/if}
-  {#if error && !parsed.error}<p class="error" role="alert">{error}</p>{/if}
+  {#if error}<p class="error" role="alert">{error}</p>{/if}
   <label class="block output-block">
-    <div class="caption-row"><span class="caption">{t("输出", "Output")}</span>{#if output}<CopyButton {locale} text={output} labelZh="复制输出" labelEn="Copy output" />{/if}</div>
+    <div class="caption-row">
+      <span class="caption">{t("输出", "Output")}</span>
+      {#if busy}<span class="status" role="status">{t("转换中…", "Converting…")}</span>{/if}
+      {#if output}<CopyButton {locale} text={output} labelZh="复制输出" labelEn="Copy output" />{/if}
+    </div>
     <textarea class="dbx-textarea area mono" readonly value={output} placeholder={t("转换结果会显示在这里。", "The converted result appears here.")}></textarea>
   </label>
 </div>
@@ -93,7 +116,7 @@
   .page { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
   .options { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; min-width: 180px; font-size: 12px; }
-  .hint, .error { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-muted-foreground); }
+  .hint, .error, .status { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-muted-foreground); }
   .error { color: var(--color-destructive); }
   .block { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
   .output-block { flex: 1; }

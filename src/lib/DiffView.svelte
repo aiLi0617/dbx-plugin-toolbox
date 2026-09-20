@@ -16,6 +16,23 @@
   const inputError = $derived(inputLimitError(left, INPUT_LIMITS.diff, t("左侧输入", "Left input")) || inputLimitError(right, INPUT_LIMITS.diff, t("右侧输入", "Right input")));
   const parts = $derived(inputError ? [] : diffParts(left, right, { mode, ignoreWhitespace, ignoreCase }));
   const patchText = $derived(parts.map((part) => `${part.mark === "add" ? "+" : part.mark === "del" ? "-" : " "}${part.value}`).join(""));
+  const lineRows = $derived.by(() => {
+    if (mode !== "lines" || inputError) return [];
+    const rows = [];
+    for (const part of parts) {
+      const split = part.value.endsWith("\n") || part.value.includes("\n")
+        ? part.value.replace(/\n$/, "").split("\n")
+        : [part.value];
+      for (const line of split) {
+        rows.push({
+          mark: part.mark,
+          line,
+          pfx: part.mark === "add" ? "+" : part.mark === "del" ? "-" : " ",
+        });
+      }
+    }
+    return rows;
+  });
 
   function swap() {
     const previous = left;
@@ -57,7 +74,15 @@
       <span class="dbx-label caption">{t("差异", "Diff")}</span>
       <CopyButton {locale} text={patchText} labelZh="复制差异" labelEn="Copy diff" />
     </div>
-    <pre class="out" class:inline={mode !== "lines"}>{#each parts as part, i (i)}<span class={part.mark}>{part.value}</span>{/each}</pre>
+    {#if mode === "lines"}
+      <div class="out lines" aria-label={t("差异", "Diff")}>
+        {#each lineRows as row, i (`${i}-${row.mark}-${row.line}`)}
+          <div class="row {row.mark}"><span class="pfx" aria-hidden="true">{row.pfx}</span><span class="text">{row.line}</span></div>
+        {/each}
+      </div>
+    {:else}
+      <pre class="out inline">{#each parts as part, i (i)}<span class={part.mark}>{part.value}</span>{/each}</pre>
+    {/if}
   </div>
 </div>
 
@@ -75,9 +100,14 @@
   .caption { color: var(--color-muted-foreground); }
   .area, .out { flex: 1; min-height: 0; margin: 0; resize: none; line-height: 1.5; }
   .out { overflow: auto; padding: 10px 12px; border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 14%, transparent))); border-radius: var(--radius-md); background: var(--color-card, var(--color-background, Canvas)); white-space: pre-wrap; font-family: var(--font-mono); }
+  .out.lines { display: flex; flex-direction: column; gap: 0; padding: 6px 0; white-space: normal; }
+  .row { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); column-gap: 2px; padding: 1px 10px; white-space: pre-wrap; word-break: break-word; }
+  .pfx { opacity: 0.7; user-select: none; }
   .out.inline :global(span) { border-radius: 2px; }
   .add { color: var(--color-success); background: var(--color-success-bg); }
   .del { color: var(--color-destructive); background: color-mix(in srgb, var(--color-destructive) 12%, transparent); text-decoration: line-through; }
+  .row.del .text { text-decoration: line-through; }
+  .row.del { text-decoration: none; }
   /* The tool pane can be narrow while the host window is still wide (for example
      when the sidebar is open), so respond to this view's width, not the viewport. */
   @container (max-width: 720px) {

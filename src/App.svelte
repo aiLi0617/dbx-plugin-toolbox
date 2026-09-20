@@ -11,7 +11,7 @@
     setFavoriteToolIds,
     setVaultAutoLockMinutes,
   } from "./lib/prefs.js";
-  import { moveToolId, pushRecent, recentWithoutFavorites, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
+  import { moveToolId, pushRecent, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
   import { EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS } from "./lib/viewRegistry.js";
   import { loadVaultKeys } from "./lib/keySource.js";
   import ToolboxSidebar from "./lib/ToolboxSidebar.svelte";
@@ -48,7 +48,7 @@
 
   const favoriteSet = $derived(new Set(favoriteIds));
   const favoriteTools = $derived(toolsByIds(favoriteIds));
-  const recentTools = $derived(toolsByIds(recentWithoutFavorites(recentIds, favoriteIds, 8)));
+  const recentTools = $derived(toolsByIds(sanitizeToolIds(recentIds, 8)));
   const launcherRecentTools = $derived(toolsByIds(recentIds));
   const grouped = toolsByCategory(tools);
   const categoryCounts = Object.fromEntries(CATEGORY_ORDER.map((id) => [id, grouped[id].length]));
@@ -57,9 +57,9 @@
   const fillPane = $derived(page === "vault" || (page === "tool" && FILL_VIEWS.has(tool?.view)));
   const title = $derived.by(() => {
     if (page === "home") return pick(locale, "首页", "Home");
-    if (page === "catalog") return pick(locale, chrome.allTools.zh, chrome.allTools.en);
-    if (page === "vault") return pick(locale, chrome.vault.zh, chrome.vault.en);
-    return tool ? pick(locale, tool.name.zh, tool.name.en) : pick(locale, "首页", "Home");
+    if (page === "catalog") return pick(locale, chrome.allTools);
+    if (page === "vault") return pick(locale, chrome.vault);
+    return tool ? pick(locale, tool.name) : pick(locale, "首页", "Home");
   });
 
   onMount(() => {
@@ -306,8 +306,8 @@
 {#if launcherOpen}<ToolLauncher {locale} {tools} favorites={favoriteTools} recents={launcherRecentTools} onClose={() => (launcherOpen = false)} onTool={openTool} />{/if}
 
 <style>
-  .tool-session { min-width: 0; }
-  .tool-session.fill { display: flex; flex: 1; min-height: 0; flex-direction: column; }
+  .tool-session { min-width: 0; min-height: 0; }
+  .tool-session.fill { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; overflow: hidden; }
   .tool-session[hidden] { display: none; }
   .view-load-state { display: flex; align-items: center; gap: 10px; color: var(--color-muted-foreground); }
 </style>

@@ -1,8 +1,9 @@
 import { TOOL_DEFS } from "./toolCatalog.js";
 import { TEXT_ACTIONS } from "./textActions.js";
-import { categories } from "./i18n.js";
+import { categories, localeValues } from "./i18n.js";
+import { resolveIntent } from "./searchIntent.js";
 
-export const CATEGORY_ORDER = ["convert", "encode", "format", "image", "security", "generate", "text"];
+export const CATEGORY_ORDER = ["format", "encode", "convert", "text", "security", "generate", "image"];
 
 export const LEGACY_TOOL_IDS = {
   "json-convert": "json",
@@ -12,6 +13,7 @@ export const LEGACY_TOOL_IDS = {
   "json-toml": "json",
   "json-sql": "json",
   "json-ts": "json",
+  jsonpath: "json",
   duration: "timestamp",
   hex: "base64",
   base32: "base64",
@@ -43,48 +45,44 @@ export function canonicalToolId(id) {
 }
 
 const SUMMARIES = {
-  "data-convert": { zh: "JSON、YAML、CSV、TSV、NDJSON、XML、TOML 双向转换", en: "Convert between JSON, YAML, CSV, TSV, NDJSON, XML, and TOML" },
-  spreadsheet: { zh: "本地打开、编辑和导出 XLSX、CSV、TSV、JSON", en: "Open, edit, and export XLSX, CSV, TSV, and JSON locally" },
-  "image-process": { zh: "裁剪、缩放、旋转、翻转、水印、格式转换与质量压缩", en: "Crop, resize, rotate, flip, watermark, convert, and compress images" },
-  json: { zh: "格式化、压缩、校验、树形编辑，以及转成 TypeScript / SQL 等", en: "Format, minify, validate, tree-edit, and convert to TypeScript / SQL" },
-  "code-format": { zh: "SQL / XML / YAML / HTML / CSS / JavaScript / TypeScript", en: "SQL, XML, YAML, HTML, CSS, JavaScript, TypeScript" },
-  jsonpath: { zh: "按路径提取 JSON 节点", en: "Extract nodes with a path" },
-  "base-convert": { zh: "二至三十六进制互转，可分组、加前缀", en: "Convert bases 2–36, with grouping and prefixes" },
-  "network-calc": { zh: "计算 IPv4 / IPv6 网段、掩码、范围并切分子网", en: "Calculate IPv4/IPv6 networks and ranges, then split subnets" },
-  timestamp: { zh: "Unix 时间戳与北京时间互转", en: "Convert Unix timestamps and Beijing time" },
-  color: { zh: "HEX、RGB、CMYK、HSV、色环与屏幕取色", en: "HEX, RGB, CMYK, HSV, color wheel, and screen picker" },
-  cron: { zh: "点选字段生成表达式，并列出下次触发", en: "Build a cron expression and list the next runs" },
-  base64: { zh: "Base64 / 32 / 58 与 Hex", en: "Base64, 32, 58, or Hex" },
-  url: { zh: "编码、解码或拆查询参数", en: "Encode, decode, or list query params" },
-  "html-entities": { zh: "HTML 实体或 Unicode 转义", en: "HTML entities or Unicode escape" },
-  punycode: { zh: "国际化域名编码", en: "Encode internationalized domain names" },
-  "data-uri": { zh: "生成或解析 Data URI，支持文件", en: "Create or parse Data URIs, including files" },
-  "quoted-printable": { zh: "邮件 QP 编码与解码", en: "Quoted-printable encode or decode" },
-  jwt: { zh: "解码及 HS / RS / PS 签发与验签", en: "Decode, sign, or verify with HS / RS / PS" },
-  aes: { zh: "AES / SM4 加解密", en: "AES or SM4 encrypt and decrypt" },
-  "hmac-sha256": { zh: "HMAC-SHA256 或 HMAC-SM3", en: "HMAC-SHA256 or HMAC-SM3" },
-  xor: { zh: "按字节异或，仅用于调试", en: "XOR bytes; debug use only" },
-  rsa: { zh: "RSA OAEP / PKCS#1 或 SM2 加解密", en: "RSA OAEP/PKCS#1 or SM2" },
-  jwk: { zh: "校验 JWK / JWKS，并在 RSA JWK 与 PEM 间转换", en: "Validate JWK / JWKS and convert RSA JWK to or from PEM" },
-  cert: { zh: "检查证书有效期、SAN、指纹或 SSH 公钥", en: "Inspect certificate validity, SANs, fingerprints, or SSH keys" },
+  json: { zh: "格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript / SQL 等", en: "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL" },
+  "data-convert": { zh: "JSON / YAML / CSV / TSV / NDJSON / XML / TOML 互转", en: "Convert among JSON, YAML, CSV, TSV, NDJSON, XML, and TOML" },
+  "code-format": { zh: "格式化 SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript", en: "Format SQL, XML, YAML, HTML, CSS, JavaScript, and TypeScript" },
+  spreadsheet: { zh: "本地打开、编辑并导出 XLSX、CSV、TSV、JSON", en: "Open, edit, and export XLSX, CSV, TSV, and JSON locally" },
+  base64: { zh: "Base64 / Base32 / Base58 / Hex 编码解码", en: "Encode or decode Base64, Base32, Base58, or Hex" },
+  url: { zh: "URL 百分号编解码，或拆解查询参数", en: "Percent-encode/decode URLs, or list query params" },
+  "html-entities": { zh: "HTML 实体、Unicode、JS、JSON、CSS 标识符转义", en: "Escape HTML entities, Unicode, JS, JSON, or CSS identifiers" },
+  "sql-escape": { zh: "按行转成 SQL 字符串字面量，可选行尾逗号", en: "Escape each line as a SQL string literal, with optional commas" },
+  "data-uri": { zh: "生成或解析 Data URI，支持文本与文件", en: "Build or parse Data URIs from text or files" },
+  punycode: { zh: "国际化域名（IDN）与 Punycode 互转", en: "Convert between IDN and Punycode domain names" },
+  "quoted-printable": { zh: "邮件 Quoted-Printable 编码与解码", en: "Quoted-Printable encode or decode for email" },
+  timestamp: { zh: "Unix 时间戳与日期互转，支持时区、加减与时间差", en: "Convert Unix timestamps and dates; timezones, arithmetic, and diffs" },
+  color: { zh: "HEX / RGB / CMYK / HSV 互转，含色环与屏幕取色", en: "Convert HEX, RGB, CMYK, HSV; color wheel and screen picker" },
+  cron: { zh: "可视化编辑 Cron，并预览下次触发时间", en: "Build a cron expression and preview the next runs" },
+  "base-convert": { zh: "2–36 进制互转，支持分组与前缀", en: "Convert bases 2–36, with optional grouping and prefixes" },
+  "network-calc": { zh: "计算 IPv4 / IPv6 网段、掩码、主机范围并切分子网", en: "Calculate IPv4/IPv6 networks, masks, ranges, and split subnets" },
+  whitespace: { zh: "清理、去重、排序、序号、列截取、命名风格与字数统计", en: "Clean, dedupe, sort, number, extract columns, restyle names, and count text" },
+  regex: { zh: "测试正则表达式，查看匹配并预览替换", en: "Test regexes, inspect matches, and preview replacements" },
+  diff: { zh: "按行、单词或字符对比两段文本", en: "Compare two texts by line, word, or character" },
+  markdown: { zh: "边写边预览 Markdown 渲染结果", en: "Live Markdown preview as you type" },
+  "unicode-inspect": { zh: "逐字符查看 Unicode 码位与属性", en: "Inspect Unicode code points per character" },
   hash: { zh: "计算文本或文件的 MD5 / SHA / SM3 / CRC32", en: "Hash text or files with MD5, SHA, SM3, or CRC32" },
-  uuid: { zh: "UUID / ULID / NanoID", en: "UUID, ULID, or NanoID" },
-  password: { zh: "随机密码或十六进制字节", en: "Random password or hex bytes" },
-  qrcode: { zh: "生成 QR / 汉信码 / PDF417 / Data Matrix；识别 QR / Data Matrix / PDF417 图片", en: "Generate QR, Han Xin, PDF417, or Data Matrix; decode QR, Data Matrix, and PDF417 images" },
-  lorem: { zh: "重复生成默认 DBX 文案或自定义内容，可指定数量", en: "Repeat default DBX copy or custom content with a chosen count" },
-  totp: { zh: "从密钥计算当前口令", en: "Compute the current TOTP code" },
-  whitespace: { zh: "清理、排序、序号、列截取、长度过滤、命名转换与字数统计", en: "Clean, sort, number, extract columns, filter lengths, convert naming styles, and count text" },
-  case: { zh: "大小写与 camel / snake / kebab", en: "Letter case and identifier style" },
-  stats: { zh: "字、词、行、字节统计", en: "Count chars, words, lines, bytes" },
-  regex: { zh: "测试正则、列出匹配并预览替换", en: "Test regexes, inspect matches, and preview replacements" },
-  diff: { zh: "按行、单词或字符对比文本", en: "Compare text by line, word, or character" },
-  markdown: { zh: "边写边渲染 Markdown", en: "Live Markdown preview" },
-  slugify: { zh: "生成 URL 友好片段", en: "Make a URL-friendly slug" },
-  "strip-html": { zh: "去掉 HTML 标签留文本", en: "Remove tags, keep the text" },
-  "sql-escape": { zh: "按行转成 SQL 字符串，可选行尾逗号", en: "Escape each line as a SQL string, with optional commas" },
-  "unicode-inspect": { zh: "查看每个字符的码位", en: "Inspect code points per character" },
-  "symmetric-key": { zh: "生成 AES / SM4 / HMAC 单钥，可写入密钥库", en: "Generate an AES, SM4, or HMAC key; optional vault save" },
-  "key-pair": { zh: "生成 RSA / SM2 公钥和私钥，RSA 可选位数和 PEM 格式", en: "Generate RSA or SM2 public/private keys; RSA bits and PEM format" },
+  jwt: { zh: "解码、签发或验签 JWT（HS / RS / PS）", en: "Decode, sign, or verify JWTs with HS / RS / PS" },
+  aes: { zh: "AES / SM4 对称加解密（GCM / CBC / ECB）", en: "AES or SM4 encrypt/decrypt (GCM, CBC, ECB)" },
+  "hmac-sha256": { zh: "HMAC-SHA1 / SHA256 / SHA384 / SHA512 / SM3", en: "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3" },
+  rsa: { zh: "RSA（OAEP / PKCS#1）或 SM2 加解密", en: "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt" },
+  totp: { zh: "根据密钥生成当前 TOTP 动态口令", en: "Generate the current TOTP code from a secret" },
+  cert: { zh: "查看证书有效期、SAN、指纹，或 SSH 公钥指纹", en: "Inspect cert validity, SANs, fingerprints, or SSH public keys" },
+  jwk: { zh: "校验 JWK / JWKS，RSA JWK 与 PEM 互转", en: "Validate JWK/JWKS and convert RSA JWK ↔ PEM" },
+  "symmetric-key": { zh: "生成 AES / SM4 / HMAC 密钥，可写入密钥库", en: "Generate an AES, SM4, or HMAC key; optional vault save" },
+  "key-pair": { zh: "生成 RSA / SM2 公私钥对，可配置位数与 PEM 格式", en: "Generate RSA or SM2 key pairs; bits and PEM format options" },
+  xor: { zh: "按字节异或运算，仅供调试对照", en: "XOR bytes for debugging only" },
+  uuid: { zh: "批量生成 UUID、ULID 或 NanoID", en: "Generate UUID, ULID, or NanoID values" },
+  password: { zh: "生成随机密码或随机十六进制字节", en: "Generate a random password or hex bytes" },
+  qrcode: { zh: "生成或识别 QR / 汉信码 / PDF417 / Data Matrix", en: "Generate or decode QR, Han Xin, PDF417, and Data Matrix" },
+  lorem: { zh: "按次数重复默认文案或自定义内容", en: "Repeat default or custom copy a chosen number of times" },
+  "image-process": { zh: "裁剪、缩放、旋转、翻转、水印、转格式与压缩", en: "Crop, resize, rotate, flip, watermark, convert, and compress" },
+  "image-generate": { zh: "按像素尺寸与目标体积生成占位图", en: "Generate placeholders at exact pixel size and file size" },
 };
 
 const catalog = TOOL_DEFS;
@@ -97,7 +95,7 @@ export const tools = catalog.map((tool) => {
   return { ...tool, ...(summary ? { summary } : {}), ...(aliases ? { aliases } : {}) };
 });
 
-export const DEFAULT_ENABLED_IDS = ["json", "base64", "code-format", "hash", "uuid", "color"];
+export const DEFAULT_ENABLED_IDS = ["json", "base64", "timestamp", "hash", "uuid", "code-format"];
 
 export function toolsByIds(ids) {
   const map = new Map(tools.map((tool) => [tool.id, tool]));
@@ -153,12 +151,27 @@ export function searchTools(query, locale, pool = tools) {
   const q = query.trim().toLowerCase();
   if (!q) return pool;
   const tokens = q.split(/\s+/).filter(Boolean);
+  const intentBoost = new Map();
+  for (const [index, intent] of resolveIntent(q).entries()) {
+    const boost = 5 + (Object.keys(intent.options || {}).length ? 1 : 0) - index * 0.01;
+    const prev = intentBoost.get(intent.toolId);
+    if (prev == null || boost > prev) intentBoost.set(intent.toolId, boost);
+  }
   return pool.map((tool) => {
-    const names = [tool.id, tool.name.zh, tool.name.en].map((value) => value.toLowerCase());
+    const names = [tool.id, ...localeValues(tool.name)].map((value) => value.toLowerCase());
     const aliases = (tool.aliases || []).map((value) => value.toLowerCase());
     const category = categories[tool.category];
-    const haystack = [...names, ...aliases, tool.summary?.zh, tool.summary?.en, tool.category, category?.zh, category?.en].filter(Boolean).join(" ").toLowerCase();
-    const score = names.includes(q) ? 4 : aliases.includes(q) ? 3 : names.some((name) => name.includes(q)) ? 2 : 1;
-    return { tool, score: tokens.every((token) => haystack.includes(token)) ? score : 0 };
+    const haystack = [
+      ...names,
+      ...aliases,
+      ...localeValues(tool.summary),
+      tool.category,
+      ...localeValues(category),
+    ].filter(Boolean).join(" ").toLowerCase();
+    const matched = tokens.every((token) => haystack.includes(token));
+    let score = matched ? (names.includes(q) ? 4 : aliases.includes(q) ? 3 : names.some((name) => name.includes(q)) ? 2 : 1) : 0;
+    const boost = intentBoost.get(tool.id);
+    if (boost != null) score = Math.max(score, boost);
+    return { tool, score };
   }).filter((item) => item.score).sort((a, b) => b.score - a.score).map((item) => item.tool);
 }

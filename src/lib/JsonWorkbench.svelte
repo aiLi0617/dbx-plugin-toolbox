@@ -1,9 +1,11 @@
 <script>
+  import { untrack } from "svelte";
   import { chrome, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { copyText as copyToClipboard } from "./clipboard.js";
   import { parseLosslessJson, parseSafeJson, toSafeJsonValue, precisionErrorMessage } from "./jsonPrecision.js";
   import { jsonLanguages, convertJsonToLang } from "./jsonToLang.js";
+  import { runJsonPath } from "./tools/convert.js";
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
   import JsonTreeView from "./JsonTreeView.svelte";
   import Select from "./Select.svelte";
@@ -25,7 +27,7 @@
     unicodeToChinese,
   } from "./jsonOps.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   let jsonText = $state("");
   let pretty = $state(true);
@@ -35,6 +37,7 @@
   let moreOpen = $state(false);
   let moreEl = $state(null);
   let rightMode = $state("tree");
+  let jsonPath = $state("");
   let textActionsHeight = $state(42);
   const formatLanguages = new Set(["yaml", "xml", "toml", "csv", "query"]);
   const availableLanguages = $derived(jsonLanguages.filter((lang) => rightMode === "convert" ? formatLanguages.has(lang.value) : !formatLanguages.has(lang.value)));
@@ -53,6 +56,10 @@
   const t = (zhText, en) => pick(locale, zhText, en);
   const rightError = $derived(actionError || parseError || (rightMode === "tree" ? "" : convertError));
   const inputError = $derived(inputLimitError(jsonText, INPUT_LIMITS.json, t("JSON 输入", "JSON input")));
+
+  $effect(() => {
+    if (initialOptions.mode === "extract") untrack(() => { rightMode = "extract"; });
+  });
 
   $effect(() => {
     const text = jsonText;
@@ -367,6 +374,32 @@
     return () => clearTimeout(timer);
   });
 
+  $effect(() => {
+    if (rightMode !== "extract") return;
+    const text = jsonText;
+    const path = jsonPath;
+    convertOut = "";
+    convertError = "";
+    const timer = setTimeout(() => {
+      if (!text.trim()) {
+        convertOut = "";
+        return;
+      }
+      if (inputError) {
+        convertOut = "";
+        convertError = inputError;
+        return;
+      }
+      try {
+        convertOut = runJsonPath(text, path);
+      } catch (err) {
+        convertOut = "";
+        convertError = precisionErrorMessage(err, locale);
+      }
+    }, 180);
+    return () => clearTimeout(timer);
+  });
+
   function showMode(mode) {
     rightMode = mode;
     if (mode === "convert" && !formatLanguages.has(convertLang)) convertLang = "yaml";
@@ -478,53 +511,73 @@
 
     <section class="json-pane json-pane-right">
       <div class="json-pane-bar">
-        <div class="json-modes" role="group" aria-label={t("JSON 功能", "JSON tools")}>
-          {#each [["tree", "树形编辑", "Tree"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
-            <button class="dbx-btn" class:active={rightMode === mode} aria-pressed={rightMode === mode} onclick={() => showMode(mode)} type="button">{t(labelZh, labelEn)}</button>
-          {/each}
-        </div>
-        {#if rightMode === "convert" || rightMode === "generate"}
-          <Select
-            class="json-lang-select"
-            bind:value={convertLang}
-            ariaLabel={t("目标语言", "Language")}
-            options={availableLanguages.map((lang) => ({ value: lang.value, label: zh ? lang.zh : lang.en }))}
-          />
-          {#if convertLang === "mysql"}
-            <input class="dbx-input json-table-input" placeholder="users" bind:value={tableName} aria-label={t("表名", "Table")} />
+        <div class="json-pane-bar-start">
+          <div class="json-modes" role="group" aria-label={t("JSON 功能", "JSON tools")}>
+            {#each [["tree", "树形编辑", "Tree"], ["extract", "路径提取", "Extract"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
+              <button class="dbx-btn" class:active={rightMode === mode} aria-pressed={rightMode === mode} onclick={() => showMode(mode)} type="button">{t(labelZh, labelEn)}</button>
+            {/each}
+          </div>
+          {#if rightMode === "extract"}
+            <input
+              class="dbx-input mono json-path-input"
+              spellcheck="false"
+              placeholder="$.items[*].id"
+              bind:value={jsonPath}
+              aria-label={t("JSONPath", "JSONPath")}
+            />
+          {:else if rightMode === "convert" || rightMode === "generate"}
+            <Select
+              class="json-lang-select"
+              bind:value={convertLang}
+              ariaLabel={t("目标语言", "Language")}
+              options={availableLanguages.map((lang) => ({ value: lang.value, label: zh ? lang.zh : lang.en }))}
+            />
+            {#if convertLang === "mysql"}
+              <input class="dbx-input json-table-input" placeholder="users" bind:value={tableName} aria-label={t("表名", "Table")} />
+            {/if}
           {/if}
-        {/if}
-        {#if rightMode === "tree"}
-          <button
-            class="dbx-btn dbx-btn--ghost json-icon-btn"
-            disabled={parsed === undefined}
-            onclick={expandAll}
-            type="button"
-            title={t("全展开", "Expand all")}
-            aria-label={t("全展开", "Expand all")}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 5v14"></path>
-              <path d="M5 12h14"></path>
-            </svg>
-          </button>
-          <button
-            class="dbx-btn dbx-btn--ghost json-icon-btn"
-            disabled={parsed === undefined}
-            onclick={collapseAll}
-            type="button"
-            title={t("全折叠", "Collapse all")}
-            aria-label={t("全折叠", "Collapse all")}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14"></path>
-            </svg>
-          </button>
-        {:else}
-          <button class="dbx-btn" onclick={() => copyText(convertOut, "out")} type="button">
-            {copied === "out" ? t(chrome.copied.zh, chrome.copied.en) : t("复制输出", "Copy output")}
-          </button>
-        {/if}
+        </div>
+        <div class="json-pane-bar-end">
+          {#if rightMode === "tree"}
+            <button
+              class="dbx-btn"
+              disabled={parsed === undefined}
+              onclick={expandAll}
+              type="button"
+              title={t("展开全部节点", "Expand all nodes")}
+            >
+              {t("全展开", "Expand all")}
+            </button>
+            <button
+              class="dbx-btn"
+              disabled={parsed === undefined}
+              onclick={collapseAll}
+              type="button"
+              title={t("折叠全部节点", "Collapse all nodes")}
+            >
+              {t("全折叠", "Collapse all")}
+            </button>
+          {:else}
+            <button
+              class="dbx-btn dbx-btn--ghost json-icon-btn"
+              onclick={() => copyText(convertOut, "out")}
+              type="button"
+              title={copied === "out" ? t(chrome.copied.zh, chrome.copied.en) : t("复制输出", "Copy output")}
+              aria-label={copied === "out" ? t(chrome.copied.zh, chrome.copied.en) : t("复制输出", "Copy output")}
+            >
+              {#if copied === "out"}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              {:else}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              {/if}
+            </button>
+          {/if}
+        </div>
       </div>
 
       <div class="json-result">
@@ -630,7 +683,7 @@
   }
   .json-pane-bar-end {
     display: flex;
-    gap: 2px;
+    gap: 6px;
     align-items: center;
     margin-left: auto;
     flex-shrink: 0;
@@ -653,6 +706,12 @@
   .json-pane-bar :global(input.json-table-input) {
     width: 120px;
     flex: 0 0 auto;
+  }
+  .json-pane-bar :global(input.json-path-input) {
+    min-width: 12rem;
+    max-width: 22rem;
+    flex: 1 1 12rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   .json-more {
     position: relative;

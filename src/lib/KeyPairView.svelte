@@ -4,7 +4,7 @@
   import Select from "./Select.svelte";
   import { invoke } from "./host.js";
   import { errorMessage, localizeError, pick } from "./i18n.js";
-  import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, rsaGenerateTimeoutMs } from "./tools/generate.js";
+  import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem } from "./tools/generate.js";
 
   let { locale = "zh-CN", onVaultChange = () => {} } = $props();
   let algorithm = $state("rsa");
@@ -15,20 +15,33 @@
   let publicKey = $state("");
   let privateKey = $state("");
   let error = $state("");
-  let notice = $state("");
   let busy = $state(false);
   let unlockOpen = $state(false);
 
   const t = (zh, en) => pick(locale, zh, en);
+  const algoHint = $derived(algorithm === "sm2"
+    ? t(
+      "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
+      "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
+    )
+    : t(
+      "RSA 可选 2048 / 3072 / 4096 位，PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
+      "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
+    ));
 
   function isLockedError(err) {
     return /key vault is locked/i.test(errorMessage(err));
   }
 
+  function onAlgorithmChange() {
+    publicKey = "";
+    privateKey = "";
+    error = "";
+  }
+
   async function generate() {
     if (busy) return;
     error = "";
-    notice = "";
     if (save === "yes" && !name.trim()) {
       error = t("写入密钥库需要填写名称", "Name is required to save");
       return;
@@ -52,18 +65,23 @@
     busy = true;
     error = "";
     try {
+      if (algorithm === "rsa") {
+        // WebCrypto uses the OS crypto provider; pure-Rust rsa keygen is too slow for UI.
+        const pair = await generateRsaKeyPairPem(bits, pemFormat);
+        publicKey = pair.publicKey;
+        privateKey = pair.privateKey;
+        if (save === "yes") {
+          await saveRsaToVault(pair.privateKey);
+        }
+        return;
+      }
       const result = await invoke("toolbox/keys/generate-keypair", {
         algorithm,
-        bits: algorithm === "rsa" ? Number(bits) : undefined,
-        format: algorithm === "rsa" ? pemFormat : undefined,
         save: save === "yes",
         name,
-      }, algorithm === "rsa" ? rsaGenerateTimeoutMs(bits) : 60000);
+      }, 60000);
       publicKey = result.publicKey || "";
       privateKey = result.privateKey || "";
-      notice = result.saved
-        ? t("私钥已写入密钥库，界面不保留私钥原文", "Private key saved to vault; not kept in the UI")
-        : t("请立即保存私钥；锁定工作台前请清空", "Save the private key now; clear it before leaving");
       if (result.saved) onVaultChange();
     } catch (err) {
       if (save === "yes" && isLockedError(err)) {
@@ -76,16 +94,43 @@
     }
   }
 
+  async function saveRsaToVault(material) {
+    await invoke("toolbox/keys/create", {
+      name,
+      algorithm: "rsa-pem",
+      generate: false,
+      material,
+    });
+    onVaultChange();
+  }
+
   async function afterUnlock() {
     onVaultChange();
+    // Keep an already-generated RSA pair; only persist it after unlock.
+    if (algorithm === "rsa" && save === "yes" && privateKey) {
+      busy = true;
+      error = "";
+      try {
+        await saveRsaToVault(privateKey);
+      } catch (err) {
+        if (isLockedError(err)) {
+          unlockOpen = true;
+          return;
+        }
+        error = localizeError(locale, err);
+      } finally {
+        busy = false;
+      }
+      return;
+    }
     await runGenerate();
   }
 </script>
 
 <div class="page">
   {#if error}<div class="banner">{error}</div>{/if}
-  <p class="dbx-hint">{t("RSA 可选 1024 / 2048 / 3072 / 4096 位，PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。", "RSA supports 1024/2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.")}</p>
-  <div class="options">
+  <p class="dbx-hint">{algoHint}</p>
+  <div class="options options--algo">
     <label class="field">
       <span>{t("算法", "Algorithm")}</span>
       <Select
@@ -94,6 +139,7 @@
           { value: "rsa", label: "RSA" },
           { value: "sm2", label: "SM2" },
         ]}
+        onchange={onAlgorithmChange}
       />
     </label>
     {#if algorithm === "rsa"}
@@ -112,6 +158,8 @@
         />
       </label>
     {/if}
+  </div>
+  <div class="options options--actions">
     <label class="field">
       <span>{t("写入密钥库", "Save to vault")}</span>
       <Select
@@ -125,11 +173,10 @@
     {#if save === "yes"}
       <label class="field"><span>{t("名称", "Name")}</span><input class="dbx-input" bind:value={name} /></label>
     {/if}
-    <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={generate} type="button">
+    <button class="dbx-btn dbx-btn--primary generate" disabled={busy} onclick={generate} type="button">
       {busy ? t("生成中…", "Generating…") : t("生成", "Generate")}
     </button>
   </div>
-  {#if notice}<p class="dbx-hint">{notice}</p>{/if}
   <div class="keys">
     <label class="block">
       <div class="caption-row">
@@ -138,16 +185,16 @@
       </div>
       <textarea class="dbx-textarea area" value={publicKey} readonly aria-label={t("生成的公钥", "Generated public key")} placeholder={t("生成后显示", "Appears after generate")}></textarea>
     </label>
-    <label class="block">
+    <div class="block">
       <div class="caption-row">
         <span class="caption">{t("私钥", "Private key")}</span>
         {#if privateKey}
           <button class="dbx-btn dbx-btn--ghost clear-btn" onclick={() => (privateKey = "")} type="button">{t("清除", "Clear")}</button>
+          <CopyButton {locale} text={privateKey} labelZh="复制私钥" labelEn="Copy private key" />
         {/if}
-        <CopyButton {locale} text={privateKey} labelZh="复制私钥" labelEn="Copy private key" />
       </div>
       <textarea class="dbx-textarea area" value={privateKey} readonly aria-label={t("生成的私钥", "Generated private key")} placeholder={t("生成后显示", "Appears after generate")}></textarea>
-    </label>
+    </div>
   </div>
 </div>
 
@@ -172,6 +219,9 @@
     align-items: flex-end;
     flex-shrink: 0;
   }
+  .options--actions .generate {
+    margin-left: auto;
+  }
   .field :global(.dbx-select),
   .field .dbx-input {
     width: auto;
@@ -181,7 +231,7 @@
     flex: 1;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--ui-gap, 12px);
     align-items: stretch;
   }
@@ -197,14 +247,16 @@
   }
   .area {
     flex: 1;
-    min-height: 0;
+    min-height: 8rem;
     resize: none;
     font-family: var(--font-mono);
   }
-
-  @media (max-width: 720px) {
+  @media (min-width: 1100px) {
     .keys {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .area {
+      min-height: 0;
     }
   }
 </style>

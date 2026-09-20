@@ -18,28 +18,30 @@
   </label>
 
   {#if rows.length}
-    <table class="dbx-table">
-      <thead>
-        <tr>
-          <th>{t("字符", "Char")}</th>
-          <th>Unicode</th>
-          <th>{t("十进制", "Decimal")}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each rows as row, i (i)}
+    <div class="table-wrap">
+      <table class="dbx-table">
+        <thead>
           <tr>
-            <td class="glyph">{row.char}</td>
-            <td class="mono">{row.hex}</td>
-            <td class="mono">{row.dec}</td>
-            <td class="copy">
-              <CopyButton {locale} text={row.hex} labelZh="复制码位" labelEn="Copy code point" />
-            </td>
+            <th>{t("字符", "Char")}</th>
+            <th>Unicode</th>
+            <th>{t("十进制", "Decimal")}</th>
+            <th></th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {#each rows as row, i (i)}
+            <tr>
+              <td class="glyph">{row.char}</td>
+              <td class="mono">{row.hex}</td>
+              <td class="mono">{row.dec}</td>
+              <td class="copy">
+                <CopyButton {locale} text={row.hex} labelZh="复制码位" labelEn="Copy code point" />
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   {:else}
     <p class="dbx-hint">{t("输入后会列出每个字符的码位。", "Each character’s code point will appear here.")}</p>
   {/if}
@@ -48,13 +50,19 @@
 <style>
   .page {
     display: flex;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
     flex-direction: column;
     gap: 12px;
     max-width: 560px;
+    width: 100%;
+    overflow: hidden;
   }
   .block {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
     gap: 6px;
   }
   .label {
@@ -65,6 +73,18 @@
   .area {
     min-height: 72px;
     max-height: 160px;
+    resize: vertical;
+  }
+  .table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .table-wrap :global(thead th) {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--color-background, Canvas);
   }
   .glyph {
     font-size: 16px;

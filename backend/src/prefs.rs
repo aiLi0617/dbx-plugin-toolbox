@@ -22,8 +22,8 @@ const KNOWN_TOOL_IDS: &[&str] = &[
     "data-convert",
     "spreadsheet",
     "image-process",
+    "image-generate",
     "json",
-    "jsonpath",
     "base-convert",
     "network-calc",
     "timestamp",
@@ -102,7 +102,7 @@ fn default_ids() -> Vec<String> {
 fn canonical_id(id: String) -> String {
     match id.as_str() {
         "json-yaml" | "json-csv" | "json-xml" | "json-toml" | "json-sql" | "json-ts"
-        | "json-convert" => "json".to_string(),
+        | "json-convert" | "jsonpath" => "json".to_string(),
         "duration" => "timestamp".to_string(),
         "hex" | "base32" | "base58" => "base64".to_string(),
         "unicode" => "html-entities".to_string(),
@@ -330,6 +330,23 @@ mod tests {
     }
 
     #[test]
+    fn keeps_image_generate_favorites() {
+        let cleaned = filter_known(vec![
+            "hash".into(),
+            "image-generate".into(),
+            "image-process".into(),
+        ]);
+        assert_eq!(
+            cleaned,
+            vec![
+                "hash".to_string(),
+                "image-generate".to_string(),
+                "image-process".to_string(),
+            ]
+        );
+    }
+
+    #[test]
     fn empty_selection_stays_empty() {
         assert!(filter_known(Vec::new()).is_empty());
     }
@@ -341,7 +358,7 @@ mod tests {
             "json-csv".into(),
             "jsonpath".into(),
         ]);
-        assert_eq!(cleaned, vec!["json".to_string(), "jsonpath".to_string()]);
+        assert_eq!(cleaned, vec!["json".to_string()]);
     }
 
     #[test]

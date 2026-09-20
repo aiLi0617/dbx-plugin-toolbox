@@ -13,6 +13,9 @@
     { id: "case", zh: "大小写", en: "Case & naming", actions: ["upper", "lower", "title", "camel", "pascal", "snake", "kebab"] },
     { id: "convert", zh: "转换", en: "Convert", actions: ["full", "half", "slugify"] },
   ];
+  const STATS_DEBOUNCE_CHARS = 40_000;
+  const emptyStats = { chars: 0, words: 0, lines: 0, bytes: 0 };
+
   let groupId = $state("clean");
   let mode = $state("trim");
   $effect(() => {
@@ -23,6 +26,9 @@
   let affix = $state("");
   let find = $state("");
   let replace = $state("");
+  let replaceRegex = $state(false);
+  let replaceFirstOnly = $state(false);
+  let replaceIgnoreCase = $state(false);
   let startNumber = $state(1);
   let numberWidth = $state(0);
   let numberSeparator = $state(". ");
@@ -30,20 +36,53 @@
   let delimiter = $state("");
   let minLength = $state(0);
   let maxLength = $state("");
+  let shuffleSeed = $state(1);
   let input = $state("");
   let history = $state([]);
-  const output = $derived.by(() => {
-    if (mode === "stats") return input;
-    if (mode === "slugify") return slugify(input);
-    if (mode === "strip-html") return stripHtml(input);
-    if (CASE_STYLES.some((style) => style.id === mode)) return applyCaseStyle(input, mode);
-    return applyWhitespace(input, mode, {
-      affix, find, replace, start: startNumber, width: numberWidth, separator: numberSeparator,
-      column, delimiter, minLength, maxLength: maxLength === "" ? Infinity : maxLength,
-    });
+  let inputStats = $state(emptyStats);
+  let outputStats = $state(emptyStats);
+
+  const transform = $derived.by(() => {
+    try {
+      let value;
+      if (mode === "stats") value = input;
+      else if (mode === "slugify") value = slugify(input);
+      else if (mode === "strip-html") value = stripHtml(input);
+      else if (CASE_STYLES.some((style) => style.id === mode)) value = applyCaseStyle(input, mode);
+      else {
+        value = applyWhitespace(input, mode, {
+          affix, find, replace, start: startNumber, width: numberWidth, separator: numberSeparator,
+          column, delimiter, minLength, maxLength: maxLength === "" ? Infinity : maxLength,
+          seed: shuffleSeed,
+          regex: replaceRegex,
+          firstOnly: replaceFirstOnly,
+          ignoreCase: replaceIgnoreCase,
+        });
+      }
+      return { value, error: "" };
+    } catch (error) {
+      return { value: "", error: String(error?.message || error) };
+    }
   });
-  const inputStats = $derived(textStats(input));
-  const outputStats = $derived(textStats(output));
+  const output = $derived(transform.value);
+  const error = $derived(transform.error);
+
+  $effect(() => {
+    const currentInput = input;
+    const currentOutput = output;
+    const heavy = currentInput.length + currentOutput.length > STATS_DEBOUNCE_CHARS;
+    if (!heavy) {
+      inputStats = textStats(currentInput);
+      outputStats = textStats(currentOutput);
+      return;
+    }
+    const timer = setTimeout(() => {
+      inputStats = textStats(currentInput);
+      outputStats = textStats(currentOutput);
+    }, 120);
+    return () => clearTimeout(timer);
+  });
+
   const actions = $derived((groups.find((group) => group.id === groupId)?.actions || []).map((id) => TEXT_ACTIONS.find((item) => item.id === id)));
   function selectGroup(group) {
     groupId = group.id;
@@ -52,12 +91,13 @@
   function continueProcessing() {
     history = [...history.slice(-19), input];
     input = output;
-    mode = "stats";
   }
   function undo() {
-    input = history.at(-1);
+    input = history.at(-1) ?? input;
     history = history.slice(0, -1);
-    mode = "stats";
+  }
+  function reshuffle() {
+    shuffleSeed += 1;
   }
 </script>
 
@@ -69,7 +109,7 @@
       {/each}
     </div>
     <div class="history-actions">
-      <button class="dbx-btn" disabled={input === output} onclick={continueProcessing} type="button">{t("将结果继续处理", "Use result as input")}</button>
+      <button class="dbx-btn" disabled={input === output || Boolean(error)} onclick={continueProcessing} type="button">{t("将结果继续处理", "Use result as input")}</button>
       <button class="dbx-btn" disabled={!history.length} onclick={undo} type="button">{t("撤销处理", "Undo processing")}</button>
     </div>
   </div>
@@ -78,6 +118,9 @@
       {#each actions as action (action.id)}
         <button class="dbx-btn" class:selected={mode === action.id} aria-pressed={mode === action.id} onclick={() => (mode = action.id)} type="button">{t(action.zh, action.en)}</button>
       {/each}
+      {#if mode === "shuffle"}
+        <button class="dbx-btn" onclick={reshuffle} type="button">{t("重新打乱", "Reshuffle")}</button>
+      {/if}
     </div>
   {/if}
   {#if mode === "stats"}
@@ -90,6 +133,11 @@
     {:else if mode === "replace"}
       <label class="field grow"><span>{t("查找", "Find")}</span><input class="dbx-input" bind:value={find} /></label>
       <label class="field grow"><span>{t("替换为", "Replace with")}</span><input class="dbx-input" bind:value={replace} /></label>
+      <div class="replace-flags">
+        <label class="check"><input type="checkbox" bind:checked={replaceRegex} /> {t("正则", "Regex")}</label>
+        <label class="check"><input type="checkbox" bind:checked={replaceIgnoreCase} /> {t("忽略大小写", "Ignore case")}</label>
+        <label class="check"><input type="checkbox" bind:checked={replaceFirstOnly} /> {t("仅首次", "First only")}</label>
+      </div>
     {:else if mode === "number"}
       <label class="field"><span>{t("起始序号", "Start")}</span><input class="dbx-input small" type="number" bind:value={startNumber} /></label>
       <label class="field"><span>{t("补零位数", "Zero-pad width")}</span><input class="dbx-input small" type="number" min="0" max="12" bind:value={numberWidth} /></label>
@@ -103,7 +151,7 @@
     {/if}
   </div>
   {/if}
-  <IoSplit {locale} bind:input {output} />
+  <IoSplit {locale} bind:input {output} {error} />
   <div class="stats">
     {#each [[t("输入", "Input"), inputStats], [t("结果", "Result"), outputStats]] as [label, counts]}
       <span>{label} · {counts.chars} {t("字", "chars")} · {counts.words} {t("词", "words")} · {counts.lines} {t("行", "lines")} · {counts.bytes} {t("字节", "bytes")}</span>
@@ -124,5 +172,7 @@
   .field { min-width: 180px; }
   .grow { flex: 1 1 160px; }
   .small { width: 120px; }
+  .replace-flags { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding-bottom: 2px; }
+  .check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-foreground); cursor: pointer; user-select: none; }
   .stats { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--color-muted-foreground); }
 </style>

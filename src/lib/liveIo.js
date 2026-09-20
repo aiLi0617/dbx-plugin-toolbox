@@ -7,6 +7,7 @@ export const LIVE_IO_TOOLS = {
       {
         key: "mode",
         type: "select",
+        ui: "segment",
         zh: "模式",
         en: "Mode",
         values: [
@@ -17,10 +18,28 @@ export const LIVE_IO_TOOLS = {
     ],
     defaults: { mode: "encode" },
     transform: (input, opts) => quotedPrintable(input, opts.mode === "decode"),
-    inputZh: "输入",
-    inputEn: "Input",
-    outputZh: "输出",
-    outputEn: "Output",
+    labels: (opts) =>
+      opts.mode === "decode"
+        ? {
+            inputZh: "QP 文本",
+            inputEn: "QP text",
+            outputZh: "原文",
+            outputEn: "Source",
+            inputPlaceholderZh: "Hello=20world=21",
+            inputPlaceholderEn: "Hello=20world=21",
+          }
+        : {
+            inputZh: "原文",
+            inputEn: "Source",
+            outputZh: "QP 文本",
+            outputEn: "QP text",
+            inputPlaceholderZh: "Hello world!",
+            inputPlaceholderEn: "Hello world!",
+          },
+    inputZh: "原文",
+    inputEn: "Source",
+    outputZh: "QP 文本",
+    outputEn: "QP text",
   },
   slugify: {
     transform: (input) => slugify(input),
@@ -28,6 +47,8 @@ export const LIVE_IO_TOOLS = {
     inputEn: "Text",
     outputZh: "Slug",
     outputEn: "Slug",
+    inputPlaceholderZh: "Hello World 你好",
+    inputPlaceholderEn: "Hello World",
   },
   "strip-html": {
     transform: (input) => stripHtml(input),
@@ -35,6 +56,8 @@ export const LIVE_IO_TOOLS = {
     inputEn: "HTML",
     outputZh: "文本",
     outputEn: "Text",
+    inputPlaceholderZh: "<p>Hello <b>world</b></p>",
+    inputPlaceholderEn: "<p>Hello <b>world</b></p>",
   },
   "sql-escape": {
     options: [
@@ -51,5 +74,7 @@ export const LIVE_IO_TOOLS = {
     inputEn: "Text",
     outputZh: "SQL 字符串",
     outputEn: "SQL string",
+    inputPlaceholderZh: "O'Reilly\nline two",
+    inputPlaceholderEn: "O'Reilly\nline two",
   },
 };

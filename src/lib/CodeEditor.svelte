@@ -85,7 +85,7 @@
   }
   .code-editor:focus-within {
     outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+    outline-offset: -2px;
     border-color: var(--color-ring, var(--color-primary));
   }
   .code-highlight,

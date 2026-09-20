@@ -126,7 +126,7 @@
       <div class="flyout">
         <strong>{panel === "favorites" ? t("常用工具", "Favorites") : t("最近使用", "Recent")}</strong>
         {#each panel === "favorites" ? favorites : recents as item (item.id)}
-          <button type="button" onclick={() => { panel = ""; onTool?.(item); }}>{pick(locale, item.name.zh, item.name.en)}</button>
+          <button type="button" onclick={() => { panel = ""; onTool?.(item); }}>{pick(locale, item.name)}</button>
         {:else}<p>{t("暂无工具", "No tools yet")}</p>{/each}
       </div>
     {/if}
@@ -151,10 +151,10 @@
               class="drag"
               type="button"
               onkeydown={(event) => keyMove(event, item)}
-              aria-label={t(`调整 ${item.name.zh} 顺序`, `Reorder ${item.name.en}`)}
+              aria-label={t(`调整 ${pick(locale, item.name)} 顺序`, `Reorder ${pick(locale, item.name)}`)}
               title={t("拖动整行或使用上下方向键排序", "Drag the row or use Up/Down to reorder")}
             >⠿</button>
-            <button class="tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={(event) => openTool(event, item)}>{pick(locale, item.name.zh, item.name.en)}</button>
+            <button class="tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={(event) => openTool(event, item)}>{pick(locale, item.name)}</button>
           </div>
         {:else}<p class="empty">{t("在工具库中点击星标添加", "Star tools in the library")}</p>{/each}
       </div>
@@ -162,8 +162,8 @@
     <section class="group recent">
       <div class="group-title"><span>{t("最近使用", "Recent")}</span></div>
       <div class="group-list">
-        {#each recents.slice(0, 5) as item (item.id)}
-          <button class="recent-tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={() => onTool?.(item)}>{pick(locale, item.name.zh, item.name.en)}</button>
+        {#each recents.slice(0, 8) as item (item.id)}
+          <button class="recent-tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={() => onTool?.(item)}>{pick(locale, item.name)}</button>
         {:else}<p class="empty">{t("打开工具后会显示在这里", "Opened tools appear here")}</p>{/each}
       </div>
     </section>
@@ -184,7 +184,7 @@
     style:width={`${pointerDrag.width}px`}
     style:height={`${pointerDrag.height}px`}
     aria-hidden="true"
-  ><span>⠿</span><strong>{pick(locale, draggingTool.name.zh, draggingTool.name.en)}</strong></div>
+  ><span>⠿</span><strong>{pick(locale, draggingTool.name)}</strong></div>
 {/if}
 
 <style>
@@ -200,9 +200,9 @@
   .primary svg,.sidebar-bottom svg { flex:0 0 16px; }
   .primary span,.sidebar-bottom span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   kbd { margin-left:auto; color:var(--color-muted-foreground); font-size:10px; }
-  .group { min-height:0; padding:9px 8px 3px; }
-  .favorites { flex:1 1 auto; overflow:auto; }
-  .recent { flex:0 1 auto; max-height:190px; overflow:auto; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
+  .group { min-height:0; padding:9px 8px 6px; }
+  .favorites { flex:1 1 0; min-height:96px; overflow:auto; }
+  .recent { flex:0 1 auto; max-height:200px; overflow:auto; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
   .group-title { display:flex; align-items:center; justify-content:space-between; padding:0 8px 5px; color:var(--color-muted-foreground); font-size:11px; font-weight:600; letter-spacing:.04em; }
   .group-title small { font-size:10px; }
   .group-list { display:flex; flex-direction:column; gap:1px; }
