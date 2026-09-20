@@ -111,45 +111,86 @@ export function rotatedCropBounds(x, y, width, height, angle = 0) {
   return { minX, minY, maxX, maxY, width: maxX - minX, height: maxY - minY };
 }
 
-/**
- * Keep local width/height within the global side limit (not the image size).
- * Center stays on the image; the AABB may overhang (sampling allows empty areas).
- */
-export function sanitizeCropRect(sourceWidth, sourceHeight, crop = {}, angleDegrees = 0) {
-  const sw = Math.max(1, Math.trunc(finiteNumber(sourceWidth, 1)));
-  const sh = Math.max(1, Math.trunc(finiteNumber(sourceHeight, 1)));
-  const width = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(crop?.width, sw))));
-  const height = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(crop?.height, sh))));
-  let cx = finiteNumber(crop?.x) + finiteNumber(crop?.width, width) / 2;
-  let cy = finiteNumber(crop?.y) + finiteNumber(crop?.height, height) / 2;
-  cx = clamp(cx, 0, sw);
-  cy = clamp(cy, 0, sh);
-  return {
-    x: Math.round(cx - width / 2),
-    y: Math.round(cy - height / 2),
-    width,
-    height,
-    angle: finiteNumber(angleDegrees),
-  };
+function normalizeBounds(boundsOrWidth, height) {
+  if (boundsOrWidth && typeof boundsOrWidth === "object") {
+    const minX = finiteNumber(boundsOrWidth.minX ?? boundsOrWidth.x);
+    const minY = finiteNumber(boundsOrWidth.minY ?? boundsOrWidth.y);
+    const maxX = finiteNumber(
+      boundsOrWidth.maxX,
+      minX + Math.max(0, finiteNumber(boundsOrWidth.width)),
+    );
+    const maxY = finiteNumber(
+      boundsOrWidth.maxY,
+      minY + Math.max(0, finiteNumber(boundsOrWidth.height)),
+    );
+    return {
+      minX: Math.min(minX, maxX),
+      minY: Math.min(minY, maxY),
+      maxX: Math.max(minX, maxX),
+      maxY: Math.max(minY, maxY),
+    };
+  }
+  const width = Math.max(1, finiteNumber(boundsOrWidth, 1));
+  const normalizedHeight = Math.max(1, finiteNumber(height, 1));
+  return { minX: 0, minY: 0, maxX: width, maxY: normalizedHeight };
+}
+
+/** Source-pixel coordinates covered by the entire preview canvas, including letterboxing. */
+export function canvasSourceBounds(canvasWidth, canvasHeight, imageLayout = {}) {
+  const scale = finiteNumber(imageLayout?.scale);
+  if (!(scale > 0)) return null;
+  const width = Math.max(0, finiteNumber(canvasWidth));
+  const height = Math.max(0, finiteNumber(canvasHeight));
+  const left = finiteNumber(imageLayout?.left);
+  const top = finiteNumber(imageLayout?.top);
+  return normalizeBounds({
+    minX: -left / scale || 0,
+    minY: -top / scale || 0,
+    maxX: (width - left) / scale,
+    maxY: (height - top) / scale,
+  });
+}
+
+export function cropFitsBounds(crop, bounds, angleDegrees = crop?.angle) {
+  if (!bounds) return true;
+  const limit = normalizeBounds(bounds);
+  const box = rotatedCropBounds(
+    crop?.x,
+    crop?.y,
+    crop?.width,
+    crop?.height,
+    angleDegrees,
+  );
+  const epsilon = 1e-7;
+  return box.minX >= limit.minX - epsilon
+    && box.minY >= limit.minY - epsilon
+    && box.maxX <= limit.maxX + epsilon
+    && box.maxY <= limit.maxY + epsilon;
 }
 
 /**
- * Translate a crop in image space without changing local width/height/angle.
- * Position is tracked by center; size is not capped to the image dimensions.
+ * Fit and translate a crop so every rotated corner remains on the preview canvas.
+ * The crop keeps its aspect ratio if it is too large for the available canvas.
  */
-export function moveCropRect(origin, dx, dy, sourceWidth, sourceHeight) {
-  const sw = Math.max(1, Math.trunc(finiteNumber(sourceWidth, 1)));
-  const sh = Math.max(1, Math.trunc(finiteNumber(sourceHeight, 1)));
-  const width = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(origin?.width, 1))));
-  const height = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(origin?.height, 1))));
-  const angle = finiteNumber(origin?.angle);
-  let cx = finiteNumber(origin?.x) + finiteNumber(origin?.width, width) / 2 + finiteNumber(dx);
-  let cy = finiteNumber(origin?.y) + finiteNumber(origin?.height, height) / 2 + finiteNumber(dy);
-  cx = clamp(cx, 0, sw);
-  cy = clamp(cy, 0, sh);
+export function constrainCropRect(crop, bounds, angleDegrees = crop?.angle) {
+  const limit = normalizeBounds(bounds);
+  const boundWidth = Math.max(1, limit.maxX - limit.minX);
+  const boundHeight = Math.max(1, limit.maxY - limit.minY);
+  const angle = finiteNumber(angleDegrees);
+  let width = Math.max(1, Math.min(MAX_IMAGE_SIDE, finiteNumber(crop?.width, 1)));
+  let height = Math.max(1, Math.min(MAX_IMAGE_SIDE, finiteNumber(crop?.height, 1)));
+  let centerX = finiteNumber(crop?.x) + width / 2;
+  let centerY = finiteNumber(crop?.y) + height / 2;
+  let box = rotatedCropBounds(centerX - width / 2, centerY - height / 2, width, height, angle);
+  const scale = Math.min(1, boundWidth / Math.max(1e-9, box.width), boundHeight / Math.max(1e-9, box.height));
+  width = Math.max(1, width * scale);
+  height = Math.max(1, height * scale);
+  box = rotatedCropBounds(centerX - width / 2, centerY - height / 2, width, height, angle);
+  centerX = clamp(centerX, limit.minX + box.width / 2, limit.maxX - box.width / 2);
+  centerY = clamp(centerY, limit.minY + box.height / 2, limit.maxY - box.height / 2);
   return {
-    x: Math.round(cx - width / 2),
-    y: Math.round(cy - height / 2),
+    x: centerX - width / 2,
+    y: centerY - height / 2,
     width,
     height,
     angle,
@@ -157,12 +198,46 @@ export function moveCropRect(origin, dx, dy, sourceWidth, sourceHeight) {
 }
 
 /**
- * Resize along the crop's rotated local axes.
- * Width/height are not limited by the image size (only by MAX_IMAGE_SIDE).
+ * Normalize crop values for rendering. Position intentionally remains unrestricted:
+ * a crop may include the preview canvas area outside the source image.
  */
-export function resizeCropRect(origin, mode, localX, localY, sourceWidth, sourceHeight) {
-  void sourceWidth;
-  void sourceHeight;
+export function sanitizeCropRect(sourceWidth, sourceHeight, crop = {}, angleDegrees = 0) {
+  const sw = Math.max(1, Math.trunc(finiteNumber(sourceWidth, 1)));
+  const sh = Math.max(1, Math.trunc(finiteNumber(sourceHeight, 1)));
+  const width = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(crop?.width, sw))));
+  const height = Math.max(1, Math.min(MAX_IMAGE_SIDE, Math.round(finiteNumber(crop?.height, sh))));
+  return {
+    x: Math.round(finiteNumber(crop?.x)),
+    y: Math.round(finiteNumber(crop?.y)),
+    width,
+    height,
+    angle: finiteNumber(angleDegrees),
+  };
+}
+
+/**
+ * Translate a crop without changing local width/height/angle, constrained by
+ * the supplied canvas bounds. Numeric width/height keep the legacy 0..size form.
+ */
+export function moveCropRect(origin, dx, dy, boundsOrWidth, boundsHeight) {
+  const limit = normalizeBounds(boundsOrWidth, boundsHeight);
+  const fitted = constrainCropRect(origin, limit, origin?.angle);
+  const box = rotatedCropBounds(fitted.x, fitted.y, fitted.width, fitted.height, fitted.angle);
+  const moveX = clamp(finiteNumber(dx), limit.minX - box.minX, limit.maxX - box.maxX);
+  const moveY = clamp(finiteNumber(dy), limit.minY - box.minY, limit.maxY - box.maxY);
+  return {
+    ...fitted,
+    x: fitted.x + moveX,
+    y: fitted.y + moveY,
+  };
+}
+
+/**
+ * Resize along the crop's rotated local axes.
+ * Width/height are not limited by the image; optional preview-canvas bounds
+ * stop the dragged edge while preserving the opposite edge/corner.
+ */
+export function resizeCropRect(origin, mode, localX, localY, boundsOrWidth = null, boundsHeight = null) {
   const width = Math.max(1, Math.min(MAX_IMAGE_SIDE, finiteNumber(origin?.width, 1)));
   const height = Math.max(1, Math.min(MAX_IMAGE_SIDE, finiteNumber(origin?.height, 1)));
   const angle = finiteNumber(origin?.angle);
@@ -210,14 +285,42 @@ export function resizeCropRect(origin, mode, localX, localY, sourceWidth, source
 
   const fittedWidth = Math.max(1, Math.min(MAX_IMAGE_SIDE, nextWidth));
   const fittedHeight = Math.max(1, Math.min(MAX_IMAGE_SIDE, nextHeight));
-  // Keep subpixel x/y during interaction; callers round on commit via sanitizeCropRect.
-  return {
+  // Keep subpixel x/y during interaction; callers normalize on commit.
+  const candidate = {
     x: shiftedCenter.x - fittedWidth / 2,
     y: shiftedCenter.y - fittedHeight / 2,
     width: fittedWidth,
     height: fittedHeight,
     angle,
   };
+  if (boundsOrWidth == null) return candidate;
+  const bounds = normalizeBounds(boundsOrWidth, boundsHeight);
+  if (cropFitsBounds(candidate, bounds, angle)) return candidate;
+
+  // Walk the dragged handle back to its original position. This preserves the
+  // opposite edge/corner instead of translating the whole crop at the boundary.
+  const startX = east ? halfWidth : west ? -halfWidth : lx;
+  const startY = south ? halfHeight : north ? -halfHeight : ly;
+  let low = 0;
+  let high = 1;
+  let best = { x: finiteNumber(origin?.x), y: finiteNumber(origin?.y), width, height, angle };
+  if (!cropFitsBounds(best, bounds, angle)) return constrainCropRect(candidate, bounds, angle);
+  for (let iteration = 0; iteration < 36; iteration += 1) {
+    const progress = (low + high) / 2;
+    const next = resizeCropRect(
+      origin,
+      mode,
+      startX + (lx - startX) * progress,
+      startY + (ly - startY) * progress,
+    );
+    if (cropFitsBounds(next, bounds, angle)) {
+      low = progress;
+      best = next;
+    } else {
+      high = progress;
+    }
+  }
+  return best;
 }
 
 export function pointInCrop(point, x, y, width, height, angle = 0) {
@@ -227,6 +330,19 @@ export function pointInCrop(point, x, y, width, height, angle = 0) {
   const top = finiteNumber(y);
   const local = rotatePoint(point, left + w / 2, top + h / 2, -finiteNumber(angle));
   return local.x >= left && local.x <= left + w && local.y >= top && local.y <= top + h;
+}
+
+/** Resolve crop interaction from geometry rather than the event's DOM target. */
+export function resolveCropDragMode(point, crop, handle = "") {
+  if (handle) return String(handle);
+  return pointInCrop(
+    point,
+    crop?.x,
+    crop?.y,
+    crop?.width,
+    crop?.height,
+    crop?.angle,
+  ) ? "move" : "new";
 }
 
 /**

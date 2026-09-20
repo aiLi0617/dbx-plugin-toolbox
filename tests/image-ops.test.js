@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  canvasSourceBounds,
+  constrainCropRect,
   cropCorners,
+  cropFitsBounds,
   fitDimension,
   formatInfo,
   mapRotatedCropToTarget,
@@ -12,6 +15,7 @@ import {
   normalizeRotation,
   objectFitContainRect,
   resizeCropRect,
+  resolveCropDragMode,
   rotatedCropBounds,
   rotatedSize,
   rotatePoint,
@@ -68,7 +72,14 @@ test("rotates crop corners in source space without skewing", () => {
   assert.ok(Math.abs(around.y - 100) < 1e-6);
 });
 
-test("moving a rotated crop keeps local size and clamps by canvas center", () => {
+test("dragging inside a crop moves it and only outside starts a new selection", () => {
+  const crop = { x: 100, y: 80, width: 240, height: 120, angle: 30 };
+  assert.equal(resolveCropDragMode({ x: 220, y: 140 }, crop), "move");
+  assert.equal(resolveCropDragMode({ x: 20, y: 20 }, crop), "new");
+  assert.equal(resolveCropDragMode({ x: 220, y: 140 }, crop, "se"), "se");
+});
+
+test("moving a rotated crop keeps local size inside canvas bounds", () => {
   const origin = { x: 200, y: 150, width: 240, height: 160, angle: 15 };
   const moved = moveCropRect(origin, 40, -30, 800, 600);
   assert.equal(moved.width, 240);
@@ -76,56 +87,62 @@ test("moving a rotated crop keeps local size and clamps by canvas center", () =>
   assert.equal(moved.angle, 15);
   assert.equal(moved.x, 240);
   assert.equal(moved.y, 120);
+  assert.equal(cropFitsBounds(moved, { minX: 0, minY: 0, maxX: 800, maxY: 600 }), true);
 });
 
-test("rotated crop may overhang canvas while keeping canvas-sized local bounds", () => {
+test("crop movement can use canvas space outside the source image", () => {
   const origin = { x: 10, y: 10, width: 200, height: 120, angle: 45 };
-  const moved = moveCropRect(origin, -100, -100, 800, 600);
+  const canvas = { minX: -120, minY: -90, maxX: 920, maxY: 690 };
+  const moved = moveCropRect(origin, -100, -100, canvas);
   assert.equal(moved.width, 200);
   assert.equal(moved.height, 120);
   assert.equal(moved.angle, 45);
-  const cx = moved.x + moved.width / 2;
-  const cy = moved.y + moved.height / 2;
-  assert.ok(cx >= 0 && cx <= 800);
-  assert.ok(cy >= 0 && cy <= 600);
+  assert.ok(moved.x < 0);
+  assert.ok(moved.y < 0);
+  assert.equal(cropFitsBounds(moved, canvas), true);
 });
 
-test("crop size can exceed image dimensions", () => {
-  const origin = { x: 100, y: 100, width: 100, height: 80, angle: 45 };
-  const wide = resizeCropRect(origin, "e", 2000, 0, 800, 600);
-  assert.equal(wide.width, 2050);
+test("crop size can exceed image dimensions up to the canvas edge", () => {
+  const canvas = { minX: -200, minY: -150, maxX: 1000, maxY: 750 };
+  const origin = { x: 100, y: 100, width: 100, height: 80, angle: 0 };
+  const wide = resizeCropRect(origin, "e", 2000, 0, canvas);
+  assert.ok(Math.abs(wide.width - 900) < 1e-6);
   assert.ok(wide.width > 800);
   assert.equal(wide.height, 80);
-  assert.equal(wide.angle, 45);
-  const tall = resizeCropRect(origin, "s", 0, 1500, 800, 600);
+  assert.equal(wide.angle, 0);
+  assert.equal(cropFitsBounds(wide, canvas), true);
+  const tall = resizeCropRect(origin, "s", 0, 1500, canvas);
   assert.equal(tall.width, 100);
-  assert.equal(tall.height, 1540);
+  assert.ok(Math.abs(tall.height - 650) < 1e-6);
   assert.ok(tall.height > 600);
+  assert.equal(cropFitsBounds(tall, canvas), true);
 });
 
-test("resize keeps the opposite edge fixed beyond image size", () => {
+test("resize keeps the opposite edge fixed while using the full canvas", () => {
+  const canvas = { minX: -200, minY: -150, maxX: 1000, maxY: 750 };
   const origin = { x: 200, y: 150, width: 120, height: 80, angle: 0 };
-  const fromWest = resizeCropRect(origin, "w", -400, 0, 800, 600);
+  const fromWest = resizeCropRect(origin, "w", -400, 0, canvas);
   assert.equal(fromWest.width, 460);
   assert.equal(fromWest.x + fromWest.width, origin.x + origin.width);
-  const fromEast = resizeCropRect(origin, "e", 400, 0, 800, 600);
+  const fromEast = resizeCropRect(origin, "e", 400, 0, canvas);
   assert.equal(fromEast.width, 460);
   assert.equal(fromEast.x, origin.x);
-  const fromNorth = resizeCropRect(origin, "n", 0, -300, 800, 600);
+  const fromNorth = resizeCropRect(origin, "n", 0, -300, canvas);
   assert.equal(fromNorth.height, 340);
   assert.equal(fromNorth.y + fromNorth.height, origin.y + origin.height);
-  const fromSouth = resizeCropRect(origin, "s", 0, 300, 800, 600);
+  const fromSouth = resizeCropRect(origin, "s", 0, 300, canvas);
   assert.equal(fromSouth.height, 340);
   assert.equal(fromSouth.y, origin.y);
 });
 
-test("rotated west resize beyond image keeps local east edge fixed", () => {
+test("rotated resize beyond the image keeps its opposite edge fixed on canvas", () => {
+  const canvas = { minX: -300, minY: -300, maxX: 1100, maxY: 900 };
   const origin = { x: 200, y: 150, width: 100, height: 80, angle: 37 };
   const centerX = origin.x + origin.width / 2;
   const centerY = origin.y + origin.height / 2;
   const halfW = origin.width / 2;
   const oldEast = rotatePoint({ x: centerX + halfW, y: centerY }, centerX, centerY, origin.angle);
-  const next = resizeCropRect(origin, "w", -400, 0, 800, 600);
+  const next = resizeCropRect(origin, "w", -400, 0, canvas);
   assert.equal(next.width, 450);
   assert.equal(next.height, origin.height);
   assert.equal(next.angle, origin.angle);
@@ -134,16 +151,16 @@ test("rotated west resize beyond image keeps local east edge fixed", () => {
   const newEast = rotatePoint({ x: ncx + next.width / 2, y: ncy }, ncx, ncy, next.angle);
   assert.ok(Math.abs(newEast.x - oldEast.x) < 1);
   assert.ok(Math.abs(newEast.y - oldEast.y) < 1);
+  assert.equal(cropFitsBounds(next, canvas), true);
 });
 
-test("sanitize allows size beyond image while keeping center on image", () => {
-  const next = sanitizeCropRect(100, 100, { x: -20, y: -10, width: 150, height: 80 }, 37);
+test("sanitize preserves crop positions outside the source image", () => {
+  const next = sanitizeCropRect(100, 100, { x: -120, y: 130, width: 150, height: 80 }, 37);
   assert.equal(next.width, 150);
   assert.equal(next.height, 80);
-  // Original center x = -20 + 75 = 55; stays on image.
-  assert.equal(next.x + next.width / 2, 55);
-  assert.ok(next.y + next.height / 2 >= 0);
-  assert.ok(next.y + next.height / 2 <= 100);
+  assert.equal(next.x, -120);
+  assert.equal(next.y, 130);
+  assert.equal(next.angle, 37);
 });
 
 test("object-fit contain uses a single isotropic scale", () => {
@@ -153,6 +170,28 @@ test("object-fit contain uses a single isotropic scale", () => {
   assert.equal(box.height, 200);
   assert.equal(box.left, 0);
   assert.equal(box.top, 50);
+});
+
+test("maps letterboxed preview canvas into source-pixel coordinates", () => {
+  const layout = objectFitContainRect(400, 300, 800, 400);
+  assert.deepEqual(canvasSourceBounds(400, 300, layout), {
+    minX: 0,
+    minY: -100,
+    maxX: 800,
+    maxY: 500,
+  });
+});
+
+test("constrains every rotated crop corner to the canvas", () => {
+  const canvas = { minX: -100, minY: -80, maxX: 900, maxY: 680 };
+  const next = constrainCropRect(
+    { x: -300, y: -200, width: 1200, height: 700, angle: 45 },
+    canvas,
+    45,
+  );
+  assert.equal(cropFitsBounds(next, canvas, 45), true);
+  assert.ok(next.width < 1200);
+  assert.ok(next.x < 0);
 });
 
 test("rotated crop sampling maps tilted-axis corners to upright target corners", () => {

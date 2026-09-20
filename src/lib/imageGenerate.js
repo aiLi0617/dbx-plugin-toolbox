@@ -12,7 +12,6 @@ import {
   padTiffToSize,
 } from "./imageEncodeExtra.js";
 import { MAX_IMAGE_PIXELS, MAX_IMAGE_SIDE, normalizeOutputSize } from "./imageOps.js";
-import { buildZipStore } from "./zipStore.js";
 
 export const MAX_TARGET_BYTES = 50 * 1024 * 1024;
 export const MIN_TARGET_BYTES = 64;
@@ -35,6 +34,18 @@ const FORMAT_BY_MIME = Object.freeze(Object.fromEntries(OUTPUT_FORMATS.map((item
 
 let avifSupported = null;
 
+function normalizedMime(mime) {
+  const value = String(mime || "").split(";", 1)[0].trim().toLowerCase();
+  if (value === "image/jpg") return "image/jpeg";
+  if (value === "image/vnd.microsoft.icon") return "image/x-icon";
+  return value;
+}
+
+/** Canvas encoders may silently fall back to PNG for an unsupported MIME type. */
+export function encodedBlobMatchesMime(blob, mime) {
+  return Boolean(blob) && normalizedMime(blob.type) === normalizedMime(mime);
+}
+
 export async function detectAvifSupport() {
   if (avifSupported != null) return avifSupported;
   if (typeof document === "undefined") {
@@ -46,14 +57,13 @@ export async function detectAvifSupport() {
     canvas.width = 1;
     canvas.height = 1;
     avifSupported = await new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(Boolean(blob)), "image/avif", 0.5);
+      canvas.toBlob((blob) => resolve(encodedBlobMatchesMime(blob, "image/avif")), "image/avif", 0.5);
     });
   } catch {
     avifSupported = false;
   }
   return avifSupported;
 }
-
 export async function listAvailableFormats() {
   const allowAvif = await detectAvifSupport();
   return OUTPUT_FORMATS.filter((item) => !item.optional || (item.mime === "image/avif" && allowAvif));
@@ -130,6 +140,21 @@ export function clampGenerateSize(width, height) {
     requestedWidth,
     requestedHeight,
     dimensionAdjusted: w !== requestedWidth || h !== requestedHeight,
+  };
+}
+
+/** ICO directory dimensions are one byte, where zero represents exactly 256 px. */
+export function clampGenerateSizeForFormat(width, height, mime = "image/png") {
+  const size = clampGenerateSize(width, height);
+  if (resolveOutputFormat(mime).mime !== "image/x-icon" || (size.width <= 256 && size.height <= 256)) {
+    return size;
+  }
+  const scale = Math.min(256 / size.width, 256 / size.height);
+  return {
+    ...size,
+    width: Math.max(1, Math.round(size.width * scale)),
+    height: Math.max(1, Math.round(size.height * scale)),
+    dimensionAdjusted: true,
   };
 }
 
@@ -312,6 +337,7 @@ export function padImageToSize(bytes, targetBytes, mime = "image/png") {
   if (mime === "image/svg+xml") return padSvgToSize(bytes, targetBytes);
   if (mime === "image/x-icon" || mime === "image/vnd.microsoft.icon") return padIcoToSize(bytes, targetBytes);
   if (mime === "image/tiff" || mime === "image/tif") return padTiffToSize(bytes, targetBytes);
+  if (mime === "image/avif") return padAvifToSize(bytes, targetBytes);
   return padPngToSize(bytes, targetBytes);
 }
 
@@ -321,13 +347,44 @@ function minPadForMime(mime) {
   if (mime === "image/bmp" || mime === "image/tiff" || mime === "image/tif" || mime === "image/x-icon" || mime === "image/vnd.microsoft.icon") return 1;
   if (mime === "image/gif") return 4;
   if (mime === "image/svg+xml") return 7;
+  if (mime === "image/avif") return 8;
   return PNG_MIN_PAD;
+}
+
+/** Append an ISO BMFF `free` box so AVIF keeps its exact requested byte size. */
+export function padAvifToSize(bytes, targetBytes) {
+  const source = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const target = Math.trunc(Number(targetBytes));
+  if (!Number.isFinite(target) || target < source.length) {
+    throw new Error("Target size is smaller than the encoded image");
+  }
+  if (target === source.length) return source;
+  const padding = target - source.length;
+  if (padding < 8) throw new Error("Padding gap is too small for AVIF");
+
+  const out = new Uint8Array(target);
+  out.set(source, 0);
+  const offset = source.length;
+  out[offset] = (padding >>> 24) & 0xff;
+  out[offset + 1] = (padding >>> 16) & 0xff;
+  out[offset + 2] = (padding >>> 8) & 0xff;
+  out[offset + 3] = padding & 0xff;
+  out.set([0x66, 0x72, 0x65, 0x65], offset + 4); // "free"
+  return out;
 }
 
 function canvasToBlob(canvas, mime, quality) {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Image encoding failed"))),
+      (blob) => {
+        if (!blob) {
+          reject(new Error("Image encoding failed"));
+        } else if (!encodedBlobMatchesMime(blob, mime)) {
+          reject(new Error(`${resolveOutputFormat(mime).label} is not supported in this environment`));
+        } else {
+          resolve(blob);
+        }
+      },
       mime,
       quality,
     );
@@ -665,20 +722,20 @@ export async function generateSizedImage(options = {}) {
     throw new Error("Image generation requires a browser canvas");
   }
 
+  const format = resolveOutputFormat(mime);
   const {
     width: outWidth,
     height: outHeight,
     requestedWidth,
     requestedHeight,
     dimensionAdjusted,
-  } = clampGenerateSize(width, height);
+  } = clampGenerateSizeForFormat(width, height, format.mime);
   const size = { width: outWidth, height: outHeight };
   const requestedTarget = Math.trunc(Number(targetBytes));
   if (!Number.isFinite(requestedTarget) || requestedTarget < MIN_TARGET_BYTES || requestedTarget > MAX_TARGET_BYTES) {
     throw new Error("Target size is invalid");
   }
 
-  const format = resolveOutputFormat(mime);
   if (format.optional && format.mime === "image/avif" && !(await detectAvifSupport())) {
     throw new Error("AVIF is not supported in this environment");
   }
@@ -768,9 +825,13 @@ export async function generateSizedImage(options = {}) {
     ? encoded.bytes
     : padImageToSize(encoded.bytes, target, format.mime);
   const blob = new Blob([bytes], { type: format.mime });
+  const previewBlob = canvas && !["image/png", "image/jpeg", "image/webp"].includes(format.mime)
+    ? await canvasToBlob(canvas, "image/png")
+    : blob;
   const fileName = buildFileName(fileBase, format.extension, size);
   return {
     blob,
+    previewBlob,
     bytes,
     width: size.width,
     height: size.height,
@@ -787,38 +848,5 @@ export async function generateSizedImage(options = {}) {
     requestedWidth,
     requestedHeight,
     dimensionAdjusted,
-  };
-}
-
-export async function generateAllFormats(options = {}) {
-  const formats = await listAvailableFormats();
-  const results = [];
-  const errors = [];
-  for (const format of formats) {
-    try {
-      results.push(await generateSizedImage({ ...options, mime: format.mime }));
-    } catch (cause) {
-      errors.push({ mime: format.mime, label: format.label, error: cause });
-    }
-  }
-  if (!results.length) {
-    throw errors[0]?.error || new Error("Image encoding failed");
-  }
-  return { results, errors };
-}
-
-export function buildFormatsZip(results, fileBase = "placeholder") {
-  const stem = sanitizeFileBase(fileBase, "placeholder");
-  const files = results.map((item) => ({
-    name: `${stem}.${item.extension}`,
-    bytes: item.bytes instanceof Uint8Array ? item.bytes : new Uint8Array(item.bytes),
-  }));
-  const bytes = buildZipStore(files);
-  return {
-    bytes,
-    blob: new Blob([bytes], { type: "application/zip" }),
-    fileName: `${stem}-images.zip`,
-    mime: "application/zip",
-    count: files.length,
   };
 }

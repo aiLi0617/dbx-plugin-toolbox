@@ -338,9 +338,12 @@ function canvasToPngBytes(canvas) {
 
 /** ICO containing a single PNG image (supported by modern Windows / browsers). */
 export async function encodeIcoFromCanvas(canvas) {
+  if (canvas.width > 256 || canvas.height > 256) {
+    throw new Error("ICO dimensions are limited to 256 × 256 pixels");
+  }
   const png = await canvasToPngBytes(canvas);
-  const width = canvas.width >= 256 ? 0 : canvas.width;
-  const height = canvas.height >= 256 ? 0 : canvas.height;
+  const width = canvas.width === 256 ? 0 : canvas.width;
+  const height = canvas.height === 256 ? 0 : canvas.height;
   const out = new Uint8Array(6 + 16 + png.length);
   // ICONDIR
   writeUint16LE(out, 0, 0);

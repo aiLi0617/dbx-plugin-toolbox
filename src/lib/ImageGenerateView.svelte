@@ -5,9 +5,7 @@
   import { pick } from "./i18n.js";
   import { invoke } from "./host.js";
   import {
-    buildFormatsZip,
     buildFileName,
-    generateAllFormats,
     generateSizedImage,
     humanFileSize,
     listAvailableFormats,
@@ -128,7 +126,7 @@
   function applyResult(result) {
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     resultBlob = result.blob;
-    resultUrl = URL.createObjectURL(result.blob);
+    resultUrl = URL.createObjectURL(result.previewBlob || result.blob);
     resultMeta = result;
     width = result.width;
     height = result.height;
@@ -197,8 +195,10 @@
         {
           fileName: name,
           mimeType: result.mime,
+          extension: result.extension,
           data: await blobBase64(result.blob),
           title: title || t("保存图片", "Save image"),
+          binary: true,
         },
         120000,
       );
@@ -219,56 +219,6 @@
       error = String(cause.message || cause);
     } finally {
       saving = false;
-    }
-  }
-
-  async function downloadAllFormats() {
-    if (saving || generating) return;
-    saving = true;
-    generating = true;
-    error = "";
-    notice = "";
-    savedNotes = [];
-    try {
-      const targetBytes = parseTargetBytes(sizeValue, sizeUnit);
-      const { results, errors } = await generateAllFormats(sharedOptions(targetBytes));
-      const current = results.find((item) => item.mime === format) || results[0];
-      if (current) applyResult(current);
-
-      const zip = buildFormatsZip(results, fileBase || current?.fileBase || "placeholder");
-      if (window.dbxPlugin?.invoke) {
-        const saved = await invoke(
-          "toolbox/save-file",
-          {
-            fileName: zip.fileName,
-            mimeType: zip.mime,
-            data: await blobBase64(zip.blob),
-            title: t("保存全部格式", "Save all formats"),
-          },
-          180000,
-        );
-        savedNotes = [saved?.path ? `${zip.fileName} → ${saved.path}` : zip.fileName];
-      } else {
-        triggerDownload(zip.blob, zip.fileName);
-        savedNotes = [zip.fileName];
-      }
-
-      if (errors.length) {
-        error = t(
-          `已打包 ${results.length} 种格式；失败：${errors.map((item) => item.label).join("、")}`,
-          `Packed ${results.length} format(s); failed: ${errors.map((item) => item.label).join(", ")}`,
-        );
-      } else {
-        notice = t(
-          `已将 ${results.length} 种格式打包为 ${zip.fileName}`,
-          `Packed ${results.length} formats into ${zip.fileName}`,
-        );
-      }
-    } catch (cause) {
-      error = localizeError(cause);
-    } finally {
-      saving = false;
-      generating = false;
     }
   }
 
@@ -379,8 +329,8 @@
 
       <p class="hint">
         {t(
-          "支持 PNG / JPEG / GIF / WebP / BMP / SVG / ICO / TIFF，环境支持时还有 AVIF。下载全部会打成一个 ZIP。",
-          "PNG, JPEG, GIF, WebP, BMP, SVG, ICO, TIFF, and AVIF when supported. Download all packs a single ZIP.",
+          "支持 PNG / JPEG / GIF / WebP / BMP / SVG / ICO / TIFF，环境支持时还有 AVIF。",
+          "PNG, JPEG, GIF, WebP, BMP, SVG, ICO, TIFF, and AVIF when supported.",
         )}
         {#if targetHint}<span> · {t("目标", "Target")} {targetHint}</span>{/if}
       </p>
@@ -395,9 +345,6 @@
         </button>
         <button class="dbx-btn" type="button" onclick={downloadResult} disabled={!resultBlob || generating || saving}>
           {saving ? t("保存中…", "Saving…") : t("下载当前", "Download")}
-        </button>
-        <button class="dbx-btn" type="button" onclick={downloadAllFormats} disabled={generating || saving}>
-          {t("下载全部（ZIP）", "Download all (ZIP)")}
         </button>
       </div>
     </div>

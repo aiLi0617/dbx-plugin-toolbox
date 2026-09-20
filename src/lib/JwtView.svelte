@@ -461,7 +461,7 @@
   }
   .dot { color: var(--color-muted-foreground); }
   .part.p0 { color: #e11d48; }
-  .part.p1 { color: #2563eb; }
+  .part.p1 { color: var(--color-info); }
   .part.p2 { color: #16a34a; }
   .row {
     display: grid;

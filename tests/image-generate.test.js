@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildFileName,
-  buildFormatsZip,
   clampGenerateSize,
+  clampGenerateSizeForFormat,
+  encodedBlobMatchesMime,
   humanFileSize,
   OUTPUT_FORMATS,
   PROCESS_OUTPUT_FORMATS,
   padImageToSize,
+  padAvifToSize,
   padJpegToSize,
   padPngToSize,
   padWebpToSize,
@@ -102,6 +104,22 @@ test("routes padding by mime type", () => {
   assert.equal(padImageToSize(webp, webp.length + 32, "image/webp").length, webp.length + 32);
 });
 
+test("does not mistake canvas PNG fallback for AVIF support", () => {
+  assert.equal(encodedBlobMatchesMime(new Blob([], { type: "image/avif" }), "image/avif"), true);
+  assert.equal(encodedBlobMatchesMime(new Blob([], { type: "image/png" }), "image/avif"), false);
+});
+
+test("pads AVIF with a top-level ISO BMFF free box", () => {
+  const avif = Uint8Array.of(
+    0, 0, 0, 20, 0x66, 0x74, 0x79, 0x70, 0x61, 0x76, 0x69, 0x66,
+    0, 0, 0, 0, 0x61, 0x76, 0x69, 0x66,
+  );
+  const padded = padAvifToSize(avif, avif.length + 24);
+  assert.equal(padded.length, avif.length + 24);
+  assert.deepEqual([...padded.slice(avif.length, avif.length + 8)], [0, 0, 0, 24, 0x66, 0x72, 0x65, 0x65]);
+  assert.equal(padImageToSize(avif, avif.length + 16, "image/avif").length, avif.length + 16);
+});
+
 test("clamps generate dimensions to side and megapixel caps", () => {
   const side = clampGenerateSize(20_000, 100);
   assert.equal(side.width, MAX_IMAGE_SIDE);
@@ -121,6 +139,16 @@ test("clamps generate dimensions to side and megapixel caps", () => {
   );
 });
 
+test("fits ICO dimensions within its 256 px directory limit", () => {
+  const wide = clampGenerateSizeForFormat(800, 600, "image/x-icon");
+  assert.deepEqual(
+    { width: wide.width, height: wide.height, dimensionAdjusted: wide.dimensionAdjusted },
+    { width: 256, height: 192, dimensionAdjusted: true },
+  );
+  const small = clampGenerateSizeForFormat(64, 32, "image/x-icon");
+  assert.deepEqual({ width: small.width, height: small.height }, { width: 64, height: 32 });
+});
+
 test("sanitizes file names and builds download names", () => {
   assert.equal(sanitizeFileBase('a/b:c*.png'), "a_b_c_");
   assert.equal(sanitizeFileBase("  hello world  "), "hello-world");
@@ -128,19 +156,12 @@ test("sanitizes file names and builds download names", () => {
   assert.equal(buildFileName("", "png", { width: 10, height: 20 }), "placeholder-10x20.png");
 });
 
-test("builds a store-only zip for multiple formats", () => {
+test("builds a store-only zip archive", () => {
   const zip = buildZipStore([
     { name: "a.png", bytes: new Uint8Array([1, 2, 3]) },
     { name: "b.jpg", bytes: new Uint8Array([4, 5]) },
   ]);
   assert.equal(String.fromCharCode(zip[0], zip[1], zip[2], zip[3]), "PK\u0003\u0004");
-  const packed = buildFormatsZip([
-    { extension: "png", bytes: new Uint8Array([9, 9]) },
-    { extension: "bmp", bytes: new Uint8Array([8]) },
-  ], "demo");
-  assert.equal(packed.fileName, "demo-images.zip");
-  assert.equal(packed.mime, "application/zip");
-  assert.equal(packed.count, 2);
 });
 
 test("pads BMP GIF and SVG to an exact byte length", () => {

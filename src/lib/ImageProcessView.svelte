@@ -5,14 +5,17 @@
   import { invoke } from "./host.js";
   import {
     MAX_IMAGE_SIDE,
+    canvasSourceBounds,
+    constrainCropRect,
     fitDimension,
     formatInfo,
+    moveCropRect,
     normalizeAngle,
     normalizeOutputSize,
     normalizeRotation,
     objectFitContainRect,
-    pointInCrop,
     resizeCropRect,
+    resolveCropDragMode,
     rotatePoint,
     rotatedSize,
     sanitizeCropRect,
@@ -637,23 +640,32 @@
       scale,
     };
   }
-  function sourcePoint(event, allowOutside = false) {
+  function activeCanvasBounds() {
+    return canvasSourceBounds(stageSize.width, stageSize.height, imageLayout) || {
+      minX: 0,
+      minY: 0,
+      maxX: Math.max(1, sourceWidth),
+      maxY: Math.max(1, sourceHeight),
+    };
+  }
+  function sourcePoint(event, allowBeyondCanvas = false) {
     if (!cropStage || !sourceWidth || !sourceHeight || !imageLayout.scale) return null;
     const stageRect = cropStage.getBoundingClientRect();
-    const { left, top, width, height, scale } = imageLayout;
+    const { left, top, scale } = imageLayout;
     // Match imageLayout: pointer in padding-box coordinates.
-    const localX = event.clientX - (stageRect.left + cropStage.clientLeft);
-    const localY = event.clientY - (stageRect.top + cropStage.clientTop);
-    const outside = localX < left || localX > left + width || localY < top || localY > top + height;
-    const isHandle = event.target?.closest?.("[data-crop-handle]");
-    if (outside && !cropDragging && !allowOutside && !isHandle) return null;
+    let localX = event.clientX - (stageRect.left + cropStage.clientLeft);
+    let localY = event.clientY - (stageRect.top + cropStage.clientTop);
+    const canvasWidth = Math.max(1, cropStage.clientWidth);
+    const canvasHeight = Math.max(1, cropStage.clientHeight);
+    const outside = localX < 0 || localX > canvasWidth || localY < 0 || localY > canvasHeight;
+    if (outside && !cropDragging && !allowBeyondCanvas) return null;
+    if (!allowBeyondCanvas) {
+      localX = Math.max(0, Math.min(canvasWidth, localX));
+      localY = Math.max(0, Math.min(canvasHeight, localY));
+    }
     const x = (localX - left) / scale;
     const y = (localY - top) / scale;
-    if (allowOutside || (cropDragging && cropDragMode === "rotate")) return { x, y };
-    return {
-      x: Math.max(0, Math.min(sourceWidth, x)),
-      y: Math.max(0, Math.min(sourceHeight, y)),
-    };
+    return { x, y };
   }
   function cropTarget(event) {
     const target = event.target;
@@ -663,17 +675,15 @@
     if (event.button != null && event.button !== 0) return;
     const target = cropTarget(event);
     const handle = target?.closest("[data-crop-handle]")?.dataset?.cropHandle || "";
-    const selection = target?.closest(".crop-selection");
-    const point = sourcePoint(event, Boolean(handle) || Boolean(selection && !handle));
+    const point = sourcePoint(event);
     if (!point) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    const inside = pointInCrop(point, cropX, cropY, cropWidth, cropHeight, cropRotation);
-    const isFullCrop = cropX <= 0 && cropY <= 0 && cropWidth >= sourceWidth && cropHeight >= sourceHeight && Math.abs(Number(cropRotation) || 0) < 0.001;
+    const origin = { x: cropX, y: cropY, width: cropWidth, height: cropHeight, angle: cropRotation };
     cropDragging = true;
     cropDragStart = point;
-    cropDragOrigin = { x: cropX, y: cropY, width: cropWidth, height: cropHeight, angle: cropRotation };
-    cropDragMode = handle || (selection && inside && !isFullCrop ? "move" : "new");
+    cropDragOrigin = origin;
+    cropDragMode = resolveCropDragMode(point, origin, handle);
     cropDragMoved = false;
   }
   function moveCrop(event) {
@@ -689,8 +699,7 @@
   }
   function applyCropMove(event) {
     if (!cropDragging || !cropDragStart || !cropDragOrigin) return;
-    const resizing = cropDragMode && !["move", "new", "rotate"].includes(cropDragMode);
-    const point = sourcePoint(event, cropDragMode === "rotate" || resizing || cropDragMode === "move");
+    const point = sourcePoint(event, cropDragMode === "rotate");
     if (!point) return;
     if (!cropDragMoved && Math.hypot(point.x - cropDragStart.x, point.y - cropDragStart.y) < 2) return;
     cropDragMoved = true;
@@ -703,13 +712,20 @@
     };
     const dx = point.x - cropDragStart.x;
     const dy = point.y - cropDragStart.y;
+    const bounds = activeCanvasBounds();
     if (cropDragMode === "rotate") {
       const centerX = origin.x + origin.width / 2;
       const centerY = origin.y + origin.height / 2;
       const startAngle = Math.atan2(cropDragStart.y - centerY, cropDragStart.x - centerX);
       const currentAngle = Math.atan2(point.y - centerY, point.x - centerX);
       const delta = (currentAngle - startAngle) * 180 / Math.PI;
-      cropRotation = normalizeAngle((Number(origin.angle) || 0) + delta);
+      const angle = normalizeAngle((Number(origin.angle) || 0) + delta);
+      const next = constrainCropRect({ ...origin, angle }, bounds, angle);
+      cropX = next.x;
+      cropY = next.y;
+      cropWidth = next.width;
+      cropHeight = next.height;
+      cropRotation = angle;
       return;
     }
     if (cropDragMode === "new") {
@@ -721,14 +737,15 @@
       return;
     }
     if (cropDragMode === "move") {
-      cropX = origin.x + dx;
-      cropY = origin.y + dy;
+      const moved = moveCropRect(origin, dx, dy, bounds);
+      cropX = moved.x;
+      cropY = moved.y;
       return;
     }
     const centerX = origin.x + origin.width / 2;
     const centerY = origin.y + origin.height / 2;
     const localPoint = rotatePoint(point, centerX, centerY, -origin.angle);
-    const resized = resizeCropRect(origin, cropDragMode, localPoint.x - centerX, localPoint.y - centerY, sourceWidth, sourceHeight);
+    const resized = resizeCropRect(origin, cropDragMode, localPoint.x - centerX, localPoint.y - centerY, bounds);
     cropX = resized.x;
     cropY = resized.y;
     cropWidth = resized.width;
@@ -754,20 +771,35 @@
     updateImageLayout();
   }
   function commitCropFields() {
-    const next = sanitizeCropRect(
+    const normalized = sanitizeCropRect(
       sourceWidth,
       sourceHeight,
       { x: cropX, y: cropY, width: cropWidth, height: cropHeight },
       cropRotation,
     );
+    const next = constrainCropRect(normalized, activeCanvasBounds(), cropRotation);
     cropX = next.x;
     cropY = next.y;
     cropWidth = next.width;
     cropHeight = next.height;
     persistActive();
   }
+  function setCropAngle(value) {
+    const angle = normalizeAngle(value);
+    const next = constrainCropRect(
+      { x: cropX, y: cropY, width: cropWidth, height: cropHeight, angle },
+      activeCanvasBounds(),
+      angle,
+    );
+    cropX = next.x;
+    cropY = next.y;
+    cropWidth = next.width;
+    cropHeight = next.height;
+    cropRotation = angle;
+    persistActive();
+  }
   function setFullCrop() {
-    cropX = 0; cropY = 0; cropWidth = sourceWidth; cropHeight = sourceHeight;
+    cropX = 0; cropY = 0; cropWidth = sourceWidth; cropHeight = sourceHeight; cropRotation = 0;
     targetWidth = sourceWidth; targetHeight = sourceHeight;
     persistActive();
   }
@@ -1021,7 +1053,7 @@
   {:else}
     <div class="workspace">
       <aside class="controls">
-        <section><div class="section-title"><strong>{t("裁剪", "Crop")}</strong><button class="link" type="button" onclick={setFullCrop}>{t("使用整张图片", "Full image")}</button></div><div class="quad"><label>X<input class="dbx-input" type="number" value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.x : cropX)} onchange={(event) => { cropX = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>Y<input class="dbx-input" type="number" value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.y : cropY)} onchange={(event) => { cropY = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>{t("宽", "W")}<input class="dbx-input" type="number" min="1" max={MAX_IMAGE_SIDE} value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.width : cropWidth)} onchange={(event) => { cropWidth = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>{t("高", "H")}<input class="dbx-input" type="number" min="1" max={MAX_IMAGE_SIDE} value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.height : cropHeight)} onchange={(event) => { cropHeight = Number(event.currentTarget.value); commitCropFields(); }} /></label></div><div class="crop-rotate-row"><span class="subtle">{t("裁剪框角度", "Crop angle")}：{Math.round(cropRotation)}° · {t("宽高可不限于图片，轴向随旋转", "Size may exceed image; axes follow rotation")}</span><div class="button-row"><button class="dbx-btn" type="button" onclick={() => { cropRotation = normalizeAngle(cropRotation - 15); persistActive(); }}>↶ 15°</button><button class="dbx-btn" type="button" onclick={() => { cropRotation = normalizeAngle(cropRotation + 15); persistActive(); }}>↷ 15°</button><button class="dbx-btn" type="button" onclick={() => { cropRotation = 0; persistActive(); }}>{t("归零", "Reset")}</button></div></div></section>
+        <section><div class="section-title"><strong>{t("裁剪", "Crop")}</strong><button class="link" type="button" onclick={setFullCrop}>{t("使用整张图片", "Full image")}</button></div><div class="quad"><label>X<input class="dbx-input" type="number" value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.x : cropX)} onchange={(event) => { cropX = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>Y<input class="dbx-input" type="number" value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.y : cropY)} onchange={(event) => { cropY = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>{t("宽", "W")}<input class="dbx-input" type="number" min="1" max={MAX_IMAGE_SIDE} value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.width : cropWidth)} onchange={(event) => { cropWidth = Number(event.currentTarget.value); commitCropFields(); }} /></label><label>{t("高", "H")}<input class="dbx-input" type="number" min="1" max={MAX_IMAGE_SIDE} value={Math.round(cropDragging && cropDragOrigin ? cropDragOrigin.height : cropHeight)} onchange={(event) => { cropHeight = Number(event.currentTarget.value); commitCropFields(); }} /></label></div><div class="crop-rotate-row"><span class="subtle">{t("裁剪框角度", "Crop angle")}：{Math.round(cropRotation)}° · {t("可框选画布内的图片外区域，轴向随旋转", "The crop may include canvas area outside the image; axes follow rotation")}</span><div class="button-row"><button class="dbx-btn" type="button" onclick={() => setCropAngle(cropRotation - 15)}>↶ 15°</button><button class="dbx-btn" type="button" onclick={() => setCropAngle(cropRotation + 15)}>↷ 15°</button><button class="dbx-btn" type="button" onclick={() => setCropAngle(0)}>{t("归零", "Reset")}</button></div></div></section>
         <section><div class="section-title"><strong>{t("缩放", "Resize")}</strong><button class="link" type="button" onclick={matchCropSize}>{t("匹配裁剪尺寸", "Match crop")}</button></div><div class="pair"><label>{t("宽度", "Width")}<input class="dbx-input" type="number" min="1" max="12000" value={targetWidth} oninput={changeWidth} /></label><label>{t("高度", "Height")}<input class="dbx-input" type="number" min="1" max="12000" value={targetHeight} oninput={changeHeight} /></label></div><label class="check"><input type="checkbox" bind:checked={lockRatio} onchange={persistActive} /> {t("锁定宽高比", "Lock aspect ratio")}</label></section>
         <section><strong>{t("旋转与翻转", "Rotate and flip")}</strong><span class="subtle">{t("会作用于导出结果", "Applies to the exported result")}</span><div class="button-row"><button class="dbx-btn" type="button" onclick={() => rotate(-90)}>↶ 90°</button><button class="dbx-btn" type="button" onclick={() => rotate(90)}>↷ 90°</button><button class="dbx-btn" class:active={flipHorizontal} aria-pressed={flipHorizontal} type="button" onclick={() => { flipHorizontal = !flipHorizontal; persistActive(); }}>{t("水平翻转", "Flip H")}</button><button class="dbx-btn" class:active={flipVertical} aria-pressed={flipVertical} type="button" onclick={() => { flipVertical = !flipVertical; persistActive(); }}>{t("垂直翻转", "Flip V")}</button></div><span class="subtle">{t("当前旋转", "Rotation")}: {rotation}°</span></section>
         <section><strong>{t("水印", "Watermark")}</strong><label>{t("文字", "Text")}<input class="dbx-input" bind:value={watermark} onchange={persistActive} placeholder={t("留空则不添加", "Leave blank for none")} /></label><div class="pair"><label>{t("字号", "Size")}<input class="dbx-input" type="number" min="8" max="256" bind:value={watermarkSize} onchange={persistActive} /></label><label>{t("透明度", "Opacity")} · {watermarkOpacity}%<input class="range" type="range" min="0" max="100" bind:value={watermarkOpacity} onchange={persistActive} /></label></div><div class="pair"><label>{t("位置", "Position")}<Select bind:value={watermarkPosition} options={positions} onchange={persistActive} /></label><label>{t("颜色", "Color")}<input class="color-input" type="color" bind:value={watermarkColor} onchange={persistActive} /></label></div><label class="check"><input type="checkbox" bind:checked={watermarkTiled} onchange={persistActive} /> {t("平铺水印", "Tile watermark")}</label></section>

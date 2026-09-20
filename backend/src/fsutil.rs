@@ -1,4 +1,6 @@
 use std::fs;
+#[cfg(target_os = "windows")]
+use std::num::NonZeroIsize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::Mutex;
@@ -35,6 +37,16 @@ const WEBP_FORMAT: ImageFormat = ImageFormat {
     extension: "webp",
     label: "WebP",
 };
+const GIF_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/gif",
+    extension: "gif",
+    label: "GIF",
+};
+const BMP_FORMAT: ImageFormat = ImageFormat {
+    mime: "image/bmp",
+    extension: "bmp",
+    label: "BMP",
+};
 const SVG_FORMAT: ImageFormat = ImageFormat {
     mime: "image/svg+xml",
     extension: "svg",
@@ -42,6 +54,57 @@ const SVG_FORMAT: ImageFormat = ImageFormat {
 };
 
 static LAST_SAVED: Mutex<Option<PathBuf>> = Mutex::new(None);
+
+#[cfg(target_os = "windows")]
+struct DialogParent(NonZeroIsize);
+
+#[cfg(target_os = "windows")]
+impl raw_window_handle::HasWindowHandle for DialogParent {
+    fn window_handle(
+        &self,
+    ) -> Result<raw_window_handle::WindowHandle<'_>, raw_window_handle::HandleError> {
+        let handle = raw_window_handle::Win32WindowHandle::new(self.0);
+        // SAFETY: The HWND comes from GetForegroundWindow, is checked with IsWindow, and is only
+        // borrowed long enough for rfd to copy it into the native dialog configuration.
+        Ok(unsafe {
+            raw_window_handle::WindowHandle::borrow_raw(raw_window_handle::RawWindowHandle::Win32(
+                handle,
+            ))
+        })
+    }
+}
+
+#[cfg(target_os = "windows")]
+impl raw_window_handle::HasDisplayHandle for DialogParent {
+    fn display_handle(
+        &self,
+    ) -> Result<raw_window_handle::DisplayHandle<'_>, raw_window_handle::HandleError> {
+        Ok(raw_window_handle::DisplayHandle::windows())
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn attach_dialog_to_foreground(dialog: rfd::FileDialog) -> rfd::FileDialog {
+    #[link(name = "user32")]
+    extern "system" {
+        fn GetForegroundWindow() -> isize;
+        fn IsWindow(window: isize) -> i32;
+    }
+
+    let window = unsafe { GetForegroundWindow() };
+    if window == 0 || unsafe { IsWindow(window) } == 0 {
+        return dialog;
+    }
+    let Some(window) = NonZeroIsize::new(window) else {
+        return dialog;
+    };
+    dialog.set_parent(&DialogParent(window))
+}
+
+#[cfg(not(target_os = "windows"))]
+fn attach_dialog_to_foreground(dialog: rfd::FileDialog) -> rfd::FileDialog {
+    dialog
+}
 
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     match method {
@@ -265,20 +328,19 @@ fn pick_save_path_binary(
     let name = name.to_string();
     let start_dir = start_dir.map(Path::to_path_buf);
     let extension = extension.to_string();
+    let mut dialog = attach_dialog_to_foreground(
+        rfd::FileDialog::new()
+            .set_title(&title)
+            .set_file_name(&name)
+            .add_filter("File", &[&extension])
+            .add_filter("All files", &["*"]),
+    );
+    if let Some(dir) = start_dir.as_deref() {
+        dialog = dialog.set_directory(dir);
+    }
     let worker = std::thread::Builder::new()
         .name("save-dialog".into())
-        .spawn(move || {
-            let mut dialog = rfd::FileDialog::new();
-            dialog = dialog
-                .set_title(&title)
-                .set_file_name(&name)
-                .add_filter("File", &[&extension])
-                .add_filter("All files", &["*"]);
-            if let Some(dir) = start_dir.as_deref() {
-                dialog = dialog.set_directory(dir);
-            }
-            dialog.save_file()
-        })
+        .spawn(move || dialog.save_file())
         .ok()?;
     worker.join().ok()?
 }
@@ -305,19 +367,18 @@ fn pick_save_path(
     let title = title.to_string();
     let name = name.to_string();
     let start_dir = start_dir.map(Path::to_path_buf);
+    let mut dialog = attach_dialog_to_foreground(
+        rfd::FileDialog::new()
+            .set_title(&title)
+            .set_file_name(&name)
+            .add_filter(format.label, &[format.extension]),
+    );
+    if let Some(dir) = start_dir.as_deref() {
+        dialog = dialog.set_directory(dir);
+    }
     let worker = std::thread::Builder::new()
         .name("save-dialog".into())
-        .spawn(move || {
-            let mut dialog = rfd::FileDialog::new();
-            dialog = dialog
-                .set_title(&title)
-                .set_file_name(&name)
-                .add_filter(format.label, &[format.extension]);
-            if let Some(dir) = start_dir.as_deref() {
-                dialog = dialog.set_directory(dir);
-            }
-            dialog.save_file()
-        })
+        .spawn(move || dialog.save_file())
         .ok()?;
     worker.join().ok()?
 }
@@ -352,6 +413,8 @@ fn image_format(mime: &str) -> Result<ImageFormat, PluginError> {
         "image/png" => Ok(PNG_FORMAT),
         "image/jpeg" | "image/jpg" => Ok(JPEG_FORMAT),
         "image/webp" => Ok(WEBP_FORMAT),
+        "image/gif" => Ok(GIF_FORMAT),
+        "image/bmp" | "image/x-ms-bmp" => Ok(BMP_FORMAT),
         "image/svg+xml" => Ok(SVG_FORMAT),
         _ => Err(bad("Unsupported image format")),
     }
@@ -362,6 +425,18 @@ fn validate_image(bytes: &[u8], format: ImageFormat) -> Result<(), PluginError> 
         "image/png" => bytes.starts_with(PNG_SIGNATURE),
         "image/jpeg" => bytes.starts_with(&[0xff, 0xd8, 0xff]),
         "image/webp" => bytes.len() >= 12 && &bytes[..4] == b"RIFF" && &bytes[8..12] == b"WEBP",
+        "image/gif" => {
+            bytes.len() >= 14
+                && (bytes.starts_with(b"GIF87a") || bytes.starts_with(b"GIF89a"))
+                && bytes.last() == Some(&0x3b)
+        }
+        "image/bmp" => {
+            bytes.len() >= 26
+                && bytes.starts_with(b"BM")
+                && u32::from_le_bytes([bytes[2], bytes[3], bytes[4], bytes[5]]) as usize
+                    == bytes.len()
+                && u32::from_le_bytes([bytes[10], bytes[11], bytes[12], bytes[13]]) as usize >= 14
+        }
         "image/svg+xml" => validate_svg(bytes),
         _ => false,
     };
@@ -486,10 +561,22 @@ mod tests {
         assert_eq!(image_format("image/png").unwrap().extension, "png");
         assert_eq!(image_format("image/jpeg").unwrap().extension, "jpg");
         assert_eq!(image_format("image/webp").unwrap().extension, "webp");
-        assert!(image_format("image/gif").is_err());
+        assert_eq!(image_format("image/gif").unwrap().extension, "gif");
+        assert_eq!(image_format("image/bmp").unwrap().extension, "bmp");
+        assert_eq!(image_format("image/x-ms-bmp").unwrap().extension, "bmp");
         assert!(validate_image(&[0xff, 0xd8, 0xff, 0xe0], JPEG_FORMAT).is_ok());
         assert!(validate_image(b"RIFF1234WEBP", WEBP_FORMAT).is_ok());
         assert!(validate_image(b"not an image", WEBP_FORMAT).is_err());
+        assert!(validate_image(b"GIF89a1234567;", GIF_FORMAT).is_ok());
+        assert!(validate_image(b"GIF89a1234567", GIF_FORMAT).is_err());
+        let mut bmp = vec![0_u8; 26];
+        bmp[..2].copy_from_slice(b"BM");
+        let bmp_size = bmp.len() as u32;
+        bmp[2..6].copy_from_slice(&bmp_size.to_le_bytes());
+        bmp[10..14].copy_from_slice(&14_u32.to_le_bytes());
+        assert!(validate_image(&bmp, BMP_FORMAT).is_ok());
+        bmp[2] = 0;
+        assert!(validate_image(&bmp, BMP_FORMAT).is_err());
         assert!(validate_image(
             b"<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>",
             SVG_FORMAT
