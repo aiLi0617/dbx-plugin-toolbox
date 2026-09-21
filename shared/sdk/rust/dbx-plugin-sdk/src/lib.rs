@@ -72,6 +72,12 @@ pub trait PluginHandler: Send + Sync + 'static {
     fn handle_binary(&self, _channel: &str, _data: Vec<u8>, _emitter: &PluginEmitter) -> Result<(), PluginError> {
         Err(PluginError::new(-32601, "Binary input is not supported"))
     }
+
+    /// When true, `handle` runs on the stdio reader thread (process main thread)
+    /// instead of the worker pool. Required on macOS for AppKit file dialogs.
+    fn run_on_io_thread(&self, _method: &str) -> bool {
+        false
+    }
 }
 
 #[derive(Clone)]
@@ -262,9 +268,17 @@ impl<H: PluginHandler> PluginServer<H> {
             return emitter.respond(id, result).map_err(|error| error.message);
         }
 
+        let context = RequestContext { request_id: request.id, driver: request.driver.clone() };
+        if self.handler.run_on_io_thread(&request.method) {
+            let result = self.handler.handle(context, &request.method, request.params, &emitter);
+            if let Some(id) = request.id {
+                return emitter.respond(id, result).map_err(|error| error.message);
+            }
+            return Ok(());
+        }
+
         let handler = self.handler.clone();
         workers.submit(move || {
-            let context = RequestContext { request_id: request.id, driver: request.driver };
             let result = handler.handle(context, &request.method, request.params, &emitter);
             if let Some(id) = request.id {
                 if let Err(error) = emitter.respond(id, result) {
