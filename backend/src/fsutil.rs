@@ -106,6 +106,43 @@ fn attach_dialog_to_foreground(dialog: rfd::FileDialog) -> rfd::FileDialog {
     dialog
 }
 
+/// Show a native save panel.
+///
+/// On macOS the sidecar is a non-windowed process: rfd can only present panels
+/// on the calling (main) thread, and NSApp must be activated or the panel stays
+/// invisible behind DBX. Windows/Linux keep a worker thread so the RPC loop is
+/// not blocked by the modal dialog machinery the same way.
+fn run_save_dialog(dialog: rfd::FileDialog) -> Option<PathBuf> {
+    #[cfg(target_os = "macos")]
+    {
+        activate_macos_dialog_app();
+        dialog.save_file()
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let worker = std::thread::Builder::new()
+            .name("save-dialog".into())
+            .spawn(move || dialog.save_file())
+            .ok()?;
+        worker.join().ok()?
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn activate_macos_dialog_app() {
+    use objc2::MainThreadMarker;
+    use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
+
+    let Some(mtm) = MainThreadMarker::new() else {
+        return;
+    };
+    let app = NSApplication::sharedApplication(mtm);
+    // Accessory avoids a dock bounce for the sidecar while still allowing panels.
+    let _ = app.setActivationPolicy(NSApplicationActivationPolicy::Accessory);
+    #[allow(deprecated)]
+    app.activateIgnoringOtherApps(true);
+}
+
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     match method {
         "toolbox/save-file" => save_file(params),
@@ -339,11 +376,7 @@ fn pick_save_path_binary(
     if let Some(dir) = start_dir.as_deref() {
         dialog = dialog.set_directory(dir);
     }
-    let worker = std::thread::Builder::new()
-        .name("save-dialog".into())
-        .spawn(move || dialog.save_file())
-        .ok()?;
-    worker.join().ok()?
+    run_save_dialog(dialog)
 }
 
 fn reveal_file(params: Value) -> Result<Value, PluginError> {
@@ -377,11 +410,7 @@ fn pick_save_path(
     if let Some(dir) = start_dir.as_deref() {
         dialog = dialog.set_directory(dir);
     }
-    let worker = std::thread::Builder::new()
-        .name("save-dialog".into())
-        .spawn(move || dialog.save_file())
-        .ok()?;
-    worker.join().ok()?
+    run_save_dialog(dialog)
 }
 
 fn download_dir() -> Result<PathBuf, PluginError> {

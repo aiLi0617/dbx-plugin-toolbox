@@ -485,6 +485,8 @@ dependencies = [
  "hex",
  "hmac",
  "md-5",
+ "objc2",
+ "objc2-app-kit",
  "pem 3.0.6",
  "rand 0.8.8",
  "raw-window-handle",

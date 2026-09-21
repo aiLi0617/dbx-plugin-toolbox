@@ -202,6 +202,7 @@
         },
         120000,
       );
+      if (saved?.cancelled) return null;
       return saved?.path ? `${name} → ${saved.path}` : name;
     }
     triggerDownload(result.blob, name);
@@ -214,7 +215,7 @@
     error = "";
     try {
       const note = await saveOne(resultMeta);
-      savedNotes = [note];
+      savedNotes = note ? [note] : [];
     } catch (cause) {
       error = String(cause.message || cause);
     } finally {

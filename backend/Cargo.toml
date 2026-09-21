@@ -36,6 +36,15 @@ rfd = "0.15"
 x509-parser = "0.16"
 zeroize = { version = "1", features = ["derive"] }
 
+# macOS save panels must run on the main thread of a non-windowed sidecar and
+# briefly activate NSApp so the sheet is not stuck behind DBX.
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = [
+  "NSApplication",
+  "NSRunningApplication",
+] }
+
 # `dbx-plugin-sdk` is not published to crates.io. Vendor the SDK that matches
 # the DBX plugin CLI so ordinary Cargo and CI builds resolve it locally.
 [patch.crates-io]
