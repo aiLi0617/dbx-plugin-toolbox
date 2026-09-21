@@ -120,7 +120,11 @@ fn run_save_dialog(dialog: rfd::FileDialog) -> Option<PathBuf> {
 /// silently no-op. `osascript` launches a separate UI process that always can
 /// present "choose file name".
 #[cfg(target_os = "macos")]
-fn pick_save_path_via_osascript(title: &str, name: &str, start_dir: Option<&Path>) -> Option<PathBuf> {
+fn pick_save_path_via_osascript(
+    title: &str,
+    name: &str,
+    start_dir: Option<&Path>,
+) -> Option<PathBuf> {
     let mut script = format!(
         "POSIX path of (choose file name with prompt \"{}\" default name \"{}\"",
         escape_applescript(title),
@@ -134,7 +138,10 @@ fn pick_save_path_via_osascript(title: &str, name: &str, start_dir: Option<&Path
     }
     script.push(')');
 
-    let output = Command::new("osascript").args(["-e", &script]).output().ok()?;
+    let output = Command::new("osascript")
+        .args(["-e", &script])
+        .output()
+        .ok()?;
     if !output.status.success() {
         return None;
     }
