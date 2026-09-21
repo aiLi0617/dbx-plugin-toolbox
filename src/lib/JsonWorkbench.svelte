@@ -52,7 +52,6 @@
   let copied = $state("");
   let seededFold = false;
 
-  const zh = $derived(String(locale || "").toLowerCase().startsWith("zh"));
   const t = (zhText, en) => pick(locale, zhText, en);
   const rightError = $derived(actionError || parseError || (rightMode === "tree" ? "" : convertError));
   const inputError = $derived(inputLimitError(jsonText, INPUT_LIMITS.json, t("JSON 输入", "JSON input")));
@@ -530,7 +529,7 @@
               class="json-lang-select"
               bind:value={convertLang}
               ariaLabel={t("目标语言", "Language")}
-              options={availableLanguages.map((lang) => ({ value: lang.value, label: zh ? lang.zh : lang.en }))}
+              options={availableLanguages.map((lang) => ({ value: lang.value, label: t(lang.zh, lang.en) }))}
             />
             {#if convertLang === "mysql"}
               <input class="dbx-input json-table-input" placeholder="users" bind:value={tableName} aria-label={t("表名", "Table")} />
@@ -664,8 +663,8 @@
     background: var(--color-primary);
   }
   .json-resizer:focus-visible {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--dbx-focus-ring);
   }
   .json-pane-bar {
     display: flex;

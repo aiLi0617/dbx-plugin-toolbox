@@ -25,7 +25,7 @@
   $effect(() => { searchQuery; searchSelected = 0; });
 
   function searchDestination(item) {
-    return intentLabelForTool(item.id, searchQuery);
+    return intentLabelForTool(item.id, searchQuery, locale);
   }
   function chooseSearchResult(item) {
     if (!item) return;
@@ -263,7 +263,7 @@
   h2,h3,p { margin:0; } h2 { font-size:20px; } h3 { font-size:14px; } .hero p,.section-head p { margin-top:5px; color:var(--color-muted-foreground); font-size:12px; }
   .home-search { position:relative; min-width:0; }
   .home-search-box { display:flex; align-items:center; gap:9px; height:42px; padding:0 12px; border:1px solid var(--color-input); border-radius:8px; background:var(--color-background); color:var(--color-muted-foreground); }
-  .home-search-box:focus-within { border-color:var(--color-ring,var(--color-primary)); box-shadow:0 0 0 2px color-mix(in srgb,var(--color-ring,var(--color-primary)) 22%,transparent); }
+  .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:var(--dbx-focus-ring); }
   .home-search-box input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--color-foreground); font:inherit; }
   .home-search-box input::placeholder { color:var(--color-muted-foreground); }
   .home-search-box input::-webkit-search-cancel-button { display:none; }

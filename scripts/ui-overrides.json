@@ -1,0 +1,904 @@
+{
+  "Invalid encoding. Other results were cleared; check the characters, length, and padding.": {
+    "zh-TW": "編碼無效，其他結果已清空；請檢查字元、長度及填充。",
+    "es": "Codificación no válida. Comprueba los caracteres, la longitud y el relleno.",
+    "it": "Codifica non valida. Controlla caratteri, lunghezza e padding.",
+    "ja": "無効なエンコードです。文字、長さ、パディングを確認してください。",
+    "pt-BR": "Codificação inválida. Verifique caracteres, tamanho e preenchimento.",
+    "ko": "인코딩이 잘못되었습니다. 문자, 길이 및 패딩을 확인하세요.",
+    "tr": "Kodlama geçersiz. Karakterleri, uzunluğu ve dolguyu denetleyin.",
+    "az": "Kodlaşdırma yanlışdır. Simvolları, uzunluğu və doldurmanı yoxlayın."
+  },
+  "Current value information": {
+    "zh-TW": "目前數值資訊",
+    "es": "Información del valor actual",
+    "it": "Informazioni sul valore attuale",
+    "ja": "現在の値の情報",
+    "pt-BR": "Informações do valor atual",
+    "ko": "현재 값 정보",
+    "tr": "Geçerli değer bilgisi",
+    "az": "Cari dəyər məlumatı"
+  },
+  "Bits": {
+    "zh-TW": "位元數",
+    "es": "Bits",
+    "it": "Bit",
+    "ja": "ビット数",
+    "pt-BR": "Bits",
+    "ko": "비트 수",
+    "tr": "Bit",
+    "az": "Bit"
+  },
+  "Bytes": {
+    "zh-TW": "位元組數",
+    "es": "Bytes",
+    "it": "Byte",
+    "ja": "バイト数",
+    "pt-BR": "Bytes",
+    "ko": "바이트 수",
+    "tr": "Bayt",
+    "az": "Bayt"
+  },
+  "Character": {
+    "zh-TW": "字元",
+    "es": "Carácter",
+    "it": "Carattere",
+    "ja": "文字",
+    "pt-BR": "Caractere",
+    "ko": "문자",
+    "tr": "Karakter",
+    "az": "Simvol"
+  },
+  "Group": {
+    "zh-TW": "分組",
+    "es": "Agrupar",
+    "it": "Raggruppa",
+    "ja": "グループ化",
+    "pt-BR": "Agrupar",
+    "ko": "그룹화",
+    "tr": "Grupla",
+    "az": "Qruplaşdır"
+  },
+  "0x / 0b prefix": {
+    "zh-TW": "0x / 0b 前綴",
+    "es": "Prefijo 0x / 0b",
+    "it": "Prefisso 0x / 0b",
+    "ja": "0x / 0b 接頭辞",
+    "pt-BR": "Prefixo 0x / 0b",
+    "ko": "0x / 0b 접두사",
+    "tr": "0x / 0b öneki",
+    "az": "0x / 0b prefiksi"
+  },
+  "Base {0}": {
+    "zh-TW": "進位 {0}",
+    "es": "Base {0}",
+    "it": "Base {0}",
+    "ja": "{0} 進数",
+    "pt-BR": "Base {0}",
+    "ko": "{0}진수",
+    "tr": "{0} tabanı",
+    "az": "{0} əsası"
+  },
+  "Any base": {
+    "zh-TW": "任意進位",
+    "es": "Cualquier base",
+    "it": "Base arbitraria",
+    "ja": "任意の基数",
+    "pt-BR": "Qualquer base",
+    "ko": "사용자 지정 진수",
+    "tr": "Herhangi bir taban",
+    "az": "İstənilən əsas"
+  },
+  "Radix 2 to 36": {
+    "zh-TW": "2 到 36 進位",
+    "es": "Base de 2 a 36",
+    "it": "Base da 2 a 36",
+    "ja": "基数 2～36",
+    "pt-BR": "Base de 2 a 36",
+    "ko": "2~36진수",
+    "tr": "2–36 tabanı",
+    "az": "2–36 əsası"
+  },
+  "Increase radix": {
+    "zh-TW": "增加進位",
+    "es": "Aumentar base",
+    "it": "Aumenta base",
+    "ja": "基数を増やす",
+    "pt-BR": "Aumentar base",
+    "ko": "진수 증가",
+    "tr": "Tabanı artır",
+    "az": "Əsası artır"
+  },
+  "Decrease radix": {
+    "zh-TW": "減少進位",
+    "es": "Reducir base",
+    "it": "Riduci base",
+    "ja": "基数を減らす",
+    "pt-BR": "Diminuir base",
+    "ko": "진수 감소",
+    "tr": "Tabanı azalt",
+    "az": "Əsası azalt"
+  },
+  "Custom base value": {
+    "zh-TW": "自訂進位數值",
+    "es": "Valor de base personalizada",
+    "it": "Valore in base personalizzata",
+    "ja": "任意の基数の値",
+    "pt-BR": "Valor de base personalizada",
+    "ko": "사용자 지정 진수 값",
+    "tr": "Özel taban değeri",
+    "az": "Fərdi əsas dəyəri"
+  },
+  "Not a valid number for this base.": {
+    "zh-TW": "不是此進位的有效數字。",
+    "es": "Número no válido para esta base.",
+    "it": "Numero non valido per questa base.",
+    "ja": "この基数では無効な数値です。",
+    "pt-BR": "Número inválido para esta base.",
+    "ko": "이 진수에서 유효하지 않은 숫자입니다.",
+    "tr": "Bu taban için geçersiz sayı.",
+    "az": "Bu əsas üçün etibarsız ədəddir."
+  },
+  "Copy failed. Select the text and copy manually.": {
+    "zh-TW": "複製失敗，請選取文字手動複製。",
+    "es": "No se pudo copiar. Selecciona el texto y cópialo manualmente.",
+    "it": "Copia non riuscita. Seleziona e copia il testo manualmente.",
+    "ja": "コピーできませんでした。テキストを選択して手動でコピーしてください。",
+    "pt-BR": "Falha ao copiar. Selecione e copie o texto manualmente.",
+    "ko": "복사하지 못했습니다. 텍스트를 선택해 직접 복사하세요.",
+    "tr": "Kopyalanamadı. Metni seçip elle kopyalayın.",
+    "az": "Kopyalama alınmadı. Mətni seçib əl ilə kopyalayın."
+  },
+  "Copied {0}": {
+    "zh-TW": "已複製 {0}",
+    "es": "{0} copiado",
+    "it": "{0} copiato",
+    "ja": "{0} をコピーしました",
+    "pt-BR": "{0} copiado",
+    "ko": "{0} 복사됨",
+    "tr": "{0} kopyalandı",
+    "az": "{0} kopyalandı"
+  },
+  "Copy {0}": {
+    "zh-TW": "複製 {0}",
+    "es": "Copiar {0}",
+    "it": "Copia {0}",
+    "ja": "{0} をコピー",
+    "pt-BR": "Copiar {0}",
+    "ko": "{0} 복사",
+    "tr": "{0} kopyala",
+    "az": "{0} kopyala"
+  },
+  "PEM or OpenSSH public key": {
+    "zh-TW": "PEM 或 OpenSSH 公開金鑰",
+    "es": "Clave pública PEM u OpenSSH",
+    "it": "Chiave pubblica PEM o OpenSSH",
+    "ja": "PEM または OpenSSH 公開鍵",
+    "pt-BR": "Chave pública PEM ou OpenSSH",
+    "ko": "PEM 또는 OpenSSH 공개 키",
+    "tr": "PEM veya OpenSSH açık anahtarı",
+    "az": "PEM və ya OpenSSH açıq açarı"
+  },
+  "Within validity period; about {0} days remaining": {
+    "zh-TW": "有效期內，約剩 {0} 天",
+    "es": "Válido; quedan unos {0} días",
+    "it": "Valido; restano circa {0} giorni",
+    "ja": "有効期間内、残り約 {0} 日",
+    "pt-BR": "Válido; restam cerca de {0} dias",
+    "ko": "유효 기간 내, 약 {0}일 남음",
+    "tr": "Geçerli; yaklaşık {0} gün kaldı",
+    "az": "Etibarlıdır; təxminən {0} gün qalıb"
+  },
+  "Certificate expired {0} days ago": {
+    "zh-TW": "憑證已於 {0} 天前過期",
+    "es": "Certificado caducado hace {0} días",
+    "it": "Certificato scaduto da {0} giorni",
+    "ja": "証明書は {0} 日前に期限切れ",
+    "pt-BR": "Certificado expirado há {0} dias",
+    "ko": "인증서가 {0}일 전에 만료됨",
+    "tr": "Sertifikanın süresi {0} gün önce doldu",
+    "az": "Sertifikat {0} gün əvvəl bitib"
+  },
+  "Certificate is not valid yet": {
+    "zh-TW": "憑證尚未生效",
+    "es": "El certificado aún no es válido",
+    "it": "Certificato non ancora valido",
+    "ja": "証明書はまだ有効ではありません",
+    "pt-BR": "Certificado ainda não válido",
+    "ko": "인증서가 아직 유효하지 않음",
+    "tr": "Sertifika henüz geçerli değil",
+    "az": "Sertifikat hələ qüvvəyə minməyib"
+  },
+  "Inspects dates and fields; signature, trust chain, and hostname are not verified.": {
+    "zh-TW": "僅檢查日期與欄位，不驗證簽章、信任鏈及主機名稱。",
+    "es": "Solo inspecciona fechas y campos; no verifica firma, cadena de confianza ni nombre de host.",
+    "it": "Esamina date e campi; non verifica firma, catena di fiducia o nome host.",
+    "ja": "日付とフィールドのみを確認します。署名、信頼チェーン、ホスト名は検証しません。",
+    "pt-BR": "Inspeciona datas e campos; não verifica assinatura, cadeia de confiança ou nome do host.",
+    "ko": "날짜와 필드만 확인하며 서명, 신뢰 체인, 호스트 이름은 검증하지 않습니다.",
+    "tr": "Tarih ve alanları inceler; imza, güven zinciri ve ana makine adı doğrulanmaz.",
+    "az": "Tarix və sahələri yoxlayır; imza, etibar zənciri və host adı təsdiqlənmir."
+  },
+  "Paste a certificate or SSH public key to inspect fields.": {
+    "zh-TW": "貼上憑證或 SSH 公開金鑰以檢視欄位。",
+    "es": "Pega un certificado o clave pública SSH para inspeccionarlo.",
+    "it": "Incolla un certificato o una chiave pubblica SSH per esaminarlo.",
+    "ja": "証明書または SSH 公開鍵を貼り付けてください。",
+    "pt-BR": "Cole um certificado ou chave pública SSH para inspecionar.",
+    "ko": "인증서 또는 SSH 공개 키를 붙여넣어 필드를 확인하세요.",
+    "tr": "İncelemek için sertifika veya SSH açık anahtarı yapıştırın.",
+    "az": "Sahələri yoxlamaq üçün sertifikat və ya SSH açıq açarı yapışdırın."
+  },
+  "Subject": {
+    "zh-TW": "主體",
+    "es": "Sujeto",
+    "it": "Soggetto",
+    "ja": "主体者",
+    "pt-BR": "Titular",
+    "ko": "주체",
+    "tr": "Konu",
+    "az": "Subyekt"
+  },
+  "Issuer": {
+    "zh-TW": "簽發者",
+    "es": "Emisor",
+    "it": "Emittente",
+    "ja": "発行者",
+    "pt-BR": "Emissor",
+    "ko": "발급자",
+    "tr": "Düzenleyen",
+    "az": "Verən"
+  },
+  "Serial": {
+    "zh-TW": "序號",
+    "es": "Número de serie",
+    "it": "Numero di serie",
+    "ja": "シリアル番号",
+    "pt-BR": "Número de série",
+    "ko": "일련번호",
+    "tr": "Seri numarası",
+    "az": "Seriya nömrəsi"
+  },
+  "Not before": {
+    "zh-TW": "生效時間",
+    "es": "Válido desde",
+    "it": "Valido dal",
+    "ja": "有効期間の開始",
+    "pt-BR": "Válido a partir de",
+    "ko": "유효 시작",
+    "tr": "Başlangıç",
+    "az": "Başlanğıc"
+  },
+  "Not after": {
+    "zh-TW": "到期時間",
+    "es": "Válido hasta",
+    "it": "Valido fino al",
+    "ja": "有効期間の終了",
+    "pt-BR": "Válido até",
+    "ko": "유효 만료",
+    "tr": "Bitiş",
+    "az": "Bitmə"
+  },
+  "Signature": {
+    "zh-TW": "簽章",
+    "es": "Firma",
+    "it": "Firma",
+    "ja": "署名",
+    "pt-BR": "Assinatura",
+    "ko": "서명",
+    "tr": "İmza",
+    "az": "İmza"
+  },
+  "Public key": {
+    "zh-TW": "公開金鑰",
+    "es": "Clave pública",
+    "it": "Chiave pubblica",
+    "ja": "公開鍵",
+    "pt-BR": "Chave pública",
+    "ko": "공개 키",
+    "tr": "Açık anahtar",
+    "az": "Açıq açar"
+  },
+  "SHA-256 fingerprint": {
+    "zh-TW": "SHA-256 指紋",
+    "es": "Huella SHA-256",
+    "it": "Impronta SHA-256",
+    "ja": "SHA-256 フィンガープリント",
+    "pt-BR": "Impressão SHA-256",
+    "ko": "SHA-256 지문",
+    "tr": "SHA-256 parmak izi",
+    "az": "SHA-256 barmaq izi"
+  },
+  "Subject alternative names": {
+    "zh-TW": "主體別名",
+    "es": "Nombres alternativos del sujeto",
+    "it": "Nomi alternativi del soggetto",
+    "ja": "サブジェクトの代替名",
+    "pt-BR": "Nomes alternativos do titular",
+    "ko": "주체 대체 이름",
+    "tr": "Konu alternatif adları",
+    "az": "Subyektin alternativ adları"
+  },
+  "Subject matches issuer": {
+    "zh-TW": "主體與簽發者相同",
+    "es": "El sujeto coincide con el emisor",
+    "it": "Il soggetto coincide con l'emittente",
+    "ja": "主体者と発行者が一致",
+    "pt-BR": "Titular corresponde ao emissor",
+    "ko": "주체와 발급자가 같음",
+    "tr": "Konu düzenleyenle eşleşiyor",
+    "az": "Subyekt verənlə eynidir"
+  },
+  "Yes": {
+    "zh-TW": "是",
+    "es": "Sí",
+    "it": "Sì",
+    "ja": "はい",
+    "pt-BR": "Sim",
+    "ko": "예",
+    "tr": "Evet",
+    "az": "Bəli"
+  },
+  "No": {
+    "zh-TW": "否",
+    "es": "No",
+    "it": "No",
+    "ja": "いいえ",
+    "pt-BR": "Não",
+    "ko": "아니요",
+    "tr": "Hayır",
+    "az": "Xeyr"
+  },
+  "Type": {
+    "zh-TW": "類型",
+    "es": "Tipo",
+    "it": "Tipo",
+    "ja": "種類",
+    "pt-BR": "Tipo",
+    "ko": "유형",
+    "tr": "Tür",
+    "az": "Növ"
+  },
+  "Comment": {
+    "zh-TW": "註解",
+    "es": "Comentario",
+    "it": "Commento",
+    "ja": "コメント",
+    "pt-BR": "Comentário",
+    "ko": "주석",
+    "tr": "Yorum",
+    "az": "Şərh"
+  },
+  "Tag": {
+    "zh-TW": "標籤",
+    "es": "Etiqueta",
+    "it": "Tag",
+    "ja": "タグ",
+    "pt-BR": "Etiqueta",
+    "ko": "태그",
+    "tr": "Etiket",
+    "az": "Etiket"
+  },
+  "Ciphertext format": {
+    "zh-TW": "密文格式",
+    "es": "Formato del texto cifrado",
+    "it": "Formato del testo cifrato",
+    "ja": "暗号文の形式",
+    "pt-BR": "Formato do texto cifrado",
+    "ko": "암호문 형식",
+    "tr": "Şifreli metin biçimi",
+    "az": "Şifrəli mətn formatı"
+  },
+  "Packed": {
+    "zh-TW": "合併封裝",
+    "es": "Empaquetado",
+    "it": "Combinato",
+    "ja": "結合形式",
+    "pt-BR": "Empacotado",
+    "ko": "결합",
+    "tr": "Birleşik",
+    "az": "Birləşdirilmiş"
+  },
+  "Separate parameters": {
+    "zh-TW": "分離參數",
+    "es": "Parámetros separados",
+    "it": "Parametri separati",
+    "ja": "個別パラメーター",
+    "pt-BR": "Parâmetros separados",
+    "ko": "개별 매개변수",
+    "tr": "Ayrı parametreler",
+    "az": "Ayrı parametrlər"
+  },
+  "Padding": {
+    "zh-TW": "填充",
+    "es": "Relleno",
+    "it": "Padding",
+    "ja": "パディング",
+    "pt-BR": "Preenchimento",
+    "ko": "패딩",
+    "tr": "Dolgu",
+    "az": "Doldurma"
+  },
+  "Decryption output": {
+    "zh-TW": "解密輸出",
+    "es": "Salida descifrada",
+    "it": "Output decifrato",
+    "ja": "復号出力",
+    "pt-BR": "Saída decifrada",
+    "ko": "복호화 출력",
+    "tr": "Şifre çözme çıktısı",
+    "az": "Şifrə açma çıxışı"
+  },
+  "Text": {
+    "zh-TW": "文字",
+    "es": "Texto",
+    "it": "Testo",
+    "ja": "テキスト",
+    "pt-BR": "Texto",
+    "ko": "텍스트",
+    "tr": "Metin",
+    "az": "Mətn"
+  },
+  "Ciphertext encoding": {
+    "zh-TW": "密文編碼",
+    "es": "Codificación del texto cifrado",
+    "it": "Codifica del testo cifrato",
+    "ja": "暗号文のエンコード",
+    "pt-BR": "Codificação do texto cifrado",
+    "ko": "암호문 인코딩",
+    "tr": "Şifreli metin kodlaması",
+    "az": "Şifrəli mətnin kodlaşdırılması"
+  },
+  "Plaintext encoding": {
+    "zh-TW": "明文編碼",
+    "es": "Codificación del texto plano",
+    "it": "Codifica del testo in chiaro",
+    "ja": "平文のエンコード",
+    "pt-BR": "Codificação do texto simples",
+    "ko": "평문 인코딩",
+    "tr": "Düz metin kodlaması",
+    "az": "Açıq mətnin kodlaşdırılması"
+  },
+  "IV / tag encoding": {
+    "zh-TW": "IV / 標籤編碼",
+    "es": "Codificación IV / etiqueta",
+    "it": "Codifica IV / tag",
+    "ja": "IV / タグのエンコード",
+    "pt-BR": "Codificação IV / etiqueta",
+    "ko": "IV / 태그 인코딩",
+    "tr": "IV / etiket kodlaması",
+    "az": "IV / etiket kodlaşdırılması"
+  },
+  "Leave empty to generate randomly": {
+    "zh-TW": "留空則隨機產生",
+    "es": "Dejar vacío para generar aleatoriamente",
+    "it": "Lascia vuoto per generare casualmente",
+    "ja": "空欄でランダム生成",
+    "pt-BR": "Deixe vazio para gerar aleatoriamente",
+    "ko": "비워두면 무작위 생성",
+    "tr": "Rastgele üretmek için boş bırakın",
+    "az": "Təsadüfi yaratmaq üçün boş saxlayın"
+  },
+  "Required": {
+    "zh-TW": "必填",
+    "es": "Obligatorio",
+    "it": "Obbligatorio",
+    "ja": "必須",
+    "pt-BR": "Obrigatório",
+    "ko": "필수",
+    "tr": "Gerekli",
+    "az": "Tələb olunur"
+  },
+  "AAD encoding": {
+    "zh-TW": "AAD 編碼",
+    "es": "Codificación AAD",
+    "it": "Codifica AAD",
+    "ja": "AAD のエンコード",
+    "pt-BR": "Codificação AAD",
+    "ko": "AAD 인코딩",
+    "tr": "AAD kodlaması",
+    "az": "AAD kodlaşdırılması"
+  },
+  "Additional authenticated data (optional)": {
+    "zh-TW": "附加驗證資料（選填）",
+    "es": "Datos autenticados adicionales (opcional)",
+    "it": "Dati autenticati aggiuntivi (facoltativo)",
+    "ja": "追加認証データ（省略可）",
+    "pt-BR": "Dados autenticados adicionais (opcional)",
+    "ko": "추가 인증 데이터(선택)",
+    "tr": "Ek kimlik doğrulama verileri (isteğe bağlı)",
+    "az": "Əlavə təsdiqlənmiş məlumatlar (istəyə bağlı)"
+  },
+  "Key material (hex/base64)": {
+    "zh-TW": "金鑰內容（hex/base64）",
+    "es": "Material de clave (hex/base64)",
+    "it": "Materiale della chiave (hex/base64)",
+    "ja": "鍵データ（hex/base64）",
+    "pt-BR": "Material da chave (hex/base64)",
+    "ko": "키 자료(hex/base64)",
+    "tr": "Anahtar verisi (hex/base64)",
+    "az": "Açar məlumatı (hex/base64)"
+  },
+  "e.g. 00 or deadbeef": {
+    "zh-TW": "例如 00 或 deadbeef",
+    "es": "p. ej., 00 o deadbeef",
+    "it": "es. 00 o deadbeef",
+    "ja": "例：00 または deadbeef",
+    "pt-BR": "ex.: 00 ou deadbeef",
+    "ko": "예: 00 또는 deadbeef",
+    "tr": "Örn. 00 veya deadbeef",
+    "az": "Məs. 00 və ya deadbeef"
+  },
+  "Provide a key to compute automatically.": {
+    "zh-TW": "提供金鑰後自動計算。",
+    "es": "Introduce una clave para calcular automáticamente.",
+    "it": "Inserisci una chiave per il calcolo automatico.",
+    "ja": "鍵を入力すると自動計算します。",
+    "pt-BR": "Forneça uma chave para calcular automaticamente.",
+    "ko": "키를 입력하면 자동으로 계산합니다.",
+    "tr": "Otomatik hesaplamak için anahtar girin.",
+    "az": "Avtomatik hesablamaq üçün açar daxil edin."
+  },
+  "Use Hex": {
+    "zh-TW": "使用十六進位",
+    "es": "Usar hexadecimal",
+    "it": "Usa esadecimale",
+    "ja": "16 進数を使用",
+    "pt-BR": "Usar hexadecimal",
+    "ko": "16진수 사용",
+    "tr": "Onaltılık kullan",
+    "az": "Onaltılıq istifadə et"
+  },
+  "Computing…": {
+    "zh-TW": "計算中…",
+    "es": "Calculando…",
+    "it": "Calcolo…",
+    "ja": "計算中…",
+    "pt-BR": "Calculando…",
+    "ko": "계산 중…",
+    "tr": "Hesaplanıyor…",
+    "az": "Hesablanır…"
+  },
+  "Use as input": {
+    "zh-TW": "用作輸入",
+    "es": "Usar como entrada",
+    "it": "Usa come input",
+    "ja": "入力として使用",
+    "pt-BR": "Usar como entrada",
+    "ko": "입력으로 사용",
+    "tr": "Girdi olarak kullan",
+    "az": "Giriş kimi istifadə et"
+  },
+  "UTF-8 preview": {
+    "zh-TW": "UTF-8 預覽",
+    "es": "Vista previa UTF-8",
+    "it": "Anteprima UTF-8",
+    "ja": "UTF-8 プレビュー",
+    "pt-BR": "Prévia UTF-8",
+    "ko": "UTF-8 미리보기",
+    "tr": "UTF-8 önizlemesi",
+    "az": "UTF-8 önizləməsi"
+  },
+  "Input (Hex)": {
+    "zh-TW": "輸入（十六進位）",
+    "es": "Entrada (hexadecimal)",
+    "it": "Input (esadecimale)",
+    "ja": "入力（16 進数）",
+    "pt-BR": "Entrada (hexadecimal)",
+    "ko": "입력(16진수)",
+    "tr": "Girdi (onaltılık)",
+    "az": "Giriş (onaltılıq)"
+  },
+  "Input (Text)": {
+    "zh-TW": "輸入（文字）",
+    "es": "Entrada (texto)",
+    "it": "Input (testo)",
+    "ja": "入力（テキスト）",
+    "pt-BR": "Entrada (texto)",
+    "ko": "입력(텍스트)",
+    "tr": "Girdi (metin)",
+    "az": "Giriş (mətn)"
+  },
+  "Plaintext": {
+    "zh-TW": "明文",
+    "es": "Texto plano",
+    "it": "Testo in chiaro",
+    "ja": "平文",
+    "pt-BR": "Texto simples",
+    "ko": "평문",
+    "tr": "Düz metin",
+    "az": "Açıq mətn"
+  },
+  "Ciphertext": {
+    "zh-TW": "密文",
+    "es": "Texto cifrado",
+    "it": "Testo cifrato",
+    "ja": "暗号文",
+    "pt-BR": "Texto cifrado",
+    "ko": "암호문",
+    "tr": "Şifreli metin",
+    "az": "Şifrəli mətn"
+  },
+  "e.g. 68656c6c6f (hex for hello)": {
+    "zh-TW": "例如 68656c6c6f（hello 的十六進位）",
+    "es": "p. ej., 68656c6c6f (hello en hexadecimal)",
+    "it": "es. 68656c6c6f (hello in esadecimale)",
+    "ja": "例：68656c6c6f（hello の16進数）",
+    "pt-BR": "ex.: 68656c6c6f (hello em hexadecimal)",
+    "ko": "예: 68656c6c6f(hello의 16진수)",
+    "tr": "Örn. 68656c6c6f (hello için onaltılık)",
+    "az": "Məs. 68656c6c6f (hello üçün onaltılıq)"
+  },
+  "e.g. hello": {
+    "zh-TW": "例如 hello",
+    "es": "p. ej., hello",
+    "it": "es. hello",
+    "ja": "例：hello",
+    "pt-BR": "ex.: hello",
+    "ko": "예: hello",
+    "tr": "Örn. hello",
+    "az": "Məs. hello"
+  },
+  "Dialect": {
+    "zh-TW": "方言",
+    "es": "Dialecto",
+    "it": "Dialetto",
+    "ja": "方言",
+    "pt-BR": "Dialeto",
+    "ko": "방언",
+    "tr": "Lehçe",
+    "az": "Dialekt"
+  },
+  "Format": {
+    "zh-TW": "格式化",
+    "es": "Formatear",
+    "it": "Formatta",
+    "ja": "整形",
+    "pt-BR": "Formatar",
+    "ko": "서식 지정",
+    "tr": "Biçimlendir",
+    "az": "Formatla"
+  },
+  "Validate": {
+    "zh-TW": "驗證",
+    "es": "Validar",
+    "it": "Convalida",
+    "ja": "検証",
+    "pt-BR": "Validar",
+    "ko": "검증",
+    "tr": "Doğrula",
+    "az": "Yoxla"
+  },
+  "Indent": {
+    "zh-TW": "縮排",
+    "es": "Sangría",
+    "it": "Rientro",
+    "ja": "インデント",
+    "pt-BR": "Recuo",
+    "ko": "들여쓰기",
+    "tr": "Girinti",
+    "az": "Abzas"
+  },
+  "2 spaces": {
+    "zh-TW": "2 個空格",
+    "es": "2 espacios",
+    "it": "2 spazi",
+    "ja": "スペース 2 個",
+    "pt-BR": "2 espaços",
+    "ko": "공백 2개",
+    "tr": "2 boşluk",
+    "az": "2 boşluq"
+  },
+  "4 spaces": {
+    "zh-TW": "4 個空格",
+    "es": "4 espacios",
+    "it": "4 spazi",
+    "ja": "スペース 4 個",
+    "pt-BR": "4 espaços",
+    "ko": "공백 4개",
+    "tr": "4 boşluk",
+    "az": "4 boşluq"
+  },
+  "8 spaces": {
+    "zh-TW": "8 個空格",
+    "es": "8 espacios",
+    "it": "8 spazi",
+    "ja": "スペース 8 個",
+    "pt-BR": "8 espaços",
+    "ko": "공백 8개",
+    "tr": "8 boşluk",
+    "az": "8 boşluq"
+  },
+  "Source": {
+    "zh-TW": "原始碼",
+    "es": "Código fuente",
+    "it": "Codice sorgente",
+    "ja": "ソース",
+    "pt-BR": "Código-fonte",
+    "ko": "소스",
+    "tr": "Kaynak",
+    "az": "Mənbə"
+  },
+  "Result": {
+    "zh-TW": "結果",
+    "es": "Resultado",
+    "it": "Risultato",
+    "ja": "結果",
+    "pt-BR": "Resultado",
+    "ko": "결과",
+    "tr": "Sonuç",
+    "az": "Nəticə"
+  },
+  "Processing…": {
+    "zh-TW": "處理中…",
+    "es": "Procesando…",
+    "it": "Elaborazione…",
+    "ja": "処理中…",
+    "pt-BR": "Processando…",
+    "ko": "처리 중…",
+    "tr": "İşleniyor…",
+    "az": "Emal edilir…"
+  },
+  "HEX color value": {
+    "zh-TW": "HEX 色彩值",
+    "es": "Valor de color HEX",
+    "it": "Valore colore HEX",
+    "ja": "HEX カラー値",
+    "pt-BR": "Valor de cor HEX",
+    "ko": "HEX 색상 값",
+    "tr": "HEX renk değeri",
+    "az": "HEX rəng dəyəri"
+  },
+  "e.g. FF5733": {
+    "zh-TW": "例如 FF5733",
+    "es": "p. ej., FF5733",
+    "it": "es. FF5733",
+    "ja": "例：FF5733",
+    "pt-BR": "ex.: FF5733",
+    "ko": "예: FF5733",
+    "tr": "Örn. FF5733",
+    "az": "Məs. FF5733"
+  },
+  "Range: 0-255": {
+    "zh-TW": "範圍：0–255",
+    "es": "Rango: 0–255",
+    "it": "Intervallo: 0–255",
+    "ja": "範囲：0～255",
+    "pt-BR": "Intervalo: 0–255",
+    "ko": "범위: 0–255",
+    "tr": "Aralık: 0–255",
+    "az": "Aralıq: 0–255"
+  },
+  "Range: 0-100%": {
+    "zh-TW": "範圍：0–100%",
+    "es": "Rango: 0–100%",
+    "it": "Intervallo: 0–100%",
+    "ja": "範囲：0～100%",
+    "pt-BR": "Intervalo: 0–100%",
+    "ko": "범위: 0–100%",
+    "tr": "Aralık: 0–100%",
+    "az": "Aralıq: 0–100%"
+  },
+  "H: 0-360°, S/V: 0-100%": {
+    "zh-TW": "H：0–360°，S/V：0–100%",
+    "es": "H: 0–360°, S/V: 0–100%",
+    "it": "H: 0–360°, S/V: 0–100%",
+    "ja": "H：0～360°、S/V：0～100%",
+    "pt-BR": "H: 0–360°, S/V: 0–100%",
+    "ko": "H: 0–360°, S/V: 0–100%",
+    "tr": "H: 0–360°, S/V: 0–100%",
+    "az": "H: 0–360°, S/V: 0–100%"
+  },
+  "Color wheel": {
+    "zh-TW": "色輪",
+    "es": "Rueda de color",
+    "it": "Ruota dei colori",
+    "ja": "カラーホイール",
+    "pt-BR": "Círculo cromático",
+    "ko": "색상환",
+    "tr": "Renk çarkı",
+    "az": "Rəng çarxı"
+  },
+  "Pick color": {
+    "zh-TW": "擷取色彩",
+    "es": "Elegir color",
+    "it": "Scegli colore",
+    "ja": "色を選択",
+    "pt-BR": "Escolher cor",
+    "ko": "색상 선택",
+    "tr": "Renk seç",
+    "az": "Rəng seç"
+  },
+  "Current values": {
+    "zh-TW": "目前數值",
+    "es": "Valores actuales",
+    "it": "Valori attuali",
+    "ja": "現在の値",
+    "pt-BR": "Valores atuais",
+    "ko": "현재 값",
+    "tr": "Geçerli değerler",
+    "az": "Cari dəyərlər"
+  },
+  "Pick from the screen, drag the wheel, or type on the left": {
+    "zh-TW": "從螢幕取色、拖曳色輪，或在左側輸入",
+    "es": "Elige de la pantalla, arrastra la rueda o escribe a la izquierda",
+    "it": "Scegli dallo schermo, trascina la ruota o scrivi a sinistra",
+    "ja": "画面から色を取得、ホイールをドラッグ、または左側に入力",
+    "pt-BR": "Escolha na tela, arraste o círculo ou digite à esquerda",
+    "ko": "화면에서 선택하거나 색상환을 끌거나 왼쪽에 입력하세요",
+    "tr": "Ekrandan seçin, çarkı sürükleyin veya sola yazın",
+    "az": "Ekrandan seçin, çarxı sürükləyin və ya solda yazın"
+  },
+  "Eyedropper unavailable; opened the system color picker": {
+    "zh-TW": "滴管不可用，已開啟系統色彩選擇器",
+    "es": "Cuentagotas no disponible; se abrió el selector del sistema",
+    "it": "Contagocce non disponibile; aperto il selettore di sistema",
+    "ja": "スポイトを使用できないため、システムの色選択を開きました",
+    "pt-BR": "Conta-gotas indisponível; seletor do sistema aberto",
+    "ko": "스포이드를 사용할 수 없어 시스템 색상 선택기를 열었습니다",
+    "tr": "Damlalık kullanılamıyor; sistem renk seçicisi açıldı",
+    "az": "Damcı aləti əlçatan deyil; sistem rəng seçicisi açıldı"
+  },
+  "Color picking is not available here": {
+    "zh-TW": "此處無法擷取色彩",
+    "es": "No se puede elegir color aquí",
+    "it": "Selezione colore non disponibile qui",
+    "ja": "ここでは色を取得できません",
+    "pt-BR": "Seleção de cor indisponível aqui",
+    "ko": "여기서는 색상을 선택할 수 없습니다",
+    "tr": "Burada renk seçilemiyor",
+    "az": "Burada rəng seçmək mümkün deyil"
+  },
+  "Color wheel: hue and saturation": {
+    "zh-TW": "色輪：色相與飽和度",
+    "es": "Rueda: tono y saturación",
+    "it": "Ruota: tonalità e saturazione",
+    "ja": "カラーホイール：色相と彩度",
+    "pt-BR": "Círculo: matiz e saturação",
+    "ko": "색상환: 색조 및 채도",
+    "tr": "Renk çarkı: ton ve doygunluk",
+    "az": "Rəng çarxı: ton və doyma"
+  },
+  "Hue {0}°, saturation {1}%": {
+    "zh-TW": "色相 {0}°，飽和度 {1}%",
+    "es": "Tono {0}°, saturación {1}%",
+    "it": "Tonalità {0}°, saturazione {1}%",
+    "ja": "色相 {0}°、彩度 {1}%",
+    "pt-BR": "Matiz {0}°, saturação {1}%",
+    "ko": "색조 {0}°, 채도 {1}%",
+    "tr": "Ton {0}°, doygunluk {1}%",
+    "az": "Ton {0}°, doyma {1}%"
+  },
+  "Brightness": {
+    "zh-TW": "明度",
+    "es": "Brillo",
+    "it": "Luminosità",
+    "ja": "明るさ",
+    "pt-BR": "Brilho",
+    "ko": "밝기",
+    "tr": "Parlaklık",
+    "az": "Parlaqlıq"
+  },
+  "Current color": {
+    "zh-TW": "目前色彩",
+    "es": "Color actual",
+    "it": "Colore attuale",
+    "ja": "現在の色",
+    "pt-BR": "Cor atual",
+    "ko": "현재 색상",
+    "tr": "Geçerli renk",
+    "az": "Cari rəng"
+  },
+  "Beijing time → timestamp (quick format: YYYYMMDDHHMMSS)": {
+    "az": "Pekin vaxtı → zaman nişanı (sürətli format: YYYYMMDDHHMMSS)"
+  },
+  "Also accepts 2026-09-18 20:31:17, 2026/09/18 20:31:17, and ISO 8601.": {
+    "az": "2026-09-18 20:31:17, 2026/09/18 20:31:17 və ISO 8601 formatları da qəbul edilir."
+  },
+  "Fill in year, month, day, hour, minute, second, and millisecond": {
+    "az": "İl, ay, gün, saat, dəqiqə, saniyə və millisaniyəni daxil edin"
+  },
+  "Fill in year, month, day, hour, minute, and second": {
+    "az": "İl, ay, gün, saat, dəqiqə və saniyəni daxil edin"
+  }
+}

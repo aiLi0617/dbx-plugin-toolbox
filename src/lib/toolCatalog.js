@@ -3,6 +3,50 @@
 // Row: [id, category, zh-CN, zh-TW, en, view, aliases?]
 import { L } from "./locale.js";
 
+// The original catalog was bilingual, which made every non-Chinese locale
+// silently fall back to English. Keep the compact row format and layer the
+// host's other four locales on top of it here.
+const LOCALIZED_NAMES = {
+  json: ["Banco de trabajo JSON", "Area di lavoro JSON", "JSON ワークベンチ", "Bancada JSON"],
+  "data-convert": ["Conversión de formatos", "Conversione formati", "データ形式変換", "Conversão de formatos"],
+  "code-format": ["Formateador de código", "Formattatore di codice", "コードフォーマッター", "Formatador de código"],
+  spreadsheet: ["Hoja de cálculo", "Foglio di calcolo", "スプレッドシート", "Planilha"],
+  base64: ["Base / Hex", "Base / Hex", "Base / Hex", "Base / Hex"],
+  url: ["Codificación URL", "Codifica URL", "URL エンコード", "Codificação de URL"],
+  "html-entities": ["Escape de caracteres", "Escape caratteri", "文字エスケープ", "Escape de caracteres"],
+  "sql-escape": ["Escape SQL", "Escape SQL", "SQL エスケープ", "Escape SQL"],
+  "data-uri": ["URI de datos", "URI dati", "データ URI", "URI de dados"],
+  punycode: ["Punycode / IDN", "Punycode / IDN", "Punycode / IDN", "Punycode / IDN"],
+  "quoted-printable": ["Quoted-Printable", "Quoted-Printable", "Quoted-Printable", "Quoted-Printable"],
+  timestamp: ["Marca de tiempo", "Timestamp", "タイムスタンプ", "Timestamp"],
+  color: ["Conversión de color", "Conversione colori", "色変換", "Conversão de cores"],
+  cron: ["Expresión Cron", "Espressione Cron", "Cron 式", "Expressão Cron"],
+  "base-convert": ["Conversión de bases", "Conversione di base", "進数変換", "Conversão de bases"],
+  "network-calc": ["Red / CIDR", "Rete / CIDR", "ネットワーク / CIDR", "Rede / CIDR"],
+  whitespace: ["Herramientas de texto", "Strumenti di testo", "テキスト処理", "Ferramentas de texto"],
+  regex: ["Prueba de expresiones regulares", "Test espressioni regolari", "正規表現テスター", "Teste de expressões regulares"],
+  diff: ["Comparación de texto", "Confronto testi", "テキスト比較", "Comparação de texto"],
+  markdown: ["Markdown", "Markdown", "Markdown", "Markdown"],
+  "unicode-inspect": ["Inspector Unicode", "Analisi Unicode", "Unicode インスペクター", "Inspetor Unicode"],
+  hash: ["Hash y suma de verificación", "Hash e checksum", "ハッシュとチェックサム", "Hash e checksum"],
+  jwt: ["JWT", "JWT", "JWT", "JWT"],
+  aes: ["Cifrado simétrico", "Cifratura simmetrica", "対称暗号", "Criptografia simétrica"],
+  "hmac-sha256": ["HMAC", "HMAC", "HMAC", "HMAC"],
+  rsa: ["Cifrado asimétrico", "Cifratura asimmetrica", "非対称暗号", "Criptografia assimétrica"],
+  totp: ["TOTP", "TOTP", "TOTP", "TOTP"],
+  cert: ["Certificados y SSH", "Certificati e SSH", "証明書と SSH", "Certificados e SSH"],
+  jwk: ["JWK / JWKS", "JWK / JWKS", "JWK / JWKS", "JWK / JWKS"],
+  "symmetric-key": ["Clave simétrica", "Chiave simmetrica", "対称鍵", "Chave simétrica"],
+  "key-pair": ["Par de claves", "Coppia di chiavi", "鍵ペア", "Par de chaves"],
+  xor: ["XOR (depuración)", "XOR (debug)", "XOR（デバッグ）", "XOR (depuração)"],
+  uuid: ["ID único", "ID univoco", "一意の ID", "ID único"],
+  password: ["Contraseña aleatoria", "Password casuale", "ランダムパスワード", "Senha aleatória"],
+  qrcode: ["QR y códigos de barras", "QR e codici a barre", "QR・バーコード", "QR e códigos de barras"],
+  lorem: ["Texto repetido", "Testo ripetuto", "繰り返しテキスト", "Texto repetido"],
+  "image-process": ["Editor de imágenes", "Editor immagini", "画像編集", "Editor de imagens"],
+  "image-generate": ["Imagen de marcador", "Immagine segnaposto", "プレースホルダー画像", "Imagem de espaço reservado"],
+};
+
 const rows = [
   // —— 数据与代码 ——
   ["json", "format", "JSON 工作台", "JSON 工作台", "JSON workbench", "json-workbench", [
@@ -151,10 +195,13 @@ const rows = [
   ]],
 ];
 
-export const TOOL_DEFS = rows.map(([id, category, zhCN, zhTW, en, view, aliases]) => ({
-  id,
-  category,
-  name: L(en, zhCN, zhTW, en, en, en, en),
-  view,
-  ...(aliases ? { aliases } : {}),
-}));
+export const TOOL_DEFS = rows.map(([id, category, zhCN, zhTW, en, view, aliases]) => {
+  const [es = en, it = en, ja = en, ptBR = en] = LOCALIZED_NAMES[id] || [];
+  return {
+    id,
+    category,
+    name: L(en, zhCN, zhTW, es, it, ja, ptBR),
+    view,
+    ...(aliases ? { aliases } : {}),
+  };
+});

@@ -81,7 +81,7 @@ export function precisionErrorMessage(error, locale = "en") {
   if (error?.code === "UNSAFE_NUMBER") {
     const value = error.value;
     return localize(locale, L(
-      error.message || `Number ${value} cannot be converted without losing precision.`,
+      `Number ${value} cannot be converted without losing precision.`,
       `数字 ${value} 无法无损转换。格式化和压缩会保留原值；树形编辑和当前格式转换已停止，避免精度丢失。`,
       `數字 ${value} 無法無損轉換。格式化和壓縮會保留原值；樹形編輯和目前格式轉換已停止，避免精度遺失。`,
       `El número ${value} no se puede convertir sin perder precisión. El formato y la minificación conservan el valor; se detuvo la edición en árbol y la conversión.`,

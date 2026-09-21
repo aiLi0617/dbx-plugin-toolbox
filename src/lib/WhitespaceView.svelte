@@ -71,11 +71,11 @@
     {:else if kind === "replace"}
       <label class="field grow">
         <span>{t("查找", "Find")}</span>
-        <input class="dbx-input" placeholder="find" bind:value={find} />
+        <input class="dbx-input" placeholder={t("查找", "Find")} bind:value={find} />
       </label>
       <label class="field grow">
         <span>{t("替换", "Replace")}</span>
-        <input class="dbx-input" placeholder="replace" bind:value={replace} />
+        <input class="dbx-input" placeholder={t("替换", "Replace")} bind:value={replace} />
       </label>
     {:else}
       <div class="field">

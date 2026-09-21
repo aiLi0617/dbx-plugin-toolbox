@@ -249,16 +249,16 @@
         <div class="opts">
           <label class="field">
             <span>{t("宽度", "Width")}</span>
-            <NumberInput class="size" min="1" max="12000" ariaLabel={t("宽度", "Width")} bind:value={width} />
+            <NumberInput {locale} class="size" min="1" max="12000" ariaLabel={t("宽度", "Width")} bind:value={width} />
           </label>
           <label class="field">
             <span>{t("高度", "Height")}</span>
-            <NumberInput class="size" min="1" max="12000" ariaLabel={t("高度", "Height")} bind:value={height} />
+            <NumberInput {locale} class="size" min="1" max="12000" ariaLabel={t("高度", "Height")} bind:value={height} />
           </label>
           <label class="field target">
             <span>{t("目标大小", "Target size")}</span>
             <div class="target-row">
-              <NumberInput class="size" min={sizeMin} max={sizeMax} ariaLabel={t("目标大小", "Target size")} bind:value={sizeValue} />
+              <NumberInput {locale} class="size" min={sizeMin} max={sizeMax} ariaLabel={t("目标大小", "Target size")} bind:value={sizeValue} />
               <Select bind:value={sizeUnit} options={unitOptions} />
             </div>
           </label>

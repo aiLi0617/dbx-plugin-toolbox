@@ -562,7 +562,7 @@
         />
         {#if sizePreset === "custom"}
           <div class="custom-size">
-            <NumberInput min="128" max="2048" step="1" bind:value={customPx} />
+            <NumberInput {locale} min="128" max="2048" step="1" bind:value={customPx} />
             <span class="px">px</span>
           </div>
         {/if}

@@ -1,5 +1,7 @@
 <script>
+  import { pick } from './i18n.js';
   let {
+    locale = "zh-CN",
     value = $bindable(0),
     min = undefined,
     max = undefined,
@@ -93,7 +95,7 @@
   />
   <div class="stepper" aria-hidden="true">
     <button
-      aria-label="Increase"
+      aria-label={pick(locale, "增加", "Increase")}
       disabled={disabled || atMax}
       onmousedown={(event) => event.preventDefault()}
       onclick={(event) => bump(1, event)}
@@ -105,7 +107,7 @@
       </svg>
     </button>
     <button
-      aria-label="Decrease"
+      aria-label={pick(locale, "减少", "Decrease")}
       disabled={disabled || atMin}
       onmousedown={(event) => event.preventDefault()}
       onclick={(event) => bump(-1, event)}

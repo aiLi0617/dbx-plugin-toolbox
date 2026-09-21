@@ -389,10 +389,102 @@ const SUMMARIES = {
   ),
 };
 
+const JAPANESE_SUMMARIES = {
+  json: "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
+  "data-convert": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
+  "code-format": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
+  spreadsheet: "XLSX、CSV、TSV、JSON をローカルで開き、編集して出力",
+  base64: "Base64、Base32、Base58、Hex をエンコードまたはデコード",
+  url: "URL のパーセントエンコード／デコードとクエリパラメーターの解析",
+  "html-entities": "HTML エンティティ、Unicode、JS、JSON、CSS 識別子をエスケープ",
+  "sql-escape": "各行を SQL 文字列リテラルへ変換し、末尾カンマにも対応",
+  "data-uri": "テキストやファイルから Data URI を生成・解析",
+  punycode: "IDN と Punycode ドメイン名を相互変換",
+  "quoted-printable": "メール用 Quoted-Printable のエンコード／デコード",
+  timestamp: "Unix タイムスタンプと日時を変換し、タイムゾーン・加減算・差分に対応",
+  color: "HEX、RGB、CMYK、HSV の相互変換、カラーホイール、画面色取得",
+  cron: "Cron 式を作成し、次回の実行日時をプレビュー",
+  "base-convert": "2～36 進数を相互変換し、グループ化と接頭辞に対応",
+  "network-calc": "IPv4/IPv6 のネットワーク、マスク、範囲、サブネット分割を計算",
+  whitespace: "テキストの整理、重複削除、並べ替え、連番、列抽出、命名変換、文字数集計",
+  regex: "正規表現をテストし、マッチ結果と置換をプレビュー",
+  diff: "2 つのテキストを行・単語・文字単位で比較",
+  markdown: "入力しながら Markdown をリアルタイムプレビュー",
+  "unicode-inspect": "文字ごとの Unicode コードポイントを確認",
+  hash: "テキストやファイルの MD5、SHA、SM3、CRC32 を計算",
+  jwt: "HS / RS / PS を使って JWT をデコード、署名、検証",
+  aes: "AES / SM4 の暗号化・復号（GCM、CBC、ECB）",
+  "hmac-sha256": "SHA-1、SHA-256、SHA-384、SHA-512、SM3 による HMAC",
+  rsa: "RSA OAEP / PKCS#1 または SM2 の暗号化・復号",
+  totp: "秘密鍵から現在の TOTP コードを生成",
+  cert: "証明書の有効期限、SAN、フィンガープリント、SSH 公開鍵を確認",
+  jwk: "JWK / JWKS を検証し、RSA JWK と PEM を相互変換",
+  "symmetric-key": "AES、SM4、HMAC 鍵を生成し、必要に応じて保管庫へ保存",
+  "key-pair": "RSA / SM2 鍵ペアを生成し、ビット数と PEM 形式を指定",
+  xor: "デバッグ用にバイト単位の XOR 演算を実行",
+  uuid: "UUID、ULID、NanoID を生成",
+  password: "ランダムパスワードまたは 16 進数バイト列を生成",
+  qrcode: "QR、漢信、PDF417、Data Matrix を生成・読み取り",
+  lorem: "既定または任意のテキストを指定回数だけ繰り返し",
+  "image-process": "切り抜き、サイズ変更、回転、反転、透かし、形式変換、圧縮",
+  "image-generate": "指定したピクセル寸法とファイルサイズのプレースホルダー画像を生成",
+};
+
+// [es, it, pt-BR]. English remains the canonical source text, while every
+// locale advertised by the host gets native catalog copy.
+const ROMANCE_SUMMARIES = {
+  json: ["Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL", "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL", "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"],
+  "data-convert": ["Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML", "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML", "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"],
+  "code-format": ["Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript", "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript", "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"],
+  spreadsheet: ["Abre, edita y exporta XLSX, CSV, TSV y JSON localmente", "Apre, modifica ed esporta XLSX, CSV, TSV e JSON in locale", "Abra, edite e exporte XLSX, CSV, TSV e JSON localmente"],
+  base64: ["Codifica o decodifica Base64, Base32, Base58 o Hex", "Codifica o decodifica Base64, Base32, Base58 o Hex", "Codifique ou decodifique Base64, Base32, Base58 ou Hex"],
+  url: ["Codifica o decodifica porcentajes en URL y analiza parámetros de consulta", "Codifica o decodifica percentuali negli URL e analizza i parametri di query", "Codifique ou decodifique percentuais em URLs e analise parâmetros de consulta"],
+  "html-entities": ["Escapa entidades HTML, Unicode, JS, JSON o identificadores CSS", "Esegue l'escape di entità HTML, Unicode, JS, JSON o identificatori CSS", "Faça escape de entidades HTML, Unicode, JS, JSON ou identificadores CSS"],
+  "sql-escape": ["Convierte cada línea en un literal SQL, con comas finales opcionales", "Converte ogni riga in un letterale SQL, con virgole finali opzionali", "Converta cada linha em um literal SQL, com vírgulas finais opcionais"],
+  "data-uri": ["Crea o analiza URI de datos a partir de texto o archivos", "Crea o analizza URI dati da testo o file", "Crie ou analise URIs de dados a partir de texto ou arquivos"],
+  punycode: ["Convierte entre nombres de dominio IDN y Punycode", "Converte tra nomi di dominio IDN e Punycode", "Converta entre nomes de domínio IDN e Punycode"],
+  "quoted-printable": ["Codifica o decodifica Quoted-Printable para correo electrónico", "Codifica o decodifica Quoted-Printable per le email", "Codifique ou decodifique Quoted-Printable para e-mail"],
+  timestamp: ["Convierte marcas Unix y fechas; admite zonas horarias, aritmética y diferencias", "Converte timestamp Unix e date; supporta fusi orari, calcoli e differenze", "Converta timestamps Unix e datas; inclui fusos horários, cálculos e diferenças"],
+  color: ["Convierte HEX, RGB, CMYK y HSV; incluye rueda de color y selector de pantalla", "Converte HEX, RGB, CMYK e HSV; include ruota colori e selettore schermo", "Converta HEX, RGB, CMYK e HSV; inclui roda de cores e seletor de tela"],
+  cron: ["Crea una expresión Cron y previsualiza las próximas ejecuciones", "Crea un'espressione Cron e visualizza le prossime esecuzioni", "Crie uma expressão Cron e visualize as próximas execuções"],
+  "base-convert": ["Convierte bases de 2 a 36, con agrupación y prefijos opcionales", "Converte basi da 2 a 36, con raggruppamento e prefissi opzionali", "Converta bases de 2 a 36, com agrupamento e prefixos opcionais"],
+  "network-calc": ["Calcula redes IPv4/IPv6, máscaras, rangos y división de subredes", "Calcola reti IPv4/IPv6, maschere, intervalli e suddivisione in sottoreti", "Calcule redes IPv4/IPv6, máscaras, intervalos e divisão de sub-redes"],
+  whitespace: ["Limpia, deduplica, ordena, numera, extrae columnas, cambia nombres y cuenta texto", "Pulisce, deduplica, ordina, numera, estrae colonne, rinomina e conta il testo", "Limpe, remova duplicados, ordene, numere, extraia colunas, renomeie e conte textos"],
+  regex: ["Prueba expresiones regulares, inspecciona coincidencias y previsualiza reemplazos", "Prova espressioni regolari, analizza le corrispondenze e mostra le sostituzioni", "Teste expressões regulares, inspecione correspondências e visualize substituições"],
+  diff: ["Compara dos textos por línea, palabra o carácter", "Confronta due testi per riga, parola o carattere", "Compare dois textos por linha, palavra ou caractere"],
+  markdown: ["Previsualiza Markdown en tiempo real mientras escribes", "Mostra l'anteprima Markdown in tempo reale durante la digitazione", "Visualize Markdown em tempo real enquanto digita"],
+  "unicode-inspect": ["Inspecciona los puntos de código Unicode de cada carácter", "Analizza i punti di codice Unicode di ogni carattere", "Inspecione os pontos de código Unicode de cada caractere"],
+  hash: ["Calcula MD5, SHA, SM3 o CRC32 de texto o archivos", "Calcola MD5, SHA, SM3 o CRC32 di testo o file", "Calcule MD5, SHA, SM3 ou CRC32 de textos ou arquivos"],
+  jwt: ["Decodifica, firma o verifica JWT con HS / RS / PS", "Decodifica, firma o verifica JWT con HS / RS / PS", "Decodifique, assine ou verifique JWTs com HS / RS / PS"],
+  aes: ["Cifra o descifra con AES / SM4 (GCM, CBC, ECB)", "Cifra o decifra con AES / SM4 (GCM, CBC, ECB)", "Criptografe ou descriptografe com AES / SM4 (GCM, CBC, ECB)"],
+  "hmac-sha256": ["HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3", "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3", "HMAC com SHA-1, SHA-256, SHA-384, SHA-512 ou SM3"],
+  rsa: ["Cifra y descifra con RSA OAEP / PKCS#1 o SM2", "Cifra e decifra con RSA OAEP / PKCS#1 o SM2", "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2"],
+  totp: ["Genera el código TOTP actual a partir de un secreto", "Genera il codice TOTP corrente da un segreto", "Gere o código TOTP atual a partir de um segredo"],
+  cert: ["Inspecciona validez, SAN, huellas y claves públicas SSH", "Analizza validità, SAN, impronte e chiavi pubbliche SSH", "Inspecione validade, SANs, impressões digitais e chaves públicas SSH"],
+  jwk: ["Valida JWK / JWKS y convierte RSA JWK ↔ PEM", "Convalida JWK / JWKS e converte RSA JWK ↔ PEM", "Valide JWK / JWKS e converta RSA JWK ↔ PEM"],
+  "symmetric-key": ["Genera claves AES, SM4 o HMAC y permite guardarlas en el almacén", "Genera chiavi AES, SM4 o HMAC e consente di salvarle nell'archivio", "Gere chaves AES, SM4 ou HMAC e salve-as opcionalmente no cofre"],
+  "key-pair": ["Genera pares RSA o SM2 con opciones de bits y formato PEM", "Genera coppie RSA o SM2 con opzioni per bit e formato PEM", "Gere pares RSA ou SM2 com opções de bits e formato PEM"],
+  xor: ["Aplica XOR a bytes solo para depuración", "Applica XOR ai byte solo per il debug", "Aplique XOR a bytes somente para depuração"],
+  uuid: ["Genera valores UUID, ULID o NanoID", "Genera valori UUID, ULID o NanoID", "Gere valores UUID, ULID ou NanoID"],
+  password: ["Genera una contraseña aleatoria o bytes hexadecimales", "Genera una password casuale o byte esadecimali", "Gere uma senha aleatória ou bytes hexadecimais"],
+  qrcode: ["Genera o lee QR, Han Xin, PDF417 y Data Matrix", "Genera o legge QR, Han Xin, PDF417 e Data Matrix", "Gere ou leia QR, Han Xin, PDF417 e Data Matrix"],
+  lorem: ["Repite texto predeterminado o personalizado el número de veces elegido", "Ripete testo predefinito o personalizzato per il numero di volte scelto", "Repita um texto padrão ou personalizado pelo número de vezes escolhido"],
+  "image-process": ["Recorta, redimensiona, gira, voltea, añade marcas de agua, convierte y comprime", "Ritaglia, ridimensiona, ruota, capovolge, aggiunge filigrane, converte e comprime", "Recorte, redimensione, gire, vire, aplique marca d'água, converta e comprima"],
+  "image-generate": ["Genera imágenes de marcador con dimensiones y tamaño de archivo exactos", "Genera immagini segnaposto con dimensioni e peso esatti", "Gere imagens de espaço reservado com dimensões e tamanho de arquivo exatos"],
+};
+
 const catalog = TOOL_DEFS;
 
 export const tools = catalog.map((tool) => {
-  const summary = SUMMARIES[tool.id];
+  const baseSummary = SUMMARIES[tool.id];
+  const [es, it, ptBR] = ROMANCE_SUMMARIES[tool.id] || [];
+  const summary = baseSummary ? {
+    ...baseSummary,
+    ...(es ? { es } : {}),
+    ...(it ? { it } : {}),
+    ...(JAPANESE_SUMMARIES[tool.id] ? { ja: JAPANESE_SUMMARIES[tool.id] } : {}),
+    ...(ptBR ? { "pt-BR": ptBR } : {}),
+  } : baseSummary;
   const aliases = tool.id === "whitespace"
     ? [...(tool.aliases || []), ...TEXT_ACTIONS.flatMap((action) => [action.id, action.zh, action.en, ...action.aliases])]
     : tool.aliases;

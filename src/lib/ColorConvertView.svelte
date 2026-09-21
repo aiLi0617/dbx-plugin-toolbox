@@ -547,10 +547,9 @@
     border-radius: var(--radius-md, 8px);
     background: var(--color-background, Canvas);
   }
-  .hex-field:focus-within {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+  .hex-field:has(input:focus-visible) {
     border-color: var(--color-ring, var(--color-primary));
+    box-shadow: var(--dbx-focus-ring);
   }
   .hex-field.invalid {
     border-color: var(--color-destructive);

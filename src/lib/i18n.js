@@ -90,9 +90,8 @@ function localizeXmlDetail(locale, raw) {
     /^Expected closing tag '(.+)' \(opened in line (\d+), col (\d+)\) instead of closing tag '(.+)'\.?$/,
   );
   if (expectedClose) {
-    const en = expectedClose[0].endsWith(".") ? expectedClose[0] : `${expectedClose[0]}.`;
     return localize(locale, L(
-      en,
+      `Expected closing tag '${expectedClose[1]}' (opened in line ${expectedClose[2]}, col ${expectedClose[3]}) instead of closing tag '${expectedClose[4]}'.`,
       `期望结束标签「${expectedClose[1]}」（在第 ${expectedClose[2]} 行第 ${expectedClose[3]} 列打开），实际为「${expectedClose[4]}」`,
       `期望結束標籤「${expectedClose[1]}」（在第 ${expectedClose[2]} 行第 ${expectedClose[3]} 列打開），實際為「${expectedClose[4]}」`,
       `Se esperaba la etiqueta de cierre '${expectedClose[1]}' (abierta en línea ${expectedClose[2]}, col. ${expectedClose[3]}), no '${expectedClose[4]}'.`,
@@ -148,6 +147,9 @@ function jsonWhere(locale, v8Pos, fxPos) {
     if (key === "pt-BR") {
       return { en, local: v8Pos[2] ? ` (linha ${v8Pos[2]}, coluna ${v8Pos[3]}, posição ${v8Pos[1]})` : ` (posição ${v8Pos[1]})` };
     }
+    if (key === "ko") return { en, local: v8Pos[2] ? ` (${v8Pos[2]}행 ${v8Pos[3]}열, 위치 ${v8Pos[1]})` : ` (위치 ${v8Pos[1]})` };
+    if (key === "tr") return { en, local: v8Pos[2] ? ` (satır ${v8Pos[2]}, sütun ${v8Pos[3]}, konum ${v8Pos[1]})` : ` (konum ${v8Pos[1]})` };
+    if (key === "az") return { en, local: v8Pos[2] ? ` (sətir ${v8Pos[2]}, sütun ${v8Pos[3]}, mövqe ${v8Pos[1]})` : ` (mövqe ${v8Pos[1]})` };
     return { en, local: en };
   }
   if (fxPos) {
@@ -157,6 +159,9 @@ function jsonWhere(locale, v8Pos, fxPos) {
     if (key === "es") return { en, local: ` (línea ${fxPos[1]}, columna ${fxPos[2]})` };
     if (key === "it") return { en, local: ` (riga ${fxPos[1]}, colonna ${fxPos[2]})` };
     if (key === "pt-BR") return { en, local: ` (linha ${fxPos[1]}, coluna ${fxPos[2]})` };
+    if (key === "ko") return { en, local: ` (${fxPos[1]}행 ${fxPos[2]}열)` };
+    if (key === "tr") return { en, local: ` (satır ${fxPos[1]}, sütun ${fxPos[2]})` };
+    if (key === "az") return { en, local: ` (sətir ${fxPos[1]}, sütun ${fxPos[2]})` };
     return { en, local: en };
   }
   return { en: "", local: "" };
@@ -276,7 +281,7 @@ function localizeJsonSyntaxError(locale, raw) {
   const tokenJson = body.match(/^Unexpected token (.+), .+ is not valid JSON$/i);
   if (tokenJson) {
     return localize(locale, L(
-      tokenJson[0],
+      `JSON syntax error: unexpected ${tokenJson[1]}${whereLocal}`,
       `JSON 语法错误：意外的 ${tokenJson[1]}${whereLocal}`,
       `JSON 語法錯誤：意外的 ${tokenJson[1]}${whereLocal}`,
       `Error de sintaxis JSON: ${tokenJson[1]} inesperado${whereLocal}`,
@@ -312,7 +317,7 @@ function localizeJsonSyntaxError(locale, raw) {
   if (!/in JSON|is not valid JSON|^JSON\.parse:/i.test(raw)) return null;
   if (key === "en") return raw;
   return localize(locale, L(
-    raw,
+    `JSON parse failed: ${body}${whereLocal}`,
     `JSON 解析失败：${body}${whereLocal}`,
     `JSON 解析失敗：${body}${whereLocal}`,
     `Error al analizar JSON: ${body}${whereLocal}`,
@@ -350,7 +355,7 @@ export function localizeError(locale, err) {
   const keyLen = raw.match(/^Key length must be (\d+) bytes$/);
   if (keyLen) {
     return localize(locale, L(
-      raw,
+      `Key length must be ${keyLen[1]} bytes`,
       `密钥长度必须是 ${keyLen[1]} 字节`,
       `金鑰長度必須是 ${keyLen[1]} 位元組`,
       `La clave debe tener ${keyLen[1]} bytes`,
@@ -363,7 +368,7 @@ export function localizeError(locale, err) {
   if (ivLen) {
     const name = ivLen[1];
     return localize(locale, L(
-      raw,
+      `${name} must be ${ivLen[2]} bytes`,
       `${name} 必须是 ${ivLen[2]} 字节`,
       `${name} 必須是 ${ivLen[2]} 位元組`,
       `${name} debe tener ${ivLen[2]} bytes`,
@@ -438,7 +443,7 @@ export function localizeError(locale, err) {
   const datePath = raw.match(/^Date\/time at (.+) cannot be converted without changing its type\. Quote it as a string first\.$/);
   if (datePath) {
     return localize(locale, L(
-      raw,
+      `Date/time at ${datePath[1]} cannot be converted without changing its type. Quote it as a string first.`,
       `${datePath[1]} 处的日期/时间无法原样转换，请先写成字符串`,
       `${datePath[1]} 處的日期/時間無法原樣轉換，請先寫成字串`,
       `La fecha/hora en ${datePath[1]} no se puede convertir sin cambiar el tipo. Escríbela primero como cadena.`,
@@ -462,7 +467,7 @@ export function localizeError(locale, err) {
   const tomlNull = raw.match(/^TOML cannot represent null at (.+)\. Remove it or choose another format\.$/);
   if (tomlNull) {
     return localize(locale, L(
-      raw,
+      `TOML cannot represent null at ${tomlNull[1]}. Remove it or choose another format.`,
       `TOML 无法表示 ${tomlNull[1]} 处的 null，请删除或改用其他格式`,
       `TOML 無法表示 ${tomlNull[1]} 處的 null，請刪除或改用其他格式`,
       `TOML no puede representar null en ${tomlNull[1]}. Elimínalo o elige otro formato.`,
@@ -477,6 +482,12 @@ export function localizeError(locale, err) {
 }
 
 export const chrome = {
+  pluginName: L("DBX Toolbox", "DBX 工具箱", "DBX 工具箱", "Herramientas DBX", "Strumenti DBX", "DBX ツールボックス", "Ferramentas DBX"),
+  toolLoadFailed: L("Failed to load tool", "工具加载失败", "工具載入失敗", "No se pudo cargar la herramienta", "Impossibile caricare lo strumento", "ツールを読み込めませんでした", "Falha ao carregar a ferramenta"),
+  retry: L("Retry", "重试", "重試", "Reintentar", "Riprova", "再試行", "Tentar novamente"),
+  loadingTool: L("Loading tool…", "正在加载工具…", "正在載入工具…", "Cargando herramienta…", "Caricamento dello strumento…", "ツールを読み込み中…", "Carregando ferramenta…"),
+  removeFavorite: L("Remove favorite", "从常用移除", "從常用移除", "Quitar de favoritos", "Rimuovi dai preferiti", "お気に入りから削除", "Remover dos favoritos"),
+  addFavorite: L("Add favorite", "添加到常用", "新增至常用", "Añadir a favoritos", "Aggiungi ai preferiti", "お気に入りに追加", "Adicionar aos favoritos"),
   brand: L("Toolbox", "工具箱", "工具箱", "Herramientas", "Strumenti", "ツールボックス", "Ferramentas"),
   search: L("Search tools", "搜索工具", "搜尋工具", "Buscar herramientas", "Cerca strumenti", "ツールを検索", "Buscar ferramentas"),
   searchPlaceholder: L(

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { CATEGORY_ORDER, DEFAULT_ENABLED_IDS, tools, toolsByCategory, toolsByIds } from "./lib/catalog.js";
   import { chrome, pick } from "./lib/i18n.js";
-  import { applyTheme, invoke, locale as hostLocale, ready } from "./lib/host.js";
+  import { applyTheme, invoke, locale as hostLocale, observeEnvironment, ready } from "./lib/host.js";
   import {
     DEFAULT_VAULT_AUTO_LOCK_MINUTES,
     getFavoriteToolIds,
@@ -56,10 +56,10 @@
   const sessionTools = $derived(toolsByIds(sessionToolIds));
   const fillPane = $derived(page === "vault" || (page === "tool" && FILL_VIEWS.has(tool?.view)));
   const title = $derived.by(() => {
-    if (page === "home") return pick(locale, "首页", "Home");
+    if (page === "home") return pick(locale, chrome.home);
     if (page === "catalog") return pick(locale, chrome.allTools);
     if (page === "vault") return pick(locale, chrome.vault);
-    return tool ? pick(locale, tool.name) : pick(locale, "首页", "Home");
+    return tool ? pick(locale, tool.name) : pick(locale, chrome.home);
   });
 
   onMount(() => {
@@ -68,7 +68,12 @@
     try { recentIds = sanitizeToolIds(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"), 10); } catch { recentIds = []; }
     // DBX's sandboxed iframe may deny access to browser storage.
     try { sidebarCollapsed = localStorage.getItem(SIDEBAR_KEY) === "true"; } catch { sidebarCollapsed = false; }
-    const onEnv = () => { locale = hostLocale(); applyTheme(); };
+    const onEnv = (environment) => {
+      locale = hostLocale(environment);
+      document.documentElement.lang = locale;
+      document.title = pick(locale, chrome.pluginName);
+      applyTheme();
+    };
     const onVaultChange = () => { void refreshKeys(); };
     const onActivity = () => recordVaultActivity();
     const onResume = () => { if (!document.hidden) void enforceVaultAutoLock(); };
@@ -83,20 +88,19 @@
     window.addEventListener("toolbox-vault-change", onVaultChange);
     const initialize = async () => {
       await ready(); if (disposed) return;
-      onEnv();
+      // Subscribe before loading preferences: language/theme changes must not be
+      // lost while the sidecar-backed startup work is still in flight.
+      offInit = observeEnvironment(onEnv);
       [favoriteIds, vaultAutoLockMinutes] = await Promise.all([
         getFavoriteToolIds(),
         getVaultAutoLockMinutes(),
       ]);
       if (disposed) return;
       await refreshKeys();
-      window.addEventListener("dbx-plugin-env", onEnv);
-      offInit = typeof window.dbxPlugin?.onInit === "function" ? window.dbxPlugin.onInit(onEnv) : undefined;
     };
     void initialize();
     return () => {
       disposed = true;
-      window.removeEventListener("dbx-plugin-env", onEnv);
       window.removeEventListener("keydown", onShortcut);
       window.removeEventListener("keydown", onActivity);
       window.removeEventListener("pointerdown", onActivity);
@@ -260,11 +264,11 @@
     {:else}<ActiveView {locale} {initialOptions} />{/if}
   {:else if viewLoadErrors[item.view]}
     <div class="view-load-state" role="alert">
-      <span>{pick(locale, "工具加载失败", "Failed to load tool")}: {viewLoadErrors[item.view]}</span>
-      <button class="dbx-btn" type="button" onclick={() => ensureViewLoaded(item.view)}>{pick(locale, "重试", "Retry")}</button>
+      <span>{pick(locale, chrome.toolLoadFailed)}: {viewLoadErrors[item.view]}</span>
+      <button class="dbx-btn" type="button" onclick={() => ensureViewLoaded(item.view)}>{pick(locale, chrome.retry)}</button>
     </div>
   {:else}
-    <div class="view-load-state" role="status">{pick(locale, "正在加载工具…", "Loading tool…")}</div>
+    <div class="view-load-state" role="status">{pick(locale, chrome.loadingTool)}</div>
   {/if}
 {/snippet}
 
@@ -277,7 +281,7 @@
       <h2>{title}</h2>
       <div class="toolbar-end">
         {#if page === "tool" && tool}
-          <button class="dbx-btn dbx-btn--ghost icon-btn favorite-action" class:active={favoriteSet.has(tool.id)} disabled={savingPrefs} onclick={() => toggleFavorite(tool.id)} type="button" aria-label={favoriteSet.has(tool.id) ? pick(locale,"从常用移除","Remove favorite") : pick(locale,"添加到常用","Add favorite")} title={favoriteSet.has(tool.id) ? pick(locale,"从常用移除","Remove favorite") : pick(locale,"添加到常用","Add favorite")}>{favoriteSet.has(tool.id) ? "★" : "☆"}</button>
+          <button class="dbx-btn dbx-btn--ghost icon-btn favorite-action" class:active={favoriteSet.has(tool.id)} disabled={savingPrefs} onclick={() => toggleFavorite(tool.id)} type="button" aria-label={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)} title={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)}>{favoriteSet.has(tool.id) ? "★" : "☆"}</button>
         {/if}
       </div>
     </div>

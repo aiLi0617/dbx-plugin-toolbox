@@ -17,6 +17,8 @@
   let triggerEl = $state(null);
   let menuEl = $state(null);
   let activeIndex = $state(-1);
+  let keyboardFocus = $state(false);
+  let pointerFocusing = false;
   let pos = $state({ top: 0, left: 0, width: 160, maxHeight: 240 });
   let search = "";
   let searchAt = 0;
@@ -149,8 +151,21 @@
     });
   }
 
+  function onTriggerPointerDown() {
+    pointerFocusing = true;
+    keyboardFocus = false;
+    setTimeout(() => {
+      pointerFocusing = false;
+    }, 0);
+  }
+
+  function onTriggerFocus() {
+    keyboardFocus = !pointerFocusing;
+  }
+
   async function onTriggerKey(event) {
     if (disabled) return;
+    keyboardFocus = true;
     if (event.key === "Tab") {
       if (open) closeMenu(false);
       return;
@@ -214,6 +229,7 @@
     bind:this={triggerEl}
     class="trigger"
     class:placeholder={!selectedLabel}
+    class:keyboard-focus={keyboardFocus}
     type="button"
     role="combobox"
     aria-autocomplete="none"
@@ -224,6 +240,9 @@
     aria-label={ariaLabel || undefined}
     disabled={disabled}
     onclick={toggle}
+    onpointerdown={onTriggerPointerDown}
+    onfocus={onTriggerFocus}
+    onblur={() => (keyboardFocus = false)}
     onkeydown={onTriggerKey}
   >
     <span class="value">{shownLabel}</span>
@@ -256,7 +275,10 @@
           tabindex="-1"
           aria-selected={String(row.value) === String(value)}
           aria-disabled={row.disabled ? "true" : undefined}
-          onmousedown={(event) => event.preventDefault()}
+          onmousedown={(event) => {
+            keyboardFocus = false;
+            event.preventDefault();
+          }}
           onpointerenter={() => {
             if (!row.disabled) activeIndex = row.index;
           }}
@@ -310,12 +332,15 @@
   .trigger:hover:not(:disabled) {
     background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 6%, transparent)));
   }
-  .trigger:focus,
-  .trigger:focus-visible,
-  .open .trigger {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: -2px;
+  .trigger:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  .trigger.keyboard-focus {
     border-color: var(--color-ring, var(--color-primary));
+    outline: 1px solid var(--color-ring, var(--color-primary));
+    outline-offset: 2px;
+    box-shadow: none;
   }
   .trigger:disabled {
     opacity: 0.5;
@@ -349,7 +374,8 @@
     border-radius: var(--radius-md, 8px);
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
     color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
-    box-shadow: 0 10px 28px color-mix(in srgb, CanvasText 16%, transparent);
+    /* Shadows remain dark in both color schemes; CanvasText becomes white. */
+    box-shadow: 0 4px 12px rgb(0 0 0 / 16%);
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .group {

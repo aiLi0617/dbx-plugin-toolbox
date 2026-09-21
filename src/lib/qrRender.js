@@ -1,3 +1,5 @@
+import { pick } from './locale.js';
+
 export const CODE_TYPES = [
   { id: "qr", zh: "QR Code", en: "QR Code" },
   { id: "hanxin", zh: "汉信码", en: "Han Xin" },
@@ -59,7 +61,7 @@ export function matchQrStyle(moduleStyle, dark, light) {
 
 export function typeLabel(type, locale) {
   const item = CODE_TYPES.find((entry) => entry.id === type) || CODE_TYPES[0];
-  return String(locale || "").toLowerCase().startsWith("zh") ? item.zh : item.en;
+  return pick(locale, item.zh, item.en);
 }
 
 function roundRect(ctx, x, y, w, h, r) {

@@ -27,7 +27,7 @@
     dialogEl?.querySelectorAll('[role="option"]')[index]?.scrollIntoView({ block: "nearest" });
   });
   function destination(item) {
-    return intentLabelForTool(item.id, query);
+    return intentLabelForTool(item.id, query, locale);
   }
   function moveSelection(delta) {
     selected = Math.max(0, Math.min(results.length - 1, selected + delta));

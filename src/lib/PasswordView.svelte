@@ -39,7 +39,7 @@
     </label>
     <label class="field">
       <span>{t("长度", "Length")}</span>
-      <NumberInput class="size" min="4" max="1024" ariaLabel={t("长度", "Length")} bind:value={length} />
+      <NumberInput {locale} class="size" min="4" max="1024" ariaLabel={t("长度", "Length")} bind:value={length} />
     </label>
     {#if kind === "password"}
       <label class="field">

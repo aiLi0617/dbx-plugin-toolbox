@@ -1,0 +1,25 @@
+diff --git a/apps/desktop/src/components/plugins/PluginWorkbenchTab.vue b/apps/desktop/src/components/plugins/PluginWorkbenchTab.vue
+--- a/apps/desktop/src/components/plugins/PluginWorkbenchTab.vue
++++ b/apps/desktop/src/components/plugins/PluginWorkbenchTab.vue
+@@ -92,7 +92,21 @@
+ }
+ 
+ onMounted(start);
+ watch(() => [props.pluginId, props.contributionId, props.connectionId, props.context?.connectionId], start);
++
++// A workbench's contribution label is reactive, but its tab title is a saved
++// string. Refresh all matching tabs when the localized registry entry changes.
++watch(() => entry.value?.contribution.label, (label) => {
++  if (!label) return;
++  for (const tab of queryStore.tabs) {
++    if (tab.mode === "plugin-workbench"
++      && tab.pluginWorkbench?.pluginId === props.pluginId
++      && tab.pluginWorkbench?.contributionId === props.contributionId
++      && !tab.customTitle) {
++      tab.title = label;
++    }
++  }
++}, { immediate: true });
+ 
+ defineExpose({ refresh });
+ </script>

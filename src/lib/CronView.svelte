@@ -2,7 +2,7 @@
   import CopyButton from "./CopyButton.svelte";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
-  import { isZh, pick } from "./i18n.js";
+  import { pick } from "./i18n.js";
   import {
     CRON_FIELD_DEFS,
     CRON_FLAVORS,
@@ -64,7 +64,6 @@
   let { locale = "zh-CN" } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
-  const zh = $derived(isZh(locale));
 
   const DEFAULT_EXPR = "*/5 * * * *";
 
@@ -317,9 +316,9 @@
               <span class="mode-name">{t("范围", "Range")}</span>
               <span class="mode-desc mode-controls">
                 {t("从", "From")}
-                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("范围起始", "Range start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
+                <NumberInput {locale} class="num" min={def.min} max={def.max} ariaLabel={t("范围起始", "Range start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
                 {t("到", "to")}
-                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("范围结束", "Range end")} value={active.to} oninput={(n) => num(activeKey, "to", n, def.max)} />
+                <NumberInput {locale} class="num" min={def.min} max={def.max} ariaLabel={t("范围结束", "Range end")} value={active.to} oninput={(n) => num(activeKey, "to", n, def.max)} />
                 {t(def.unitZh, def.unitEn)}
               </span>
             </label>
@@ -329,9 +328,9 @@
               <span class="mode-name">{t("周期", "Step")}</span>
               <span class="mode-desc mode-controls">
                 {t("从", "From")}
-                <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("周期起始", "Step start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
+                <NumberInput {locale} class="num" min={def.min} max={def.max} ariaLabel={t("周期起始", "Step start")} value={active.from} oninput={(n) => num(activeKey, "from", n, def.min)} />
                 {t("开始，每", "every")}
-                <NumberInput class="num" min="1" max={def.max} ariaLabel={t("周期间隔", "Step interval")} value={active.interval} oninput={(n) => num(activeKey, "interval", n, 1)} />
+                <NumberInput {locale} class="num" min="1" max={def.max} ariaLabel={t("周期间隔", "Step interval")} value={active.interval} oninput={(n) => num(activeKey, "interval", n, 1)} />
                 {t(`${def.unitZh}执行一次`, `${def.unitEn}s`)}
               </span>
             </label>
@@ -342,7 +341,7 @@
                 <span class="mode-name">{t("最近工作日", "Nearest weekday")}</span>
                 <span class="mode-desc mode-controls">
                   {t("每月", "On")}
-                  <NumberInput class="num" min={def.min} max={def.max} ariaLabel={t("最近工作日日期", "Nearest weekday day")} value={active.from} oninput={(n) => num(activeKey, "from", n, 1)} />
+                  <NumberInput {locale} class="num" min={def.min} max={def.max} ariaLabel={t("最近工作日日期", "Nearest weekday day")} value={active.from} oninput={(n) => num(activeKey, "from", n, 1)} />
                   {t("号最近的工作日", "nearest weekday")}
                 </span>
               </label>
@@ -391,7 +390,7 @@
               >
                 {#each pickValues as value}
                   <button class="pick" class:on={highlightedSet.has(value)} data-cron-val={value} draggable="false" tabindex="-1" type="button">
-                    {valueLabel(activeKey, value, zh, flavorId)}
+                    {valueLabel(activeKey, value, locale, flavorId)}
                   </button>
                 {/each}
               </div>

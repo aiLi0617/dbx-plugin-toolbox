@@ -43,7 +43,7 @@
         <button class="dbx-btn dbx-btn--ghost small-action" type="button" disabled={clearIsDisabled} onclick={clearInput}>{t("清空", "Clear")}</button>
       </div>
       {#if language}
-        <CodeEditor bind:value={input} {language} placeholder={inputPlaceholder} label={left} />
+        <CodeEditor bind:value={input} {locale} {language} placeholder={inputPlaceholder} label={left} />
       {:else}
         <textarea
           class="dbx-textarea area"
@@ -67,7 +67,7 @@
       {#if error}
         <pre class="area out error">{error}</pre>
       {:else if language}
-        <CodeEditor value={output} {language} placeholder={outputPlaceholder} readonly={outputReadonly} label={right} />
+        <CodeEditor value={output} {locale} {language} placeholder={outputPlaceholder} readonly={outputReadonly} label={right} />
       {:else if outputReadonly}
         <textarea class="dbx-textarea area out" readonly tabindex="-1" placeholder={outputPlaceholder} value={output} aria-label={right}></textarea>
       {:else}

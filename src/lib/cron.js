@@ -110,15 +110,16 @@ export function fieldValues(key, flavorId, selected = []) {
   return values;
 }
 
-export function valueLabel(key, value, localeIsZh, flavorId) {
+export function valueLabel(key, value, locale, flavorId) {
+  // Retain the helper's boolean API for older callers.
+  const tag = typeof locale === "boolean" ? (locale ? "zh-CN" : "en") : locale || "en";
   if (key === "month") {
-    const name = MONTH_ZH[value - 1];
-    return localeIsZh ? name : String(value);
+    return new Intl.DateTimeFormat(tag, { month: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, value - 1, 1)));
   }
   if (key === "weekday") {
     const index = isQuartzFlavor(flavorId) ? (value === 7 ? 6 : value - 1) : value === 7 ? 0 : value;
     const safe = index >= 0 && index < 7 ? index : 0;
-    return localeIsZh ? WEEK_ZH[safe] : WEEK_EN[safe];
+    return new Intl.DateTimeFormat(tag, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 7 + safe)));
   }
   const def = CRON_FIELD_DEFS[key];
   return def.pad ? String(value).padStart(def.pad, "0") : String(value);
