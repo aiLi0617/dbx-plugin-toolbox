@@ -3,7 +3,7 @@
   "manifest_version": 1,
   "id": "io.github.aili0617.toolbox",
   "name": "DBX Toolbox",
-  "version": "0.1.5",
+  "version": "0.1.1",
   "publisher": "aili0617",
   "description": "An all-in-one, privacy-focused developer toolbox for data conversion, encoding and decoding, formatting, text and image processing, generators, cryptographic tools, and an encrypted key vault—all processed locally.",
   "icon": "assets/plugin.svg",
