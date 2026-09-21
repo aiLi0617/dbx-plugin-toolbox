@@ -19,12 +19,6 @@ struct Plugin {
 }
 
 impl PluginHandler for Plugin {
-    fn run_on_io_thread(&self, method: &str) -> bool {
-        // macOS AppKit panels only work on the process main thread; the SDK
-        // worker pool is not main, so save dialogs must run inline on stdio I/O.
-        cfg!(target_os = "macos") && method == "toolbox/save-file"
-    }
-
     fn handle(
         &self,
         _context: RequestContext,
