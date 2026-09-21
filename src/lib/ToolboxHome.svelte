@@ -1,11 +1,11 @@
 <script>
   import { CATEGORY_ORDER, searchTools } from "./catalog.js";
-  import { categories, pick } from "./i18n.js";
+  import { categories, chrome, pick } from "./i18n.js";
   import { intentLabelForTool } from "./navigation.js";
   import ClipTip from "./ClipTip.svelte";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], categoryCounts = {}, onCatalog, onTool, onToggleFavorite, onMoveFavorite } = $props();
-  const t = (zh, en) => pick(locale, zh, en);
+  const t = (dict) => pick(locale, dict);
   const FAVORITE_PREVIEW_LIMIT = 12;
   let pointerDrag = $state(null);
   let suppressOpen = $state(false);
@@ -127,7 +127,7 @@
 
 <div class="home-page">
   <section class="hero">
-    <div><h2>{t("需要使用什么工具？", "What do you need?")}</h2><p>{t("搜索全部工具，或从常用和最近使用中快速打开。", "Search every tool, or jump back into favorites and recent tools.")}</p></div>
+    <div><h2>{t(chrome.homeTitle)}</h2><p>{t(chrome.homeSubtitle)}</p></div>
     <div class="home-search" onfocusout={searchFocusOut}>
       <div class="home-search-box">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
@@ -139,22 +139,22 @@
           type="search"
           autocomplete="off"
           role="combobox"
-          aria-label={t("搜索工具", "Search tools")}
+          aria-label={t(chrome.search)}
           aria-autocomplete="list"
           aria-expanded={searchActive}
           aria-controls="home-search-results"
           aria-activedescendant={searchActive && searchResults.length ? `home-search-result-${searchSelected}` : undefined}
-          placeholder={t("搜索工具、功能或关键字", "Search tools, features, or keywords")}
+          placeholder={t(chrome.searchPlaceholder)}
         />
         {#if searchQuery}
-          <button class="search-clear" type="button" onclick={() => { searchQuery = ""; searchInput?.focus(); }} aria-label={t("清空搜索", "Clear search")}>×</button>
+          <button class="search-clear" type="button" onclick={() => { searchQuery = ""; searchInput?.focus(); }} aria-label={t(chrome.clearSearch)}>×</button>
         {:else}
           <kbd>Ctrl K</kbd>
         {/if}
       </div>
       {#if searchActive}
-        <div class="home-search-results" id="home-search-results" role="listbox" aria-label={t("工具搜索结果", "Tool search results")}>
-          <div class="search-result-label">{searchQuery.trim() ? t("搜索结果", "Results") : t("常用与最近", "Favorites and recent")}</div>
+        <div class="home-search-results" id="home-search-results" role="listbox" aria-label={t(chrome.searchResultsLabel)}>
+          <div class="search-result-label">{searchQuery.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
           {#each searchResults as item, index (item.id)}
             <button
               id={`home-search-result-${index}`}
@@ -171,7 +171,7 @@
               <em>{pick(locale, categories[item.category])}</em>
             </button>
           {:else}
-            <p class="search-empty">{t("没有匹配的工具", "No matching tools")}</p>
+            <p class="search-empty">{t(chrome.empty)}</p>
           {/each}
         </div>
       {/if}
@@ -180,14 +180,14 @@
 
   <section class="home-section">
     <div class="section-head">
-      <div><h3>{t("常用工具", "Favorites")}</h3><p>{t("拖动卡片调整日常使用顺序", "Drag cards to arrange your workflow")}</p></div>
+      <div><h3>{t(chrome.pinned)}</h3><p>{t(chrome.pinnedHint)}</p></div>
       <div class="section-actions">
         {#if favorites.length > FAVORITE_PREVIEW_LIMIT}
           <button class="text-btn" type="button" onclick={() => (showAllFavorites = !showAllFavorites)}>
-            {showAllFavorites ? t("收起", "Collapse") : t(`展开全部（${favorites.length}）`, `Show all (${favorites.length})`)}
+            {showAllFavorites ? t(chrome.collapse) : t(chrome.showAll(favorites.length))}
           </button>
         {/if}
-        <button class="text-btn" type="button" onclick={() => onCatalog?.("all")}>{t("工具库", "Library")}</button>
+        <button class="text-btn" type="button" onclick={() => onCatalog?.("all")}>{t(chrome.library)}</button>
       </div>
     </div>
     {#if favorites.length}
@@ -208,22 +208,22 @@
               class="drag"
               type="button"
               onkeydown={(event) => keyMove(event, item)}
-              aria-label={t(`调整 ${pick(locale, item.name)} 顺序`, `Reorder ${pick(locale, item.name)}`)}
-              title={t("拖动整张卡片排序，或使用方向键调整", "Drag the card to reorder, or use arrow keys")}
+              aria-label={t(chrome.reorderItem(pick(locale, item.name)))}
+              title={t(chrome.reorderHintCard)}
             >⠿</button>
             <button class="card-open" type="button" onclick={(event) => openItem(event, item)}><strong>{pick(locale, item.name)}</strong><span class="summary"><ClipTip text={pick(locale, item.summary)} /></span></button>
-            <button class="star active" type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={t("从常用移除", "Remove favorite")} title={t("从常用移除", "Remove favorite")}>★</button>
+            <button class="star active" type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={t(chrome.removeFavorite)} title={t(chrome.removeFavorite)}>★</button>
           </article>
         {/each}
       </div>
     {:else}
-      <div class="empty"><p>{t("还没有常用工具。", "No favorite tools yet.")}</p><button class="dbx-btn dbx-btn--primary" type="button" onclick={() => onCatalog?.("all")}>{t("前往工具库添加", "Add from tool library")}</button></div>
+      <div class="empty"><p>{t(chrome.emptyFavorites)}</p><button class="dbx-btn dbx-btn--primary" type="button" onclick={() => onCatalog?.("all")}>{t(chrome.addFromLibrary)}</button></div>
     {/if}
   </section>
 
   {#if recents.length}
     <section class="home-section">
-      <div class="section-head"><div><h3>{t("最近使用", "Recent")}</h3><p>{t("自动记录最近打开的工具", "Recently opened tools")}</p></div></div>
+      <div class="section-head"><div><h3>{t(chrome.recent)}</h3><p>{t(chrome.recentHint)}</p></div></div>
       <div class="recent-grid">
         {#each recents.slice(0, 8) as item (item.id)}
           <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
@@ -233,7 +233,7 @@
   {/if}
 
   <section class="home-section categories">
-    <div class="section-head"><div><h3>{t("按分类浏览", "Browse by category")}</h3></div></div>
+    <div class="section-head"><div><h3>{t(chrome.browseByCategory)}</h3></div></div>
     <div class="category-grid">
       {#each CATEGORY_ORDER as id}
         <button type="button" onclick={() => onCatalog?.(id)}><span>{pick(locale, categories[id])}</span><small>{categoryCounts[id] || 0}</small></button>

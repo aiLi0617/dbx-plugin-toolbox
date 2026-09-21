@@ -1,0 +1,70 @@
+name: "🐞 Bug Report / 问题反馈"
+description: 工具箱插件崩溃、结果错误、界面异常或其他可复现问题（非数据库连接 / 查询问题）。
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **本仓库是 DBX 的「工具箱」插件**（`io.github.aili0617.toolbox`），不是数据库客户端。
+        > 连接失败、查询异常、schema / SQL 方言等问题请到 [DBX](https://github.com/t8y2/dbx/issues/new/choose) 反馈。
+
+        感谢反馈。涉及敏感信息请脱敏；密钥库相关请勿粘贴真实主密码或明文密钥。
+        DBX 版本与运行环境可在宿主应用内通过「设置 → 关于我们 → 复制支持信息」一键复制。
+  - type: input
+    id: tool-name
+    attributes:
+      label: 相关工具 / Tool
+      description: 出问题的工具页名称。 / Name of the toolbox page that failed.
+      placeholder: "例如：JSON 工作台 / JWT / 对称加密 · Example: JSON Workbench"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述 / Problem description
+      description: 请按下面的清单逐项填写。 / Complete each item below.
+      placeholder: |
+        1. 复现步骤 / Steps: 打开 JWT → 粘贴 token → 点击验签
+        2. 期望结果 / Expected: 正常显示 payload
+        3. 实际结果 / Actual: 页面空白 / 报错 …
+        4. 附上截图和错误日志 / Attach screenshots and logs when possible
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本 / Plugin version
+      description: 见插件详情或 `manifest.json` 的 version。
+      placeholder: "例如：0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: support-info
+    attributes:
+      label: DBX 支持信息 / Host support information
+      description: 粘贴宿主「复制支持信息」的结果；如无法打开应用，请说明原因。也可手写 DBX 版本 / OS / 架构。
+      placeholder: |
+        DBX 版本 / Version: v0.5.68
+        运行环境 / Runtime: Desktop
+        操作系统 / OS: Windows 11
+        系统架构 / Architecture: x86_64
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级（是否紧急） / Priority (urgency)
+      description: 紧急 = 希望下个版本优先修；维护者可调整。
+      options:
+        - "🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release"
+        - "🟠 P1 重要 · 尽快处理 / Important · Fix soon"
+        - "🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate"
+        - "🟢 P3 低优 · 有空再修 / Low · Fix when possible"
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充信息 / Additional information
+      description: 截图、可复现样例数据（请脱敏）、控制台报错等。

@@ -1,12 +1,12 @@
 <script>
-  import { pick } from "./i18n.js";
+  import { chrome, pick } from "./i18n.js";
 
   let {
     locale = "zh-CN", collapsed = false, page = "home", activeToolId = "",
     favorites = [], recents = [], vaultUnlocked = false,
     onHome, onCatalog, onSearch, onTool, onVault, onToggleCollapse, onMoveFavorite,
   } = $props();
-  const t = (zh, en) => pick(locale, zh, en);
+  const t = (dict) => pick(locale, dict);
   let panel = $state("");
   let pointerDrag = $state(null);
   let suppressOpen = $state(false);
@@ -95,44 +95,44 @@
 
 <aside class="sidebar" class:collapsed bind:this={sidebarEl}>
   <div class="brand-row">
-    {#if !collapsed}<strong>{t("工具箱", "Toolbox")}</strong>{/if}
-    <button class="icon" type="button" onclick={onToggleCollapse} aria-label={collapsed ? t("展开侧栏", "Expand sidebar") : t("收起侧栏", "Collapse sidebar")} title={collapsed ? t("展开侧栏", "Expand sidebar") : t("收起侧栏", "Collapse sidebar")}>
+    {#if !collapsed}<strong>{t(chrome.brand)}</strong>{/if}
+    <button class="icon" type="button" onclick={onToggleCollapse} aria-label={collapsed ? t(chrome.expandSidebar) : t(chrome.collapseSidebar)} title={collapsed ? t(chrome.expandSidebar) : t(chrome.collapseSidebar)}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d={collapsed ? "m9 18 6-6-6-6" : "m15 18-6-6 6-6"}/></svg>
     </button>
   </div>
 
-  <nav class="primary" aria-label={t("主导航", "Primary navigation")}>
-    <button class:active={page === "home"} onclick={onHome} type="button" title={t("首页", "Home")}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg><span>{t("首页", "Home")}</span>
+  <nav class="primary" aria-label={t(chrome.primaryNav)}>
+    <button class:active={page === "home"} onclick={onHome} type="button" title={t(chrome.home)}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg><span>{t(chrome.home)}</span>
     </button>
-    <button onclick={onSearch} type="button" title={`${t("搜索工具", "Search tools")} (Ctrl+K)`}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>{t("搜索工具", "Search tools")}</span>{#if !collapsed}<kbd>Ctrl K</kbd>{/if}
+    <button onclick={onSearch} type="button" title={`${t(chrome.search)} (Ctrl+K)`}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>{t(chrome.search)}</span>{#if !collapsed}<kbd>Ctrl K</kbd>{/if}
     </button>
-    <button class:active={page === "catalog"} onclick={onCatalog} type="button" title={t("全部工具", "All tools")}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>{t("全部工具", "All tools")}</span>
+    <button class:active={page === "catalog"} onclick={onCatalog} type="button" title={t(chrome.allTools)}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>{t(chrome.allTools)}</span>
     </button>
   </nav>
 
   {#if collapsed}
     <div class="rail-groups">
-      <button class="icon" class:active={panel === "favorites"} onclick={() => openPanel("favorites")} type="button" title={t("常用工具", "Favorites")} aria-label={t("常用工具", "Favorites")}>
+      <button class="icon" class:active={panel === "favorites"} onclick={() => openPanel("favorites")} type="button" title={t(chrome.pinned)} aria-label={t(chrome.pinned)}>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2.5 3 6.1 6.7 1-4.9 4.7 1.2 6.7-6-3.2-6 3.2 1.2-6.7-4.9-4.7 6.7-1z"/></svg>
       </button>
-      <button class="icon" class:active={panel === "recent"} onclick={() => openPanel("recent")} type="button" title={t("最近使用", "Recent")} aria-label={t("最近使用", "Recent")}>
+      <button class="icon" class:active={panel === "recent"} onclick={() => openPanel("recent")} type="button" title={t(chrome.recent)} aria-label={t(chrome.recent)}>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
       </button>
     </div>
     {#if panel}
       <div class="flyout">
-        <strong>{panel === "favorites" ? t("常用工具", "Favorites") : t("最近使用", "Recent")}</strong>
+        <strong>{panel === "favorites" ? t(chrome.pinned) : t(chrome.recent)}</strong>
         {#each panel === "favorites" ? favorites : recents as item (item.id)}
           <button type="button" onclick={() => { panel = ""; onTool?.(item); }}>{pick(locale, item.name)}</button>
-        {:else}<p>{t("暂无工具", "No tools yet")}</p>{/each}
+        {:else}<p>{t(chrome.noToolsYet)}</p>{/each}
       </div>
     {/if}
   {:else}
     <section class="group favorites">
-      <div class="group-title"><span>{t("常用工具", "Favorites")}</span><small>{favorites.length}</small></div>
+      <div class="group-title"><span>{t(chrome.pinned)}</span><small>{favorites.length}</small></div>
       <div class="group-list">
         {#each favorites as item (item.id)}
           <div
@@ -151,27 +151,27 @@
               class="drag"
               type="button"
               onkeydown={(event) => keyMove(event, item)}
-              aria-label={t(`调整 ${pick(locale, item.name)} 顺序`, `Reorder ${pick(locale, item.name)}`)}
-              title={t("拖动整行或使用上下方向键排序", "Drag the row or use Up/Down to reorder")}
+              aria-label={t(chrome.reorderItem(pick(locale, item.name)))}
+              title={t(chrome.reorderHintRow)}
             >⠿</button>
             <button class="tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={(event) => openTool(event, item)}>{pick(locale, item.name)}</button>
           </div>
-        {:else}<p class="empty">{t("在工具库中点击星标添加", "Star tools in the library")}</p>{/each}
+        {:else}<p class="empty">{t(chrome.starInLibrary)}</p>{/each}
       </div>
     </section>
     <section class="group recent">
-      <div class="group-title"><span>{t("最近使用", "Recent")}</span></div>
+      <div class="group-title"><span>{t(chrome.recent)}</span></div>
       <div class="group-list">
         {#each recents.slice(0, 8) as item (item.id)}
           <button class="recent-tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={() => onTool?.(item)}>{pick(locale, item.name)}</button>
-        {:else}<p class="empty">{t("打开工具后会显示在这里", "Opened tools appear here")}</p>{/each}
+        {:else}<p class="empty">{t(chrome.openedAppearHere)}</p>{/each}
       </div>
     </section>
   {/if}
 
   <div class="sidebar-bottom">
-    <button class:active={page === "vault"} onclick={onVault} type="button" title={vaultUnlocked ? t("密钥库已解锁", "Vault unlocked") : t("密钥库", "Vault")}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="10" width="18" height="11" rx="2"/><path d={vaultUnlocked ? "M7 10V7a5 5 0 0 1 9.9-1" : "M7 10V7a5 5 0 0 1 10 0v3"}/></svg><span>{t("密钥库", "Vault")}</span>
+    <button class:active={page === "vault"} onclick={onVault} type="button" title={vaultUnlocked ? t(chrome.vaultUnlockedShort) : t(chrome.vaultShort)}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="10" width="18" height="11" rx="2"/><path d={vaultUnlocked ? "M7 10V7a5 5 0 0 1 9.9-1" : "M7 10V7a5 5 0 0 1 10 0v3"}/></svg><span>{t(chrome.vaultShort)}</span>
     </button>
   </div>
 </aside>

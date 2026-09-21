@@ -1,0 +1,58 @@
+name: "❓ Question / 问题咨询"
+description: 工具箱使用疑问、配置问题，或不确定是否为 bug 的反馈（非数据库连接问题）。
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **本仓库是 DBX 的「工具箱」插件**。
+        > 若问题是「连不上库 / 查不出数据 / SQL 报错」，请到 [DBX](https://github.com/t8y2/dbx/issues/new/choose) 提问。
+  - type: dropdown
+    id: topic
+    attributes:
+      label: 咨询类型 / Topic
+      options:
+        - 使用方法 / How to use
+        - 功能是否支持 / Feature availability
+        - 安装 / 升级 / Install or upgrade
+        - 密钥库 / Keystore
+        - 与 DBX 宿主配合 / Host integration
+        - 其他 / Other
+    validations:
+      required: true
+  - type: input
+    id: tool-name
+    attributes:
+      label: 相关工具（如有） / Related tool
+      placeholder: "例如：电子表格 / TOTP · Example: Spreadsheet"
+    validations:
+      required: false
+  - type: textarea
+    id: support-info
+    attributes:
+      label: DBX 支持信息 / Host support information
+      description: 打开 DBX「设置 → 关于我们」，点击「复制支持信息」后粘贴到这里。如无法打开应用，请说明原因。
+      placeholder: |
+        DBX 版本：v0.5.68
+        运行环境：桌面端
+        操作系统：Windows 11
+        系统架构：x86_64
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: 描述 / Description
+      description: 你想完成什么？已经尝试了什么？
+      placeholder: "例如：想把密钥写入密钥库后再做 AES 加密，已经…但…"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 环境信息 / Environment
+      description: 插件版本、特殊环境、已尝试的排查方式等。
+      placeholder: |
+        插件版本：
+        补充环境：

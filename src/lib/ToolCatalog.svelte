@@ -1,10 +1,10 @@
 <script>
   import { CATEGORY_ORDER, searchTools } from "./catalog.js";
-  import { categories, pick } from "./i18n.js";
+  import { categories, chrome, pick } from "./i18n.js";
   import { intentLabelForTool } from "./navigation.js";
   import ClipTip from "./ClipTip.svelte";
   let { locale = "zh-CN", tools = [], favorites = [], category = "all", onCategory, onTool, onToggleFavorite } = $props();
-  const t = (zh, en) => pick(locale, zh, en);
+  const t = (dict) => pick(locale, dict);
   let query = $state("");
   const favoriteSet = $derived(new Set(favorites));
   const filtered = $derived(searchTools(query, locale, tools).filter((item) => category === "all" || item.category === category));
@@ -15,14 +15,14 @@
 
 <div class="catalog-page">
   <div class="catalog-top">
-    <p>{t("搜索、筛选并将高频工具加入常用。", "Search, filter, and favorite the tools you use most.")}</p>
-    <div class="catalog-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input bind:value={query} name="toolbox-catalog-query" autocomplete="off" placeholder={t("搜索名称、功能或关键字", "Search names, features, or keywords")} />{#if query}<button type="button" onclick={() => (query = "")}>×</button>{/if}</div>
+    <p>{t(chrome.catalogHint)}</p>
+    <div class="catalog-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input bind:value={query} name="toolbox-catalog-query" autocomplete="off" placeholder={t(chrome.searchPlaceholderShort)} />{#if query}<button type="button" onclick={() => (query = "")}>×</button>{/if}</div>
   </div>
-  <div class="filters" role="group" aria-label={t("工具分类", "Tool categories")}>
-    <button class:active={category === "all"} aria-pressed={category === "all"} onclick={() => onCategory?.("all")} type="button">{t("全部", "All")} <small>{tools.length}</small></button>
+  <div class="filters" role="group" aria-label={t(chrome.categoriesNav)}>
+    <button class:active={category === "all"} aria-pressed={category === "all"} onclick={() => onCategory?.("all")} type="button">{t(chrome.all)} <small>{tools.length}</small></button>
     {#each CATEGORY_ORDER as id}<button class:active={category === id} aria-pressed={category === id} onclick={() => onCategory?.(id)} type="button">{pick(locale,categories[id])} <small>{tools.filter((item) => item.category === id).length}</small></button>{/each}
   </div>
-  <div class="result-head"><span>{t(`${filtered.length} 个工具`, `${filtered.length} tools`)}</span></div>
+  <div class="result-head"><span>{t(chrome.toolCount(filtered.length))}</span></div>
   <div class="catalog-grid">
     {#each filtered as item (item.id)}
       <article class="catalog-card">
@@ -31,9 +31,9 @@
           <span class="summary"><ClipTip text={pick(locale,item.summary)} /></span>
           <small>{pick(locale,categories[item.category])}</small>
         </button>
-        <button class="star" class:active={favoriteSet.has(item.id)} type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={favoriteSet.has(item.id) ? t("从常用移除", "Remove favorite") : t("添加到常用", "Add favorite")} title={favoriteSet.has(item.id) ? t("从常用移除", "Remove favorite") : t("添加到常用", "Add favorite")}>{favoriteSet.has(item.id) ? "★" : "☆"}</button>
+        <button class="star" class:active={favoriteSet.has(item.id)} type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={favoriteSet.has(item.id) ? t(chrome.removeFavorite) : t(chrome.addFavorite)} title={favoriteSet.has(item.id) ? t(chrome.removeFavorite) : t(chrome.addFavorite)}>{favoriteSet.has(item.id) ? "★" : "☆"}</button>
       </article>
-    {:else}<div class="empty">{t("没有匹配的工具。", "No matching tools.")}</div>{/each}
+    {:else}<div class="empty">{t(chrome.emptyDot)}</div>{/each}
   </div>
 </div>
 
