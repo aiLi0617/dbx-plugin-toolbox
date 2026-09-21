@@ -470,7 +470,7 @@ dependencies = [
 
 [[package]]
 name = "dbx-plugin-toolbox"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -485,8 +485,6 @@ dependencies = [
  "hex",
  "hmac",
  "md-5",
- "objc2",
- "objc2-app-kit",
  "pem 3.0.6",
  "rand 0.8.8",
  "raw-window-handle",

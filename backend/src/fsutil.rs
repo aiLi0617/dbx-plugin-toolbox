@@ -101,46 +101,52 @@ fn attach_dialog_to_foreground(dialog: rfd::FileDialog) -> rfd::FileDialog {
     dialog.set_parent(&DialogParent(window))
 }
 
-#[cfg(not(target_os = "windows"))]
+#[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
 fn attach_dialog_to_foreground(dialog: rfd::FileDialog) -> rfd::FileDialog {
     dialog
 }
 
-/// Show a native save panel.
-///
-/// On macOS the sidecar is a non-windowed process: rfd can only present panels
-/// on the calling (main) thread, and NSApp must be activated or the panel stays
-/// invisible behind DBX. Windows/Linux keep a worker thread so the RPC loop is
-/// not blocked by the modal dialog machinery the same way.
+/// Show a native save panel on Windows/Linux via rfd.
+#[cfg(not(target_os = "macos"))]
 fn run_save_dialog(dialog: rfd::FileDialog) -> Option<PathBuf> {
-    #[cfg(target_os = "macos")]
-    {
-        activate_macos_dialog_app();
-        dialog.save_file()
-    }
-    #[cfg(not(target_os = "macos"))]
-    {
-        let worker = std::thread::Builder::new()
-            .name("save-dialog".into())
-            .spawn(move || dialog.save_file())
-            .ok()?;
-        worker.join().ok()?
-    }
+    let worker = std::thread::Builder::new()
+        .name("save-dialog".into())
+        .spawn(move || dialog.save_file())
+        .ok()?;
+    worker.join().ok()?
 }
 
+/// macOS sidecars run handlers off the AppKit main thread; rfd panels then
+/// silently no-op. `osascript` launches a separate UI process that always can
+/// present "choose file name".
 #[cfg(target_os = "macos")]
-fn activate_macos_dialog_app() {
-    use objc2::MainThreadMarker;
-    use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
+fn pick_save_path_via_osascript(title: &str, name: &str, start_dir: Option<&Path>) -> Option<PathBuf> {
+    let mut script = format!(
+        "POSIX path of (choose file name with prompt \"{}\" default name \"{}\"",
+        escape_applescript(title),
+        escape_applescript(name),
+    );
+    if let Some(dir) = start_dir {
+        script.push_str(&format!(
+            " default location (POSIX file \"{}\")",
+            escape_applescript(&dir.to_string_lossy()),
+        ));
+    }
+    script.push(')');
 
-    let Some(mtm) = MainThreadMarker::new() else {
-        return;
-    };
-    let app = NSApplication::sharedApplication(mtm);
-    // Accessory avoids a dock bounce for the sidecar while still allowing panels.
-    let _ = app.setActivationPolicy(NSApplicationActivationPolicy::Accessory);
-    #[allow(deprecated)]
-    app.activateIgnoringOtherApps(true);
+    let output = Command::new("osascript").args(["-e", &script]).output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if path.is_empty() {
+        return None;
+    }
+    Some(PathBuf::from(path))
+}
+
+fn escape_applescript(value: &str) -> String {
+    value.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
@@ -362,21 +368,29 @@ fn pick_save_path_binary(
     start_dir: Option<&Path>,
     extension: &str,
 ) -> Option<PathBuf> {
-    let title = title.to_string();
-    let name = name.to_string();
-    let start_dir = start_dir.map(Path::to_path_buf);
-    let extension = extension.to_string();
-    let mut dialog = attach_dialog_to_foreground(
-        rfd::FileDialog::new()
-            .set_title(&title)
-            .set_file_name(&name)
-            .add_filter("File", &[&extension])
-            .add_filter("All files", &["*"]),
-    );
-    if let Some(dir) = start_dir.as_deref() {
-        dialog = dialog.set_directory(dir);
+    #[cfg(target_os = "macos")]
+    {
+        let _ = extension;
+        return pick_save_path_via_osascript(title, name, start_dir);
     }
-    run_save_dialog(dialog)
+    #[cfg(not(target_os = "macos"))]
+    {
+        let title = title.to_string();
+        let name = name.to_string();
+        let start_dir = start_dir.map(Path::to_path_buf);
+        let extension = extension.to_string();
+        let mut dialog = attach_dialog_to_foreground(
+            rfd::FileDialog::new()
+                .set_title(&title)
+                .set_file_name(&name)
+                .add_filter("File", &[&extension])
+                .add_filter("All files", &["*"]),
+        );
+        if let Some(dir) = start_dir.as_deref() {
+            dialog = dialog.set_directory(dir);
+        }
+        run_save_dialog(dialog)
+    }
 }
 
 fn reveal_file(params: Value) -> Result<Value, PluginError> {
@@ -398,19 +412,27 @@ fn pick_save_path(
     start_dir: Option<&Path>,
     format: ImageFormat,
 ) -> Option<PathBuf> {
-    let title = title.to_string();
-    let name = name.to_string();
-    let start_dir = start_dir.map(Path::to_path_buf);
-    let mut dialog = attach_dialog_to_foreground(
-        rfd::FileDialog::new()
-            .set_title(&title)
-            .set_file_name(&name)
-            .add_filter(format.label, &[format.extension]),
-    );
-    if let Some(dir) = start_dir.as_deref() {
-        dialog = dialog.set_directory(dir);
+    #[cfg(target_os = "macos")]
+    {
+        let _ = format;
+        return pick_save_path_via_osascript(title, name, start_dir);
     }
-    run_save_dialog(dialog)
+    #[cfg(not(target_os = "macos"))]
+    {
+        let title = title.to_string();
+        let name = name.to_string();
+        let start_dir = start_dir.map(Path::to_path_buf);
+        let mut dialog = attach_dialog_to_foreground(
+            rfd::FileDialog::new()
+                .set_title(&title)
+                .set_file_name(&name)
+                .add_filter(format.label, &[format.extension]),
+        );
+        if let Some(dir) = start_dir.as_deref() {
+            dialog = dialog.set_directory(dir);
+        }
+        run_save_dialog(dialog)
+    }
 }
 
 fn download_dir() -> Result<PathBuf, PluginError> {
@@ -656,5 +678,10 @@ mod tests {
         );
         assert_eq!(sanitize_file_name("Sheet1.csv", "csv"), "Sheet1.csv");
         assert_ne!(sanitize_file_name("Sheet1.csv", "bin"), "Sheet1.csv");
+    }
+
+    #[test]
+    fn escapes_applescript_string_literals() {
+        assert_eq!(escape_applescript(r#"a"b\c"#), r#"a\"b\\c"#);
     }
 }
