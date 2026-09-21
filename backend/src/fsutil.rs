@@ -152,6 +152,7 @@ fn pick_save_path_via_osascript(
     Some(PathBuf::from(path))
 }
 
+#[cfg(any(target_os = "macos", test))]
 fn escape_applescript(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
