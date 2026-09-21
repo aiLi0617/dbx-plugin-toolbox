@@ -1,0 +1,764 @@
+{
+  "Convert": {
+    "ko": "변환",
+    "tr": "Dönüştür",
+    "az": "Çevir",
+    "pt-BR": "Converter"
+  },
+  "Domain": {
+    "ko": "도메인",
+    "tr": "Etki alanı",
+    "az": "Domen"
+  },
+  "Range": {
+    "ko": "범위형",
+    "tr": "Aralık",
+    "az": "Aralıq"
+  },
+  "Name": {
+    "ko": "이름",
+    "tr": "Ad",
+    "az": "Ad"
+  },
+  "Used by": {
+    "ko": "사용처",
+    "tr": "Kullananlar",
+    "az": "İstifadə edənlər",
+    "pt-BR": "Usado por"
+  },
+  "Saving…": {
+    "ko": "저장 중…",
+    "tr": "Kaydediliyor…",
+    "az": "Yadda saxlanılır…"
+  },
+  "Saved": {
+    "ko": "저장됨",
+    "tr": "Kaydedildi",
+    "az": "Yadda saxlanıldı"
+  },
+  "Search": {
+    "ko": "검색",
+    "tr": "Ara",
+    "az": "Axtarış",
+    "pt-BR": "Buscar"
+  },
+  "Column": {
+    "ko": "컬럼",
+    "tr": "Sütun",
+    "az": "Sütun",
+    "pt-BR": "Coluna"
+  },
+  "Language": {
+    "ko": "언어",
+    "tr": "Dil",
+    "az": "Dil"
+  },
+  "Exporting…": {
+    "ko": "내보내는 중…",
+    "tr": "Dışa aktarılıyor…",
+    "az": "İxrac edilir…"
+  },
+  "Update": {
+    "ko": "업데이트",
+    "pt-BR": "Atualizar",
+    "tr": "Güncelle",
+    "az": "Yenilə"
+  },
+  "Custom": {
+    "ko": "사용자 지정",
+    "tr": "Özel",
+    "az": "Fərdi"
+  },
+  "New": {
+    "ko": "새 연결",
+    "pt-BR": "Nova",
+    "tr": "Yeni",
+    "az": "Yeni"
+  },
+  "Open": {
+    "ko": "열기",
+    "tr": "Aç",
+    "az": "Aç"
+  },
+  "Confirm password": {
+    "ko": "비밀번호 확인",
+    "tr": "Parolayı doğrulayın",
+    "az": "Parolu təsdiqləyin",
+    "pt-BR": "Confirmar senha"
+  },
+  "Passwords do not match": {
+    "ko": "비밀번호가 일치하지 않습니다",
+    "tr": "Parolalar eşleşmiyor",
+    "az": "Parollar uyğun gəlmir",
+    "pt-BR": "As senhas não coincidem"
+  },
+  "Current password": {
+    "ko": "현재 비밀번호",
+    "tr": "Mevcut parola",
+    "az": "Cari parol",
+    "pt-BR": "Senha atual"
+  },
+  "Clear": {
+    "ko": "지우기",
+    "tr": "Temizle",
+    "az": "Təmizlə"
+  },
+  "Collapse all": {
+    "ko": "모두 접기",
+    "tr": "Tümünü daralt",
+    "az": "Hamısını yığ"
+  },
+  "Collapse sidebar": {
+    "ko": "사이드바 접기",
+    "tr": "Kenar çubuğunu daralt",
+    "az": "Yan paneli yığ"
+  },
+  "Expand sidebar": {
+    "ko": "사이드바 펼치기",
+    "tr": "Kenar çubuğunu genişlet",
+    "az": "Yan paneli genişləndir"
+  },
+  "Table": {
+    "ko": "테이블",
+    "tr": "Tablo",
+    "az": "Cədvəl"
+  },
+  "Save": {
+    "ko": "저장",
+    "tr": "Kaydet",
+    "az": "Yadda saxla",
+    "pt-BR": "Salvar"
+  },
+  "File name": {
+    "ko": "파일 이름",
+    "tr": "Dosya adı",
+    "az": "Faylın adı"
+  },
+  "File": {
+    "ko": "파일",
+    "tr": "Dosya",
+    "az": "Fayl"
+  },
+  "Password": {
+    "ko": "비밀번호",
+    "tr": "Parola",
+    "az": "Parol"
+  },
+  "Cancel": {
+    "ko": "취소",
+    "tr": "İptal",
+    "az": "Ləğv et",
+    "pt-BR": "Cancelar"
+  },
+  "Auto": {
+    "ko": "자동",
+    "tr": "Otomatik",
+    "az": "Avtomatik"
+  },
+  "Version": {
+    "ko": "버전",
+    "tr": "Sürüm",
+    "az": "Versiya"
+  },
+  "Basic": {
+    "az": "Əsas"
+  },
+  "Value": {
+    "ko": "값",
+    "tr": "Değer",
+    "az": "Dəyər",
+    "pt-BR": "Valor"
+  },
+  "Uppercase": {
+    "ko": "대문자",
+    "tr": "Büyük harf",
+    "az": "Böyük hərflər",
+    "pt-BR": "Maiúsculas"
+  },
+  "Copied": {
+    "ko": "복사했습니다",
+    "tr": "Kopyalandı",
+    "az": "Kopyalandı"
+  },
+  "Advanced": {
+    "ko": "고급",
+    "tr": "Gelişmiş",
+    "az": "Əlavə"
+  },
+  "Delete": {
+    "ko": "삭제",
+    "tr": "Sil",
+    "az": "Sil",
+    "pt-BR": "Excluir"
+  },
+  "Fingerprint": {
+    "ko": "지문",
+    "tr": "Parmak izi",
+    "az": "Barmaq izi",
+    "pt-BR": "Impressão digital"
+  },
+  "Close": {
+    "ko": "닫기",
+    "tr": "Kapat",
+    "az": "Bağla"
+  },
+  "Verify": {
+    "ko": "인증",
+    "tr": "Doğrula",
+    "az": "Yoxla"
+  },
+  "Color": {
+    "ko": "색상",
+    "tr": "Renk",
+    "az": "Rəng"
+  },
+  "Export": {
+    "ko": "내보내기",
+    "tr": "Dışa Aktar",
+    "az": "İxrac et",
+    "pt-BR": "Exportar"
+  },
+  "Preview": {
+    "ko": "미리보기",
+    "tr": "Önizleme",
+    "az": "Önbaxış"
+  },
+  "Find": {
+    "ko": "찾기",
+    "tr": "Bul",
+    "az": "Tap"
+  },
+  "Replace": {
+    "ko": "바꾸기",
+    "tr": "Değiştir",
+    "az": "Əvəz et"
+  },
+  "Reset": {
+    "ko": "초기화",
+    "tr": "Sıfırla",
+    "az": "Sıfırla"
+  },
+  "Size": {
+    "ko": "크기",
+    "tr": "Boyut",
+    "az": "Ölçü"
+  },
+  "Retry": {
+    "ko": "다시 시도",
+    "tr": "Yeniden dene",
+    "az": "Yenidən cəhd et"
+  },
+  "Copy": {
+    "ko": "복사",
+    "tr": "Kopyala",
+    "az": "Kopyala"
+  },
+  "Never": {
+    "ko": "안 함",
+    "tr": "Asla",
+    "az": "Heç vaxt",
+    "pt-BR": "Nunca"
+  },
+  "Export CSV": {
+    "ko": "CSV 내보내기",
+    "tr": "CSV Dışa Aktar",
+    "az": "CSV-yə ixrac et",
+    "pt-BR": "Exportar CSV"
+  },
+  "Export XLSX": {
+    "ko": "XLSX 내보내기",
+    "tr": "XLSX Dışa Aktar",
+    "az": "XLSX-ə ixrac et",
+    "pt-BR": "Exportar XLSX"
+  },
+  "Export JSON": {
+    "ko": "JSON 내보내기",
+    "tr": "JSON Dışa Aktar",
+    "az": "JSON-a ixrac et",
+    "pt-BR": "Exportar JSON"
+  },
+  "Filter": {
+    "ko": "필터",
+    "tr": "Filtre",
+    "az": "Süzgəc",
+    "pt-BR": "Filtrar"
+  },
+  "Timezone": {
+    "ko": "시간대",
+    "tr": "Saat dilimi",
+    "az": "Saat qurşağı"
+  },
+  "Count": {
+    "ko": "개수",
+    "tr": "Sayı",
+    "az": "Say",
+    "pt-BR": "Contagem"
+  },
+  "Left": {
+    "ko": "왼쪽",
+    "tr": "Sol",
+    "az": "Sola"
+  },
+  "Right": {
+    "ko": "오른쪽",
+    "tr": "Sağ",
+    "az": "Sağa"
+  },
+  "Sort": {
+    "ko": "정렬",
+    "tr": "Sırala",
+    "az": "Sırala",
+    "pt-BR": "Ordenar"
+  },
+  "Replace with": {
+    "ko": "바꿀 내용",
+    "pt-BR": "Substituir por"
+  },
+  "Position": {
+    "ko": "위치",
+    "tr": "Konum",
+    "az": "Mövqe"
+  },
+  "Clean": {
+    "ko": "변경 없음",
+    "tr": "Temiz",
+    "az": "Dəyişdirilməmiş",
+    "pt-BR": "Sem alterações"
+  },
+  "Hex": {
+    "ko": "16진수",
+    "tr": "Onaltılık",
+    "az": "Onaltılıq"
+  },
+  "Length": {
+    "ko": "길이",
+    "tr": "Uzunluk",
+    "az": "Uzunluq"
+  },
+  "Original": {
+    "ko": "원래 값",
+    "tr": "Özgün",
+    "az": "Orijinal"
+  },
+  "rows": {
+    "ko": "행",
+    "tr": "satır",
+    "az": "sətir",
+    "pt-BR": "linhas"
+  },
+  "Remove": {
+    "ko": "제거",
+    "tr": "Kaldır",
+    "az": "Çıxar"
+  },
+  "More": {
+    "ko": "더보기",
+    "tr": "Daha fazla",
+    "az": "Daha çox"
+  },
+  "Decrease": {
+    "ko": "감소",
+    "tr": "Azalt",
+    "az": "Azalt",
+    "pt-BR": "Diminuir"
+  },
+  "Increase": {
+    "ko": "증가",
+    "tr": "Artır",
+    "az": "Artır",
+    "pt-BR": "Aumentar"
+  },
+  "Action": {
+    "ko": "작업",
+    "tr": "Eylem",
+    "az": "Əməliyyat"
+  },
+  "Hour": {
+    "ko": "시",
+    "tr": "Saat",
+    "az": "Saat"
+  },
+  "Minute": {
+    "ko": "분",
+    "tr": "Dakika",
+    "az": "Dəqiqə"
+  },
+  "Second": {
+    "ko": "초",
+    "tr": "Saniye",
+    "az": "Saniyə"
+  },
+  "Select": {
+    "ko": "선택",
+    "tr": "Seç",
+    "az": "Seç"
+  },
+  "Node": {
+    "ko": "노드",
+    "tr": "Düğüm",
+    "az": "Qovşaq"
+  },
+  "Expand all": {
+    "ko": "모두 펼치기",
+    "tr": "Tümünü genişlet",
+    "az": "Hamısını genişləndir"
+  },
+  "All": {
+    "ko": "전체",
+    "tr": "Tümü",
+    "az": "Hamısı"
+  },
+  "Results": {
+    "ko": "결과",
+    "tr": "Sonuçlar",
+    "az": "Nəticələr"
+  },
+  "Decrypt": {
+    "ko": "복호화",
+    "tr": "Şifreyi çöz",
+    "az": "Şifrəni aç"
+  },
+  "Active": {
+    "ko": "활성",
+    "tr": "Etkin",
+    "az": "Aktiv"
+  },
+  "Run": {
+    "ko": "실행",
+    "tr": "Çalıştır",
+    "az": "İşlət"
+  },
+  "chars": {
+    "ko": "자",
+    "tr": "karakter",
+    "az": "simvol",
+    "pt-BR": "car."
+  },
+  "Download PNG": {
+    "ko": "PNG 다운로드",
+    "tr": "PNG İndir",
+    "az": "PNG-ni endir"
+  },
+  "Rename": {
+    "ko": "이름 변경",
+    "tr": "Yeniden Adlandır",
+    "az": "Adını dəyiş",
+    "pt-BR": "Renomear"
+  },
+  "Mode": {
+    "ko": "모드",
+    "tr": "Mod",
+    "az": "Rejim"
+  },
+  "Path": {
+    "ko": "경로",
+    "tr": "Yol",
+    "az": "Yol"
+  },
+  "Query": {
+    "ko": "쿼리",
+    "tr": "Sorgu",
+    "az": "Sorğu",
+    "pt-BR": "Consulta"
+  },
+  "Swap": {
+    "az": "Mübadilə yaddaşı"
+  },
+  "New password": {
+    "ko": "새 비밀번호",
+    "tr": "Yeni parola",
+    "az": "Yeni parol",
+    "pt-BR": "Nova senha"
+  },
+  "Lock": {
+    "ko": "잠금",
+    "tr": "Kilitle",
+    "az": "Kilidlə",
+    "pt-BR": "Bloquear"
+  },
+  "Unlock": {
+    "ko": "잠금 해제",
+    "tr": "Kilidi aç",
+    "az": "Kilidi aç",
+    "pt-BR": "Desbloquear"
+  },
+  "Created": {
+    "ko": "생성 시간",
+    "tr": "Oluşturuldu",
+    "az": "Yaradılıb",
+    "pt-BR": "Criado em"
+  },
+  "Unique": {
+    "ko": "고유",
+    "tr": "Benzersiz",
+    "az": "Unikal",
+    "pt-BR": "Único"
+  },
+  "Ready": {
+    "ko": "준비됨",
+    "tr": "Hazır",
+    "az": "Hazırdır"
+  },
+  "Undo": {
+    "tr": "Geri al",
+    "az": "Geri qaytar",
+    "pt-BR": "Desfazer",
+    "ko": "실행 취소"
+  },
+  "Redo": {
+    "tr": "Yinele",
+    "az": "Təkrar et",
+    "pt-BR": "Refazer",
+    "ko": "다시 실행"
+  },
+  "Unlocked": {
+    "tr": "Kilitsiz",
+    "az": "Kilidi açılıb",
+    "pt-BR": "Desbloqueada"
+  },
+  "Create": {
+    "tr": "Oluştur",
+    "az": "Yarat",
+    "ko": "생성"
+  },
+  "Fields": {
+    "tr": "Alanlar",
+    "az": "Sahələr",
+    "ko": "필드"
+  },
+  "Target": {
+    "tr": "Hedef",
+    "az": "Hədəf",
+    "ko": "대상"
+  },
+  "Clear all": {
+    "tr": "Tümünü temizle",
+    "az": "Hamısını təmizlə",
+    "ko": "모두 지우기"
+  },
+  "Key saved": {
+    "ko": "키를 저장했습니다",
+    "tr": "Anahtar kaydedildi",
+    "az": "Açar yadda saxlanıldı",
+    "pt-BR": "Chave salva"
+  },
+  "Operation": {
+    "ko": "작업",
+    "tr": "İşlem",
+    "az": "Əməliyyat"
+  },
+  "Key": {
+    "tr": "Anahtar",
+    "az": "Açar",
+    "ko": "키"
+  },
+  "Prefix": {
+    "tr": "Önek",
+    "az": "Prefiks",
+    "pt-BR": "Prefixo",
+    "ko": "접두사"
+  },
+  "Reveal": {
+    "ko": "표시",
+    "tr": "Göster",
+    "az": "Göstər",
+    "pt-BR": "Mostrar"
+  },
+  "Kind": {
+    "ko": "종류",
+    "tr": "Tür",
+    "az": "Növ"
+  },
+  "Output": {
+    "ko": "출력",
+    "tr": "Çıktı",
+    "az": "Çıxış"
+  },
+  "Start": {
+    "ko": "시작",
+    "tr": "Başlat",
+    "az": "Başlat",
+    "pt-BR": "Iniciar"
+  },
+  "Height": {
+    "ko": "높이",
+    "tr": "Yükseklik",
+    "az": "Hündürlük"
+  },
+  "No matching keys": {
+    "ko": "일치하는 키가 없습니다",
+    "tr": "Eşleşen anahtar yok",
+    "az": "Uyğun açar yoxdur",
+    "pt-BR": "Nenhuma chave correspondente"
+  },
+  "Delete key": {
+    "ko": "키 삭제",
+    "tr": "Anahtarı sil",
+    "az": "Açarı sil",
+    "pt-BR": "Excluir chave"
+  },
+  "Key name": {
+    "ko": "키 이름",
+    "tr": "Anahtar adı",
+    "az": "Açarın adı",
+    "pt-BR": "Nome da chave"
+  },
+  "Decode": {
+    "ko": "디코딩",
+    "tr": "Çöz",
+    "az": "Dekodlaşdır"
+  },
+  "Compress": {
+    "ko": "압축",
+    "tr": "Sıkıştır",
+    "az": "Sıx"
+  },
+  "Modules": {
+    "ko": "모듈",
+    "tr": "Modüller",
+    "az": "Modullar"
+  },
+  "Background": {
+    "ko": "백그라운드",
+    "tr": "Arka plan",
+    "az": "Arxa plan"
+  },
+  "Choose file": {
+    "ko": "파일 선택",
+    "tr": "Dosya seç",
+    "az": "Fayl seçin"
+  },
+  "Encoding": {
+    "ko": "인코딩",
+    "tr": "Kodlama",
+    "az": "Kodlama"
+  },
+  "Decimal": {
+    "ko": "소수",
+    "tr": "Ondalık",
+    "az": "Onluq"
+  },
+  "Weekday": {
+    "ko": "요일",
+    "tr": "Hafta günü",
+    "az": "Həftənin günü"
+  },
+  "Generate": {
+    "ko": "생성",
+    "tr": "Üret",
+    "az": "Yarat"
+  },
+  "OK": {
+    "ko": "확인",
+    "tr": "Tamam",
+    "az": "Oldu"
+  },
+  "Regex": {
+    "ko": "정규 표현식",
+    "az": "Müntəzəm ifadə",
+    "pt-BR": "Expressão regular"
+  },
+  "Characters": {
+    "ko": "문자 수",
+    "tr": "Karakterler",
+    "az": "Simvollar"
+  },
+  "English": {
+    "ko": "영어",
+    "tr": "İngilizce",
+    "az": "İngilis dili"
+  },
+  "Title": {
+    "ko": "칭호",
+    "tr": "Unvan",
+    "az": "Başlıq"
+  },
+  "Params": {
+    "ko": "매개변수",
+    "tr": "Parametreler",
+    "az": "Parametrlər",
+    "pt-BR": "Parâmetros"
+  },
+  "Appearance": {
+    "ko": "모양",
+    "tr": "Görünüm",
+    "az": "Görünüş"
+  },
+  "Square": {
+    "ko": "각형",
+    "tr": "Köşeli",
+    "az": "Kvadrat"
+  },
+  "Foreground": {
+    "tr": "Ön plan",
+    "az": "Ön plan",
+    "ko": "전경"
+  },
+  "Border": {
+    "tr": "Kenarlık",
+    "az": "Haşiyə"
+  },
+  "Downloaded": {
+    "ko": "다운로드했습니다",
+    "tr": "İndirildi",
+    "az": "Endirildi"
+  },
+  "Binary": {
+    "ko": "바이너리",
+    "tr": "İkili",
+    "az": "İkilik"
+  },
+  "Download": {
+    "ko": "다운로드",
+    "tr": "İndir",
+    "az": "Endir"
+  },
+  "Save failed": {
+    "ko": "저장 실패"
+  },
+  "Unspecified": {
+    "ko": "미지정",
+    "tr": "Belirtilmemiş",
+    "az": "Göstərilməyib"
+  },
+  "Pattern": {
+    "ko": "패턴",
+    "tr": "Desen",
+    "az": "Şablon"
+  },
+  "bytes": {
+    "tr": "bayt",
+    "az": "bayt"
+  },
+  "Broadcast": {
+    "ko": "브로드캐스트",
+    "tr": "Yayın",
+    "az": "Yayım"
+  },
+  "Algorithm": {
+    "ko": "알고리즘",
+    "tr": "Algoritma",
+    "az": "Alqoritm"
+  },
+  "Expand": {
+    "ko": "펼치기",
+    "tr": "Genişlet",
+    "az": "Genişləndir",
+    "pt-BR": "Expandir"
+  },
+  "Collapse": {
+    "ko": "접기",
+    "tr": "Daralt",
+    "az": "Yığ"
+  },
+  "Content": {
+    "ko": "내용",
+    "tr": "İçerik",
+    "az": "Məzmun"
+  },
+  "Save PNG": {
+    "ko": "PNG 저장",
+    "tr": "PNG Kaydet",
+    "az": "PNG-ni yadda saxla"
+  }
+}

@@ -7,7 +7,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 当前版本 | `0.1.0` |
+| 当前版本 | `0.1.3` |
 | 运行要求 | DBX `>= 0.5.68`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |

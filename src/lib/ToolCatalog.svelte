@@ -9,7 +9,7 @@
   const favoriteSet = $derived(new Set(favorites));
   const filtered = $derived(searchTools(query, locale, tools).filter((item) => category === "all" || item.category === category));
   function destination(item) {
-    return intentLabelForTool(item.id, query);
+    return intentLabelForTool(item.id, query, locale);
   }
 </script>
 

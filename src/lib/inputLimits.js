@@ -28,15 +28,13 @@ export function inputLimitError(value, limit, labelOrOpts = "Input") {
     const locale = labelOrOpts.locale || "en";
     const label = labelOrOpts.label
       ? localize(locale, labelOrOpts.label)
-      : localize(locale, L(
-        labelOrOpts.en || "Input",
-        labelOrOpts.zh || "输入",
-        labelOrOpts.zhTW || labelOrOpts.zh || "輸入",
-        labelOrOpts.es || labelOrOpts.en || "Entrada",
-        labelOrOpts.it || labelOrOpts.en || "Input",
-        labelOrOpts.ja || labelOrOpts.en || "入力",
-        labelOrOpts.ptBR || labelOrOpts.en || "Entrada",
-      ));
+      : localize(locale, {
+        en: labelOrOpts.en || "Input",
+        "zh-CN": labelOrOpts.zh || "输入",
+        "zh-TW": labelOrOpts.zhTW,
+        es: labelOrOpts.es, it: labelOrOpts.it, ja: labelOrOpts.ja,
+        "pt-BR": labelOrOpts.ptBR,
+      });
     return localize(locale, L(
       `${label} is limited to ${n} characters`,
       `${label}不能超过 ${n} 个字符`,

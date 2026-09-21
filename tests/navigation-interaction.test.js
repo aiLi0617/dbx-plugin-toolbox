@@ -34,6 +34,19 @@ test("resolveIntent maps action phrases to tools and options", () => {
   assert.deepEqual(resolveIntent("去重")[0]?.options, { action: "unique" });
 });
 
+test("intent search understands every non-English host locale", () => {
+  assert.deepEqual(toolOptionsForQuery("jwt", "JWT の署名を検証"), { mode: "verify" });
+  assert.deepEqual(toolOptionsForQuery("url", "URLをデコード"), { mode: "decode" });
+  assert.deepEqual(toolOptionsForQuery("image-process", "画像を切り抜き"), { op: "crop" });
+  assert.equal(resolveIntent("正規表現")[0]?.toolId, "regex");
+
+  assert.deepEqual(toolOptionsForQuery("jwt", "verificar firma JWT"), { mode: "verify" });
+  assert.deepEqual(toolOptionsForQuery("url", "decodificar URL"), { mode: "decode" });
+  assert.equal(resolveIntent("espressione regolare")[0]?.toolId, "regex");
+  assert.equal(resolveIntent("senha aleatória")[0]?.toolId, "password");
+  assert.deepEqual(toolOptionsForQuery("url", "URL 解碼"), { mode: "decode" });
+});
+
 test("search finds localized categories and multiple keywords", () => {
   assert.ok(searchTools("安全加密", "zh-CN").every((tool) => tool.category === "security"));
   assert.ok(searchTools("安全加密", "zh-CN").length >= 8);
@@ -52,6 +65,8 @@ test("search ranks intent matches first", () => {
   assert.equal(searchTools("crontab", "zh-CN")[0].id, "cron");
   assert.equal(searchTools("decode token", "en")[0].id, "jwt");
   assert.equal(searchTools("去重", "zh-CN")[0].id, "whitespace");
+  assert.equal(searchTools("ランダムパスワード", "ja")[0].id, "password");
+  assert.equal(searchTools("contraseña aleatoria", "es")[0].id, "password");
 });
 
 test("editor indentation preserves selections and supports outdent", () => {

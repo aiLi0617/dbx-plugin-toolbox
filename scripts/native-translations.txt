@@ -1,0 +1,194 @@
+# index|ko|tr|az
+0|JSON 서식 지정, 압축, 검증, 트리 편집, JSONPath 및 TypeScript / SQL 내보내기|JSON biçimlendirme, sıkıştırma, doğrulama, ağaç düzenleme, JSONPath ve TypeScript / SQL dışa aktarma|JSON formatlama, sıxlaşdırma, yoxlama, ağac redaktəsi, JSONPath və TypeScript / SQL ixracı
+1|JSON, YAML, CSV, TSV, NDJSON, XML 및 TOML 상호 변환|JSON, YAML, CSV, TSV, NDJSON, XML ve TOML arasında dönüştürme|JSON, YAML, CSV, TSV, NDJSON, XML və TOML arasında çevirmə
+2|SQL, XML, YAML, HTML, CSS, JavaScript 및 TypeScript 서식 지정|SQL, XML, YAML, HTML, CSS, JavaScript ve TypeScript biçimlendirme|SQL, XML, YAML, HTML, CSS, JavaScript və TypeScript formatlama
+3|XLSX, CSV, TSV 및 JSON을 로컬에서 열고 편집하고 내보내기|XLSX, CSV, TSV ve JSON dosyalarını yerel olarak açma, düzenleme ve dışa aktarma|XLSX, CSV, TSV və JSON fayllarını yerli açmaq, redaktə və ixrac etmək
+4|Base64, Base32, Base58 또는 Hex 인코딩 및 디코딩|Base64, Base32, Base58 veya Hex kodlama ve çözme|Base64, Base32, Base58 və ya Hex kodlaşdırma və açma
+5|URL 퍼센트 인코딩/디코딩 및 쿼리 매개변수 보기|URL yüzde kodlama/çözme ve sorgu parametrelerini listeleme|URL faiz kodlaşdırma/açma və sorğu parametrlərini göstərmə
+6|HTML 엔티티, Unicode, JS, JSON 또는 CSS 식별자 이스케이프|HTML varlıkları, Unicode, JS, JSON veya CSS tanımlayıcılarını kaçırma|HTML varlıqları, Unicode, JS, JSON və ya CSS identifikatorlarını qaçışlama
+7|각 줄을 SQL 문자열 리터럴로 이스케이프하고 선택적으로 쉼표 추가|Her satırı SQL dizesine dönüştürme, isteğe bağlı virgül ekleme|Hər sətri SQL sətir literalına çevirmə, istəyə görə vergül əlavə etmə
+8|텍스트 또는 파일로 Data URI 생성 및 해석|Metin veya dosyalardan Data URI oluşturma ve ayrıştırma|Mətn və ya fayldan Data URI yaratma və təhlil etmə
+9|IDN과 Punycode 도메인 이름 상호 변환|IDN ve Punycode alan adları arasında dönüştürme|IDN və Punycode domen adları arasında çevirmə
+10|이메일용 Quoted-Printable 인코딩 및 디코딩|E-posta için Quoted-Printable kodlama ve çözme|E-poçt üçün Quoted-Printable kodlaşdırma və açma
+11|Unix 타임스탬프와 날짜 변환, 시간대 및 시간 계산|Unix zaman damgası ve tarih dönüştürme, saat dilimleri ve zaman hesapları|Unix zaman nişanı və tarix çevirmə, saat qurşaqları və vaxt hesablamaları
+12|HEX, RGB, CMYK, HSV 변환, 색상환 및 화면 색상 선택|HEX, RGB, CMYK, HSV dönüştürme; renk çarkı ve ekran seçici|HEX, RGB, CMYK, HSV çevirmə; rəng çarxı və ekran seçicisi
+13|Cron 표현식 작성 및 다음 실행 미리보기|Cron ifadesi oluşturma ve sonraki çalışmaları önizleme|Cron ifadəsi yaratma və növbəti icralara önizləmə
+14|2~36진수 변환, 그룹화 및 접두사 옵션|2–36 tabanları arasında dönüştürme, gruplama ve önek seçenekleri|2–36 əsasları arasında çevirmə, qruplaşdırma və prefiks seçimləri
+15|IPv4/IPv6 네트워크, 마스크, 범위 계산 및 서브넷 분할|IPv4/IPv6 ağ, maske, aralık hesaplama ve alt ağ bölme|IPv4/IPv6 şəbəkə, maska, aralıq hesablama və alt şəbəkə bölmə
+16|텍스트 정리, 중복 제거, 정렬, 번호 매기기, 열 추출, 이름 변환 및 개수 계산|Metin temizleme, tekilleştirme, sıralama, numaralama, sütun çıkarma, ad dönüştürme ve sayma|Mətn təmizləmə, təkrarsızlaşdırma, sıralama, nömrələmə, sütun çıxarma, ad çevirmə və sayma
+17|정규식 테스트, 일치 항목 검사 및 바꾸기 미리보기|Düzenli ifadeleri test etme, eşleşmeleri inceleme ve değiştirmeyi önizleme|Müntəzəm ifadələri sınama, uyğunluqları yoxlama və əvəzləməyə önizləmə
+18|두 텍스트를 줄, 단어 또는 문자 단위로 비교|İki metni satır, sözcük veya karakter düzeyinde karşılaştırma|İki mətni sətir, söz və ya simvol səviyyəsində müqayisə
+19|입력하는 동안 Markdown 실시간 미리보기|Yazarken canlı Markdown önizlemesi|Yazarkən canlı Markdown önizləməsi
+20|문자별 Unicode 코드 포인트 검사|Karakter başına Unicode kod noktalarını inceleme|Hər simvolun Unicode kod nöqtəsini yoxlama
+21|MD5, SHA, SM3 또는 CRC32로 텍스트 및 파일 해시 계산|MD5, SHA, SM3 veya CRC32 ile metin ve dosya özeti hesaplama|MD5, SHA, SM3 və ya CRC32 ilə mətn və fayl heşini hesablama
+22|HS / RS / PS로 JWT 디코딩, 서명 및 검증|HS / RS / PS ile JWT çözme, imzalama veya doğrulama|HS / RS / PS ilə JWT açma, imzalama və yoxlama
+23|AES 또는 SM4 암호화/복호화(GCM, CBC, ECB)|AES veya SM4 şifreleme/çözme (GCM, CBC, ECB)|AES və ya SM4 şifrələmə/açma (GCM, CBC, ECB)
+24|SHA-1, SHA-256, SHA-384, SHA-512 또는 SM3 HMAC|SHA-1, SHA-256, SHA-384, SHA-512 veya SM3 ile HMAC|SHA-1, SHA-256, SHA-384, SHA-512 və ya SM3 ilə HMAC
+25|RSA OAEP/PKCS#1 또는 SM2 암호화 및 복호화|RSA OAEP/PKCS#1 veya SM2 şifreleme ve çözme|RSA OAEP/PKCS#1 və ya SM2 şifrələmə və açma
+26|비밀 키로 현재 TOTP 코드 생성|Gizli anahtardan güncel TOTP kodu üretme|Gizli açardan cari TOTP kodu yaratma
+27|인증서 유효 기간, SAN, 지문 및 SSH 공개 키 검사|Sertifika geçerliliği, SAN, parmak izi veya SSH açık anahtarlarını inceleme|Sertifikat etibarlılığı, SAN, barmaq izi və ya SSH açıq açarlarını yoxlama
+28|JWK/JWKS 검증 및 RSA JWK ↔ PEM 변환|JWK/JWKS doğrulama ve RSA JWK ↔ PEM dönüştürme|JWK/JWKS yoxlama və RSA JWK ↔ PEM çevirmə
+29|AES, SM4 또는 HMAC 키 생성 및 선택적으로 보관함에 저장|AES, SM4 veya HMAC anahtarı üretme; isteğe bağlı kasaya kaydetme|AES, SM4 və ya HMAC açarı yaratma; istəyə görə anbara saxlama
+30|RSA 또는 SM2 키 쌍 생성, 비트 수와 PEM 형식 선택|RSA veya SM2 anahtar çifti üretme; bit ve PEM biçimi seçenekleri|RSA və ya SM2 açar cütü yaratma; bit və PEM formatı seçimləri
+31|디버깅 전용 바이트 XOR|Yalnızca hata ayıklama için bayt XOR işlemi|Yalnız sazlama üçün bayt XOR əməliyyatı
+32|UUID, ULID 또는 NanoID 생성|UUID, ULID veya NanoID üretme|UUID, ULID və ya NanoID yaratma
+33|무작위 비밀번호 또는 16진수 바이트 생성|Rastgele parola veya onaltılık bayt üretme|Təsadüfi parol və ya onaltılıq bayt yaratma
+34|QR, Han Xin, PDF417 및 Data Matrix 생성 또는 디코딩|QR, Han Xin, PDF417 ve Data Matrix üretme veya çözme|QR, Han Xin, PDF417 və Data Matrix yaratma və ya açma
+35|기본 또는 사용자 지정 텍스트를 지정 횟수만큼 반복|Varsayılan veya özel metni seçilen sayıda yineleme|Standart və ya fərdi mətni seçilmiş sayda təkrarlama
+36|자르기, 크기 조정, 회전, 뒤집기, 워터마크, 변환 및 압축|Kırpma, boyutlandırma, döndürme, çevirme, filigran, dönüştürme ve sıkıştırma|Kəsmə, ölçüləndirmə, döndərmə, çevirmə, su nişanı, format çevirmə və sıxma
+37|정확한 픽셀 크기 및 파일 크기의 자리표시자 이미지 생성|Tam piksel ve dosya boyutunda yer tutucu görsel üretme|Dəqiq piksel və fayl ölçüsündə yer tutucu şəkil yaratma
+38|인증서 입력|Sertifika girdisi|Sertifikat girişi
+39|암호화|Şifrele|Şifrələ
+40|SM4 모드|SM4 kipi|SM4 rejimi
+41|입력 형식|Girdi biçimi|Giriş formatı
+42|반복 키로 각 바이트를 XOR합니다. 오른쪽 Hex가 기본 결과이고 아래 UTF-8은 같은 바이트의 텍스트입니다. 되돌리려면 입력으로 사용하거나 Hex로 붙여넣으세요.|Her bayta yinelenen anahtarla XOR uygular. Sağdaki Hex ana sonuçtur; alttaki UTF-8 aynı baytların metnidir. Tersine çevirmek için girdi olarak kullanın veya Hex olarak yapıştırın.|Hər bayta təkrarlanan açarla XOR tətbiq edir. Sağdakı Hex əsas nəticədir; altdakı UTF-8 eyni baytların mətnidir. Geri çevirmək üçün giriş kimi istifadə edin və ya Hex kimi yapışdırın.
+43|암호문에는 nonce와 태그가 포함되지 않습니다. 별도로 전달하세요. 같은 키로 암호화할 때마다 다른 nonce가 필요합니다.|Şifreli metin nonce ve etiketi içermez; ayrı iletin. Aynı anahtarla her şifrelemede farklı nonce gerekir.|Şifrəli mətn nonce və etiketi saxlamır; ayrıca ötürün. Eyni açarla hər şifrələmə fərqli nonce tələb edir.
+44|ECB는 IV 없이 PKCS#7 패딩을 사용합니다.|ECB, IV kullanmaz; PKCS#7 dolgusu kullanır.|ECB, IV istifadə etmir; PKCS#7 doldurması istifadə edir.
+45|암호문에 IV가 포함되지 않으며 PKCS#7 패딩을 사용합니다.|Şifreli metin IV içermez; PKCS#7 dolgusu kullanır.|Şifrəli mətn IV saxlamır; PKCS#7 doldurması istifadə edir.
+46|호환 모드는 암호문을 인증하지 않습니다. 새 데이터에는 AES-GCM을 권장합니다.|Uyumluluk kipi şifreli metni doğrulamaz; yeni veriler için AES-GCM tercih edin.|Uyğunluq rejimi şifrəli mətni təsdiqləmir; yeni məlumat üçün AES-GCM seçin.
+47|PKCS#1 v1.5는 이전 버전 호환용입니다. OAEP-SHA256을 권장합니다.|PKCS#1 v1.5 eski uyumluluk içindir; OAEP-SHA256 tercih edin.|PKCS#1 v1.5 köhnə uyğunluq üçündür; OAEP-SHA256 seçin.
+48|텍스트 문자로 처리합니다. 이전 Hex 결과라면 Hex로 전환하세요.|Metin karakterleri olarak işleniyor. Önceki Hex sonucuysa Hex'e geçin.|Mətn simvolları kimi emal edilir. Əvvəlki Hex nəticəsidirsə, Hex-ə keçin.
+49|복호화된 바이트가 UTF-8이 아니므로 Hex로 표시합니다. 고급 모드에서 출력 인코딩을 선택할 수 있습니다.|Çözülen baytlar UTF-8 değil; Hex gösterilir. Gelişmiş kipte çıktı kodlaması seçilebilir.|Açılmış baytlar UTF-8 deyil, Hex göstərilir. Təkmil rejimdə çıxış kodlaşdırması seçilə bilər.
+50|Base64(12바이트 nonce + 암호문 + 16바이트 태그), AAD 없음. 암호화할 때 새 nonce를 생성합니다.|Base64(12 bayt nonce + şifreli metin + 16 bayt etiket), AAD yok. Şifrelemede yeni nonce üretilir.|Base64(12 bayt nonce + şifrəli mətn + 16 bayt etiket), AAD yoxdur. Şifrələmədə yeni nonce yaradılır.
+51|Base64(16바이트 IV + 암호문), PKCS#7 패딩. 암호화할 때 새 IV를 생성합니다.|Base64(16 bayt IV + şifreli metin), PKCS#7 dolgusu. Şifrelemede yeni IV üretilir.|Base64(16 bayt IV + şifrəli mətn), PKCS#7 doldurması. Şifrələmədə yeni IV yaradılır.
+52|Base64(암호문), PKCS#7 패딩. ECB에는 IV가 없습니다.|Base64(şifreli metin), PKCS#7 dolgusu; ECB, IV kullanmaz.|Base64(şifrəli mətn), PKCS#7 doldurması; ECB, IV istifadə etmir.
+53|HEX|HEX|HEX
+54|매초|Her saniye|Hər saniyə
+55|초|saniye|saniyə
+56|매분|Her dakika|Hər dəqiqə
+57|분|dakika|dəqiqə
+58|매시간|Her saat|Hər saat
+59|시간|saat|saat
+60|일|Gün|Gün
+61|매일|Her gün|Hər gün
+62|일|gün|gün
+63|월|Ay|Ay
+64|매월|Her ay|Hər ay
+65|월|ay|ay
+66|주|Hafta|Həftə
+67|매 평일|Her iş günü|Hər iş günü
+68|요일|haftanın günü|həftənin günü
+69|년|Yıl|İl
+70|매년|Her yıl|Hər il
+71|년|yıl|il
+72|중국 표준시|Çin Standart Saati|Çin standart vaxtı
+73|도쿄|Tokyo|Tokio
+74|싱가포르|Singapur|Sinqapur
+75|런던|Londra|London
+76|뉴욕|New York|Nyu-York
+77|5분마다|Her 5 dakikada|Hər 5 dəqiqədə
+78|10분마다|Her 10 dakikada|Hər 10 dəqiqədə
+79|15분마다|Her 15 dakikada|Hər 15 dəqiqədə
+80|30분마다|Her 30 dakikada|Hər 30 dəqiqədə
+81|매시간|Saatlik|Saatlıq
+82|2시간마다|Her 2 saatte|Hər 2 saatda
+83|6시간마다|Her 6 saatte|Hər 6 saatda
+84|매일 자정|Her gün gece yarısı|Hər gün gecə yarısı
+85|매일 8:00|Her gün 8:00|Hər gün 8:00
+86|매일 9:30|Her gün 9:30|Hər gün 9:30
+87|매일 정오|Her gün öğlen|Hər gün günorta
+88|매일 18:00|Her gün 18:00|Hər gün 18:00
+89|매일 23:00|Her gün 23:00|Hər gün 23:00
+90|평일 9:00|İş günleri 9:00|İş günləri 9:00
+91|평일 18:00|İş günleri 18:00|İş günləri 18:00
+92|월요일 9:00|Pazartesi 9:00|Bazar ertəsi 9:00
+93|금요일 18:00|Cuma 18:00|Cümə 18:00
+94|토요일 10:00|Cumartesi 10:00|Şənbə 10:00
+95|매월 1일|Ayın 1'i|Ayın 1-i
+96|매월 15일|Ayın 15'i|Ayın 15-i
+97|매월 마지막 날|Ayın son günü|Ayın son günü
+98|분기 첫날|Çeyreğin ilk günü|Rübün ilk günü
+99|새해 첫날|Yılbaşı|Yeni ilin ilk günü
+100|Linux 5분마다|Linux her 5 dakika|Linux hər 5 dəqiqə
+101|Linux 매일 2:00|Linux her gün 2:00|Linux hər gün 2:00
+102|Linux 근무 시간|Linux çalışma saatleri|Linux iş saatları
+103|Linux 일요일|Linux pazar günleri|Linux bazar günləri
+104|Node 10분마다|Node her 10 dakika|Node hər 10 dəqiqə
+105|Node 평일 9:00|Node iş günleri 9:00|Node iş günləri 9:00
+106|표현식 유형|İfade türü|İfadə növü
+107|매 {0} 일치 (*)|Her {0} ile eşleşir (*)|Hər {0} uyğun gəlir (*)
+108|다른 날짜 필드를 적용하려면 ? 사용|Diğer tarih alanını uygulamak için ? kullanın|Digər tarix sahəsini tətbiq etmək üçün ? istifadə edin
+109|시작|Başlangıç|Başlanğıc
+110|범위 시작|Aralık başlangıcı|Aralığın başlanğıcı
+111|부터|ile|qədər
+112|범위 끝|Aralık sonu|Aralığın sonu
+113|간격|Adım|Addım
+114|간격 시작|Adım başlangıcı|Addımın başlanğıcı
+115|마다|her|hər
+116|실행 간격|Adım aralığı|Addım intervalı
+117|{0}초|{0} sn|{0} san
+118|가장 가까운 평일|En yakın iş günü|Ən yaxın iş günü
+119|날짜|Tarih|Tarix
+120|가장 가까운 평일 날짜|En yakın iş günü tarihi|Ən yaxın iş gününün tarixi
+121|가장 가까운 평일|en yakın iş günü|ən yaxın iş günü
+122|마지막 날|Son gün|Son gün
+123|매월 마지막 날|Ayın son günü|Ayın son günü
+124|마지막 평일|Son iş günü|Son iş günü
+125|매월 마지막 평일|Ayın son iş günü|Ayın son iş günü
+126|지정|Belirli|Müəyyən
+127|{0}개 선택됨|{0} seçili|{0} seçilib
+128|끌어서 범위 선택|Aralık seçmek için sürükleyin|Aralıq seçmək üçün sürükləyin
+129|Cron 표현식|Cron ifadesi|Cron ifadəsi
+130|해석|Ayrıştır|Təhlil et
+131|사전 설정|Ön ayarlar|Hazır ayarlar
+132|클릭하여 적용|Uygulamak için tıklayın|Tətbiq etmək üçün klikləyin
+133|접기|Daha az|Daha az
+134|다음 실행 5회|Sonraki 5 çalışma|Növbəti 5 icra
+135|실행 순서|Çalışma sırasıyla|İcra sırası ilə
+136|유효한 표현식을 입력하면 다음 실행이 표시됩니다.|Geçerli ifadede sonraki çalışmalar görünür.|Etibarlı ifadə üçün növbəti icralar görünür.
+137|잘못된 Cron 표현식|Geçersiz cron ifadesi|Etibarsız cron ifadəsi
+138|서로 바꾸고 결과 사용|Değiştir ve sonucu kullan|Dəyişdir və nəticədən istifadə et
+139|출력 형식|Çıktı biçimi|Çıxış formatı
+140|CSV/TSV는 첫 행을 열 이름으로, 값을 텍스트로 읽습니다. NDJSON은 줄마다 JSON 값 하나를 포함합니다. 중첩 CSV/TSV 값은 JSON 텍스트가 됩니다. XML 속성은 @_를 사용하고 여러 최상위 필드는 root, 배열은 root/item을 사용합니다. 형식 변환 시 주석이 손실될 수 있습니다.|CSV/TSV ilk satırı sütun adları, değerleri metin olarak okur. NDJSON her satırda bir JSON değeri içerir. İç içe CSV/TSV değerleri JSON metnine dönüşür. XML, @_ özniteliklerini, birden çok üst alan için root, diziler için root/item kullanır. Biçimler arası dönüşüm yorumları kaybedebilir.|CSV/TSV ilk sətri sütun adları, dəyərləri mətn kimi oxuyur. NDJSON hər sətirdə bir JSON dəyəri saxlayır. İç-içə CSV/TSV dəyərləri JSON mətninə çevrilir. XML atributlar üçün @_, çoxsaylı üst sahələr üçün root, massivlər üçün root/item istifadə edir. Format çevirməsi şərhləri itirə bilər.
+141|변환 중…|Dönüştürülüyor…|Çevrilir…
+142|사용자 지정…|Özel…|Fərdi…
+143|MIME 유형|MIME türü|MIME növü
+144|사용자 지정 MIME|Özel MIME|Fərdi MIME
+145|인코딩 형식|Kodlama biçimi|Kodlaşdırma formatı
+146|퍼센트|Yüzde|Faiz
+147|Data URI를 붙여넣어 유형과 인코딩 확인|Tür ve kodlamayı görmek için Data URI yapıştırın|Növ və kodlaşdırmanı görmək üçün Data URI yapışdırın
+148|읽는 중…|Okunuyor…|Oxunur…
+149|파일 제거|Dosyayı kaldır|Faylı sil
+150|파일 다운로드|Dosyayı indir|Faylı endir
+151|입력 영역에 파일 놓기|Girdi bölmesi; dosyayı buraya bırakın|Giriş paneli; faylı bura buraxın
+152|놓아서 교체|Değiştirmek için bırakın|Əvəz etmək üçün buraxın
+153|텍스트를 입력하거나 파일을 놓으세요(최대 10 MB)…|Metin yazın veya dosya bırakın (≤10 MB)…|Mətn daxil edin və ya fayl buraxın (≤10 MB)…
+154|Data URI가 여기에 표시됩니다|Data URI burada görünür|Data URI burada görünür
+155|바이너리 콘텐츠|İkili içerik|İkili məzmun
+156|텍스트가 아닙니다. 파일 다운로드를 사용하세요|Metin değil; dosyayı indirin|Mətn deyil; faylı endirin
+157|디코딩된 콘텐츠가 여기에 표시됩니다|Çözülen içerik burada görünür|Açılmış məzmun burada görünür
+158|파일이 너무 큽니다({0}). 최대 10 MB입니다|Dosya çok büyük ({0}); sınır 10 MB|Fayl çox böyükdür ({0}); hədd 10 MB
+159|파일을 읽지 못했습니다|Dosya okunamadı|Fayl oxunmadı
+160|인코딩된 데이터가 10 MB 제한을 초과합니다|Kodlanmış veri 10 MB sınırını aşıyor|Kodlaşdırılmış məlumat 10 MB həddini aşır
+161|파일 저장|Dosyayı kaydet|Faylı saxla
+162|저장하지 못했습니다|Kaydedilemedi|Saxlanmadı
+163|비교 단위|Ayrıntı düzeyi|Təfərrüat səviyyəsi
+164|줄|Satırlar|Sətirlər
+165|단어|Sözcükler|Sözlər
+166|공백 무시|Boşlukları yoksay|Boşluqları nəzərə alma
+167|대소문자 무시|Büyük/küçük harfi yoksay|Böyük/kiçik hərfi nəzərə alma
+168|서로 바꾸기|Yer değiştir|Yerini dəyiş
+169|차이|Fark|Fərq
+170|왼쪽 입력|Sol girdi|Sol giriş
+171|오른쪽 입력|Sağ girdi|Sağ giriş
+172|방향|Yön|İstiqamət
+173|이스케이프된 텍스트|Kaçırılmış metin|Qaçışlanmış mətn
+174|입력하는 동안 업데이트|Yazarken güncellenir|Yazarkən yenilənir
+175|{0} 출력|{0} çıktısı|{0} çıxışı
+176|이스케이프|Kaçır|Qaçışla
+177|이스케이프 해제|Kaçışı çöz|Qaçışı aç
+178|HTML 엔티티|HTML varlıkları|HTML varlıqları
+179|JSON 문자열|JSON dizesi|JSON sətri
+180|CSS 식별자|CSS tanımlayıcısı|CSS identifikatoru
+181|현재 파일|Geçerli dosya|Cari fayl
+182|텍스트 입력|Metin girdisi|Mətn girişi
+183|파일 읽는 중…|Dosya okunuyor…|Fayl oxunur…
+184|텍스트 사용|Metin kullan|Mətndən istifadə et
+185|예상 체크섬(선택)|Beklenen sağlama toplamı (isteğe bağlı)|Gözlənilən yoxlama cəmi (istəyə bağlı)
+186|일치 없음|Eşleşme yok|Uyğunluq yoxdur
+187|{0} 다이제스트|{0} özeti|{0} xülasəsi
+188|파일은 최대 16 MB입니다. 더 작은 파일을 선택하세요.|Dosya sınırı 16 MB. Daha küçük dosya seçin.|Fayl həddi 16 MB-dır. Daha kiçik fayl seçin.
+189|파일을 읽지 못했습니다. 다시 선택하세요.|Dosya okunamadı. Yeniden seçin.|Fayl oxunmadı. Yenidən seçin.
+190|입력|Girdi|Giriş
+191|다이제스트를 계산하려면 키를 입력하세요.|Özeti hesaplamak için anahtar girin.|Xülasəni hesablamaq üçün açar daxil edin.
+192|다이제스트|Özet|Xülasə

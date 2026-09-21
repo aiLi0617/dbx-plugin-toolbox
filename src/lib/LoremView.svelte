@@ -35,7 +35,7 @@
   <div class="opts">
     <label class="field">
       <span>{t("重复次数", "Repeat count")}</span>
-      <NumberInput class="size" min={LOREM_MIN_LINES} max={LOREM_MAX_LINES} bind:value={paragraphs} />
+      <NumberInput {locale} class="size" min={LOREM_MIN_LINES} max={LOREM_MAX_LINES} bind:value={paragraphs} />
     </label>
     <label class="field">
       <span>{t("默认文案语言", "Default copy language")}</span>

@@ -1,4 +1,5 @@
 <script>
+  import { pick } from "./i18n.js";
   import JsonTreeNode from "./JsonTreeNode.svelte";
   import { childCount, encodePointer, hoverDistance, hoverRelation, hoverTint, isContainer, parseLeaf } from "./jsonOps.js";
 
@@ -38,9 +39,9 @@
   );
   const openBrace = $derived(isArray ? "[" : "{");
   const closeBrace = $derived(isArray ? "]" : "}");
-  const delLabel = $derived(locale.toLowerCase().startsWith("zh") ? "删除" : "Delete");
-  const zh = $derived(locale.toLowerCase().startsWith("zh"));
-  const addTitle = $derived(isArray ? (zh ? "添加元素" : "Add item") : (zh ? "添加属性" : "Add property"));
+  const t = (zh, en) => pick(locale, zh, en);
+  const delLabel = $derived(t("删除", "Delete"));
+  const addTitle = $derived(isArray ? t("添加元素", "Add item") : t("添加属性", "Add property"));
   const canDelete = $derived(path !== "");
   const relation = $derived(hoverRelation(path, hoverPath));
   const distance = $derived(hoverDistance(path, hoverPath));
@@ -145,7 +146,7 @@
           onclick={() => onToggle?.(path)}
           type="button"
           aria-expanded={String(!folded)}
-          title={folded ? (zh ? "展开" : "Expand") : (zh ? "收起" : "Collapse")}
+          title={folded ? t("展开", "Expand") : t("收起", "Collapse")}
         >
           <span class="json-twist-icon"></span>
         </button>
@@ -296,8 +297,8 @@
   .json-val:focus-visible,
   .json-key:focus-visible,
   .json-del:focus-visible {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--dbx-focus-ring);
   }
   .json-twist-icon {
     width: 0;

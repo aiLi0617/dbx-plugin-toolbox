@@ -1,4 +1,5 @@
 <script>
+  import { pick } from "./i18n.js";
   import { tokenizeCode } from "./codeHighlight.js";
   import { indentSelection } from "./editorIndent.js";
 
@@ -8,6 +9,7 @@
     placeholder = "",
     readonly = false,
     label = "",
+    locale = "zh-CN",
   } = $props();
 
   let textareaEl = $state(null);
@@ -61,7 +63,7 @@
       spellcheck="false"
       onscroll={syncScroll}
       onkeydown={onKeydown}
-      title="Tab: 缩进 / indent · Shift+Tab: 减少缩进 / outdent · Esc, Tab: 移动焦点 / move focus"
+      title={pick(locale, "Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点", "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus")}
     ></textarea>
   {/if}
 </div>
@@ -83,10 +85,9 @@
     font-size: 13px;
     line-height: 1.55;
   }
-  .code-editor:focus-within {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: -2px;
+  .code-editor:has(.code-textarea:focus-visible) {
     border-color: var(--color-ring, var(--color-primary));
+    box-shadow: var(--dbx-focus-ring);
   }
   .code-highlight,
   .code-textarea {

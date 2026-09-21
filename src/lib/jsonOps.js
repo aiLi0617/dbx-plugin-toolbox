@@ -1,4 +1,5 @@
 import { isLosslessNumber, parseLosslessJson, parseSafeJson, stringifyLosslessJson } from "./jsonPrecision.js";
+import { pick } from './locale.js';
 
 export function isContainer(value) {
   return value !== null && typeof value === "object" && !isLosslessNumber(value);
@@ -103,9 +104,8 @@ function nodeAt(root, path) {
 }
 
 export function addChild(root, path, locale = "zh-CN") {
-  const zh = String(locale || "").toLowerCase().startsWith("zh");
-  const keyBase = zh ? "新的属性" : "new_key";
-  const leaf = zh ? "新的属性值" : "new value";
+  const keyBase = pick(locale, "新的属性", "new_key");
+  const leaf = pick(locale, "新的属性值", "new value");
   const clone = cloneJson(root);
   const target = nodeAt(clone, path);
   if (!isContainer(target)) return clone;

@@ -592,7 +592,7 @@
     color: var(--color-foreground);
     font: 12px var(--font-mono);
   }
-  td input:focus { box-shadow: inset 0 0 0 2px var(--color-primary); }
+  td input:focus-visible { box-shadow: var(--dbx-focus-ring); }
   .header-row td { background: color-mix(in srgb, var(--color-primary) 5%, var(--color-background)); }
   .header-row td input { font-weight: 600; }
   .empty { padding: 28px 20px; text-align: center; color: var(--color-muted-foreground); }

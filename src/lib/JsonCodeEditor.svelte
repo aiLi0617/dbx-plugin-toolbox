@@ -1,4 +1,5 @@
 <script>
+  import { pick } from "./i18n.js";
   import { indentSelection } from "./editorIndent.js";
   let tabMovesFocus = false;
   import { jsonTextFolds, tokenizeJson, visibleTextLines } from "./jsonOps.js";
@@ -24,7 +25,7 @@
   const shownText = $derived(visible.map((line) => line.text).join("\n"));
   const hasActiveFolds = $derived(visible.some((line) => line.folded));
   const overlayTokens = $derived(tokenizeJson(hasActiveFolds ? shownText : value));
-  const zh = $derived(String(locale || "").toLowerCase().startsWith("zh"));
+  const t = (zh, en) => pick(locale, zh, en);
 
   $effect(() => {
     const foldable = folds.foldable;
@@ -120,8 +121,8 @@
             onmousedown={(event) => event.preventDefault()}
             type="button"
             tabindex="-1"
-            title={line.folded ? (zh ? "展开" : "Expand") : (zh ? "折叠" : "Collapse")}
-            aria-label={line.folded ? (zh ? "展开" : "Expand") : (zh ? "折叠" : "Collapse")}
+            title={line.folded ? t("展开", "Expand") : t("折叠", "Collapse")}
+            aria-label={line.folded ? t("展开", "Expand") : t("折叠", "Collapse")}
           ></button>
         {:else}
           <span class="fold-arrow-space"></span>
@@ -157,7 +158,7 @@
         spellcheck="false"
         onscroll={syncScroll}
         onkeydown={onKeydown}
-        title="Tab: 缩进 / indent · Shift+Tab: 减少缩进 / outdent · Esc, Tab: 移动焦点 / move focus"
+        title={t("Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点", "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus")}
       ></textarea>
     {/if}
   </div>
@@ -230,8 +231,8 @@
     background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
   }
   .fold-arrow:focus-visible {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--dbx-focus-ring);
   }
   .fold-arrow::before {
     content: "";

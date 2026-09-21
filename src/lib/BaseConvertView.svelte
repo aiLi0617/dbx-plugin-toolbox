@@ -424,9 +424,9 @@
     overflow: hidden;
     background: var(--color-background, Canvas);
   }
-  .base-radix-group:focus-within {
-    outline: 2px solid var(--color-ring, var(--color-primary));
-    outline-offset: -1px;
+  .base-radix-group:has(:focus-visible) {
+    border-color: var(--color-ring, var(--color-primary));
+    box-shadow: var(--dbx-focus-ring);
   }
   .base-radix {
     width: 2.55rem;

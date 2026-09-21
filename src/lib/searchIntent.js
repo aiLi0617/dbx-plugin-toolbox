@@ -1,4 +1,104 @@
 import { TEXT_ACTIONS, textActionForQuery } from "./textActions.js";
+import { L, localize } from "./locale.js";
+
+// Normalize common intent phrases from every locale exposed by the DBX host.
+// Search indexing already handles localized catalog strings; this layer makes
+// action-oriented queries (for example "URLをデコード") open the right mode.
+const INTENT_REPLACEMENTS = [
+  // Traditional Chinese
+  ["正規表示式", "regex"], ["正則表達式", "regex"], ["時間戳記", "时间戳"],
+  ["驗證簽章", "验签"], ["驗簽", "验签"], ["解碼", "解码"], ["編碼", "编码"],
+  ["隨機密碼", "随机密码"], ["對稱加密", "对称加密"], ["非對稱", "非对称"],
+  ["圖片處理", "图片处理"], ["圖片編輯", "图片编辑"], ["裁切", "裁剪"],
+  ["縮放", "缩放"], ["旋轉", "旋转"], ["翻轉", "翻转"], ["浮水印", "水印"],
+  ["憑證", "证书"], ["金鑰對", "密钥对"], ["對稱金鑰", "对称密钥"],
+  ["子網", "子网"], ["網段", "网段"], ["進位轉換", "进制转换"], ["重複資料刪除", "去重"],
+
+  // Japanese
+  ["署名を検証", "verify"], ["署名検証", "verify"], ["検証", "verify"],
+  ["デコード", "decode"], ["復号化", "decrypt"], ["復号", "decrypt"],
+  ["エンコード", "encode"], ["暗号化", "encrypt"], ["署名", "sign"],
+  ["ランダムパスワード", "password generator"], ["対称暗号", "对称加密"], ["非対称暗号", "非对称"],
+  ["コードフォーマット", "代码格式化"], ["コード整形", "代码格式化"],
+  ["データ形式変換", "格式转换"], ["json の整形", "格式化 json"], ["json整形", "格式化 json"],
+  ["タイムスタンプ", "时间戳"], ["時間差", "时间差"], ["正規表現", "regex"],
+  ["画像処理", "图片处理"], ["画像編集", "图片编辑"], ["プレースホルダー画像", "占位图"],
+  ["切り抜き", "crop"], ["トリミング", "crop"], ["サイズ変更", "resize"],
+  ["回転", "rotate"], ["反転", "flip"], ["透かし", "watermark"], ["圧縮", "compress"],
+  ["色選択", "color picker"], ["証明書", "证书"], ["鍵ペア", "密钥对"], ["対称鍵", "对称密钥"],
+  ["サブネット", "子网"], ["進数変換", "进制转换"], ["文字エスケープ", "字符转义"],
+  ["スプレッドシート", "spreadsheet"], ["テキスト比較", "文本对比"],
+  ["重複削除", "去重"], ["並べ替え", "sort"], ["置換", "replace"],
+
+  // Spanish
+  ["verificar firma", "verify"], ["verificar jwt", "verify jwt"], ["decodificar", "decode"],
+  ["codificar", "encode"], ["descifrar", "decrypt"], ["cifrar", "encrypt"], ["firmar", "sign"],
+  ["contraseña aleatoria", "password generator"], ["cifrado simétrico", "对称加密"],
+  ["cifrado asimétrico", "非对称"], ["formatear código", "代码格式化"],
+  ["conversión de formatos", "格式转换"], ["marca de tiempo", "时间戳"],
+  ["diferencia de tiempo", "时间差"], ["expresión regular", "regex"],
+  ["editar imagen", "image edit"], ["imagen de marcador", "placeholder image"],
+  ["recortar", "crop"], ["redimensionar", "resize"], ["girar", "rotate"],
+  ["voltear", "flip"], ["marca de agua", "watermark"], ["comprimir", "compress"],
+  ["certificado", "证书"], ["par de claves", "密钥对"], ["clave simétrica", "对称密钥"],
+  ["subred", "子网"], ["conversión de bases", "进制转换"], ["eliminar duplicados", "去重"],
+
+  // Italian
+  ["verifica firma", "verify"], ["decodifica", "decode"], ["codifica", "encode"],
+  ["decifra", "decrypt"], ["cifra", "encrypt"], ["firma", "sign"],
+  ["password casuale", "password generator"], ["cifratura simmetrica", "对称加密"],
+  ["cifratura asimmetrica", "非对称"], ["formatta codice", "代码格式化"],
+  ["conversione formati", "格式转换"], ["differenza di tempo", "时间差"],
+  ["espressione regolare", "regex"], ["modifica immagine", "image edit"],
+  ["immagine segnaposto", "placeholder image"], ["ritaglia", "crop"],
+  ["ridimensiona", "resize"], ["ruota", "rotate"], ["capovolgi", "flip"],
+  ["filigrana", "watermark"], ["comprimi", "compress"], ["certificato", "证书"],
+  ["coppia di chiavi", "密钥对"], ["chiave simmetrica", "对称密钥"],
+  ["sottorete", "子网"], ["conversione di base", "进制转换"], ["rimuovi duplicati", "去重"],
+
+  // Brazilian Portuguese
+  ["verificar assinatura", "verify"], ["decodificar", "decode"], ["codificar", "encode"],
+  ["descriptografar", "decrypt"], ["criptografar", "encrypt"], ["assinar", "sign"],
+  ["senha aleatória", "password generator"], ["criptografia simétrica", "对称加密"],
+  ["criptografia assimétrica", "非对称"], ["formatar código", "代码格式化"],
+  ["conversão de formatos", "格式转换"], ["diferença de tempo", "时间差"],
+  ["expressão regular", "regex"], ["editar imagem", "image edit"],
+  ["imagem de espaço reservado", "placeholder image"], ["recortar", "crop"],
+  ["redimensionar", "resize"], ["girar", "rotate"], ["virar", "flip"],
+  ["marca d'água", "watermark"], ["comprimir", "compress"], ["certificado", "证书"],
+  ["par de chaves", "密钥对"], ["chave simétrica", "对称密钥"],
+  ["sub-rede", "子网"], ["conversão de bases", "进制转换"], ["remover duplicados", "去重"],
+];
+
+function normalizeIntentQuery(query) {
+  let normalized = String(query).trim().toLowerCase();
+  for (const [source, target] of INTENT_REPLACEMENTS) normalized = normalized.split(source).join(target);
+  return normalized.replace(/[を]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+const INTENT_LABELS = {
+  encode: L("Encode", "编码", "編碼", "Codificar", "Codifica", "エンコード", "Codificar"),
+  decode: L("Decode", "解码", "解碼", "Decodificar", "Decodifica", "デコード", "Decodificar"),
+  encrypt: L("Encrypt", "加密", "加密", "Cifrar", "Cifra", "暗号化", "Criptografar"),
+  decrypt: L("Decrypt", "解密", "解密", "Descifrar", "Decifra", "復号", "Descriptografar"),
+  verify: L("Verify", "验签", "驗簽", "Verificar", "Verifica", "検証", "Verificar"),
+  sign: L("Sign", "签发", "簽發", "Firmar", "Firma", "署名", "Assinar"),
+  extract: L("Extract", "提取", "擷取", "Extraer", "Estrai", "抽出", "Extrair"),
+  difference: L("Difference", "时间差", "時間差", "Diferencia", "Differenza", "時間差", "Diferença"),
+  arithmetic: L("Arithmetic", "日期加减", "日期加減", "Aritmética", "Aritmetica", "日時の加減算", "Aritmética"),
+  picker: L("Picker", "取色", "取色", "Selector", "Selettore", "色選択", "Seletor"),
+  crop: L("Crop", "裁剪", "裁切", "Recortar", "Ritaglia", "切り抜き", "Recortar"),
+  resize: L("Resize", "缩放", "縮放", "Redimensionar", "Ridimensiona", "サイズ変更", "Redimensionar"),
+  rotate: L("Rotate", "旋转", "旋轉", "Girar", "Ruota", "回転", "Girar"),
+  flip: L("Flip", "翻转", "翻轉", "Voltear", "Capovolgi", "反転", "Virar"),
+  watermark: L("Watermark", "水印", "浮水印", "Marca de agua", "Filigrana", "透かし", "Marca d'água"),
+  compress: L("Compress", "压缩", "壓縮", "Comprimir", "Comprimi", "圧縮", "Comprimir"),
+  unique: L("Dedupe", "去重", "去重", "Quitar duplicados", "Rimuovi duplicati", "重複削除", "Remover duplicados"),
+};
+
+function localizeIntentLabel(label, locale) {
+  return String(label || "").split(" → ").map((part) => localize(locale, INTENT_LABELS[part] || part)).join(" → ");
+}
 
 function labelFrom(options, fallback = "") {
   const parts = Object.values(options || {}).filter(Boolean);
@@ -167,7 +267,7 @@ function push(out, toolId, options, label, priority) {
  * Returns zero or more { toolId, options, label, priority } hits, highest priority first.
  */
 export function resolveIntent(query = "") {
-  const q = String(query).trim().toLowerCase();
+  const q = normalizeIntentQuery(query);
   if (!q) return [];
   const out = [];
 
@@ -372,7 +472,7 @@ export function resolveIntent(query = "") {
 
 /** Options to apply when opening a known tool from a search query. */
 export function optionsForTool(toolId, query = "") {
-  const q = String(query).trim().toLowerCase();
+  const q = normalizeIntentQuery(query);
   if (!q) return {};
   if (toolId === "whitespace") return { action: textActionForQuery(q) };
   const parser = OPTION_PARSERS[toolId];
@@ -385,15 +485,15 @@ export function optionsForTool(toolId, query = "") {
 }
 
 /** Short destination label for search result rows. */
-export function intentLabelForTool(toolId, query = "") {
+export function intentLabelForTool(toolId, query = "", locale = "en") {
   const q = String(query).trim();
   if (!q) return "";
   if (toolId === "whitespace") {
-    const match = textActionMatch(q.toLowerCase());
-    return match ? match.id : "";
+    const match = textActionMatch(normalizeIntentQuery(q));
+    return match ? localizeIntentLabel(match.id, locale) : "";
   }
   const options = optionsForTool(toolId, q);
-  if (Object.keys(options).length) return labelFrom(options);
+  if (Object.keys(options).length) return localizeIntentLabel(labelFrom(options), locale);
   const hit = resolveIntent(q).find((item) => item.toolId === toolId);
-  return hit?.label || "";
+  return localizeIntentLabel(hit?.label || "", locale);
 }

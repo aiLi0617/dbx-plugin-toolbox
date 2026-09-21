@@ -1,0 +1,90 @@
+# index|zh-TW|es|it|ja|pt-BR|ko|tr|az
+0|編碼無效，其他結果已清空；請檢查字元、長度及填充。|Codificación no válida. Comprueba los caracteres, la longitud y el relleno.|Codifica non valida. Controlla caratteri, lunghezza e padding.|無効なエンコードです。文字、長さ、パディングを確認してください。|Codificação inválida. Verifique caracteres, tamanho e preenchimento.|인코딩이 잘못되었습니다. 문자, 길이 및 패딩을 확인하세요.|Kodlama geçersiz. Karakterleri, uzunluğu ve dolguyu denetleyin.|Kodlaşdırma yanlışdır. Simvolları, uzunluğu və doldurmanı yoxlayın.
+1|目前數值資訊|Información del valor actual|Informazioni sul valore attuale|現在の値の情報|Informações do valor atual|현재 값 정보|Geçerli değer bilgisi|Cari dəyər məlumatı
+2|位元數|Bits|Bit|ビット数|Bits|비트 수|Bit|Bit
+3|位元組數|Bytes|Byte|バイト数|Bytes|바이트 수|Bayt|Bayt
+4|字元|Carácter|Carattere|文字|Caractere|문자|Karakter|Simvol
+5|分組|Agrupar|Raggruppa|グループ化|Agrupar|그룹화|Grupla|Qruplaşdır
+6|0x / 0b 前綴|Prefijo 0x / 0b|Prefisso 0x / 0b|0x / 0b 接頭辞|Prefixo 0x / 0b|0x / 0b 접두사|0x / 0b öneki|0x / 0b prefiksi
+7|進位 {0}|Base {0}|Base {0}|{0} 進数|Base {0}|{0}진수|{0} tabanı|{0} əsası
+8|任意進位|Cualquier base|Base arbitraria|任意の基数|Qualquer base|사용자 지정 진수|Herhangi bir taban|İstənilən əsas
+9|2 到 36 進位|Base de 2 a 36|Base da 2 a 36|基数 2～36|Base de 2 a 36|2~36진수|2–36 tabanı|2–36 əsası
+10|增加進位|Aumentar base|Aumenta base|基数を増やす|Aumentar base|진수 증가|Tabanı artır|Əsası artır
+11|減少進位|Reducir base|Riduci base|基数を減らす|Diminuir base|진수 감소|Tabanı azalt|Əsası azalt
+12|自訂進位數值|Valor de base personalizada|Valore in base personalizzata|任意の基数の値|Valor de base personalizada|사용자 지정 진수 값|Özel taban değeri|Fərdi əsas dəyəri
+13|不是此進位的有效數字。|Número no válido para esta base.|Numero non valido per questa base.|この基数では無効な数値です。|Número inválido para esta base.|이 진수에서 유효하지 않은 숫자입니다.|Bu taban için geçersiz sayı.|Bu əsas üçün etibarsız ədəddir.
+14|複製失敗，請選取文字手動複製。|No se pudo copiar. Selecciona el texto y cópialo manualmente.|Copia non riuscita. Seleziona e copia il testo manualmente.|コピーできませんでした。テキストを選択して手動でコピーしてください。|Falha ao copiar. Selecione e copie o texto manualmente.|복사하지 못했습니다. 텍스트를 선택해 직접 복사하세요.|Kopyalanamadı. Metni seçip elle kopyalayın.|Kopyalama alınmadı. Mətni seçib əl ilə kopyalayın.
+15|已複製 {0}|{0} copiado|{0} copiato|{0} をコピーしました|{0} copiado|{0} 복사됨|{0} kopyalandı|{0} kopyalandı
+16|複製 {0}|Copiar {0}|Copia {0}|{0} をコピー|Copiar {0}|{0} 복사|{0} kopyala|{0} kopyala
+17|PEM 或 OpenSSH 公開金鑰|Clave pública PEM u OpenSSH|Chiave pubblica PEM o OpenSSH|PEM または OpenSSH 公開鍵|Chave pública PEM ou OpenSSH|PEM 또는 OpenSSH 공개 키|PEM veya OpenSSH açık anahtarı|PEM və ya OpenSSH açıq açarı
+18|有效期內，約剩 {0} 天|Válido; quedan unos {0} días|Valido; restano circa {0} giorni|有効期間内、残り約 {0} 日|Válido; restam cerca de {0} dias|유효 기간 내, 약 {0}일 남음|Geçerli; yaklaşık {0} gün kaldı|Etibarlıdır; təxminən {0} gün qalıb
+19|憑證已於 {0} 天前過期|Certificado caducado hace {0} días|Certificato scaduto da {0} giorni|証明書は {0} 日前に期限切れ|Certificado expirado há {0} dias|인증서가 {0}일 전에 만료됨|Sertifikanın süresi {0} gün önce doldu|Sertifikat {0} gün əvvəl bitib
+20|憑證尚未生效|El certificado aún no es válido|Certificato non ancora valido|証明書はまだ有効ではありません|Certificado ainda não válido|인증서가 아직 유효하지 않음|Sertifika henüz geçerli değil|Sertifikat hələ qüvvəyə minməyib
+21|僅檢查日期與欄位，不驗證簽章、信任鏈及主機名稱。|Solo inspecciona fechas y campos; no verifica firma, cadena de confianza ni nombre de host.|Esamina date e campi; non verifica firma, catena di fiducia o nome host.|日付とフィールドのみを確認します。署名、信頼チェーン、ホスト名は検証しません。|Inspeciona datas e campos; não verifica assinatura, cadeia de confiança ou nome do host.|날짜와 필드만 확인하며 서명, 신뢰 체인, 호스트 이름은 검증하지 않습니다.|Tarih ve alanları inceler; imza, güven zinciri ve ana makine adı doğrulanmaz.|Tarix və sahələri yoxlayır; imza, etibar zənciri və host adı təsdiqlənmir.
+22|貼上憑證或 SSH 公開金鑰以檢視欄位。|Pega un certificado o clave pública SSH para inspeccionarlo.|Incolla un certificato o una chiave pubblica SSH per esaminarlo.|証明書または SSH 公開鍵を貼り付けてください。|Cole um certificado ou chave pública SSH para inspecionar.|인증서 또는 SSH 공개 키를 붙여넣어 필드를 확인하세요.|İncelemek için sertifika veya SSH açık anahtarı yapıştırın.|Sahələri yoxlamaq üçün sertifikat və ya SSH açıq açarı yapışdırın.
+23|主體|Sujeto|Soggetto|主体者|Titular|주체|Konu|Subyekt
+24|簽發者|Emisor|Emittente|発行者|Emissor|발급자|Düzenleyen|Verən
+25|序號|Número de serie|Numero di serie|シリアル番号|Número de série|일련번호|Seri numarası|Seriya nömrəsi
+26|生效時間|Válido desde|Valido dal|有効期間の開始|Válido a partir de|유효 시작|Başlangıç|Başlanğıc
+27|到期時間|Válido hasta|Valido fino al|有効期間の終了|Válido até|유효 만료|Bitiş|Bitmə
+28|簽章|Firma|Firma|署名|Assinatura|서명|İmza|İmza
+29|公開金鑰|Clave pública|Chiave pubblica|公開鍵|Chave pública|공개 키|Açık anahtar|Açıq açar
+30|SHA-256 指紋|Huella SHA-256|Impronta SHA-256|SHA-256 フィンガープリント|Impressão SHA-256|SHA-256 지문|SHA-256 parmak izi|SHA-256 barmaq izi
+31|主體別名|Nombres alternativos del sujeto|Nomi alternativi del soggetto|サブジェクトの代替名|Nomes alternativos do titular|주체 대체 이름|Konu alternatif adları|Subyektin alternativ adları
+32|主體與簽發者相同|El sujeto coincide con el emisor|Il soggetto coincide con l'emittente|主体者と発行者が一致|Titular corresponde ao emissor|주체와 발급자가 같음|Konu düzenleyenle eşleşiyor|Subyekt verənlə eynidir
+33|是|Sí|Sì|はい|Sim|예|Evet|Bəli
+34|否|No|No|いいえ|Não|아니요|Hayır|Xeyr
+35|類型|Tipo|Tipo|種類|Tipo|유형|Tür|Növ
+36|註解|Comentario|Commento|コメント|Comentário|주석|Yorum|Şərh
+39|標籤|Etiqueta|Tag|タグ|Etiqueta|태그|Etiket|Etiket
+40|密文格式|Formato del texto cifrado|Formato del testo cifrato|暗号文の形式|Formato do texto cifrado|암호문 형식|Şifreli metin biçimi|Şifrəli mətn formatı
+41|合併封裝|Empaquetado|Combinato|結合形式|Empacotado|결합|Birleşik|Birləşdirilmiş
+42|分離參數|Parámetros separados|Parametri separati|個別パラメーター|Parâmetros separados|개별 매개변수|Ayrı parametreler|Ayrı parametrlər
+43|填充|Relleno|Padding|パディング|Preenchimento|패딩|Dolgu|Doldurma
+44|解密輸出|Salida descifrada|Output decifrato|復号出力|Saída decifrada|복호화 출력|Şifre çözme çıktısı|Şifrə açma çıxışı
+45|文字|Texto|Testo|テキスト|Texto|텍스트|Metin|Mətn
+47|密文編碼|Codificación del texto cifrado|Codifica del testo cifrato|暗号文のエンコード|Codificação do texto cifrado|암호문 인코딩|Şifreli metin kodlaması|Şifrəli mətnin kodlaşdırılması
+48|明文編碼|Codificación del texto plano|Codifica del testo in chiaro|平文のエンコード|Codificação do texto simples|평문 인코딩|Düz metin kodlaması|Açıq mətnin kodlaşdırılması
+49|IV / 標籤編碼|Codificación IV / etiqueta|Codifica IV / tag|IV / タグのエンコード|Codificação IV / etiqueta|IV / 태그 인코딩|IV / etiket kodlaması|IV / etiket kodlaşdırılması
+50|留空則隨機產生|Dejar vacío para generar aleatoriamente|Lascia vuoto per generare casualmente|空欄でランダム生成|Deixe vazio para gerar aleatoriamente|비워두면 무작위 생성|Rastgele üretmek için boş bırakın|Təsadüfi yaratmaq üçün boş saxlayın
+51|必填|Obligatorio|Obbligatorio|必須|Obrigatório|필수|Gerekli|Tələb olunur
+52|AAD 編碼|Codificación AAD|Codifica AAD|AAD のエンコード|Codificação AAD|AAD 인코딩|AAD kodlaması|AAD kodlaşdırılması
+53|附加驗證資料（選填）|Datos autenticados adicionales (opcional)|Dati autenticati aggiuntivi (facoltativo)|追加認証データ（省略可）|Dados autenticados adicionais (opcional)|추가 인증 데이터(선택)|Ek kimlik doğrulama verileri (isteğe bağlı)|Əlavə təsdiqlənmiş məlumatlar (istəyə bağlı)
+59|金鑰內容（hex/base64）|Material de clave (hex/base64)|Materiale della chiave (hex/base64)|鍵データ（hex/base64）|Material da chave (hex/base64)|키 자료(hex/base64)|Anahtar verisi (hex/base64)|Açar məlumatı (hex/base64)
+60|例如 00 或 deadbeef|p. ej., 00 o deadbeef|es. 00 o deadbeef|例：00 または deadbeef|ex.: 00 ou deadbeef|예: 00 또는 deadbeef|Örn. 00 veya deadbeef|Məs. 00 və ya deadbeef
+61|提供金鑰後自動計算。|Introduce una clave para calcular automáticamente.|Inserisci una chiave per il calcolo automatico.|鍵を入力すると自動計算します。|Forneça uma chave para calcular automaticamente.|키를 입력하면 자동으로 계산합니다.|Otomatik hesaplamak için anahtar girin.|Avtomatik hesablamaq üçün açar daxil edin.
+63|使用十六進位|Usar hexadecimal|Usa esadecimale|16 進数を使用|Usar hexadecimal|16진수 사용|Onaltılık kullan|Onaltılıq istifadə et
+64|計算中…|Calculando…|Calcolo…|計算中…|Calculando…|계산 중…|Hesaplanıyor…|Hesablanır…
+65|用作輸入|Usar como entrada|Usa come input|入力として使用|Usar como entrada|입력으로 사용|Girdi olarak kullan|Giriş kimi istifadə et
+66|UTF-8 預覽|Vista previa UTF-8|Anteprima UTF-8|UTF-8 プレビュー|Prévia UTF-8|UTF-8 미리보기|UTF-8 önizlemesi|UTF-8 önizləməsi
+71|輸入（十六進位）|Entrada (hexadecimal)|Input (esadecimale)|入力（16 進数）|Entrada (hexadecimal)|입력(16진수)|Girdi (onaltılık)|Giriş (onaltılıq)
+72|輸入（文字）|Entrada (texto)|Input (testo)|入力（テキスト）|Entrada (texto)|입력(텍스트)|Girdi (metin)|Giriş (mətn)
+73|明文|Texto plano|Testo in chiaro|平文|Texto simples|평문|Düz metin|Açıq mətn
+74|密文|Texto cifrado|Testo cifrato|暗号文|Texto cifrado|암호문|Şifreli metin|Şifrəli mətn
+75|例如 68656c6c6f（hello 的十六進位）|p. ej., 68656c6c6f (hello en hexadecimal)|es. 68656c6c6f (hello in esadecimale)|例：68656c6c6f（hello の16進数）|ex.: 68656c6c6f (hello em hexadecimal)|예: 68656c6c6f(hello의 16진수)|Örn. 68656c6c6f (hello için onaltılık)|Məs. 68656c6c6f (hello üçün onaltılıq)
+76|例如 hello|p. ej., hello|es. hello|例：hello|ex.: hello|예: hello|Örn. hello|Məs. hello
+77|方言|Dialecto|Dialetto|方言|Dialeto|방언|Lehçe|Dialekt
+78|格式化|Formatear|Formatta|整形|Formatar|서식 지정|Biçimlendir|Formatla
+79|驗證|Validar|Convalida|検証|Validar|검증|Doğrula|Yoxla
+80|縮排|Sangría|Rientro|インデント|Recuo|들여쓰기|Girinti|Abzas
+81|2 個空格|2 espacios|2 spazi|スペース 2 個|2 espaços|공백 2개|2 boşluk|2 boşluq
+82|4 個空格|4 espacios|4 spazi|スペース 4 個|4 espaços|공백 4개|4 boşluk|4 boşluq
+83|8 個空格|8 espacios|8 spazi|スペース 8 個|8 espaços|공백 8개|8 boşluk|8 boşluq
+84|原始碼|Código fuente|Codice sorgente|ソース|Código-fonte|소스|Kaynak|Mənbə
+85|結果|Resultado|Risultato|結果|Resultado|결과|Sonuç|Nəticə
+86|處理中…|Procesando…|Elaborazione…|処理中…|Processando…|처리 중…|İşleniyor…|Emal edilir…
+88|HEX 色彩值|Valor de color HEX|Valore colore HEX|HEX カラー値|Valor de cor HEX|HEX 색상 값|HEX renk değeri|HEX rəng dəyəri
+89|例如 FF5733|p. ej., FF5733|es. FF5733|例：FF5733|ex.: FF5733|예: FF5733|Örn. FF5733|Məs. FF5733
+90|範圍：0–255|Rango: 0–255|Intervallo: 0–255|範囲：0～255|Intervalo: 0–255|범위: 0–255|Aralık: 0–255|Aralıq: 0–255
+91|範圍：0–100%|Rango: 0–100%|Intervallo: 0–100%|範囲：0～100%|Intervalo: 0–100%|범위: 0–100%|Aralık: 0–100%|Aralıq: 0–100%
+92|H：0–360°，S/V：0–100%|H: 0–360°, S/V: 0–100%|H: 0–360°, S/V: 0–100%|H：0～360°、S/V：0～100%|H: 0–360°, S/V: 0–100%|H: 0–360°, S/V: 0–100%|H: 0–360°, S/V: 0–100%|H: 0–360°, S/V: 0–100%
+93|色輪|Rueda de color|Ruota dei colori|カラーホイール|Círculo cromático|색상환|Renk çarkı|Rəng çarxı
+94|擷取色彩|Elegir color|Scegli colore|色を選択|Escolher cor|색상 선택|Renk seç|Rəng seç
+95|目前數值|Valores actuales|Valori attuali|現在の値|Valores atuais|현재 값|Geçerli değerler|Cari dəyərlər
+96|從螢幕取色、拖曳色輪，或在左側輸入|Elige de la pantalla, arrastra la rueda o escribe a la izquierda|Scegli dallo schermo, trascina la ruota o scrivi a sinistra|画面から色を取得、ホイールをドラッグ、または左側に入力|Escolha na tela, arraste o círculo ou digite à esquerda|화면에서 선택하거나 색상환을 끌거나 왼쪽에 입력하세요|Ekrandan seçin, çarkı sürükleyin veya sola yazın|Ekrandan seçin, çarxı sürükləyin və ya solda yazın
+97|滴管不可用，已開啟系統色彩選擇器|Cuentagotas no disponible; se abrió el selector del sistema|Contagocce non disponibile; aperto il selettore di sistema|スポイトを使用できないため、システムの色選択を開きました|Conta-gotas indisponível; seletor do sistema aberto|스포이드를 사용할 수 없어 시스템 색상 선택기를 열었습니다|Damlalık kullanılamıyor; sistem renk seçicisi açıldı|Damcı aləti əlçatan deyil; sistem rəng seçicisi açıldı
+98|此處無法擷取色彩|No se puede elegir color aquí|Selezione colore non disponibile qui|ここでは色を取得できません|Seleção de cor indisponível aqui|여기서는 색상을 선택할 수 없습니다|Burada renk seçilemiyor|Burada rəng seçmək mümkün deyil
+99|色輪：色相與飽和度|Rueda: tono y saturación|Ruota: tonalità e saturazione|カラーホイール：色相と彩度|Círculo: matiz e saturação|색상환: 색조 및 채도|Renk çarkı: ton ve doygunluk|Rəng çarxı: ton və doyma
+100|色相 {0}°，飽和度 {1}%|Tono {0}°, saturación {1}%|Tonalità {0}°, saturazione {1}%|色相 {0}°、彩度 {1}%|Matiz {0}°, saturação {1}%|색조 {0}°, 채도 {1}%|Ton {0}°, doygunluk {1}%|Ton {0}°, doyma {1}%
+101|明度|Brillo|Luminosità|明るさ|Brilho|밝기|Parlaklık|Parlaqlıq
+102|目前色彩|Color actual|Colore attuale|現在の色|Cor atual|현재 색상|Geçerli renk|Cari rəng

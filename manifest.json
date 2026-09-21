@@ -3,7 +3,7 @@
   "manifest_version": 1,
   "id": "io.github.aili0617.toolbox",
   "name": "DBX Toolbox",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "publisher": "aili0617",
   "description": "An all-in-one, privacy-focused developer toolbox for data conversion, encoding and decoding, formatting, text and image processing, generators, cryptographic tools, and an encrypted key vault—all processed locally.",
   "icon": "assets/plugin.svg",
@@ -54,21 +54,21 @@
       }
     },
     "es": {
-      "name": "DBX Toolbox",
+      "name": "Herramientas DBX",
       "description": "Una caja de herramientas local y centrada en la privacidad para desarrollo, con conversión de datos, codificación y decodificación, formato, procesamiento de texto e imágenes, generadores, criptografía y un almacén cifrado de claves; todos los datos se procesan localmente.",
       "contributions": {
         "io.github.aili0617.toolbox.workbench": {
-          "label": "DBX Toolbox",
+          "label": "Herramientas DBX",
           "description": "Utilidades de desarrollo y gestión cifrada de claves, todo procesado localmente."
         }
       }
     },
     "it": {
-      "name": "DBX Toolbox",
+      "name": "Strumenti DBX",
       "description": "Una raccolta completa di strumenti locali per sviluppatori, attenta alla privacy, con conversione dei dati, codifica e decodifica, formattazione, elaborazione di testo e immagini, generatori, crittografia e archivio cifrato delle chiavi; tutti i dati vengono elaborati in locale.",
       "contributions": {
         "io.github.aili0617.toolbox.workbench": {
-          "label": "DBX Toolbox",
+          "label": "Strumenti DBX",
           "description": "Utilità per sviluppatori e gestione cifrata delle chiavi, tutto elaborato in locale."
         }
       }
@@ -84,12 +84,42 @@
       }
     },
     "pt-BR": {
-      "name": "DBX Toolbox",
+      "name": "Ferramentas DBX",
       "description": "Uma caixa de ferramentas local completa e focada em privacidade para desenvolvimento, com conversão de dados, codificação e decodificação, formatação, processamento de texto e imagens, geradores, criptografia e um cofre de chaves criptografado; todos os dados são processados localmente.",
       "contributions": {
         "io.github.aili0617.toolbox.workbench": {
-          "label": "DBX Toolbox",
+          "label": "Ferramentas DBX",
           "description": "Utilitários para desenvolvimento e gerenciamento criptografado de chaves, com processamento local."
+        }
+      }
+    },
+    "ko": {
+      "name": "DBX 도구 상자",
+      "description": "데이터 변환, 인코딩, 서식 지정, 텍스트 및 이미지 처리, 암호화와 암호화된 키 보관함을 제공하는 로컬 개발 도구입니다.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "DBX 도구 상자",
+          "description": "데이터 변환, 인코딩, 서식 지정, 텍스트 및 이미지 처리, 암호화와 암호화된 키 보관함을 제공하는 로컬 개발 도구입니다."
+        }
+      }
+    },
+    "tr": {
+      "name": "DBX Araç Kutusu",
+      "description": "Veri dönüştürme, kodlama, biçimlendirme, metin ve görüntü işleme, şifreleme ve şifreli anahtar kasası için yerel geliştirici araçları.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "DBX Araç Kutusu",
+          "description": "Veri dönüştürme, kodlama, biçimlendirme, metin ve görüntü işleme, şifreleme ve şifreli anahtar kasası için yerel geliştirici araçları."
+        }
+      }
+    },
+    "az": {
+      "name": "DBX Alətlər Qutusu",
+      "description": "Məlumat çevirmə, kodlaşdırma, formatlama, mətn və şəkil emalı, kriptoqrafiya və şifrəli açar anbarı üçün yerli tərtibatçı alətləri.",
+      "contributions": {
+        "io.github.aili0617.toolbox.workbench": {
+          "label": "DBX Alətlər Qutusu",
+          "description": "Məlumat çevirmə, kodlaşdırma, formatlama, mətn və şəkil emalı, kriptoqrafiya və şifrəli açar anbarı üçün yerli tərtibatçı alətləri."
         }
       }
     }

@@ -470,7 +470,7 @@ dependencies = [
 
 [[package]]
 name = "dbx-plugin-toolbox"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "aes",
  "aes-gcm",

@@ -51,8 +51,40 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
   throw normalizeError(lastErr, method);
 }
 
-export function locale() {
-  return normalizeLocale(window.dbxPlugin?.locale || navigator.language || "en");
+/** Read a locale from an onInit payload / dbx-plugin-env event before falling back to the bridge snapshot. */
+export function locale(environment) {
+  const seen = new Set();
+  const findLocale = (value) => {
+    if (typeof value === "string" && value.trim()) return value;
+    if (!value || typeof value !== "object" || seen.has(value)) return "";
+    seen.add(value);
+    for (const key of ["locale", "language", "languageTag"]) {
+      if (typeof value[key] === "string" && value[key].trim()) return value[key];
+    }
+    for (const key of ["detail", "environment", "env", "init", "payload", "params"]) {
+      const nested = findLocale(value[key]);
+      if (nested) return nested;
+    }
+    return "";
+  };
+  const hostValue = typeof window !== "undefined" ? window.dbxPlugin?.locale : "";
+  const browserValue = typeof navigator !== "undefined" ? navigator.language : "";
+  return normalizeLocale(findLocale(environment) || hostValue || browserValue || "en");
+}
+
+/** Subscribe before reading the snapshot. DBX env events target document and
+ * do not bubble; capture supports both current and older window-based hosts.
+ * onInit's argument is application context and must never override locale.
+ */
+export function observeEnvironment(callback) {
+  const update = (event) => callback(event);
+  window.addEventListener("dbx-plugin-env", update, true);
+  const offInit = window.dbxPlugin?.onInit?.(() => callback());
+  callback();
+  return () => {
+    window.removeEventListener("dbx-plugin-env", update, true);
+    if (typeof offInit === "function") offInit();
+  };
 }
 
 export function theme() {

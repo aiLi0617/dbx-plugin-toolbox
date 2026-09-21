@@ -229,7 +229,7 @@
   .time-parts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; min-width: 0; }
   .time-parts.has-ms { grid-template-columns: repeat(7, minmax(0, 1fr)); }
   .part-field { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; min-width: 0; border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 18%, transparent))); border-radius: var(--radius-md, 4px); overflow: hidden; background: var(--color-background, Canvas); }
-  .part-field:focus-within { outline: 2px solid var(--color-ring, var(--color-primary)); outline-offset: 1px; }
+  .part-field:has(:focus-visible) { border-color: var(--color-ring, var(--color-primary)); box-shadow: var(--dbx-focus-ring); }
   .time-part { min-width: 0; width: 100%; height: 30px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font-family: var(--font-mono); text-align: center; }
   .time-part:focus { outline: 0; }
   .part-field span { padding: 0 7px 0 4px; color: var(--color-muted-foreground); font-size: 12px; white-space: nowrap; }

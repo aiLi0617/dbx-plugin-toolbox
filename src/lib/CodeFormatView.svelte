@@ -58,7 +58,7 @@
     {#if language === "sql"}
       <label class="field">
         <span>{t("方言", "Dialect")}</span>
-        <Select bind:value={sqlDialect} options={SQL_DIALECTS} />
+        <Select bind:value={sqlDialect} options={SQL_DIALECTS.map(item => ({ ...item, label: item.value === "sql" ? t("标准 SQL", "Standard SQL") : item.label }))} />
       </label>
     {/if}
     {#if language === "xml"}

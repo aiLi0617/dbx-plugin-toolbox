@@ -1,0 +1,6378 @@
+{
+  "Invalid encoding. Other results were cleared; check the characters, length, and padding.": {
+    "en": "Invalid encoding. Other results were cleared; check the characters, length, and padding.",
+    "zh-CN": "输入不是有效的编码，其他结果已清空。请检查字符、长度和填充。"
+  },
+  "Current value information": {
+    "en": "Current value information",
+    "zh-CN": "当前值信息"
+  },
+  "Bits": {
+    "en": "Bits",
+    "zh-CN": "位数"
+  },
+  "Bytes": {
+    "en": "Bytes",
+    "zh-CN": "字节"
+  },
+  "Character": {
+    "en": "Character",
+    "zh-CN": "字符"
+  },
+  "Clear": {
+    "en": "Clear",
+    "zh-CN": "清空",
+    "zh-TW": "清空",
+    "es": "Borrar",
+    "it": "Cancella",
+    "ja": "クリア",
+    "pt-BR": "Limpar"
+  },
+  "Group": {
+    "en": "Group",
+    "zh-CN": "分组"
+  },
+  "0x / 0b prefix": {
+    "en": "0x / 0b prefix",
+    "zh-CN": "0x / 0b 前缀"
+  },
+  "Base {0}": {
+    "en": "Base {0}",
+    "zh-CN": "进制 {0}"
+  },
+  "Any base": {
+    "en": "Any base",
+    "zh-CN": "任意进制"
+  },
+  "Radix 2 to 36": {
+    "en": "Radix 2 to 36",
+    "zh-CN": "2 到 36 进制"
+  },
+  "Increase radix": {
+    "en": "Increase radix",
+    "zh-CN": "进制加一"
+  },
+  "Decrease radix": {
+    "en": "Decrease radix",
+    "zh-CN": "进制减一"
+  },
+  "Custom base value": {
+    "en": "Custom base value",
+    "zh-CN": "任意进制数值"
+  },
+  "Not a valid number for this base.": {
+    "en": "Not a valid number for this base.",
+    "zh-CN": "不是有效的数字，请检查当前进制。"
+  },
+  "Copy failed. Select the text and copy manually.": {
+    "en": "Copy failed. Select the text and copy manually.",
+    "zh-CN": "复制失败，请选择文本手动复制。"
+  },
+  "Copied {0}": {
+    "en": "Copied {0}",
+    "zh-CN": "{0}已复制"
+  },
+  "Copy {0}": {
+    "en": "Copy {0}",
+    "zh-CN": "复制 {0}"
+  },
+  "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL": {
+    "en": "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL",
+    "zh-CN": "格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript / SQL 等",
+    "zh-TW": "格式化、壓縮、校驗、樹狀編輯、JSONPath，以及匯出 TypeScript / SQL 等",
+    "es": "Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL",
+    "it": "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL",
+    "ja": "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
+    "pt-BR": "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"
+  },
+  "Convert among JSON, YAML, CSV, TSV, NDJSON, XML, and TOML": {
+    "en": "Convert among JSON, YAML, CSV, TSV, NDJSON, XML, and TOML",
+    "zh-CN": "JSON / YAML / CSV / TSV / NDJSON / XML / TOML 互转",
+    "zh-TW": "JSON / YAML / CSV / TSV / NDJSON / XML / TOML 互轉",
+    "es": "Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML",
+    "it": "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML",
+    "ja": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
+    "pt-BR": "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"
+  },
+  "Format SQL, XML, YAML, HTML, CSS, JavaScript, and TypeScript": {
+    "en": "Format SQL, XML, YAML, HTML, CSS, JavaScript, and TypeScript",
+    "zh-CN": "格式化 SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript",
+    "zh-TW": "格式化 SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript",
+    "es": "Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript",
+    "it": "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript",
+    "ja": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
+    "pt-BR": "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"
+  },
+  "Open, edit, and export XLSX, CSV, TSV, and JSON locally": {
+    "en": "Open, edit, and export XLSX, CSV, TSV, and JSON locally",
+    "zh-CN": "本地打开、编辑并导出 XLSX、CSV、TSV、JSON",
+    "zh-TW": "本機開啟、編輯並匯出 XLSX、CSV、TSV、JSON",
+    "es": "Abre, edita y exporta XLSX, CSV, TSV y JSON localmente",
+    "it": "Apre, modifica ed esporta XLSX, CSV, TSV e JSON in locale",
+    "ja": "XLSX、CSV、TSV、JSON をローカルで開き、編集して出力",
+    "pt-BR": "Abra, edite e exporte XLSX, CSV, TSV e JSON localmente"
+  },
+  "Encode or decode Base64, Base32, Base58, or Hex": {
+    "en": "Encode or decode Base64, Base32, Base58, or Hex",
+    "zh-CN": "Base64 / Base32 / Base58 / Hex 编码解码",
+    "zh-TW": "Base64 / Base32 / Base58 / Hex 編碼解碼",
+    "es": "Codifica o decodifica Base64, Base32, Base58 o Hex",
+    "it": "Codifica o decodifica Base64, Base32, Base58 o Hex",
+    "ja": "Base64、Base32、Base58、Hex をエンコードまたはデコード",
+    "pt-BR": "Codifique ou decodifique Base64, Base32, Base58 ou Hex"
+  },
+  "Percent-encode/decode URLs, or list query params": {
+    "en": "Percent-encode/decode URLs, or list query params",
+    "zh-CN": "URL 百分号编解码，或拆解查询参数",
+    "zh-TW": "URL 百分號編解碼，或拆解查詢參數",
+    "es": "Codifica o decodifica porcentajes en URL y analiza parámetros de consulta",
+    "it": "Codifica o decodifica percentuali negli URL e analizza i parametri di query",
+    "ja": "URL のパーセントエンコード／デコードとクエリパラメーターの解析",
+    "pt-BR": "Codifique ou decodifique percentuais em URLs e analise parâmetros de consulta"
+  },
+  "Escape HTML entities, Unicode, JS, JSON, or CSS identifiers": {
+    "en": "Escape HTML entities, Unicode, JS, JSON, or CSS identifiers",
+    "zh-CN": "HTML 实体、Unicode、JS、JSON、CSS 标识符转义",
+    "zh-TW": "HTML 實體、Unicode、JS、JSON、CSS 識別碼轉義",
+    "es": "Escapa entidades HTML, Unicode, JS, JSON o identificadores CSS",
+    "it": "Esegue l'escape di entità HTML, Unicode, JS, JSON o identificatori CSS",
+    "ja": "HTML エンティティ、Unicode、JS、JSON、CSS 識別子をエスケープ",
+    "pt-BR": "Faça escape de entidades HTML, Unicode, JS, JSON ou identificadores CSS"
+  },
+  "Escape each line as a SQL string literal, with optional commas": {
+    "en": "Escape each line as a SQL string literal, with optional commas",
+    "zh-CN": "按行转成 SQL 字符串字面量，可选行尾逗号",
+    "zh-TW": "按行轉成 SQL 字串字面量，可選行尾逗號",
+    "es": "Convierte cada línea en un literal SQL, con comas finales opcionales",
+    "it": "Converte ogni riga in un letterale SQL, con virgole finali opzionali",
+    "ja": "各行を SQL 文字列リテラルへ変換し、末尾カンマにも対応",
+    "pt-BR": "Converta cada linha em um literal SQL, com vírgulas finais opcionais"
+  },
+  "Build or parse Data URIs from text or files": {
+    "en": "Build or parse Data URIs from text or files",
+    "zh-CN": "生成或解析 Data URI，支持文本与文件",
+    "zh-TW": "產生或解析 Data URI，支援文字與檔案",
+    "es": "Crea o analiza URI de datos a partir de texto o archivos",
+    "it": "Crea o analizza URI dati da testo o file",
+    "ja": "テキストやファイルから Data URI を生成・解析",
+    "pt-BR": "Crie ou analise URIs de dados a partir de texto ou arquivos"
+  },
+  "Convert between IDN and Punycode domain names": {
+    "en": "Convert between IDN and Punycode domain names",
+    "zh-CN": "国际化域名（IDN）与 Punycode 互转",
+    "zh-TW": "國際化網域名稱（IDN）與 Punycode 互轉",
+    "es": "Convierte entre nombres de dominio IDN y Punycode",
+    "it": "Converte tra nomi di dominio IDN e Punycode",
+    "ja": "IDN と Punycode ドメイン名を相互変換",
+    "pt-BR": "Converta entre nomes de domínio IDN e Punycode"
+  },
+  "Quoted-Printable encode or decode for email": {
+    "en": "Quoted-Printable encode or decode for email",
+    "zh-CN": "邮件 Quoted-Printable 编码与解码",
+    "zh-TW": "郵件 Quoted-Printable 編碼與解碼",
+    "es": "Codifica o decodifica Quoted-Printable para correo electrónico",
+    "it": "Codifica o decodifica Quoted-Printable per le email",
+    "ja": "メール用 Quoted-Printable のエンコード／デコード",
+    "pt-BR": "Codifique ou decodifique Quoted-Printable para e-mail"
+  },
+  "Convert Unix timestamps and dates; timezones, arithmetic, and diffs": {
+    "en": "Convert Unix timestamps and dates; timezones, arithmetic, and diffs",
+    "zh-CN": "Unix 时间戳与日期互转，支持时区、加减与时间差",
+    "zh-TW": "Unix 時間戳與日期互轉，支援時區、加減與時間差",
+    "es": "Convierte marcas Unix y fechas; admite zonas horarias, aritmética y diferencias",
+    "it": "Converte timestamp Unix e date; supporta fusi orari, calcoli e differenze",
+    "ja": "Unix タイムスタンプと日時を変換し、タイムゾーン・加減算・差分に対応",
+    "pt-BR": "Converta timestamps Unix e datas; inclui fusos horários, cálculos e diferenças"
+  },
+  "Convert HEX, RGB, CMYK, HSV; color wheel and screen picker": {
+    "en": "Convert HEX, RGB, CMYK, HSV; color wheel and screen picker",
+    "zh-CN": "HEX / RGB / CMYK / HSV 互转，含色环与屏幕取色",
+    "zh-TW": "HEX / RGB / CMYK / HSV 互轉，含色環與螢幕取色",
+    "es": "Convierte HEX, RGB, CMYK y HSV; incluye rueda de color y selector de pantalla",
+    "it": "Converte HEX, RGB, CMYK e HSV; include ruota colori e selettore schermo",
+    "ja": "HEX、RGB、CMYK、HSV の相互変換、カラーホイール、画面色取得",
+    "pt-BR": "Converta HEX, RGB, CMYK e HSV; inclui roda de cores e seletor de tela"
+  },
+  "Build a cron expression and preview the next runs": {
+    "en": "Build a cron expression and preview the next runs",
+    "zh-CN": "可视化编辑 Cron，并预览下次触发时间",
+    "zh-TW": "視覺化編輯 Cron，並預覽下次觸發時間",
+    "es": "Crea una expresión Cron y previsualiza las próximas ejecuciones",
+    "it": "Crea un'espressione Cron e visualizza le prossime esecuzioni",
+    "ja": "Cron 式を作成し、次回の実行日時をプレビュー",
+    "pt-BR": "Crie uma expressão Cron e visualize as próximas execuções"
+  },
+  "Convert bases 2–36, with optional grouping and prefixes": {
+    "en": "Convert bases 2–36, with optional grouping and prefixes",
+    "zh-CN": "2–36 进制互转，支持分组与前缀",
+    "zh-TW": "2–36 進制互轉，支援分組與前綴",
+    "es": "Convierte bases de 2 a 36, con agrupación y prefijos opcionales",
+    "it": "Converte basi da 2 a 36, con raggruppamento e prefissi opzionali",
+    "ja": "2～36 進数を相互変換し、グループ化と接頭辞に対応",
+    "pt-BR": "Converta bases de 2 a 36, com agrupamento e prefixos opcionais"
+  },
+  "Calculate IPv4/IPv6 networks, masks, ranges, and split subnets": {
+    "en": "Calculate IPv4/IPv6 networks, masks, ranges, and split subnets",
+    "zh-CN": "计算 IPv4 / IPv6 网段、掩码、主机范围并切分子网",
+    "zh-TW": "計算 IPv4 / IPv6 網段、遮罩、主機範圍並切分子網",
+    "es": "Calcula redes IPv4/IPv6, máscaras, rangos y división de subredes",
+    "it": "Calcola reti IPv4/IPv6, maschere, intervalli e suddivisione in sottoreti",
+    "ja": "IPv4/IPv6 のネットワーク、マスク、範囲、サブネット分割を計算",
+    "pt-BR": "Calcule redes IPv4/IPv6, máscaras, intervalos e divisão de sub-redes"
+  },
+  "Clean, dedupe, sort, number, extract columns, restyle names, and count text": {
+    "en": "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
+    "zh-CN": "清理、去重、排序、序号、列截取、命名风格与字数统计",
+    "zh-TW": "清理、去重、排序、序號、欄截取、命名風格與字數統計",
+    "es": "Limpia, deduplica, ordena, numera, extrae columnas, cambia nombres y cuenta texto",
+    "it": "Pulisce, deduplica, ordina, numera, estrae colonne, rinomina e conta il testo",
+    "ja": "テキストの整理、重複削除、並べ替え、連番、列抽出、命名変換、文字数集計",
+    "pt-BR": "Limpe, remova duplicados, ordene, numere, extraia colunas, renomeie e conte textos"
+  },
+  "Test regexes, inspect matches, and preview replacements": {
+    "en": "Test regexes, inspect matches, and preview replacements",
+    "zh-CN": "测试正则表达式，查看匹配并预览替换",
+    "zh-TW": "測試正規運算式，查看符合並預覽取代",
+    "es": "Prueba expresiones regulares, inspecciona coincidencias y previsualiza reemplazos",
+    "it": "Prova espressioni regolari, analizza le corrispondenze e mostra le sostituzioni",
+    "ja": "正規表現をテストし、マッチ結果と置換をプレビュー",
+    "pt-BR": "Teste expressões regulares, inspecione correspondências e visualize substituições"
+  },
+  "Compare two texts by line, word, or character": {
+    "en": "Compare two texts by line, word, or character",
+    "zh-CN": "按行、单词或字符对比两段文本",
+    "zh-TW": "按行、單詞或字元對比兩段文字",
+    "es": "Compara dos textos por línea, palabra o carácter",
+    "it": "Confronta due testi per riga, parola o carattere",
+    "ja": "2 つのテキストを行・単語・文字単位で比較",
+    "pt-BR": "Compare dois textos por linha, palavra ou caractere"
+  },
+  "Live Markdown preview as you type": {
+    "en": "Live Markdown preview as you type",
+    "zh-CN": "边写边预览 Markdown 渲染结果",
+    "zh-TW": "邊寫邊預覽 Markdown 渲染結果",
+    "es": "Previsualiza Markdown en tiempo real mientras escribes",
+    "it": "Mostra l'anteprima Markdown in tempo reale durante la digitazione",
+    "ja": "入力しながら Markdown をリアルタイムプレビュー",
+    "pt-BR": "Visualize Markdown em tempo real enquanto digita"
+  },
+  "Inspect Unicode code points per character": {
+    "en": "Inspect Unicode code points per character",
+    "zh-CN": "逐字符查看 Unicode 码位与属性",
+    "zh-TW": "逐字元查看 Unicode 碼位與屬性",
+    "es": "Inspecciona los puntos de código Unicode de cada carácter",
+    "it": "Analizza i punti di codice Unicode di ogni carattere",
+    "ja": "文字ごとの Unicode コードポイントを確認",
+    "pt-BR": "Inspecione os pontos de código Unicode de cada caractere"
+  },
+  "Hash text or files with MD5, SHA, SM3, or CRC32": {
+    "en": "Hash text or files with MD5, SHA, SM3, or CRC32",
+    "zh-CN": "计算文本或文件的 MD5 / SHA / SM3 / CRC32",
+    "zh-TW": "計算文字或檔案的 MD5 / SHA / SM3 / CRC32",
+    "es": "Calcula MD5, SHA, SM3 o CRC32 de texto o archivos",
+    "it": "Calcola MD5, SHA, SM3 o CRC32 di testo o file",
+    "ja": "テキストやファイルの MD5、SHA、SM3、CRC32 を計算",
+    "pt-BR": "Calcule MD5, SHA, SM3 ou CRC32 de textos ou arquivos"
+  },
+  "Decode, sign, or verify JWTs with HS / RS / PS": {
+    "en": "Decode, sign, or verify JWTs with HS / RS / PS",
+    "zh-CN": "解码、签发或验签 JWT（HS / RS / PS）",
+    "zh-TW": "解碼、簽發或驗簽 JWT（HS / RS / PS）",
+    "es": "Decodifica, firma o verifica JWT con HS / RS / PS",
+    "it": "Decodifica, firma o verifica JWT con HS / RS / PS",
+    "ja": "HS / RS / PS を使って JWT をデコード、署名、検証",
+    "pt-BR": "Decodifique, assine ou verifique JWTs com HS / RS / PS"
+  },
+  "AES or SM4 encrypt/decrypt (GCM, CBC, ECB)": {
+    "en": "AES or SM4 encrypt/decrypt (GCM, CBC, ECB)",
+    "zh-CN": "AES / SM4 对称加解密（GCM / CBC / ECB）",
+    "zh-TW": "AES / SM4 對稱加解密（GCM / CBC / ECB）",
+    "es": "Cifra o descifra con AES / SM4 (GCM, CBC, ECB)",
+    "it": "Cifra o decifra con AES / SM4 (GCM, CBC, ECB)",
+    "ja": "AES / SM4 の暗号化・復号（GCM、CBC、ECB）",
+    "pt-BR": "Criptografe ou descriptografe com AES / SM4 (GCM, CBC, ECB)"
+  },
+  "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3": {
+    "en": "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3",
+    "zh-CN": "HMAC-SHA1 / SHA256 / SHA384 / SHA512 / SM3",
+    "zh-TW": "HMAC-SHA1 / SHA256 / SHA384 / SHA512 / SM3",
+    "es": "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3",
+    "it": "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3",
+    "ja": "SHA-1、SHA-256、SHA-384、SHA-512、SM3 による HMAC",
+    "pt-BR": "HMAC com SHA-1, SHA-256, SHA-384, SHA-512 ou SM3"
+  },
+  "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt": {
+    "en": "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
+    "zh-CN": "RSA（OAEP / PKCS#1）或 SM2 加解密",
+    "zh-TW": "RSA（OAEP / PKCS#1）或 SM2 加解密",
+    "es": "Cifra y descifra con RSA OAEP / PKCS#1 o SM2",
+    "it": "Cifra e decifra con RSA OAEP / PKCS#1 o SM2",
+    "ja": "RSA OAEP / PKCS#1 または SM2 の暗号化・復号",
+    "pt-BR": "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2"
+  },
+  "Generate the current TOTP code from a secret": {
+    "en": "Generate the current TOTP code from a secret",
+    "zh-CN": "根据密钥生成当前 TOTP 动态口令",
+    "zh-TW": "根據金鑰產生目前 TOTP 動態口令",
+    "es": "Genera el código TOTP actual a partir de un secreto",
+    "it": "Genera il codice TOTP corrente da un segreto",
+    "ja": "秘密鍵から現在の TOTP コードを生成",
+    "pt-BR": "Gere o código TOTP atual a partir de um segredo"
+  },
+  "Inspect cert validity, SANs, fingerprints, or SSH public keys": {
+    "en": "Inspect cert validity, SANs, fingerprints, or SSH public keys",
+    "zh-CN": "查看证书有效期、SAN、指纹，或 SSH 公钥指纹",
+    "zh-TW": "查看憑證有效期、SAN、指紋，或 SSH 公鑰指紋",
+    "es": "Inspecciona validez, SAN, huellas y claves públicas SSH",
+    "it": "Analizza validità, SAN, impronte e chiavi pubbliche SSH",
+    "ja": "証明書の有効期限、SAN、フィンガープリント、SSH 公開鍵を確認",
+    "pt-BR": "Inspecione validade, SANs, impressões digitais e chaves públicas SSH"
+  },
+  "Validate JWK/JWKS and convert RSA JWK ↔ PEM": {
+    "en": "Validate JWK/JWKS and convert RSA JWK ↔ PEM",
+    "zh-CN": "校验 JWK / JWKS，RSA JWK 与 PEM 互转",
+    "zh-TW": "校驗 JWK / JWKS，RSA JWK 與 PEM 互轉",
+    "es": "Valida JWK / JWKS y convierte RSA JWK ↔ PEM",
+    "it": "Convalida JWK / JWKS e converte RSA JWK ↔ PEM",
+    "ja": "JWK / JWKS を検証し、RSA JWK と PEM を相互変換",
+    "pt-BR": "Valide JWK / JWKS e converta RSA JWK ↔ PEM"
+  },
+  "Generate an AES, SM4, or HMAC key; optional vault save": {
+    "en": "Generate an AES, SM4, or HMAC key; optional vault save",
+    "zh-CN": "生成 AES / SM4 / HMAC 密钥，可写入密钥库",
+    "zh-TW": "產生 AES / SM4 / HMAC 金鑰，可寫入金鑰庫",
+    "es": "Genera claves AES, SM4 o HMAC y permite guardarlas en el almacén",
+    "it": "Genera chiavi AES, SM4 o HMAC e consente di salvarle nell'archivio",
+    "ja": "AES、SM4、HMAC 鍵を生成し、必要に応じて保管庫へ保存",
+    "pt-BR": "Gere chaves AES, SM4 ou HMAC e salve-as opcionalmente no cofre"
+  },
+  "Generate RSA or SM2 key pairs; bits and PEM format options": {
+    "en": "Generate RSA or SM2 key pairs; bits and PEM format options",
+    "zh-CN": "生成 RSA / SM2 公私钥对，可配置位数与 PEM 格式",
+    "zh-TW": "產生 RSA / SM2 公私鑰對，可設定位數與 PEM 格式",
+    "es": "Genera pares RSA o SM2 con opciones de bits y formato PEM",
+    "it": "Genera coppie RSA o SM2 con opzioni per bit e formato PEM",
+    "ja": "RSA / SM2 鍵ペアを生成し、ビット数と PEM 形式を指定",
+    "pt-BR": "Gere pares RSA ou SM2 com opções de bits e formato PEM"
+  },
+  "XOR bytes for debugging only": {
+    "en": "XOR bytes for debugging only",
+    "zh-CN": "按字节异或运算，仅供调试对照",
+    "zh-TW": "按位元組異或運算，僅供除錯對照",
+    "es": "Aplica XOR a bytes solo para depuración",
+    "it": "Applica XOR ai byte solo per il debug",
+    "ja": "デバッグ用にバイト単位の XOR 演算を実行",
+    "pt-BR": "Aplique XOR a bytes somente para depuração"
+  },
+  "Generate UUID, ULID, or NanoID values": {
+    "en": "Generate UUID, ULID, or NanoID values",
+    "zh-CN": "批量生成 UUID、ULID 或 NanoID",
+    "zh-TW": "批次產生 UUID、ULID 或 NanoID",
+    "es": "Genera valores UUID, ULID o NanoID",
+    "it": "Genera valori UUID, ULID o NanoID",
+    "ja": "UUID、ULID、NanoID を生成",
+    "pt-BR": "Gere valores UUID, ULID ou NanoID"
+  },
+  "Generate a random password or hex bytes": {
+    "en": "Generate a random password or hex bytes",
+    "zh-CN": "生成随机密码或随机十六进制字节",
+    "zh-TW": "產生隨機密碼或隨機十六進位位元組",
+    "es": "Genera una contraseña aleatoria o bytes hexadecimales",
+    "it": "Genera una password casuale o byte esadecimali",
+    "ja": "ランダムパスワードまたは 16 進数バイト列を生成",
+    "pt-BR": "Gere uma senha aleatória ou bytes hexadecimais"
+  },
+  "Generate or decode QR, Han Xin, PDF417, and Data Matrix": {
+    "en": "Generate or decode QR, Han Xin, PDF417, and Data Matrix",
+    "zh-CN": "生成或识别 QR / 汉信码 / PDF417 / Data Matrix",
+    "zh-TW": "產生或辨識 QR / 漢信碼 / PDF417 / Data Matrix",
+    "es": "Genera o lee QR, Han Xin, PDF417 y Data Matrix",
+    "it": "Genera o legge QR, Han Xin, PDF417 e Data Matrix",
+    "ja": "QR、漢信、PDF417、Data Matrix を生成・読み取り",
+    "pt-BR": "Gere ou leia QR, Han Xin, PDF417 e Data Matrix"
+  },
+  "Repeat default or custom copy a chosen number of times": {
+    "en": "Repeat default or custom copy a chosen number of times",
+    "zh-CN": "按次数重复默认文案或自定义内容",
+    "zh-TW": "按次數重複預設文案或自訂內容",
+    "es": "Repite texto predeterminado o personalizado el número de veces elegido",
+    "it": "Ripete testo predefinito o personalizzato per il numero di volte scelto",
+    "ja": "既定または任意のテキストを指定回数だけ繰り返し",
+    "pt-BR": "Repita um texto padrão ou personalizado pelo número de vezes escolhido"
+  },
+  "Crop, resize, rotate, flip, watermark, convert, and compress": {
+    "en": "Crop, resize, rotate, flip, watermark, convert, and compress",
+    "zh-CN": "裁剪、缩放、旋转、翻转、水印、转格式与压缩",
+    "zh-TW": "裁剪、縮放、旋轉、翻轉、浮水印、轉格式與壓縮",
+    "es": "Recorta, redimensiona, gira, voltea, añade marcas de agua, convierte y comprime",
+    "it": "Ritaglia, ridimensiona, ruota, capovolge, aggiunge filigrane, converte e comprime",
+    "ja": "切り抜き、サイズ変更、回転、反転、透かし、形式変換、圧縮",
+    "pt-BR": "Recorte, redimensione, gire, vire, aplique marca d'água, converta e comprima"
+  },
+  "Generate placeholders at exact pixel size and file size": {
+    "en": "Generate placeholders at exact pixel size and file size",
+    "zh-CN": "按像素尺寸与目标体积生成占位图",
+    "zh-TW": "依像素尺寸與目標體積產生佔位圖",
+    "es": "Genera imágenes de marcador con dimensiones y tamaño de archivo exactos",
+    "it": "Genera immagini segnaposto con dimensioni e peso esatti",
+    "ja": "指定したピクセル寸法とファイルサイズのプレースホルダー画像を生成",
+    "pt-BR": "Gere imagens de espaço reservado com dimensões e tamanho de arquivo exatos"
+  },
+  "PEM or OpenSSH public key": {
+    "en": "PEM or OpenSSH public key",
+    "zh-CN": "PEM 或 OpenSSH 公钥"
+  },
+  "Within validity period; about {0} days remaining": {
+    "en": "Within validity period; about {0} days remaining",
+    "zh-CN": "处于有效期内，剩余约 {0} 天"
+  },
+  "Certificate expired {0} days ago": {
+    "en": "Certificate expired {0} days ago",
+    "zh-CN": "证书已过期 {0} 天"
+  },
+  "Certificate is not valid yet": {
+    "en": "Certificate is not valid yet",
+    "zh-CN": "证书尚未生效"
+  },
+  "Inspects dates and fields; signature, trust chain, and hostname are not verified.": {
+    "en": "Inspects dates and fields; signature, trust chain, and hostname are not verified.",
+    "zh-CN": "这里只检查有效期和证书字段；未验证签名、信任链或主机名。"
+  },
+  "Paste a certificate or SSH public key to inspect fields.": {
+    "en": "Paste a certificate or SSH public key to inspect fields.",
+    "zh-CN": "粘贴证书或 SSH 公钥后会列出字段。"
+  },
+  "Subject": {
+    "en": "Subject",
+    "zh-CN": "主题"
+  },
+  "Issuer": {
+    "en": "Issuer",
+    "zh-CN": "颁发者"
+  },
+  "Serial": {
+    "en": "Serial",
+    "zh-CN": "序列号"
+  },
+  "Not before": {
+    "en": "Not before",
+    "zh-CN": "生效"
+  },
+  "Not after": {
+    "en": "Not after",
+    "zh-CN": "过期"
+  },
+  "Signature": {
+    "en": "Signature",
+    "zh-CN": "签名"
+  },
+  "Public key": {
+    "en": "Public key",
+    "zh-CN": "对应公钥"
+  },
+  "SHA-256 fingerprint": {
+    "en": "SHA-256 fingerprint",
+    "zh-CN": "SHA-256 指纹"
+  },
+  "Subject alternative names": {
+    "en": "Subject alternative names",
+    "zh-CN": "备用名称"
+  },
+  "Subject matches issuer": {
+    "en": "Subject matches issuer",
+    "zh-CN": "主题与颁发者相同"
+  },
+  "Yes": {
+    "en": "Yes",
+    "zh-CN": "是"
+  },
+  "No": {
+    "en": "No",
+    "zh-CN": "否"
+  },
+  "Type": {
+    "en": "Type",
+    "zh-CN": "码制"
+  },
+  "Comment": {
+    "en": "Comment",
+    "zh-CN": "注释"
+  },
+  "SHA256": {
+    "en": "SHA256",
+    "zh-CN": "SHA256"
+  },
+  "MD5": {
+    "en": "MD5",
+    "zh-CN": "MD5"
+  },
+  "Tag": {
+    "en": "Tag",
+    "zh-CN": "标签"
+  },
+  "Certificate input": {
+    "en": "Certificate input",
+    "zh-CN": "证书输入",
+    "zh-TW": "憑證輸入",
+    "es": "Entrada de certificado",
+    "it": "Input certificato",
+    "ja": "証明書入力",
+    "pt-BR": "Entrada de certificado"
+  },
+  "Operation": {
+    "en": "Operation",
+    "zh-CN": "处理方式",
+    "zh-TW": "操作",
+    "es": "Operación",
+    "it": "Operazione",
+    "ja": "操作",
+    "pt-BR": "Operação"
+  },
+  "Encrypt": {
+    "en": "Encrypt",
+    "zh-CN": "加密",
+    "zh-TW": "加密",
+    "es": "Cifrar",
+    "it": "Cifra",
+    "ja": "暗号化",
+    "pt-BR": "Criptografar"
+  },
+  "Decrypt": {
+    "en": "Decrypt",
+    "zh-CN": "解密",
+    "zh-TW": "解密",
+    "es": "Descifrar",
+    "it": "Decifra",
+    "ja": "復号",
+    "pt-BR": "Descriptografar"
+  },
+  "Algorithm": {
+    "en": "Algorithm",
+    "zh-CN": "算法",
+    "zh-TW": "演算法",
+    "es": "Algoritmo",
+    "it": "Algoritmo",
+    "ja": "アルゴリズム",
+    "pt-BR": "Algoritmo"
+  },
+  "SM4 mode": {
+    "en": "SM4 mode",
+    "zh-CN": "SM4 模式",
+    "zh-TW": "SM4 模式",
+    "es": "Modo SM4",
+    "it": "Modalità SM4",
+    "ja": "SM4 モード",
+    "pt-BR": "Modo SM4"
+  },
+  "Mode": {
+    "en": "Mode",
+    "zh-CN": "模式",
+    "zh-TW": "模式",
+    "es": "Modo",
+    "it": "Modalità",
+    "ja": "モード",
+    "pt-BR": "Modo"
+  },
+  "Ciphertext format": {
+    "en": "Ciphertext format",
+    "zh-CN": "密文格式"
+  },
+  "Packed": {
+    "en": "Packed",
+    "zh-CN": "简单封装"
+  },
+  "Separate parameters": {
+    "en": "Separate parameters",
+    "zh-CN": "高级互操作"
+  },
+  "Padding": {
+    "en": "Padding",
+    "zh-CN": "填充"
+  },
+  "Decryption output": {
+    "en": "Decryption output",
+    "zh-CN": "解密输出"
+  },
+  "Input format": {
+    "en": "Input format",
+    "zh-CN": "输入格式",
+    "zh-TW": "輸入格式",
+    "es": "Formato de entrada",
+    "it": "Formato di input",
+    "ja": "入力形式",
+    "pt-BR": "Formato de entrada"
+  },
+  "Text": {
+    "en": "Text",
+    "zh-CN": "文本"
+  },
+  "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.": {
+    "en": "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.",
+    "zh-CN": "对每个字节与密钥循环异或。右侧 Hex 是主结果，下方 UTF-8 是同一字节的可读预览。还原时点「填入输入」或贴回并选 Hex。"
+  },
+  "Ciphertext encoding": {
+    "en": "Ciphertext encoding",
+    "zh-CN": "密文编码"
+  },
+  "Plaintext encoding": {
+    "en": "Plaintext encoding",
+    "zh-CN": "明文编码"
+  },
+  "IV / tag encoding": {
+    "en": "IV / tag encoding",
+    "zh-CN": "IV / tag 编码"
+  },
+  "Leave empty to generate randomly": {
+    "en": "Leave empty to generate randomly",
+    "zh-CN": "留空时随机生成"
+  },
+  "Required": {
+    "en": "Required",
+    "zh-CN": "必填"
+  },
+  "AAD encoding": {
+    "en": "AAD encoding",
+    "zh-CN": "AAD 编码"
+  },
+  "Additional authenticated data (optional)": {
+    "en": "Additional authenticated data (optional)",
+    "zh-CN": "附加认证数据 AAD（可选）"
+  },
+  "Ciphertext excludes nonce and tag; pass them separately. Every encryption with the same key requires a different nonce.": {
+    "en": "Ciphertext excludes nonce and tag; pass them separately. Every encryption with the same key requires a different nonce.",
+    "zh-CN": "密文不包含 nonce 或 tag；三者需分别传递。相同密钥下，每次加密必须使用不同 nonce。"
+  },
+  "ECB has no IV; uses PKCS#7 padding.": {
+    "en": "ECB has no IV; uses PKCS#7 padding.",
+    "zh-CN": "ECB 不使用 IV；使用 PKCS#7 填充。"
+  },
+  "Ciphertext excludes the IV; uses PKCS#7 padding.": {
+    "en": "Ciphertext excludes the IV; uses PKCS#7 padding.",
+    "zh-CN": "密文不包含 IV；使用 PKCS#7 填充。"
+  },
+  "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.": {
+    "en": "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.",
+    "zh-CN": "兼容模式不提供密文完整性保护；新数据优先使用 AES-GCM。"
+  },
+  "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.": {
+    "en": "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.",
+    "zh-CN": "PKCS#1 v1.5 仅用于兼容旧系统；新数据优先使用 OAEP-SHA256。"
+  },
+  "Key material (hex/base64)": {
+    "en": "Key material (hex/base64)",
+    "zh-CN": "密钥材料（hex/base64）"
+  },
+  "e.g. 00 or deadbeef": {
+    "en": "e.g. 00 or deadbeef",
+    "zh-CN": "例如 00 或 deadbeef"
+  },
+  "Provide a key to compute automatically.": {
+    "en": "Provide a key to compute automatically.",
+    "zh-CN": "提供密钥后会自动计算。"
+  },
+  "Treating these as text characters. If this is a prior Hex result, switch to Hex.": {
+    "en": "Treating these as text characters. If this is a prior Hex result, switch to Hex.",
+    "zh-CN": "当前按「文本」处理这些字符。若这是上次的 Hex 结果，请改用 Hex。"
+  },
+  "Use Hex": {
+    "en": "Use Hex",
+    "zh-CN": "改为 Hex"
+  },
+  "Computing…": {
+    "en": "Computing…",
+    "zh-CN": "正在计算…"
+  },
+  "Use as input": {
+    "en": "Use as input",
+    "zh-CN": "填入输入"
+  },
+  "UTF-8 preview": {
+    "en": "UTF-8 preview",
+    "zh-CN": "UTF-8 预览"
+  },
+  "Decrypted bytes are not UTF-8 and are shown as Hex. Advanced mode lets you select the output encoding.": {
+    "en": "Decrypted bytes are not UTF-8 and are shown as Hex. Advanced mode lets you select the output encoding.",
+    "zh-CN": "解密结果不是 UTF-8 文本，已显示为 Hex；可切换高级模式选择输出编码。"
+  },
+  "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.": {
+    "en": "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.",
+    "zh-CN": "Base64(nonce 12 字节 + 密文 + tag 16 字节)，无 AAD。加密时自动生成 nonce。"
+  },
+  "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.": {
+    "en": "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.",
+    "zh-CN": "Base64(IV 16 字节 + 密文)，PKCS#7 填充。加密时自动生成 IV。"
+  },
+  "Base64(ciphertext), PKCS#7 padding; ECB has no IV.": {
+    "en": "Base64(ciphertext), PKCS#7 padding; ECB has no IV.",
+    "zh-CN": "Base64(密文)，PKCS#7 填充，ECB 不使用 IV。"
+  },
+  "Input (Hex)": {
+    "en": "Input (Hex)",
+    "zh-CN": "输入（Hex）"
+  },
+  "Input (Text)": {
+    "en": "Input (Text)",
+    "zh-CN": "输入（文本）"
+  },
+  "Plaintext": {
+    "en": "Plaintext",
+    "zh-CN": "明文"
+  },
+  "Ciphertext": {
+    "en": "Ciphertext",
+    "zh-CN": "密文"
+  },
+  "e.g. 68656c6c6f (hex for hello)": {
+    "en": "e.g. 68656c6c6f (hex for hello)",
+    "zh-CN": "例如 68656c6c6f（hello 的 Hex）"
+  },
+  "e.g. hello": {
+    "en": "e.g. hello",
+    "zh-CN": "例如 hello"
+  },
+  "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus": {
+    "en": "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus",
+    "zh-CN": "Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点"
+  },
+  "Language": {
+    "en": "Language",
+    "zh-CN": "目标语言",
+    "zh-TW": "語言",
+    "es": "Idioma",
+    "it": "Lingua",
+    "ja": "言語",
+    "pt-BR": "Idioma"
+  },
+  "Dialect": {
+    "en": "Dialect",
+    "zh-CN": "方言"
+  },
+  "Standard SQL": {
+    "en": "Standard SQL",
+    "zh-CN": "标准 SQL"
+  },
+  "Action": {
+    "en": "Action",
+    "zh-CN": "操作",
+    "zh-TW": "操作",
+    "es": "Acción",
+    "it": "Azione",
+    "ja": "操作",
+    "pt-BR": "Ação"
+  },
+  "Format": {
+    "en": "Format",
+    "zh-CN": "格式"
+  },
+  "Validate": {
+    "en": "Validate",
+    "zh-CN": "校验"
+  },
+  "Indent": {
+    "en": "Indent",
+    "zh-CN": "缩进"
+  },
+  "2 spaces": {
+    "en": "2 spaces",
+    "zh-CN": "2 空格"
+  },
+  "4 spaces": {
+    "en": "4 spaces",
+    "zh-CN": "4 空格"
+  },
+  "8 spaces": {
+    "en": "8 spaces",
+    "zh-CN": "8 空格"
+  },
+  "Source": {
+    "en": "Source",
+    "zh-CN": "原文"
+  },
+  "Result": {
+    "en": "Result",
+    "zh-CN": "结果"
+  },
+  "Processing…": {
+    "en": "Processing…",
+    "zh-CN": "处理中…"
+  },
+  "HEX": {
+    "en": "HEX",
+    "zh-CN": "16进制 (HEX)"
+  },
+  "HEX color value": {
+    "en": "HEX color value",
+    "zh-CN": "十六进制颜色值"
+  },
+  "e.g. FF5733": {
+    "en": "e.g. FF5733",
+    "zh-CN": "例: FF5733"
+  },
+  "Range: 0-255": {
+    "en": "Range: 0-255",
+    "zh-CN": "范围: 0-255"
+  },
+  "Range: 0-100%": {
+    "en": "Range: 0-100%",
+    "zh-CN": "范围: 0-100%"
+  },
+  "H: 0-360°, S/V: 0-100%": {
+    "en": "H: 0-360°, S/V: 0-100%",
+    "zh-CN": "H: 0-360°, S/V: 0-100%"
+  },
+  "Color wheel": {
+    "en": "Color wheel",
+    "zh-CN": "色环选择"
+  },
+  "Pick color": {
+    "en": "Pick color",
+    "zh-CN": "吸取颜色"
+  },
+  "Current values": {
+    "en": "Current values",
+    "zh-CN": "当前颜色值"
+  },
+  "Pick from the screen, drag the wheel, or type on the left": {
+    "en": "Pick from the screen, drag the wheel, or type on the left",
+    "zh-CN": "吸取屏幕颜色、拖动色环，或在左侧输入"
+  },
+  "Eyedropper unavailable; opened the system color picker": {
+    "en": "Eyedropper unavailable; opened the system color picker",
+    "zh-CN": "屏幕取色不可用，已打开系统调色板"
+  },
+  "Color picking is not available here": {
+    "en": "Color picking is not available here",
+    "zh-CN": "当前环境不支持取色"
+  },
+  "Color wheel: hue and saturation": {
+    "en": "Color wheel: hue and saturation",
+    "zh-CN": "色环：色相与饱和度"
+  },
+  "Hue {0}°, saturation {1}%": {
+    "en": "Hue {0}°, saturation {1}%",
+    "zh-CN": "色相 {0}°，饱和度 {1}%"
+  },
+  "Brightness": {
+    "en": "Brightness",
+    "zh-CN": "明亮度"
+  },
+  "Current color": {
+    "en": "Current color",
+    "zh-CN": "当前颜色"
+  },
+  "Copy": {
+    "en": "Copy",
+    "zh-CN": "复制",
+    "zh-TW": "複製",
+    "es": "Copiar",
+    "it": "Copia",
+    "ja": "コピー",
+    "pt-BR": "Copiar"
+  },
+  "Quartz": {
+    "en": "Quartz",
+    "zh-CN": "Quartz"
+  },
+  "Spring": {
+    "en": "Spring",
+    "zh-CN": "Spring"
+  },
+  "Linux": {
+    "en": "Linux",
+    "zh-CN": "Linux"
+  },
+  "Node": {
+    "en": "Node",
+    "zh-CN": "Node"
+  },
+  "Second": {
+    "en": "Second",
+    "zh-CN": "秒"
+  },
+  "Every second": {
+    "en": "Every second",
+    "zh-CN": "每秒"
+  },
+  "second": {
+    "en": "second",
+    "zh-CN": "秒"
+  },
+  "Minute": {
+    "en": "Minute",
+    "zh-CN": "分"
+  },
+  "Every minute": {
+    "en": "Every minute",
+    "zh-CN": "每分钟"
+  },
+  "minute": {
+    "en": "minute",
+    "zh-CN": "分钟"
+  },
+  "Hour": {
+    "en": "Hour",
+    "zh-CN": "时"
+  },
+  "Every hour": {
+    "en": "Every hour",
+    "zh-CN": "每时"
+  },
+  "hour": {
+    "en": "hour",
+    "zh-CN": "小时"
+  },
+  "Day": {
+    "en": "Day",
+    "zh-CN": "日"
+  },
+  "Every day": {
+    "en": "Every day",
+    "zh-CN": "每日"
+  },
+  "day": {
+    "en": "day",
+    "zh-CN": "日"
+  },
+  "Month": {
+    "en": "Month",
+    "zh-CN": "月"
+  },
+  "Every month": {
+    "en": "Every month",
+    "zh-CN": "每月"
+  },
+  "month": {
+    "en": "month",
+    "zh-CN": "月"
+  },
+  "Weekday": {
+    "en": "Weekday",
+    "zh-CN": "周"
+  },
+  "Week": {
+    "en": "Week",
+    "zh-CN": "周"
+  },
+  "Every weekday": {
+    "en": "Every weekday",
+    "zh-CN": "每周"
+  },
+  "weekday": {
+    "en": "weekday",
+    "zh-CN": "周"
+  },
+  "Year": {
+    "en": "Year",
+    "zh-CN": "年"
+  },
+  "Every year": {
+    "en": "Every year",
+    "zh-CN": "每年"
+  },
+  "year": {
+    "en": "year",
+    "zh-CN": "年"
+  },
+  "China Standard Time": {
+    "en": "China Standard Time",
+    "zh-CN": "中国标准时间"
+  },
+  "Tokyo": {
+    "en": "Tokyo",
+    "zh-CN": "东京"
+  },
+  "Singapore": {
+    "en": "Singapore",
+    "zh-CN": "新加坡"
+  },
+  "London": {
+    "en": "London",
+    "zh-CN": "伦敦"
+  },
+  "New York": {
+    "en": "New York",
+    "zh-CN": "纽约"
+  },
+  "UTC": {
+    "en": "UTC",
+    "zh-CN": "UTC"
+  },
+  "Every 5 minutes": {
+    "en": "Every 5 minutes",
+    "zh-CN": "每5分钟"
+  },
+  "Every 10 minutes": {
+    "en": "Every 10 minutes",
+    "zh-CN": "每10分钟"
+  },
+  "Every 15 minutes": {
+    "en": "Every 15 minutes",
+    "zh-CN": "每15分钟"
+  },
+  "Every 30 minutes": {
+    "en": "Every 30 minutes",
+    "zh-CN": "每30分钟"
+  },
+  "Hourly": {
+    "en": "Hourly",
+    "zh-CN": "每小时"
+  },
+  "Every 2 hours": {
+    "en": "Every 2 hours",
+    "zh-CN": "每2小时"
+  },
+  "Every 6 hours": {
+    "en": "Every 6 hours",
+    "zh-CN": "每6小时"
+  },
+  "Daily midnight": {
+    "en": "Daily midnight",
+    "zh-CN": "每天零点"
+  },
+  "Daily 8:00": {
+    "en": "Daily 8:00",
+    "zh-CN": "每天8点"
+  },
+  "Daily 9:30": {
+    "en": "Daily 9:30",
+    "zh-CN": "每天9:30"
+  },
+  "Daily noon": {
+    "en": "Daily noon",
+    "zh-CN": "每天中午"
+  },
+  "Daily 18:00": {
+    "en": "Daily 18:00",
+    "zh-CN": "每天18点"
+  },
+  "Daily 23:00": {
+    "en": "Daily 23:00",
+    "zh-CN": "每天23点"
+  },
+  "Weekdays 9:00": {
+    "en": "Weekdays 9:00",
+    "zh-CN": "工作日9点"
+  },
+  "Weekdays 18:00": {
+    "en": "Weekdays 18:00",
+    "zh-CN": "工作日18点"
+  },
+  "Mondays 9:00": {
+    "en": "Mondays 9:00",
+    "zh-CN": "每周一9点"
+  },
+  "Fridays 18:00": {
+    "en": "Fridays 18:00",
+    "zh-CN": "每周五18点"
+  },
+  "Saturdays 10:00": {
+    "en": "Saturdays 10:00",
+    "zh-CN": "每周六10点"
+  },
+  "1st of month": {
+    "en": "1st of month",
+    "zh-CN": "每月1号"
+  },
+  "15th of month": {
+    "en": "15th of month",
+    "zh-CN": "每月15号"
+  },
+  "Last day of month": {
+    "en": "Last day of month",
+    "zh-CN": "每月最后一天"
+  },
+  "First day of quarter": {
+    "en": "First day of quarter",
+    "zh-CN": "每季度首日"
+  },
+  "New Year's Day": {
+    "en": "New Year's Day",
+    "zh-CN": "每年元旦"
+  },
+  "Linux every 5 min": {
+    "en": "Linux every 5 min",
+    "zh-CN": "Linux每5分钟"
+  },
+  "Linux daily 2:00": {
+    "en": "Linux daily 2:00",
+    "zh-CN": "Linux每天2点"
+  },
+  "Linux work hours": {
+    "en": "Linux work hours",
+    "zh-CN": "Linux工作时段"
+  },
+  "Linux Sundays": {
+    "en": "Linux Sundays",
+    "zh-CN": "Linux每周日"
+  },
+  "Node every 10 min": {
+    "en": "Node every 10 min",
+    "zh-CN": "Node每10分钟"
+  },
+  "Node weekdays 9:00": {
+    "en": "Node weekdays 9:00",
+    "zh-CN": "Node工作日9点"
+  },
+  "Expression type": {
+    "en": "Expression type",
+    "zh-CN": "表达式类型"
+  },
+  "Matches every {0} (*)": {
+    "en": "Matches every {0} (*)",
+    "zh-CN": "{0}字段匹配每一{1} (*)"
+  },
+  "Unspecified": {
+    "en": "Unspecified",
+    "zh-CN": "不指定"
+  },
+  "Use ? so the other date field applies": {
+    "en": "Use ? so the other date field applies",
+    "zh-CN": "使用 ? 让另一个日期字段生效"
+  },
+  "Range": {
+    "en": "Range",
+    "zh-CN": "范围"
+  },
+  "From": {
+    "en": "From",
+    "zh-CN": "从",
+    "zh-TW": "從",
+    "es": "Desde",
+    "it": "Da",
+    "ja": "から",
+    "pt-BR": "De"
+  },
+  "Range start": {
+    "en": "Range start",
+    "zh-CN": "范围起始"
+  },
+  "to": {
+    "en": "to",
+    "zh-CN": "到"
+  },
+  "Range end": {
+    "en": "Range end",
+    "zh-CN": "范围结束"
+  },
+  "Step": {
+    "en": "Step",
+    "zh-CN": "周期"
+  },
+  "Step start": {
+    "en": "Step start",
+    "zh-CN": "周期起始"
+  },
+  "every": {
+    "en": "every",
+    "zh-CN": "开始，每"
+  },
+  "Step interval": {
+    "en": "Step interval",
+    "zh-CN": "周期间隔"
+  },
+  "{0}s": {
+    "en": "{0}s",
+    "zh-CN": "{0}执行一次"
+  },
+  "Nearest weekday": {
+    "en": "Nearest weekday",
+    "zh-CN": "最近工作日"
+  },
+  "On": {
+    "en": "On",
+    "zh-CN": "每月"
+  },
+  "Nearest weekday day": {
+    "en": "Nearest weekday day",
+    "zh-CN": "最近工作日日期"
+  },
+  "nearest weekday": {
+    "en": "nearest weekday",
+    "zh-CN": "号最近的工作日"
+  },
+  "Last day": {
+    "en": "Last day",
+    "zh-CN": "最后一天"
+  },
+  "Last day of the month": {
+    "en": "Last day of the month",
+    "zh-CN": "当月最后一天"
+  },
+  "Last weekday": {
+    "en": "Last weekday",
+    "zh-CN": "最后工作日"
+  },
+  "Last weekday of the month": {
+    "en": "Last weekday of the month",
+    "zh-CN": "当月最后一个工作日"
+  },
+  "Specific": {
+    "en": "Specific",
+    "zh-CN": "指定"
+  },
+  "{0} selected": {
+    "en": "{0} selected",
+    "zh-CN": "已选择 {0} 项"
+  },
+  "Drag to select a range": {
+    "en": "Drag to select a range",
+    "zh-CN": "按住拖动可批量选择"
+  },
+  "All": {
+    "en": "All",
+    "zh-CN": "全部",
+    "zh-TW": "全部",
+    "es": "Todas",
+    "it": "Tutti",
+    "ja": "すべて",
+    "pt-BR": "Todas"
+  },
+  "Advanced": {
+    "en": "Advanced",
+    "zh-CN": "高级"
+  },
+  "Fields": {
+    "en": "Fields",
+    "zh-CN": "表达式字段"
+  },
+  "Cron expression": {
+    "en": "Cron expression",
+    "zh-CN": "Cron 表达式",
+    "zh-TW": "Cron 運算式",
+    "es": "Expresión Cron",
+    "it": "Espressione Cron",
+    "ja": "Cron 式",
+    "pt-BR": "Expressão Cron"
+  },
+  "Parse": {
+    "en": "Parse",
+    "zh-CN": "解析"
+  },
+  "Timezone": {
+    "en": "Timezone",
+    "zh-CN": "计算时区"
+  },
+  "Presets": {
+    "en": "Presets",
+    "zh-CN": "常用定时"
+  },
+  "Click to apply": {
+    "en": "Click to apply",
+    "zh-CN": "点击即可快速应用"
+  },
+  "Less": {
+    "en": "Less",
+    "zh-CN": "收起"
+  },
+  "More": {
+    "en": "More",
+    "zh-CN": "更多"
+  },
+  "Next 5 runs": {
+    "en": "Next 5 runs",
+    "zh-CN": "接下来 5 次"
+  },
+  "In run order": {
+    "en": "In run order",
+    "zh-CN": "按执行顺序"
+  },
+  "Next runs appear for a valid expression.": {
+    "en": "Next runs appear for a valid expression.",
+    "zh-CN": "有效表达式才会列出时间。"
+  },
+  "Not a valid cron expression": {
+    "en": "Not a valid cron expression",
+    "zh-CN": "不是有效的 Cron 表达式"
+  },
+  "Swap and use result": {
+    "en": "Swap and use result",
+    "zh-CN": "交换并使用结果"
+  },
+  "Output format": {
+    "en": "Output format",
+    "zh-CN": "输出格式"
+  },
+  "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.": {
+    "en": "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.",
+    "zh-CN": "CSV/TSV 按首行作为列名，值按文本读取；NDJSON 每行是一个 JSON 值。CSV/TSV 嵌套值输出为 JSON 文本；XML 使用 @_ 属性，多个顶层字段包在 root 中，数组包在 root/item 中。跨格式不保证保留注释。"
+  },
+  "Converting…": {
+    "en": "Converting…",
+    "zh-CN": "转换中…"
+  },
+  "Custom…": {
+    "en": "Custom…",
+    "zh-CN": "自定义…"
+  },
+  "MIME type": {
+    "en": "MIME type",
+    "zh-CN": "MIME 类型"
+  },
+  "Custom MIME": {
+    "en": "Custom MIME",
+    "zh-CN": "自定义 MIME"
+  },
+  "Encode as": {
+    "en": "Encode as",
+    "zh-CN": "输出编码"
+  },
+  "Percent": {
+    "en": "Percent",
+    "zh-CN": "百分号"
+  },
+  "Paste a Data URI to inspect type and encoding": {
+    "en": "Paste a Data URI to inspect type and encoding",
+    "zh-CN": "粘贴 Data URI 后显示类型与编码"
+  },
+  "Reading…": {
+    "en": "Reading…",
+    "zh-CN": "读取中…"
+  },
+  "Remove file": {
+    "en": "Remove file",
+    "zh-CN": "移除文件"
+  },
+  "Choose file": {
+    "en": "Choose file",
+    "zh-CN": "选择文件"
+  },
+  "Saving…": {
+    "en": "Saving…",
+    "zh-CN": "保存中…"
+  },
+  "Download file": {
+    "en": "Download file",
+    "zh-CN": "下载文件"
+  },
+  "Input pane; drop a file here": {
+    "en": "Input pane; drop a file here",
+    "zh-CN": "输入区，可拖入文件"
+  },
+  "File": {
+    "en": "File",
+    "zh-CN": "文件"
+  },
+  "Drop to replace": {
+    "en": "Drop to replace",
+    "zh-CN": "拖入可替换"
+  },
+  "Preview": {
+    "en": "Preview",
+    "zh-CN": "预览"
+  },
+  "Enter text, or drop a file (≤10 MB)…": {
+    "en": "Enter text, or drop a file (≤10 MB)…",
+    "zh-CN": "输入文本，或拖入文件（≤10 MB）…"
+  },
+  "Content": {
+    "en": "Content",
+    "zh-CN": "内容"
+  },
+  "Data URI appears here": {
+    "en": "Data URI appears here",
+    "zh-CN": "Data URI 会显示在这里"
+  },
+  "Binary content": {
+    "en": "Binary content",
+    "zh-CN": "二进制内容"
+  },
+  "Not textual — use Download file": {
+    "en": "Not textual — use Download file",
+    "zh-CN": "无法显示为文本，请使用「下载文件」"
+  },
+  "Decoded content appears here": {
+    "en": "Decoded content appears here",
+    "zh-CN": "解析结果会显示在这里"
+  },
+  "Create": {
+    "en": "Create",
+    "zh-CN": "生成"
+  },
+  "Base64": {
+    "en": "Base64",
+    "zh-CN": "Base64"
+  },
+  "File too large ({0}); limit is 10 MB": {
+    "en": "File too large ({0}); limit is 10 MB",
+    "zh-CN": "文件过大（{0}），上限 10 MB"
+  },
+  "Failed to read file": {
+    "en": "Failed to read file",
+    "zh-CN": "读取文件失败"
+  },
+  "Encoded payload exceeds the 10 MB limit": {
+    "en": "Encoded payload exceeds the 10 MB limit",
+    "zh-CN": "编码后超过 10 MB 限制"
+  },
+  "Save file": {
+    "en": "Save file",
+    "zh-CN": "保存文件"
+  },
+  "Save failed": {
+    "en": "Save failed",
+    "zh-CN": "保存失败"
+  },
+  "Granularity": {
+    "en": "Granularity",
+    "zh-CN": "粒度"
+  },
+  "Lines": {
+    "en": "Lines",
+    "zh-CN": "行",
+    "zh-TW": "行數",
+    "es": "Líneas",
+    "it": "Righe",
+    "ja": "行数",
+    "pt-BR": "Linhas"
+  },
+  "Words": {
+    "en": "Words",
+    "zh-CN": "词"
+  },
+  "Characters": {
+    "en": "Characters",
+    "zh-CN": "字符"
+  },
+  "Ignore whitespace": {
+    "en": "Ignore whitespace",
+    "zh-CN": "忽略空白差异"
+  },
+  "Ignore case": {
+    "en": "Ignore case",
+    "zh-CN": "忽略大小写"
+  },
+  "Swap": {
+    "en": "Swap",
+    "zh-CN": "交换左右"
+  },
+  "Left": {
+    "en": "Left",
+    "zh-CN": "左侧"
+  },
+  "Right": {
+    "en": "Right",
+    "zh-CN": "右侧"
+  },
+  "Diff": {
+    "en": "Diff",
+    "zh-CN": "差异"
+  },
+  "Left input": {
+    "en": "Left input",
+    "zh-CN": "左侧输入"
+  },
+  "Right input": {
+    "en": "Right input",
+    "zh-CN": "右侧输入"
+  },
+  "Direction": {
+    "en": "Direction",
+    "zh-CN": "方向",
+    "zh-TW": "方向",
+    "es": "Dirección",
+    "it": "Direzione",
+    "ja": "方向",
+    "pt-BR": "Direção"
+  },
+  "Escaped text": {
+    "en": "Escaped text",
+    "zh-CN": "已转义文本"
+  },
+  "Updates as you type": {
+    "en": "Updates as you type",
+    "zh-CN": "输入后自动转换"
+  },
+  "{0} output": {
+    "en": "{0} output",
+    "zh-CN": "{0} 输出"
+  },
+  "Escape": {
+    "en": "Escape",
+    "zh-CN": "转义"
+  },
+  "Unescape": {
+    "en": "Unescape",
+    "zh-CN": "还原"
+  },
+  "HTML entities": {
+    "en": "HTML entities",
+    "zh-CN": "HTML 实体"
+  },
+  "Unicode \\u{…}": {
+    "en": "Unicode \\u{…}",
+    "zh-CN": "Unicode \\u{…}"
+  },
+  "JS \\uXXXX": {
+    "en": "JS \\uXXXX",
+    "zh-CN": "JS \\uXXXX"
+  },
+  "JSON string": {
+    "en": "JSON string",
+    "zh-CN": "JSON 字符串"
+  },
+  "CSS identifier": {
+    "en": "CSS identifier",
+    "zh-CN": "CSS 标识符"
+  },
+  "Current file": {
+    "en": "Current file",
+    "zh-CN": "当前文件"
+  },
+  "Text input": {
+    "en": "Text input",
+    "zh-CN": "文本输入"
+  },
+  "Reading file…": {
+    "en": "Reading file…",
+    "zh-CN": "正在读取文件…"
+  },
+  "Use text": {
+    "en": "Use text",
+    "zh-CN": "改用文本"
+  },
+  "Expected checksum (optional)": {
+    "en": "Expected checksum (optional)",
+    "zh-CN": "校验值（可选）"
+  },
+  "No match": {
+    "en": "No match",
+    "zh-CN": "不匹配"
+  },
+  "{0} digest": {
+    "en": "{0} digest",
+    "zh-CN": "{0} 摘要"
+  },
+  "Files are limited to 16 MB. Choose a smaller file.": {
+    "en": "Files are limited to 16 MB. Choose a smaller file.",
+    "zh-CN": "文件不能超过 16 MB，请选择较小的文件。"
+  },
+  "Could not read the file. Please select it again.": {
+    "en": "Could not read the file. Please select it again.",
+    "zh-CN": "无法读取文件，请重新选择。"
+  },
+  "Input": {
+    "en": "Input",
+    "zh-CN": "输入",
+    "zh-TW": "輸入",
+    "es": "Entrada",
+    "it": "Input",
+    "ja": "入力",
+    "pt-BR": "Entrada"
+  },
+  "Provide a key to compute the digest.": {
+    "en": "Provide a key to compute the digest.",
+    "zh-CN": "提供密钥后会计算摘要。"
+  },
+  "Digest": {
+    "en": "Digest",
+    "zh-CN": "摘要"
+  },
+  "Tag '{0}' is an invalid name.": {
+    "en": "Tag '{0}' is an invalid name.",
+    "zh-CN": "标签「{0}」不是有效的 XML 名称",
+    "zh-TW": "標籤「{0}」不是有效的 XML 名稱",
+    "es": "La etiqueta '{0}' no es un nombre XML válido.",
+    "it": "Il tag '{0}' non è un nome XML valido.",
+    "ja": "タグ '{0}' は有効な XML 名ではありません。",
+    "pt-BR": "A tag '{0}' não é um nome XML válido."
+  },
+  "Attribute '{0}' is an invalid name.": {
+    "en": "Attribute '{0}' is an invalid name.",
+    "zh-CN": "属性「{0}」不是有效的 XML 名称",
+    "zh-TW": "屬性「{0}」不是有效的 XML 名稱",
+    "es": "El atributo '{0}' no es un nombre XML válido.",
+    "it": "L'attributo '{0}' non è un nome XML valido.",
+    "ja": "属性 '{0}' は有効な XML 名ではありません。",
+    "pt-BR": "O atributo '{0}' não é um nome XML válido."
+  },
+  "Attributes for '{0}' have open quote.": {
+    "en": "Attributes for '{0}' have open quote.",
+    "zh-CN": "标签「{0}」的属性引号未闭合",
+    "zh-TW": "標籤「{0}」的屬性引號未閉合",
+    "es": "Los atributos de '{0}' tienen comillas abiertas.",
+    "it": "Gli attributi di '{0}' hanno virgolette aperte.",
+    "ja": "「{0}」の属性引用符が閉じていません。",
+    "pt-BR": "Os atributos de '{0}' têm aspas abertas."
+  },
+  "Closing tag '{0}' doesn't have proper closing.": {
+    "en": "Closing tag '{0}' doesn't have proper closing.",
+    "zh-CN": "结束标签「{0}」写法不正确",
+    "zh-TW": "結束標籤「{0}」寫法不正確",
+    "es": "La etiqueta de cierre '{0}' no está bien formada.",
+    "it": "Il tag di chiusura '{0}' non è scritto correttamente.",
+    "ja": "終了タグ「{0}」の書き方が正しくありません。",
+    "pt-BR": "A tag de fechamento '{0}' não está bem formada."
+  },
+  "Closing tag '{0}' can't have attributes or invalid starting.": {
+    "en": "Closing tag '{0}' can't have attributes or invalid starting.",
+    "zh-CN": "结束标签「{0}」不能带属性或以非法方式开头",
+    "zh-TW": "結束標籤「{0}」不能帶屬性或以非法方式開頭",
+    "es": "La etiqueta de cierre '{0}' no puede tener atributos ni un inicio inválido.",
+    "it": "Il tag di chiusura '{0}' non può avere attributi o un inizio non valido.",
+    "ja": "終了タグ「{0}」に属性や不正な開始は使えません。",
+    "pt-BR": "A tag de fechamento '{0}' não pode ter atributos nem início inválido."
+  },
+  "Closing tag '{0}' has not been opened.": {
+    "en": "Closing tag '{0}' has not been opened.",
+    "zh-CN": "结束标签「{0}」没有对应的开始标签",
+    "zh-TW": "結束標籤「{0}」沒有對應的開始標籤",
+    "es": "La etiqueta de cierre '{0}' no tiene apertura.",
+    "it": "Il tag di chiusura '{0}' non è stato aperto.",
+    "ja": "終了タグ「{0}」に対応する開始タグがありません。",
+    "pt-BR": "A tag de fechamento '{0}' não foi aberta."
+  },
+  "Expected closing tag '{0}' (opened in line {1}, col {2}) instead of closing tag '{3}'.": {
+    "en": "Expected closing tag '{0}' (opened in line {1}, col {2}) instead of closing tag '{3}'.",
+    "zh-CN": "期望结束标签「{0}」（在第 {1} 行第 {2} 列打开），实际为「{3}」",
+    "zh-TW": "期望結束標籤「{0}」（在第 {1} 行第 {2} 列打開），實際為「{3}」",
+    "es": "Se esperaba la etiqueta de cierre '{0}' (abierta en línea {1}, col. {2}), no '{3}'.",
+    "it": "Era previsto il tag di chiusura '{0}' (aperto a riga {1}, col. {2}), non '{3}'.",
+    "ja": "終了タグ「{0}」が必要です（{1} 行 {2} 列で開始）。実際は「{3}」でした。",
+    "pt-BR": "Esperava-se a tag de fechamento '{0}' (aberta na linha {1}, col. {2}), não '{3}'."
+  },
+  "Invalid space after '<'.": {
+    "en": "Invalid space after '<'.",
+    "zh-CN": "`<` 后不能有空白",
+    "zh-TW": "`<` 後不能有空白",
+    "es": "No puede haber espacio después de '<'.",
+    "it": "Non può esserci spazio dopo '<'.",
+    "ja": "'<' の後に空白は置けません。",
+    "pt-BR": "Não pode haver espaço após '<'."
+  },
+  "Multiple possible root nodes found.": {
+    "en": "Multiple possible root nodes found.",
+    "zh-CN": "发现多个可能的根节点",
+    "zh-TW": "發現多個可能的根節點",
+    "es": "Se encontraron varios nodos raíz posibles.",
+    "it": "Trovati più possibili nodi radice.",
+    "ja": "複数のルートノードが見つかりました。",
+    "pt-BR": "Foram encontrados vários nós raiz possíveis."
+  },
+  "Bad control character in string literal in JSON": {
+    "en": "Bad control character in string literal in JSON",
+    "zh-CN": "JSON 字符串中含有未转义的控制字符（如换行、制表符，请写成 \\n、\\t）",
+    "zh-TW": "JSON 字串中含有未跳脫的控制字元（如換行、製表符，請寫成 \\n、\\t）",
+    "es": "Carácter de control sin escapar en un literal de cadena JSON",
+    "it": "Carattere di controllo non escapato in un letterale stringa JSON",
+    "ja": "JSON 文字列リテラルにエスケープされていない制御文字があります（\\n、\\t など）",
+    "pt-BR": "Caractere de controle sem escape em literal de string JSON"
+  },
+  "Unterminated string in JSON": {
+    "en": "Unterminated string in JSON",
+    "zh-CN": "JSON 字符串未正确结束",
+    "zh-TW": "JSON 字串未正確結束",
+    "es": "Cadena JSON sin terminar",
+    "it": "Stringa JSON non terminata",
+    "ja": "JSON 文字列が正しく終了していません",
+    "pt-BR": "String JSON não terminada"
+  },
+  "Unexpected end of JSON input": {
+    "en": "Unexpected end of JSON input",
+    "zh-CN": "JSON 不完整，意外结束",
+    "zh-TW": "JSON 不完整，意外結束",
+    "es": "Fin inesperado de la entrada JSON",
+    "it": "Fine imprevista dell'input JSON",
+    "ja": "JSON 入力が途中で終了しました",
+    "pt-BR": "Fim inesperado da entrada JSON"
+  },
+  "Expected property name or '}' in JSON": {
+    "en": "Expected property name or '}' in JSON",
+    "zh-CN": "JSON 此处需要属性名或 '}'",
+    "zh-TW": "JSON 此處需要屬性名或 '}'",
+    "es": "Se esperaba un nombre de propiedad o '}' en JSON",
+    "it": "Previsto un nome proprietà o '}' in JSON",
+    "ja": "JSON ではプロパティ名または '}' が必要です",
+    "pt-BR": "Esperava-se um nome de propriedade ou '}' no JSON"
+  },
+  "Expected ',' or '}' after property value in JSON": {
+    "en": "Expected ',' or '}' after property value in JSON",
+    "zh-CN": "JSON 属性值后需要 ',' 或 '}'",
+    "zh-TW": "JSON 屬性值後需要 ',' 或 '}'",
+    "es": "Se esperaba ',' o '}' tras el valor de la propiedad en JSON",
+    "it": "Prevista ',' o '}' dopo il valore della proprietà in JSON",
+    "ja": "JSON のプロパティ値の後には ',' または '}' が必要です",
+    "pt-BR": "Esperava-se ',' ou '}' após o valor da propriedade no JSON"
+  },
+  "Expected ',' or ']' after array element in JSON": {
+    "en": "Expected ',' or ']' after array element in JSON",
+    "zh-CN": "JSON 数组元素后需要 ',' 或 ']'",
+    "zh-TW": "JSON 陣列元素後需要 ',' 或 ']'",
+    "es": "Se esperaba ',' o ']' tras un elemento de matriz en JSON",
+    "it": "Prevista ',' o ']' dopo un elemento di array in JSON",
+    "ja": "JSON の配列要素の後には ',' または ']' が必要です",
+    "pt-BR": "Esperava-se ',' ou ']' após um elemento de array no JSON"
+  },
+  "Expected double-quoted property name in JSON": {
+    "en": "Expected double-quoted property name in JSON",
+    "zh-CN": "JSON 属性名须使用双引号",
+    "zh-TW": "JSON 屬性名須使用雙引號",
+    "es": "El nombre de propiedad JSON debe ir entre comillas dobles",
+    "it": "Il nome proprietà JSON deve essere tra virgolette doppie",
+    "ja": "JSON のプロパティ名は二重引用符で囲む必要があります",
+    "pt-BR": "O nome da propriedade JSON deve usar aspas duplas"
+  },
+  "Expected ':' after property name in JSON": {
+    "en": "Expected ':' after property name in JSON",
+    "zh-CN": "JSON 属性名后需要 ':'",
+    "zh-TW": "JSON 屬性名後需要 ':'",
+    "es": "Se esperaba ':' tras el nombre de propiedad en JSON",
+    "it": "Previsti ':' dopo il nome proprietà in JSON",
+    "ja": "JSON のプロパティ名の後には ':' が必要です",
+    "pt-BR": "Esperava-se ':' após o nome da propriedade no JSON"
+  },
+  "Unexpected non-whitespace character after JSON": {
+    "en": "Unexpected non-whitespace character after JSON",
+    "zh-CN": "JSON 结束后还有多余字符",
+    "zh-TW": "JSON 結束後還有多餘字元",
+    "es": "Carácter inesperado tras el JSON",
+    "it": "Carattere inatteso dopo il JSON",
+    "ja": "JSON の後に余分な文字があります",
+    "pt-BR": "Caractere inesperado após o JSON"
+  },
+  "JSON syntax error: unexpected {0}{1}": {
+    "en": "JSON syntax error: unexpected {0}{1}",
+    "zh-CN": "JSON 语法错误：意外的 {0}{1}",
+    "zh-TW": "JSON 語法錯誤：意外的 {0}{1}",
+    "es": "Error de sintaxis JSON: {0} inesperado{1}",
+    "it": "Errore di sintassi JSON: {0} imprevisto{1}",
+    "ja": "JSON 構文エラー：予期しない {0}{1}",
+    "pt-BR": "Erro de sintaxe JSON: {0} inesperado{1}"
+  },
+  "Unexpected token {0} in JSON{1}": {
+    "en": "Unexpected token {0} in JSON{1}",
+    "zh-CN": "JSON 语法错误：意外的 {0}{1}",
+    "zh-TW": "JSON 語法錯誤：意外的 {0}{1}",
+    "es": "Token inesperado {0} en JSON{1}",
+    "it": "Token imprevisto {0} in JSON{1}",
+    "ja": "JSON 内の予期しないトークン {0}{1}",
+    "pt-BR": "Token inesperado {0} no JSON{1}"
+  },
+  "Unexpected character in JSON{0}": {
+    "en": "Unexpected character in JSON{0}",
+    "zh-CN": "JSON 含有意外字符{0}",
+    "zh-TW": "JSON 含有意外字元{0}",
+    "es": "Carácter inesperado en JSON{0}",
+    "it": "Carattere imprevisto in JSON{0}",
+    "ja": "JSON に予期しない文字があります{0}",
+    "pt-BR": "Caractere inesperado no JSON{0}"
+  },
+  "JSON parse failed: {0}{1}": {
+    "en": "JSON parse failed: {0}{1}",
+    "zh-CN": "JSON 解析失败：{0}{1}",
+    "zh-TW": "JSON 解析失敗：{0}{1}",
+    "es": "Error al analizar JSON: {0}{1}",
+    "it": "Analisi JSON non riuscita: {0}{1}",
+    "ja": "JSON の解析に失敗しました：{0}{1}",
+    "pt-BR": "Falha ao analisar JSON: {0}{1}"
+  },
+  "Request failed": {
+    "en": "Request failed",
+    "zh-CN": "操作失败",
+    "zh-TW": "操作失敗",
+    "es": "La operación falló",
+    "it": "Operazione non riuscita",
+    "ja": "操作に失敗しました",
+    "pt-BR": "A operação falhou"
+  },
+  "Key length must be {0} bytes": {
+    "en": "Key length must be {0} bytes",
+    "zh-CN": "密钥长度必须是 {0} 字节",
+    "zh-TW": "金鑰長度必須是 {0} 位元組",
+    "es": "La clave debe tener {0} bytes",
+    "it": "La chiave deve essere di {0} byte",
+    "ja": "鍵長は {0} バイトである必要があります",
+    "pt-BR": "A chave deve ter {0} bytes"
+  },
+  "{0} must be {1} bytes": {
+    "en": "{0} must be {1} bytes",
+    "zh-CN": "{0} 必须是 {1} 字节",
+    "zh-TW": "{0} 必須是 {1} 位元組",
+    "es": "{0} debe tener {1} bytes",
+    "it": "{0} deve essere di {1} byte",
+    "ja": "{0} は {1} バイトである必要があります",
+    "pt-BR": "{0} deve ter {1} bytes"
+  },
+  "Crypto input": {
+    "en": "Crypto input",
+    "zh-CN": "加密输入",
+    "zh-TW": "加密輸入",
+    "es": "Entrada cifrada",
+    "it": "Input crittografico",
+    "ja": "暗号入力",
+    "pt-BR": "Entrada criptográfica"
+  },
+  "Crypto AAD": {
+    "en": "Crypto AAD",
+    "zh-CN": "AAD",
+    "zh-TW": "AAD",
+    "es": "AAD",
+    "it": "AAD",
+    "ja": "AAD",
+    "pt-BR": "AAD"
+  },
+  "RSA input": {
+    "en": "RSA input",
+    "zh-CN": "RSA 输入",
+    "zh-TW": "RSA 輸入",
+    "es": "Entrada RSA",
+    "it": "Input RSA",
+    "ja": "RSA 入力",
+    "pt-BR": "Entrada RSA"
+  },
+  "RSA ciphertext": {
+    "en": "RSA ciphertext",
+    "zh-CN": "RSA 密文",
+    "zh-TW": "RSA 密文",
+    "es": "Texto cifrado RSA",
+    "it": "Testo cifrato RSA",
+    "ja": "RSA 暗号文",
+    "pt-BR": "Texto cifrado RSA"
+  },
+  "SM2 input": {
+    "en": "SM2 input",
+    "zh-CN": "SM2 输入",
+    "zh-TW": "SM2 輸入",
+    "es": "Entrada SM2",
+    "it": "Input SM2",
+    "ja": "SM2 入力",
+    "pt-BR": "Entrada SM2"
+  },
+  "SM2 ciphertext": {
+    "en": "SM2 ciphertext",
+    "zh-CN": "SM2 密文",
+    "zh-TW": "SM2 密文",
+    "es": "Texto cifrado SM2",
+    "it": "Testo cifrato SM2",
+    "ja": "SM2 暗号文",
+    "pt-BR": "Texto cifrado SM2"
+  },
+  "JWT input": {
+    "en": "JWT input",
+    "zh-CN": "JWT 输入",
+    "zh-TW": "JWT 輸入",
+    "es": "Entrada JWT",
+    "it": "Input JWT",
+    "ja": "JWT 入力",
+    "pt-BR": "Entrada JWT"
+  },
+  "{0} exceeds the {1} byte input limit": {
+    "en": "{0} exceeds the {1} byte input limit",
+    "zh-CN": "{0}超过 {1} 字节上限",
+    "zh-TW": "{0}超過 {1} 位元組上限",
+    "es": "{0} supera el límite de {1} bytes",
+    "it": "{0} supera il limite di {1} byte",
+    "ja": "{0}が {1} バイト上限を超えています",
+    "pt-BR": "{0} excede o limite de {1} bytes"
+  },
+  "Enter the master password": {
+    "en": "Enter the master password",
+    "zh-CN": "请填写主密码",
+    "zh-TW": "請填寫主密碼",
+    "es": "Introduce la contraseña maestra",
+    "it": "Inserisci la password master",
+    "ja": "マスターパスワードを入力してください",
+    "pt-BR": "Informe a senha mestra"
+  },
+  "Invalid NDJSON at line {0}: {1}": {
+    "en": "Invalid NDJSON at line {0}: {1}",
+    "zh-CN": "第 {0} 行 NDJSON 无效：{1}",
+    "zh-TW": "第 {0} 行 NDJSON 無效：{1}",
+    "es": "NDJSON no válido en la línea {0}: {1}",
+    "it": "NDJSON non valido alla riga {0}: {1}",
+    "ja": "{0} 行目の NDJSON が無効です：{1}",
+    "pt-BR": "NDJSON inválido na linha {0}: {1}"
+  },
+  "Cannot represent these object keys as XML: {0}": {
+    "en": "Cannot represent these object keys as XML: {0}",
+    "zh-CN": "这些对象键无法表示为 XML：{0}",
+    "zh-TW": "這些物件鍵無法表示為 XML：{0}",
+    "es": "No se pueden representar estas claves de objeto como XML: {0}",
+    "it": "Impossibile rappresentare queste chiavi oggetto come XML: {0}",
+    "ja": "これらのオブジェクトキーを XML として表現できません：{0}",
+    "pt-BR": "Não é possível representar estas chaves de objeto como XML: {0}"
+  },
+  "Date/time at {0} cannot be converted without changing its type. Quote it as a string first.": {
+    "en": "Date/time at {0} cannot be converted without changing its type. Quote it as a string first.",
+    "zh-CN": "{0} 处的日期/时间无法原样转换，请先写成字符串",
+    "zh-TW": "{0} 處的日期/時間無法原樣轉換，請先寫成字串",
+    "es": "La fecha/hora en {0} no se puede convertir sin cambiar el tipo. Escríbela primero como cadena.",
+    "it": "Data/ora in {0} non convertibile senza cambiare tipo. Scrivila prima come stringa.",
+    "ja": "{0} の日付/時刻はそのまま変換できません。先に文字列にしてください。",
+    "pt-BR": "Data/hora em {0} não pode ser convertida sem mudar o tipo. Escreva-a primeiro como string."
+  },
+  "TOML cannot represent null at {0}. Remove it or choose another format.": {
+    "en": "TOML cannot represent null at {0}. Remove it or choose another format.",
+    "zh-CN": "TOML 无法表示 {0} 处的 null，请删除或改用其他格式",
+    "zh-TW": "TOML 無法表示 {0} 處的 null，請刪除或改用其他格式",
+    "es": "TOML no puede representar null en {0}. Elimínalo o elige otro formato.",
+    "it": "TOML non può rappresentare null in {0}. Rimuovilo o scegli un altro formato.",
+    "ja": "TOML は {0} の null を表現できません。削除するか別形式を選んでください。",
+    "pt-BR": "TOML não pode representar null em {0}. Remova-o ou escolha outro formato."
+  },
+  "DBX Toolbox": {
+    "en": "DBX Toolbox",
+    "zh-CN": "DBX 工具箱",
+    "zh-TW": "DBX 工具箱",
+    "es": "Herramientas DBX",
+    "it": "Strumenti DBX",
+    "ja": "DBX ツールボックス",
+    "pt-BR": "Ferramentas DBX"
+  },
+  "Failed to load tool": {
+    "en": "Failed to load tool",
+    "zh-CN": "工具加载失败",
+    "zh-TW": "工具載入失敗",
+    "es": "No se pudo cargar la herramienta",
+    "it": "Impossibile caricare lo strumento",
+    "ja": "ツールを読み込めませんでした",
+    "pt-BR": "Falha ao carregar a ferramenta"
+  },
+  "Retry": {
+    "en": "Retry",
+    "zh-CN": "重试",
+    "zh-TW": "重試",
+    "es": "Reintentar",
+    "it": "Riprova",
+    "ja": "再試行",
+    "pt-BR": "Tentar novamente"
+  },
+  "Loading tool…": {
+    "en": "Loading tool…",
+    "zh-CN": "正在加载工具…",
+    "zh-TW": "正在載入工具…",
+    "es": "Cargando herramienta…",
+    "it": "Caricamento dello strumento…",
+    "ja": "ツールを読み込み中…",
+    "pt-BR": "Carregando ferramenta…"
+  },
+  "Remove favorite": {
+    "en": "Remove favorite",
+    "zh-CN": "从常用移除",
+    "zh-TW": "從常用移除",
+    "es": "Quitar de favoritos",
+    "it": "Rimuovi dai preferiti",
+    "ja": "お気に入りから削除",
+    "pt-BR": "Remover dos favoritos"
+  },
+  "Add favorite": {
+    "en": "Add favorite",
+    "zh-CN": "添加到常用",
+    "zh-TW": "新增到常用",
+    "es": "Añadir a favoritos",
+    "it": "Aggiungi ai preferiti",
+    "ja": "お気に入りに追加",
+    "pt-BR": "Adicionar aos favoritos"
+  },
+  "Toolbox": {
+    "en": "Toolbox",
+    "zh-CN": "工具箱",
+    "zh-TW": "工具箱",
+    "es": "Herramientas",
+    "it": "Strumenti",
+    "ja": "ツールボックス",
+    "pt-BR": "Ferramentas"
+  },
+  "Search tools": {
+    "en": "Search tools",
+    "zh-CN": "搜索工具",
+    "zh-TW": "搜尋工具",
+    "es": "Buscar herramientas",
+    "it": "Cerca strumenti",
+    "ja": "ツールを検索",
+    "pt-BR": "Buscar ferramentas"
+  },
+  "Search tools, features, or keywords": {
+    "en": "Search tools, features, or keywords",
+    "zh-CN": "搜索工具、功能或关键字",
+    "zh-TW": "搜尋工具、功能或關鍵字",
+    "es": "Buscar herramientas, funciones o palabras clave",
+    "it": "Cerca strumenti, funzioni o parole chiave",
+    "ja": "ツール、機能、キーワードを検索",
+    "pt-BR": "Buscar ferramentas, recursos ou palavras-chave"
+  },
+  "Search names, features, or keywords": {
+    "en": "Search names, features, or keywords",
+    "zh-CN": "搜索名称、功能或关键字",
+    "zh-TW": "搜尋名稱、功能或關鍵字",
+    "es": "Buscar nombres, funciones o palabras clave",
+    "it": "Cerca nomi, funzioni o parole chiave",
+    "ja": "名前、機能、キーワードを検索",
+    "pt-BR": "Buscar nomes, recursos ou palavras-chave"
+  },
+  "Search names, features, or keywords…": {
+    "en": "Search names, features, or keywords…",
+    "zh-CN": "搜索名称、功能或关键字…",
+    "zh-TW": "搜尋名稱、功能或關鍵字…",
+    "es": "Buscar nombres, funciones o palabras clave…",
+    "it": "Cerca nomi, funzioni o parole chiave…",
+    "ja": "名前、機能、キーワードを検索…",
+    "pt-BR": "Buscar nomes, recursos ou palavras-chave…"
+  },
+  "Clear search": {
+    "en": "Clear search",
+    "zh-CN": "清空搜索",
+    "zh-TW": "清空搜尋",
+    "es": "Borrar búsqueda",
+    "it": "Cancella ricerca",
+    "ja": "検索をクリア",
+    "pt-BR": "Limpar pesquisa"
+  },
+  "Tool search results": {
+    "en": "Tool search results",
+    "zh-CN": "工具搜索结果",
+    "zh-TW": "工具搜尋結果",
+    "es": "Resultados de búsqueda",
+    "it": "Risultati di ricerca",
+    "ja": "ツール検索結果",
+    "pt-BR": "Resultados da pesquisa"
+  },
+  "Results": {
+    "en": "Results",
+    "zh-CN": "搜索结果",
+    "zh-TW": "搜尋結果",
+    "es": "Resultados",
+    "it": "Risultati",
+    "ja": "検索結果",
+    "pt-BR": "Resultados"
+  },
+  "Favorites and recent": {
+    "en": "Favorites and recent",
+    "zh-CN": "常用与最近",
+    "zh-TW": "常用與最近",
+    "es": "Favoritos y recientes",
+    "it": "Preferiti e recenti",
+    "ja": "お気に入りと最近",
+    "pt-BR": "Favoritos e recentes"
+  },
+  "Recent": {
+    "en": "Recent",
+    "zh-CN": "最近使用",
+    "zh-TW": "最近使用",
+    "es": "Recientes",
+    "it": "Recenti",
+    "ja": "最近",
+    "pt-BR": "Recentes"
+  },
+  "Recently opened tools": {
+    "en": "Recently opened tools",
+    "zh-CN": "自动记录最近打开的工具",
+    "zh-TW": "自動記錄最近開啟的工具",
+    "es": "Herramientas abiertas recientemente",
+    "it": "Strumenti aperti di recente",
+    "ja": "最近開いたツール",
+    "pt-BR": "Ferramentas abertas recentemente"
+  },
+  "No matching tools": {
+    "en": "No matching tools",
+    "zh-CN": "没有匹配的工具",
+    "zh-TW": "沒有符合的工具",
+    "es": "No hay herramientas coincidentes",
+    "it": "Nessuno strumento corrispondente",
+    "ja": "一致するツールがありません",
+    "pt-BR": "Nenhuma ferramenta correspondente"
+  },
+  "No matching tools.": {
+    "en": "No matching tools.",
+    "zh-CN": "没有匹配的工具。",
+    "zh-TW": "沒有符合的工具。",
+    "es": "No hay herramientas coincidentes.",
+    "it": "Nessuno strumento corrispondente.",
+    "ja": "一致するツールがありません。",
+    "pt-BR": "Nenhuma ferramenta correspondente."
+  },
+  "No tools yet": {
+    "en": "No tools yet",
+    "zh-CN": "暂无工具",
+    "zh-TW": "暫無工具",
+    "es": "Aún no hay herramientas",
+    "it": "Nessuno strumento",
+    "ja": "ツールはまだありません",
+    "pt-BR": "Ainda não há ferramentas"
+  },
+  "Pin tool": {
+    "en": "Pin tool",
+    "zh-CN": "固定到常用工具",
+    "zh-TW": "固定到常用工具",
+    "es": "Fijar herramienta",
+    "it": "Fissa strumento",
+    "ja": "ツールを固定",
+    "pt-BR": "Fixar ferramenta"
+  },
+  "Unpin tool": {
+    "en": "Unpin tool",
+    "zh-CN": "从常用工具移除",
+    "zh-TW": "從常用工具移除",
+    "es": "Desfijar herramienta",
+    "it": "Rimuovi dai preferiti",
+    "ja": "固定を解除",
+    "pt-BR": "Desafixar ferramenta"
+  },
+  "Favorites": {
+    "en": "Favorites",
+    "zh-CN": "常用工具",
+    "zh-TW": "常用工具",
+    "es": "Favoritos",
+    "it": "Preferiti",
+    "ja": "お気に入り",
+    "pt-BR": "Favoritos"
+  },
+  "Drag cards to arrange your workflow": {
+    "en": "Drag cards to arrange your workflow",
+    "zh-CN": "拖动卡片调整日常使用顺序",
+    "zh-TW": "拖動卡片調整日常使用順序",
+    "es": "Arrastra las tarjetas para ordenar tu flujo",
+    "it": "Trascina le schede per ordinare il flusso",
+    "ja": "カードをドラッグして並び替え",
+    "pt-BR": "Arraste os cartões para organizar o fluxo"
+  },
+  "Star tools in the library": {
+    "en": "Star tools in the library",
+    "zh-CN": "在工具库中点击星标添加",
+    "zh-TW": "在工具庫中點擊星標新增",
+    "es": "Marca herramientas en la biblioteca",
+    "it": "Aggiungi strumenti dalla libreria",
+    "ja": "ライブラリで星を付けて追加",
+    "pt-BR": "Marque ferramentas na biblioteca"
+  },
+  "Opened tools appear here": {
+    "en": "Opened tools appear here",
+    "zh-CN": "打开工具后会显示在这里",
+    "zh-TW": "開啟工具後會顯示在這裡",
+    "es": "Las herramientas abiertas aparecen aquí",
+    "it": "Gli strumenti aperti compaiono qui",
+    "ja": "開いたツールがここに表示されます",
+    "pt-BR": "Ferramentas abertas aparecem aqui"
+  },
+  "All tools": {
+    "en": "All tools",
+    "zh-CN": "全部工具",
+    "zh-TW": "全部工具",
+    "es": "Todas las herramientas",
+    "it": "Tutti gli strumenti",
+    "ja": "すべてのツール",
+    "pt-BR": "Todas as ferramentas"
+  },
+  "Library": {
+    "en": "Library",
+    "zh-CN": "工具库",
+    "zh-TW": "工具庫",
+    "es": "Biblioteca",
+    "it": "Libreria",
+    "ja": "ライブラリ",
+    "pt-BR": "Biblioteca"
+  },
+  "Tool categories": {
+    "en": "Tool categories",
+    "zh-CN": "工具分类",
+    "zh-TW": "工具分類",
+    "es": "Categorías de herramientas",
+    "it": "Categorie strumenti",
+    "ja": "ツールのカテゴリ",
+    "pt-BR": "Categorias de ferramentas"
+  },
+  "Browse by category": {
+    "en": "Browse by category",
+    "zh-CN": "按分类浏览",
+    "zh-TW": "按分類瀏覽",
+    "es": "Explorar por categoría",
+    "it": "Sfoglia per categoria",
+    "ja": "カテゴリで閲覧",
+    "pt-BR": "Navegar por categoria"
+  },
+  "Search, filter, and favorite the tools you use most.": {
+    "en": "Search, filter, and favorite the tools you use most.",
+    "zh-CN": "搜索、筛选并将高频工具加入常用。",
+    "zh-TW": "搜尋、篩選並將常用工具加入常用。",
+    "es": "Busca, filtra y marca las herramientas que más usas.",
+    "it": "Cerca, filtra e aggiungi ai preferiti gli strumenti più usati.",
+    "ja": "よく使うツールを検索・絞り込み・お気に入り登録。",
+    "pt-BR": "Pesquise, filtre e favorite as ferramentas que mais usa."
+  },
+  "What do you need?": {
+    "en": "What do you need?",
+    "zh-CN": "需要使用什么工具？",
+    "zh-TW": "需要使用什麼工具？",
+    "es": "¿Qué necesitas?",
+    "it": "Di cosa hai bisogno?",
+    "ja": "何が必要ですか？",
+    "pt-BR": "Do que você precisa?"
+  },
+  "Search every tool, or jump back into favorites and recent tools.": {
+    "en": "Search every tool, or jump back into favorites and recent tools.",
+    "zh-CN": "搜索全部工具，或从常用和最近使用中快速打开。",
+    "zh-TW": "搜尋全部工具，或從常用和最近使用中快速開啟。",
+    "es": "Busca cualquier herramienta, o vuelve a favoritos y recientes.",
+    "it": "Cerca ogni strumento, o torna a preferiti e recenti.",
+    "ja": "すべてのツールを検索するか、お気に入りと最近から開きます。",
+    "pt-BR": "Pesquise todas as ferramentas, ou volte aos favoritos e recentes."
+  },
+  "Expand sidebar": {
+    "en": "Expand sidebar",
+    "zh-CN": "展开侧栏",
+    "zh-TW": "展開側欄",
+    "es": "Expandir barra lateral",
+    "it": "Espandi barra laterale",
+    "ja": "サイドバーを展開",
+    "pt-BR": "Expandir barra lateral"
+  },
+  "Collapse sidebar": {
+    "en": "Collapse sidebar",
+    "zh-CN": "收起侧栏",
+    "zh-TW": "收起側欄",
+    "es": "Contraer barra lateral",
+    "it": "Comprimi barra laterale",
+    "ja": "サイドバーを折りたたむ",
+    "pt-BR": "Recolher barra lateral"
+  },
+  "Primary navigation": {
+    "en": "Primary navigation",
+    "zh-CN": "主导航",
+    "zh-TW": "主導覽",
+    "es": "Navegación principal",
+    "it": "Navigazione principale",
+    "ja": "メインナビゲーション",
+    "pt-BR": "Navegação principal"
+  },
+  "Home": {
+    "en": "Home",
+    "zh-CN": "首页",
+    "zh-TW": "首頁",
+    "es": "Inicio",
+    "it": "Home",
+    "ja": "ホーム",
+    "pt-BR": "Início"
+  },
+  "Collapse": {
+    "en": "Collapse",
+    "zh-CN": "收起",
+    "zh-TW": "收起",
+    "es": "Contraer",
+    "it": "Comprimi",
+    "ja": "折りたたむ",
+    "pt-BR": "Recolher"
+  },
+  "Show all ({0})": {
+    "en": "Show all ({0})",
+    "zh-CN": "展开全部（{0}）",
+    "zh-TW": "展開全部（{0}）",
+    "es": "Mostrar todo ({0})",
+    "it": "Mostra tutto ({0})",
+    "ja": "すべて表示（{0}）",
+    "pt-BR": "Mostrar tudo ({0})"
+  },
+  "{0} tools": {
+    "en": "{0} tools",
+    "zh-CN": "{0} 个工具",
+    "zh-TW": "{0} 個工具",
+    "es": "{0} herramientas",
+    "it": "{0} strumenti",
+    "ja": "{0} 個のツール",
+    "pt-BR": "{0} ferramentas"
+  },
+  "No favorite tools yet.": {
+    "en": "No favorite tools yet.",
+    "zh-CN": "还没有常用工具。",
+    "zh-TW": "還沒有常用工具。",
+    "es": "Aún no hay favoritos.",
+    "it": "Nessun preferito.",
+    "ja": "お気に入りはまだありません。",
+    "pt-BR": "Ainda não há favoritos."
+  },
+  "Add from tool library": {
+    "en": "Add from tool library",
+    "zh-CN": "前往工具库添加",
+    "zh-TW": "前往工具庫新增",
+    "es": "Añadir desde la biblioteca",
+    "it": "Aggiungi dalla libreria",
+    "ja": "ライブラリから追加",
+    "pt-BR": "Adicionar da biblioteca"
+  },
+  "Drag the row or use Up/Down to reorder": {
+    "en": "Drag the row or use Up/Down to reorder",
+    "zh-CN": "拖动整行或使用上下方向键排序",
+    "zh-TW": "拖動整行或使用上下方向鍵排序",
+    "es": "Arrastra la fila o usa ↑/↓ para reordenar",
+    "it": "Trascina la riga o usa ↑/↓ per riordinare",
+    "ja": "行をドラッグ、または↑/↓で並べ替え",
+    "pt-BR": "Arraste a linha ou use ↑/↓ para reordenar"
+  },
+  "Drag the card to reorder, or use arrow keys": {
+    "en": "Drag the card to reorder, or use arrow keys",
+    "zh-CN": "拖动整张卡片排序，或使用方向键调整",
+    "zh-TW": "拖動整張卡片排序，或使用方向鍵調整",
+    "es": "Arrastra la tarjeta o usa las flechas",
+    "it": "Trascina la scheda o usa le frecce",
+    "ja": "カードをドラッグ、または矢印キーで並べ替え",
+    "pt-BR": "Arraste o cartão ou use as setas"
+  },
+  "Reorder {0}": {
+    "en": "Reorder {0}",
+    "zh-CN": "调整 {0} 顺序",
+    "zh-TW": "調整 {0} 順序",
+    "es": "Reordenar {0}",
+    "it": "Riordina {0}",
+    "ja": "{0} の順序を変更",
+    "pt-BR": "Reordenar {0}"
+  },
+  "Select": {
+    "en": "Select",
+    "zh-CN": "选择",
+    "zh-TW": "選擇",
+    "es": "Seleccionar",
+    "it": "Seleziona",
+    "ja": "選択",
+    "pt-BR": "Selecionar"
+  },
+  "Open": {
+    "en": "Open",
+    "zh-CN": "打开",
+    "zh-TW": "開啟",
+    "es": "Abrir",
+    "it": "Apri",
+    "ja": "開く",
+    "pt-BR": "Abrir"
+  },
+  "Close": {
+    "en": "Close",
+    "zh-CN": "关闭",
+    "zh-TW": "關閉",
+    "es": "Cerrar",
+    "it": "Chiudi",
+    "ja": "閉じる",
+    "pt-BR": "Fechar"
+  },
+  "Browse every tool by category. Pin the ones you use often to keep them in the sidebar.": {
+    "en": "Browse every tool by category. Pin the ones you use often to keep them in the sidebar.",
+    "zh-CN": "按分类浏览全部工具；固定常用工具后，它会出现在左侧栏。",
+    "zh-TW": "按分類瀏覽全部工具；固定常用工具後，它會出現在左側欄。",
+    "es": "Explora todas las herramientas por categoría. Fija las que uses a menudo para verlas en la barra lateral.",
+    "it": "Sfoglia tutti gli strumenti per categoria. Fissa quelli che usi spesso nella barra laterale.",
+    "ja": "カテゴリ別にすべてのツールを閲覧できます。よく使うものはサイドバーに固定できます。",
+    "pt-BR": "Navegue por todas as ferramentas por categoria. Fixe as que usa com frequência na barra lateral."
+  },
+  "No pinned tools yet. Pin tools from the full catalog.": {
+    "en": "No pinned tools yet. Pin tools from the full catalog.",
+    "zh-CN": "还没有常用工具，可从全部工具中固定。",
+    "zh-TW": "還沒有常用工具，可從全部工具中固定。",
+    "es": "Aún no hay herramientas fijadas. Fíjalas desde el catálogo completo.",
+    "it": "Nessuno strumento fissato. Fissane dal catalogo completo.",
+    "ja": "まだ固定したツールがありません。カタログから固定できます。",
+    "pt-BR": "Ainda não há ferramentas fixadas. Fixe-as no catálogo completo."
+  },
+  "Run": {
+    "en": "Run",
+    "zh-CN": "运行",
+    "zh-TW": "執行",
+    "es": "Ejecutar",
+    "it": "Esegui",
+    "ja": "実行",
+    "pt-BR": "Executar"
+  },
+  "Copy output": {
+    "en": "Copy output",
+    "zh-CN": "复制输出",
+    "zh-TW": "複製輸出",
+    "es": "Copiar salida",
+    "it": "Copia output",
+    "ja": "出力をコピー",
+    "pt-BR": "Copiar saída"
+  },
+  "Output": {
+    "en": "Output",
+    "zh-CN": "输出",
+    "zh-TW": "輸出",
+    "es": "Salida",
+    "it": "Output",
+    "ja": "出力",
+    "pt-BR": "Saída"
+  },
+  "Copied": {
+    "en": "Copied",
+    "zh-CN": "已复制",
+    "zh-TW": "已複製",
+    "es": "Copiado",
+    "it": "Copiato",
+    "ja": "コピーしました",
+    "pt-BR": "Copiado"
+  },
+  "Ready": {
+    "en": "Ready",
+    "zh-CN": "已就绪",
+    "zh-TW": "已就緒",
+    "es": "Listo",
+    "it": "Pronto",
+    "ja": "準備完了",
+    "pt-BR": "Pronto"
+  },
+  "Runs locally. Keys never enter browser storage.": {
+    "en": "Runs locally. Keys never enter browser storage.",
+    "zh-CN": "本地计算，密钥不进浏览器存储",
+    "zh-TW": "本機計算，金鑰不進瀏覽器儲存",
+    "es": "Se ejecuta en local. Las claves no se guardan en el almacenamiento del navegador.",
+    "it": "Esegue in locale. Le chiavi non entrano nello storage del browser.",
+    "ja": "ローカルで実行。鍵はブラウザーのストレージに入りません。",
+    "pt-BR": "Executa localmente. As chaves não entram no armazenamento do navegador."
+  },
+  "Key vault": {
+    "en": "Key vault",
+    "zh-CN": "密钥库",
+    "zh-TW": "金鑰庫",
+    "es": "Almacén de claves",
+    "it": "Archivio chiavi",
+    "ja": "キー保管庫",
+    "pt-BR": "Cofre de chaves"
+  },
+  "Vault": {
+    "en": "Vault",
+    "zh-CN": "密钥库",
+    "zh-TW": "金鑰庫",
+    "es": "Almacén",
+    "it": "Archivio",
+    "ja": "保管庫",
+    "pt-BR": "Cofre"
+  },
+  "Vault unlocked": {
+    "en": "Vault unlocked",
+    "zh-CN": "密钥库已解锁",
+    "zh-TW": "金鑰庫已解鎖",
+    "es": "Almacén desbloqueado",
+    "it": "Archivio sbloccato",
+    "ja": "保管庫解除済み",
+    "pt-BR": "Cofre desbloqueado"
+  },
+  "Key vault (locked)": {
+    "en": "Key vault (locked)",
+    "zh-CN": "密钥库（已锁定）",
+    "zh-TW": "金鑰庫（已鎖定）",
+    "es": "Almacén de claves (bloqueado)",
+    "it": "Archivio chiavi (bloccato)",
+    "ja": "キー保管庫（ロック中）",
+    "pt-BR": "Cofre de chaves (bloqueado)"
+  },
+  "Key vault (unlocked)": {
+    "en": "Key vault (unlocked)",
+    "zh-CN": "密钥库（已解锁）",
+    "zh-TW": "金鑰庫（已解鎖）",
+    "es": "Almacén de claves (desbloqueado)",
+    "it": "Archivio chiavi (sbloccato)",
+    "ja": "キー保管庫（解除済み）",
+    "pt-BR": "Cofre de chaves (desbloqueado)"
+  },
+  "Copy failed; please copy manually": {
+    "en": "Copy failed; please copy manually",
+    "zh-CN": "复制失败，请手动复制",
+    "zh-TW": "複製失敗，請手動複製",
+    "es": "Error al copiar; cópialo manualmente",
+    "it": "Copia non riuscita; copia manualmente",
+    "ja": "コピーに失敗しました。手動でコピーしてください",
+    "pt-BR": "Falha ao copiar; copie manualmente"
+  },
+  "Data & code": {
+    "en": "Data & code",
+    "zh-CN": "数据与代码",
+    "zh-TW": "資料與程式碼",
+    "es": "Datos y código",
+    "it": "Dati e codice",
+    "ja": "データとコード",
+    "pt-BR": "Dados e código"
+  },
+  "Encode & escape": {
+    "en": "Encode & escape",
+    "zh-CN": "编码转义",
+    "zh-TW": "編碼轉義",
+    "es": "Codificar y escapar",
+    "it": "Codifica ed escape",
+    "ja": "エンコードとエスケープ",
+    "pt-BR": "Codificar e escapar"
+  },
+  "Convert & calculate": {
+    "en": "Convert & calculate",
+    "zh-CN": "转换计算",
+    "zh-TW": "轉換計算",
+    "es": "Convertir y calcular",
+    "it": "Converti e calcola",
+    "ja": "変換と計算",
+    "pt-BR": "Converter e calcular"
+  },
+  "Text tools": {
+    "en": "Text tools",
+    "zh-CN": "文本处理",
+    "zh-TW": "文字處理",
+    "es": "Herramientas de texto",
+    "it": "Strumenti di testo",
+    "ja": "テキスト処理",
+    "pt-BR": "Ferramentas de texto"
+  },
+  "Security & crypto": {
+    "en": "Security & crypto",
+    "zh-CN": "安全加密",
+    "zh-TW": "安全加密",
+    "es": "Seguridad y cifrado",
+    "it": "Sicurezza e crittografia",
+    "ja": "セキュリティと暗号",
+    "pt-BR": "Segurança e criptografia"
+  },
+  "Generators": {
+    "en": "Generators",
+    "zh-CN": "生成器",
+    "zh-TW": "產生器",
+    "es": "Generadores",
+    "it": "Generatori",
+    "ja": "ジェネレーター",
+    "pt-BR": "Geradores"
+  },
+  "Images": {
+    "en": "Images",
+    "zh-CN": "图片",
+    "zh-TW": "圖片",
+    "es": "Imágenes",
+    "it": "Immagini",
+    "ja": "画像",
+    "pt-BR": "Imagens"
+  },
+  "Path": {
+    "en": "Path",
+    "zh-CN": "路径",
+    "zh-TW": "路徑",
+    "es": "Ruta",
+    "it": "Percorso",
+    "ja": "パス",
+    "pt-BR": "Caminho"
+  },
+  "Table": {
+    "en": "Table",
+    "zh-CN": "表名",
+    "zh-TW": "表名",
+    "es": "Tabla",
+    "it": "Tabella",
+    "ja": "テーブル",
+    "pt-BR": "Tabela"
+  },
+  "To": {
+    "en": "To",
+    "zh-CN": "到",
+    "zh-TW": "到",
+    "es": "Hasta",
+    "it": "A",
+    "ja": "へ",
+    "pt-BR": "Para"
+  },
+  "Encoding": {
+    "en": "Encoding",
+    "zh-CN": "编码",
+    "zh-TW": "編碼",
+    "es": "Codificación",
+    "it": "Codifica",
+    "ja": "エンコーディング",
+    "pt-BR": "Codificação"
+  },
+  "Kind": {
+    "en": "Kind",
+    "zh-CN": "类型",
+    "zh-TW": "類型",
+    "es": "Tipo",
+    "it": "Tipo",
+    "ja": "種類",
+    "pt-BR": "Tipo"
+  },
+  "Variant": {
+    "en": "Variant",
+    "zh-CN": "变体",
+    "zh-TW": "變體",
+    "es": "Variante",
+    "it": "Variante",
+    "ja": "バリアント",
+    "pt-BR": "Variante"
+  },
+  "MIME": {
+    "en": "MIME",
+    "zh-CN": "MIME",
+    "zh-TW": "MIME",
+    "es": "MIME",
+    "it": "MIME",
+    "ja": "MIME",
+    "pt-BR": "MIME"
+  },
+  "Key order": {
+    "en": "Key order",
+    "zh-CN": "键顺序",
+    "zh-TW": "鍵順序",
+    "es": "Orden de claves",
+    "it": "Ordine chiavi",
+    "ja": "キー順",
+    "pt-BR": "Ordem das chaves"
+  },
+  "Style": {
+    "en": "Style",
+    "zh-CN": "标签样式",
+    "zh-TW": "風格",
+    "es": "Estilo",
+    "it": "Stile",
+    "ja": "スタイル",
+    "pt-BR": "Estilo"
+  },
+  "Find": {
+    "en": "Find",
+    "zh-CN": "查找",
+    "zh-TW": "尋找",
+    "es": "Buscar",
+    "it": "Trova",
+    "ja": "検索",
+    "pt-BR": "Localizar"
+  },
+  "Replace": {
+    "en": "Replace",
+    "zh-CN": "替换",
+    "zh-TW": "取代",
+    "es": "Reemplazar",
+    "it": "Sostituisci",
+    "ja": "置換",
+    "pt-BR": "Substituir"
+  },
+  "Pattern": {
+    "en": "Pattern",
+    "zh-CN": "表达式",
+    "zh-TW": "運算式",
+    "es": "Patrón",
+    "it": "Espressione",
+    "ja": "パターン",
+    "pt-BR": "Padrão"
+  },
+  "Flags": {
+    "en": "Flags",
+    "zh-CN": "标志",
+    "zh-TW": "旗標",
+    "es": "Indicadores",
+    "it": "Flag",
+    "ja": "フラグ",
+    "pt-BR": "Flags"
+  },
+  "Affix": {
+    "en": "Affix",
+    "zh-CN": "前后缀",
+    "zh-TW": "前後綴",
+    "es": "Afijo",
+    "it": "Affisso",
+    "ja": "接辞",
+    "pt-BR": "Afixo"
+  },
+  "Length": {
+    "en": "Length",
+    "zh-CN": "长度",
+    "zh-TW": "長度",
+    "es": "Longitud",
+    "it": "Lunghezza",
+    "ja": "長さ",
+    "pt-BR": "Comprimento"
+  },
+  "Symbols": {
+    "en": "Symbols",
+    "zh-CN": "符号",
+    "zh-TW": "符號",
+    "es": "Símbolos",
+    "it": "Simboli",
+    "ja": "記号",
+    "pt-BR": "Símbolos"
+  },
+  "Master password must be at least 8 characters": {
+    "en": "Master password must be at least 8 characters",
+    "zh-CN": "主密码至少 8 位",
+    "zh-TW": "主密碼至少 8 位",
+    "es": "La contraseña maestra debe tener al menos 8 caracteres",
+    "it": "La password master deve avere almeno 8 caratteri",
+    "ja": "マスターパスワードは 8 文字以上である必要があります",
+    "pt-BR": "A senha mestra deve ter pelo menos 8 caracteres"
+  },
+  "Wrong master password": {
+    "en": "Wrong master password",
+    "zh-CN": "主密码不正确",
+    "zh-TW": "主密碼不正確",
+    "es": "Contraseña maestra incorrecta",
+    "it": "Password master errata",
+    "ja": "マスターパスワードが正しくありません",
+    "pt-BR": "Senha mestra incorreta"
+  },
+  "Current master password is wrong": {
+    "en": "Current master password is wrong",
+    "zh-CN": "当前主密码不正确",
+    "zh-TW": "目前主密碼不正確",
+    "es": "La contraseña maestra actual es incorrecta",
+    "it": "La password master attuale è errata",
+    "ja": "現在のマスターパスワードが正しくありません",
+    "pt-BR": "A senha mestra atual está incorreta"
+  },
+  "Master password is wrong": {
+    "en": "Master password is wrong",
+    "zh-CN": "主密码不正确",
+    "zh-TW": "主密碼不正確",
+    "es": "La contraseña maestra es incorrecta",
+    "it": "La password master è errata",
+    "ja": "マスターパスワードが正しくありません",
+    "pt-BR": "A senha mestra está incorreta"
+  },
+  "Key vault is locked": {
+    "en": "Key vault is locked",
+    "zh-CN": "密钥库已锁定",
+    "zh-TW": "密鑰庫已鎖定",
+    "es": "El almacén de claves está bloqueado",
+    "it": "Il vault delle chiavi è bloccato",
+    "ja": "キー保管庫はロックされています",
+    "pt-BR": "O cofre de chaves está bloqueado"
+  },
+  "Key vault already exists": {
+    "en": "Key vault already exists",
+    "zh-CN": "密钥库已经存在",
+    "zh-TW": "密鑰庫已經存在",
+    "es": "El almacén de claves ya existe",
+    "it": "Il vault delle chiavi esiste già",
+    "ja": "キー保管庫は既に存在します",
+    "pt-BR": "O cofre de chaves já existe"
+  },
+  "Key vault is already unlocked": {
+    "en": "Key vault is already unlocked",
+    "zh-CN": "密钥库已解锁",
+    "zh-TW": "密鑰庫已解鎖",
+    "es": "El almacén de claves ya está desbloqueado",
+    "it": "Il vault delle chiavi è già sbloccato",
+    "ja": "キー保管庫は既にロック解除されています",
+    "pt-BR": "O cofre de chaves já está desbloqueado"
+  },
+  "Key vault not found": {
+    "en": "Key vault not found",
+    "zh-CN": "找不到密钥库",
+    "zh-TW": "找不到密鑰庫",
+    "es": "No se encuentra el almacén de claves",
+    "it": "Vault delle chiavi non trovato",
+    "ja": "キー保管庫が見つかりません",
+    "pt-BR": "Cofre de chaves não encontrado"
+  },
+  "Unknown key id": {
+    "en": "Unknown key id",
+    "zh-CN": "找不到这把密钥",
+    "zh-TW": "找不到這把密鑰",
+    "es": "Id de clave desconocido",
+    "it": "Id chiave sconosciuto",
+    "ja": "不明なキー ID です",
+    "pt-BR": "Id de chave desconhecido"
+  },
+  "Missing ids": {
+    "en": "Missing ids",
+    "zh-CN": "缺少排序列表",
+    "zh-TW": "缺少排序列表",
+    "es": "Faltan los ids",
+    "it": "Ids mancanti",
+    "ja": "ids がありません",
+    "pt-BR": "Ids ausentes"
+  },
+  "Reorder ids must be strings": {
+    "en": "Reorder ids must be strings",
+    "zh-CN": "排序列表格式无效",
+    "zh-TW": "排序列表格式無效",
+    "es": "Los ids de reordenación deben ser cadenas",
+    "it": "Gli id di riordino devono essere stringhe",
+    "ja": "並べ替え ids は文字列である必要があります",
+    "pt-BR": "Os ids de reordenação devem ser strings"
+  },
+  "Reorder ids must include every key exactly once": {
+    "en": "Reorder ids must include every key exactly once",
+    "zh-CN": "排序须包含全部密钥且不能重复",
+    "zh-TW": "排序須包含全部密鑰且不能重複",
+    "es": "Los ids de reordenación deben incluir cada clave exactamente una vez",
+    "it": "Gli id di riordino devono includere ogni chiave esattamente una volta",
+    "ja": "並べ替え ids はすべてのキーをちょうど一度ずつ含む必要があります",
+    "pt-BR": "Os ids de reordenação devem incluir cada chave exatamente uma vez"
+  },
+  "Name is required": {
+    "en": "Name is required",
+    "zh-CN": "请填写名称",
+    "zh-TW": "請填寫名稱",
+    "es": "El nombre es obligatorio",
+    "it": "Il nome è obbligatorio",
+    "ja": "名前が必要です",
+    "pt-BR": "O nome é obrigatório"
+  },
+  "Name is required to save": {
+    "en": "Name is required to save",
+    "zh-CN": "写入密钥库需要填写名称",
+    "zh-TW": "寫入密鑰庫需要填寫名稱",
+    "es": "Se requiere un nombre para guardar",
+    "it": "Il nome è obbligatorio per salvare",
+    "ja": "保存するには名前が必要です",
+    "pt-BR": "É necessário um nome para salvar"
+  },
+  "Material is required": {
+    "en": "Material is required",
+    "zh-CN": "请粘贴密钥材料",
+    "zh-TW": "請貼上密鑰材料",
+    "es": "Se requiere el material de la clave",
+    "it": "Il materiale della chiave è obbligatorio",
+    "ja": "キー材料が必要です",
+    "pt-BR": "O material da chave é obrigatório"
+  },
+  "Unsupported algorithm": {
+    "en": "Unsupported algorithm",
+    "zh-CN": "不支持该算法",
+    "zh-TW": "不支援該演算法",
+    "es": "Algoritmo no compatible",
+    "it": "Algoritmo non supportato",
+    "ja": "サポートされていないアルゴリズムです",
+    "pt-BR": "Algoritmo não suportado"
+  },
+  "Cannot generate this algorithm; import material instead": {
+    "en": "Cannot generate this algorithm; import material instead",
+    "zh-CN": "该算法不能随机生成，请粘贴已有密钥",
+    "zh-TW": "該演算法不能隨機產生，請貼上既有密鑰",
+    "es": "No se puede generar este algoritmo; importe el material en su lugar",
+    "it": "Impossibile generare questo algoritmo; importa invece il materiale",
+    "ja": "このアルゴリズムは生成できません。代わりにキー材料をインポートしてください",
+    "pt-BR": "Não é possível gerar este algoritmo; importe o material"
+  },
+  "Key material must be hex or base64": {
+    "en": "Key material must be hex or base64",
+    "zh-CN": "密钥材料须为 hex 或 base64",
+    "zh-TW": "密鑰材料須為 hex 或 base64",
+    "es": "El material de la clave debe ser hex o base64",
+    "it": "Il materiale della chiave deve essere hex o base64",
+    "ja": "キー材料は hex または base64 である必要があります",
+    "pt-BR": "O material da chave deve ser hex ou base64"
+  },
+  "Invalid PEM": {
+    "en": "Invalid PEM",
+    "zh-CN": "PEM 无效",
+    "zh-TW": "PEM 無效",
+    "es": "PEM no válido",
+    "it": "PEM non valido",
+    "ja": "無効な PEM です",
+    "pt-BR": "PEM inválido"
+  },
+  "Do not store certificates in the key vault; use Certificate & SSH": {
+    "en": "Do not store certificates in the key vault; use Certificate & SSH",
+    "zh-CN": "证书请用「证书与 SSH」，不要存进密钥库",
+    "zh-TW": "憑證請用「憑證與 SSH」，不要存進密鑰庫",
+    "es": "No almacene certificados en el almacén de claves; use Certificado y SSH",
+    "it": "Non memorizzare i certificati nel vault delle chiavi; usa Certificato e SSH",
+    "ja": "証明書はキー保管庫に保存せず、「証明書と SSH」を使用してください",
+    "pt-BR": "Não armazene certificados no cofre de chaves; use Certificado e SSH"
+  },
+  "PEM must be an RSA private or public key for the asymmetric cipher tool": {
+    "en": "PEM must be an RSA private or public key for the asymmetric cipher tool",
+    "zh-CN": "PEM 须为 RSA 公钥或私钥，供非对称加密使用",
+    "zh-TW": "PEM 須為 RSA 公鑰或私鑰，供非對稱加密使用",
+    "es": "El PEM debe ser una clave RSA privada o pública para la herramienta de cifrado asimétrico",
+    "it": "Il PEM deve essere una chiave RSA privata o pubblica per lo strumento di cifratura asimmetrica",
+    "ja": "非対称暗号ツールでは、PEM は RSA 秘密鍵または公開鍵である必要があります",
+    "pt-BR": "O PEM deve ser uma chave RSA privada ou pública para a ferramenta de cifra assimétrica"
+  },
+  "algorithm must be rsa or sm2": {
+    "en": "algorithm must be rsa or sm2",
+    "zh-CN": "算法须为 RSA 或 SM2",
+    "zh-TW": "演算法須為 RSA 或 SM2",
+    "es": "El algoritmo debe ser rsa o sm2",
+    "it": "L'algoritmo deve essere rsa o sm2",
+    "ja": "algorithm は rsa または sm2 である必要があります",
+    "pt-BR": "O algoritmo deve ser rsa ou sm2"
+  },
+  "Use Key pair for RSA and SM2": {
+    "en": "Use Key pair for RSA and SM2",
+    "zh-CN": "RSA / SM2 请用「密钥对」",
+    "zh-TW": "RSA / SM2 請用「密鑰對」",
+    "es": "Use Par de claves para RSA y SM2",
+    "it": "Usa Coppia di chiavi per RSA e SM2",
+    "ja": "RSA / SM2 には「キーペア」を使用してください",
+    "pt-BR": "Use Par de chaves para RSA e SM2"
+  },
+  "RSA bits must be 2048, 3072, or 4096": {
+    "en": "RSA bits must be 2048, 3072, or 4096",
+    "zh-CN": "RSA 位数须为 2048、3072 或 4096",
+    "zh-TW": "RSA 位數須為 2048、3072 或 4096",
+    "es": "Los bits RSA deben ser 2048, 3072 o 4096",
+    "it": "I bit RSA devono essere 2048, 3072 o 4096",
+    "ja": "RSA のビット数は 2048、3072、または 4096 である必要があります",
+    "pt-BR": "Os bits RSA devem ser 2048, 3072 ou 4096"
+  },
+  "RSA format must be pkcs8 or pkcs1": {
+    "en": "RSA format must be pkcs8 or pkcs1",
+    "zh-CN": "RSA 格式须为 PKCS#8 或 PKCS#1",
+    "zh-TW": "RSA 格式須為 PKCS#8 或 PKCS#1",
+    "es": "El formato RSA debe ser pkcs8 o pkcs1",
+    "it": "Il formato RSA deve essere pkcs8 o pkcs1",
+    "ja": "RSA 形式は pkcs8 または pkcs1 である必要があります",
+    "pt-BR": "O formato RSA deve ser pkcs8 ou pkcs1"
+  },
+  "RSA padding must be oaep or pkcs1": {
+    "en": "RSA padding must be oaep or pkcs1",
+    "zh-CN": "RSA 填充须为 OAEP 或 PKCS#1",
+    "zh-TW": "RSA 填充須為 OAEP 或 PKCS#1",
+    "es": "El relleno RSA debe ser oaep o pkcs1",
+    "it": "Il padding RSA deve essere oaep o pkcs1",
+    "ja": "RSA パディングは oaep または pkcs1 である必要があります",
+    "pt-BR": "O padding RSA deve ser oaep ou pkcs1"
+  },
+  "Invalid RSA private key PEM": {
+    "en": "Invalid RSA private key PEM",
+    "zh-CN": "RSA 私钥 PEM 无效",
+    "zh-TW": "RSA 私鑰 PEM 無效",
+    "es": "PEM de clave privada RSA no válido",
+    "it": "PEM della chiave privata RSA non valido",
+    "ja": "無効な RSA 秘密鍵 PEM です",
+    "pt-BR": "PEM de chave privada RSA inválido"
+  },
+  "Invalid RSA private key PEM (PKCS#8 or PKCS#1)": {
+    "en": "Invalid RSA private key PEM (PKCS#8 or PKCS#1)",
+    "zh-CN": "RSA 私钥须为 PKCS#8 或 PKCS#1 PEM",
+    "zh-TW": "RSA 私鑰須為 PKCS#8 或 PKCS#1 PEM",
+    "es": "PEM de clave privada RSA no válido (PKCS#8 o PKCS#1)",
+    "it": "PEM della chiave privata RSA non valido (PKCS#8 o PKCS#1)",
+    "ja": "無効な RSA 秘密鍵 PEM です（PKCS#8 または PKCS#1）",
+    "pt-BR": "PEM de chave privada RSA inválido (PKCS#8 ou PKCS#1)"
+  },
+  "Invalid RSA public/private PEM": {
+    "en": "Invalid RSA public/private PEM",
+    "zh-CN": "RSA 公钥或私钥 PEM 无效",
+    "zh-TW": "RSA 公鑰或私鑰 PEM 無效",
+    "es": "PEM público/privado RSA no válido",
+    "it": "PEM pubblico/privato RSA non valido",
+    "ja": "無効な RSA 公開/秘密鍵 PEM です",
+    "pt-BR": "PEM público/privado RSA inválido"
+  },
+  "Invalid RSA public/private PEM (PKCS#8 or PKCS#1)": {
+    "en": "Invalid RSA public/private PEM (PKCS#8 or PKCS#1)",
+    "zh-CN": "RSA 密钥须为 PKCS#8 或 PKCS#1 PEM",
+    "zh-TW": "RSA 密鑰須為 PKCS#8 或 PKCS#1 PEM",
+    "es": "PEM público/privado RSA no válido (PKCS#8 o PKCS#1)",
+    "it": "PEM pubblico/privato RSA non valido (PKCS#8 o PKCS#1)",
+    "ja": "無効な RSA 公開/秘密鍵 PEM です（PKCS#8 または PKCS#1）",
+    "pt-BR": "PEM público/privado RSA inválido (PKCS#8 ou PKCS#1)"
+  },
+  "Plaintext is too long for this RSA key and padding": {
+    "en": "Plaintext is too long for this RSA key and padding",
+    "zh-CN": "明文超过当前 RSA 密钥和填充允许的长度",
+    "zh-TW": "明文超過目前 RSA 密鑰和填充允許的長度",
+    "es": "El texto en claro es demasiado largo para esta clave RSA y relleno",
+    "it": "Il testo in chiaro è troppo lungo per questa chiave RSA e padding",
+    "ja": "平文がこの RSA キーとパディングで許容される長さを超えています",
+    "pt-BR": "O texto em claro é longo demais para esta chave RSA e padding"
+  },
+  "Unsupported algorithm/mode or key length": {
+    "en": "Unsupported algorithm/mode or key length",
+    "zh-CN": "不支持该算法、模式或密钥长度",
+    "zh-TW": "不支援該演算法、模式或密鑰長度",
+    "es": "Algoritmo/modo o longitud de clave no compatibles",
+    "it": "Algoritmo/modalità o lunghezza della chiave non supportati",
+    "ja": "サポートされていないアルゴリズム/モードまたはキー長です",
+    "pt-BR": "Algoritmo/modo ou comprimento de chave não suportados"
+  },
+  "Ciphertext format must be packed or separate": {
+    "en": "Ciphertext format must be packed or separate",
+    "zh-CN": "密文格式须为「简单封装」或「高级互操作」",
+    "zh-TW": "密文格式須為「簡單封裝」或「進階互通」",
+    "es": "El formato del texto cifrado debe ser packed o separate",
+    "it": "Il formato del testo cifrato deve essere packed o separate",
+    "ja": "暗号文の形式は packed または separate である必要があります",
+    "pt-BR": "O formato do texto cifrado deve ser packed ou separate"
+  },
+  "Invalid Hex data": {
+    "en": "Invalid Hex data",
+    "zh-CN": "Hex 数据无效",
+    "zh-TW": "Hex 資料無效",
+    "es": "Datos Hex no válidos",
+    "it": "Dati Hex non validi",
+    "ja": "無効な Hex データです",
+    "pt-BR": "Dados Hex inválidos"
+  },
+  "Invalid Base64 data": {
+    "en": "Invalid Base64 data",
+    "zh-CN": "Base64 数据无效",
+    "zh-TW": "Base64 資料無效",
+    "es": "Datos Base64 no válidos",
+    "it": "Dati Base64 non validi",
+    "ja": "無効な Base64 データです",
+    "pt-BR": "Dados Base64 inválidos"
+  },
+  "Encoding must be utf8, hex, or base64": {
+    "en": "Encoding must be utf8, hex, or base64",
+    "zh-CN": "编码须为 UTF-8、Hex 或 Base64",
+    "zh-TW": "編碼須為 UTF-8、Hex 或 Base64",
+    "es": "La codificación debe ser utf8, hex o base64",
+    "it": "La codifica deve essere utf8, hex o base64",
+    "ja": "エンコーディングは utf8、hex、または base64 である必要があります",
+    "pt-BR": "A codificação deve ser utf8, hex ou base64"
+  },
+  "Output encoding must be utf8, hex, or base64": {
+    "en": "Output encoding must be utf8, hex, or base64",
+    "zh-CN": "输出编码须为 UTF-8、Hex 或 Base64",
+    "zh-TW": "輸出編碼須為 UTF-8、Hex 或 Base64",
+    "es": "La codificación de salida debe ser utf8, hex o base64",
+    "it": "La codifica di output deve essere utf8, hex o base64",
+    "ja": "出力エンコーディングは utf8、hex、または base64 である必要があります",
+    "pt-BR": "A codificação de saída deve ser utf8, hex ou base64"
+  },
+  "Ciphertext and IV/tag encoding must be hex or base64": {
+    "en": "Ciphertext and IV/tag encoding must be hex or base64",
+    "zh-CN": "密文与 IV/tag 编码须为 Hex 或 Base64",
+    "zh-TW": "密文與 IV/tag 編碼須為 Hex 或 Base64",
+    "es": "La codificación del texto cifrado y del IV/tag debe ser hex o base64",
+    "it": "La codifica del testo cifrato e di IV/tag deve essere hex o base64",
+    "ja": "暗号文と IV/tag のエンコーディングは hex または base64 である必要があります",
+    "pt-BR": "A codificação do texto cifrado e do IV/tag deve ser hex ou base64"
+  },
+  "GCM tag must be 16 bytes": {
+    "en": "GCM tag must be 16 bytes",
+    "zh-CN": "GCM tag 必须是 16 字节",
+    "zh-TW": "GCM tag 必須是 16 位元組",
+    "es": "La etiqueta GCM debe tener 16 bytes",
+    "it": "Il tag GCM deve essere di 16 byte",
+    "ja": "GCM tag は 16 バイトである必要があります",
+    "pt-BR": "A tag GCM deve ter 16 bytes"
+  },
+  "Invalid AES key": {
+    "en": "Invalid AES key",
+    "zh-CN": "AES 密钥无效",
+    "zh-TW": "AES 密鑰無效",
+    "es": "Clave AES no válida",
+    "it": "Chiave AES non valida",
+    "ja": "無効な AES キーです",
+    "pt-BR": "Chave AES inválida"
+  },
+  "AES-GCM authentication or encryption failed": {
+    "en": "AES-GCM authentication or encryption failed",
+    "zh-CN": "AES-GCM 认证或加密失败（密钥、nonce、tag 或 AAD 可能不匹配）",
+    "zh-TW": "AES-GCM 認證或加密失敗（密鑰、nonce、tag 或 AAD 可能不相符）",
+    "es": "Falló la autenticación o el cifrado AES-GCM (la clave, el nonce, el tag o el AAD pueden no coincidir)",
+    "it": "Autenticazione o cifratura AES-GCM non riuscita (chiave, nonce, tag o AAD potrebbero non corrispondere)",
+    "ja": "AES-GCM の認証または暗号化に失敗しました（キー、nonce、tag、または AAD が一致しない可能性があります）",
+    "pt-BR": "Falha na autenticação ou criptografia AES-GCM (chave, nonce, tag ou AAD podem não corresponder)"
+  },
+  "AES-GCM encrypt failed": {
+    "en": "AES-GCM encrypt failed",
+    "zh-CN": "AES-GCM 加密失败",
+    "zh-TW": "AES-GCM 加密失敗",
+    "es": "Falló el cifrado AES-GCM",
+    "it": "Cifratura AES-GCM non riuscita",
+    "ja": "AES-GCM の暗号化に失敗しました",
+    "pt-BR": "Falha na criptografia AES-GCM"
+  },
+  "AES-GCM decrypt failed": {
+    "en": "AES-GCM decrypt failed",
+    "zh-CN": "AES-GCM 解密失败（密钥、nonce、tag 或密文可能不正确）",
+    "zh-TW": "AES-GCM 解密失敗（密鑰、nonce、tag 或密文可能不正確）",
+    "es": "Falló el descifrado AES-GCM (la clave, el nonce, el tag o el texto cifrado pueden ser incorrectos)",
+    "it": "Decifratura AES-GCM non riuscita (chiave, nonce, tag o testo cifrato potrebbero essere errati)",
+    "ja": "AES-GCM の復号に失敗しました（キー、nonce、tag、または暗号文が正しくない可能性があります）",
+    "pt-BR": "Falha na descriptografia AES-GCM (chave, nonce, tag ou texto cifrado podem estar incorretos)"
+  },
+  "AES-CBC decrypt failed": {
+    "en": "AES-CBC decrypt failed",
+    "zh-CN": "AES-CBC 解密失败",
+    "zh-TW": "AES-CBC 解密失敗",
+    "es": "Falló el descifrado AES-CBC",
+    "it": "Decifratura AES-CBC non riuscita",
+    "ja": "AES-CBC の復号に失敗しました",
+    "pt-BR": "Falha na descriptografia AES-CBC"
+  },
+  "Ciphertext or PKCS#7 padding is invalid": {
+    "en": "Ciphertext or PKCS#7 padding is invalid",
+    "zh-CN": "密文或 PKCS#7 填充无效",
+    "zh-TW": "密文或 PKCS#7 填充無效",
+    "es": "El texto cifrado o el relleno PKCS#7 no es válido",
+    "it": "Il testo cifrato o il padding PKCS#7 non è valido",
+    "ja": "暗号文または PKCS#7 パディングが無効です",
+    "pt-BR": "O texto cifrado ou o padding PKCS#7 é inválido"
+  },
+  "Ciphertext is too short": {
+    "en": "Ciphertext is too short",
+    "zh-CN": "密文过短，不是有效的封装格式",
+    "zh-TW": "密文過短，不是有效的封裝格式",
+    "es": "El texto cifrado es demasiado corto",
+    "it": "Il testo cifrato è troppo corto",
+    "ja": "暗号文が短すぎます。有効なカプセル化形式ではありません",
+    "pt-BR": "O texto cifrado é curto demais; não é um formato encapsulado válido"
+  },
+  "SM4 key must be 16 bytes": {
+    "en": "SM4 key must be 16 bytes",
+    "zh-CN": "SM4 密钥必须是 16 字节",
+    "zh-TW": "SM4 密鑰必須是 16 位元組",
+    "es": "La clave SM4 debe tener 16 bytes",
+    "it": "La chiave SM4 deve essere di 16 byte",
+    "ja": "SM4 キーは 16 バイトである必要があります",
+    "pt-BR": "A chave SM4 deve ter 16 bytes"
+  },
+  "SM4-ECB decrypt failed": {
+    "en": "SM4-ECB decrypt failed",
+    "zh-CN": "SM4-ECB 解密失败",
+    "zh-TW": "SM4-ECB 解密失敗",
+    "es": "Falló el descifrado SM4-ECB",
+    "it": "Decifratura SM4-ECB non riuscita",
+    "ja": "SM4-ECB の復号に失敗しました",
+    "pt-BR": "Falha na descriptografia SM4-ECB"
+  },
+  "SM4-CBC decrypt failed": {
+    "en": "SM4-CBC decrypt failed",
+    "zh-CN": "SM4-CBC 解密失败",
+    "zh-TW": "SM4-CBC 解密失敗",
+    "es": "Falló el descifrado SM4-CBC",
+    "it": "Decifratura SM4-CBC non riuscita",
+    "ja": "SM4-CBC の復号に失敗しました",
+    "pt-BR": "Falha na descriptografia SM4-CBC"
+  },
+  "SM2 encryption failed": {
+    "en": "SM2 encryption failed",
+    "zh-CN": "SM2 加密失败",
+    "zh-TW": "SM2 加密失敗",
+    "es": "Falló el cifrado SM2",
+    "it": "Cifratura SM2 non riuscita",
+    "ja": "SM2 の暗号化に失敗しました",
+    "pt-BR": "Falha na criptografia SM2"
+  },
+  "SM2 decryption failed": {
+    "en": "SM2 decryption failed",
+    "zh-CN": "SM2 解密失败",
+    "zh-TW": "SM2 解密失敗",
+    "es": "Falló el descifrado SM2",
+    "it": "Decifratura SM2 non riuscita",
+    "ja": "SM2 の復号に失敗しました",
+    "pt-BR": "Falha na descriptografia SM2"
+  },
+  "SM2 ciphertext is truncated": {
+    "en": "SM2 ciphertext is truncated",
+    "zh-CN": "SM2 密文不完整",
+    "zh-TW": "SM2 密文不完整",
+    "es": "El texto cifrado SM2 está truncado",
+    "it": "Il testo cifrato SM2 è troncato",
+    "ja": "SM2 暗号文が途切れています",
+    "pt-BR": "O texto cifrado SM2 está truncado"
+  },
+  "SM2 ciphertext contains an invalid curve point": {
+    "en": "SM2 ciphertext contains an invalid curve point",
+    "zh-CN": "SM2 密文含有无效曲线点",
+    "zh-TW": "SM2 密文含有無效曲線點",
+    "es": "El texto cifrado SM2 contiene un punto de curva no válido",
+    "it": "Il testo cifrato SM2 contiene un punto di curva non valido",
+    "ja": "SM2 暗号文に無効な曲線点が含まれています",
+    "pt-BR": "O texto cifrado SM2 contém um ponto de curva inválido"
+  },
+  "SM2 decryption requires a 32-byte private key": {
+    "en": "SM2 decryption requires a 32-byte private key",
+    "zh-CN": "SM2 解密需要 32 字节私钥",
+    "zh-TW": "SM2 解密需要 32 位元組私鑰",
+    "es": "El descifrado SM2 requiere una clave privada de 32 bytes",
+    "it": "La decifratura SM2 richiede una chiave privata di 32 byte",
+    "ja": "SM2 の復号には 32 バイトの秘密鍵が必要です",
+    "pt-BR": "A descriptografia SM2 requer uma chave privada de 32 bytes"
+  },
+  "Invalid RSA private or public key PEM": {
+    "en": "Invalid RSA private or public key PEM",
+    "zh-CN": "RSA 公钥或私钥 PEM 无效",
+    "zh-TW": "RSA 公鑰或私鑰 PEM 無效",
+    "es": "PEM de clave privada o pública RSA no válido",
+    "it": "PEM di chiave privata o pubblica RSA non valido",
+    "ja": "無効な RSA 秘密鍵または公開鍵 PEM です",
+    "pt-BR": "PEM de chave privada ou pública RSA inválido"
+  },
+  "Invalid SM2 private or public key": {
+    "en": "Invalid SM2 private or public key",
+    "zh-CN": "SM2 公钥或私钥无效",
+    "zh-TW": "SM2 公鑰或私鑰無效",
+    "es": "Clave privada o pública SM2 no válida",
+    "it": "Chiave privata o pubblica SM2 non valida",
+    "ja": "無効な SM2 秘密鍵または公開鍵です",
+    "pt-BR": "Chave privada ou pública SM2 inválida"
+  },
+  "Only asymmetric keys have a public half": {
+    "en": "Only asymmetric keys have a public half",
+    "zh-CN": "只有非对称密钥才有公钥",
+    "zh-TW": "只有非對稱密鑰才有公鑰",
+    "es": "Solo las claves asimétricas tienen una mitad pública",
+    "it": "Solo le chiavi asimmetriche hanno una metà pubblica",
+    "ja": "非対称キーのみ公開側があります",
+    "pt-BR": "Somente chaves assimétricas têm uma metade pública"
+  },
+  "Public key is not available for this entry": {
+    "en": "Public key is not available for this entry",
+    "zh-CN": "该条目没有可用公钥",
+    "zh-TW": "該項目沒有可用公鑰",
+    "es": "La clave pública no está disponible para esta entrada",
+    "it": "La chiave pubblica non è disponibile per questa voce",
+    "ja": "このエントリには公開鍵がありません",
+    "pt-BR": "A chave pública não está disponível para esta entrada"
+  },
+  "Invalid SM2 private key": {
+    "en": "Invalid SM2 private key",
+    "zh-CN": "SM2 私钥无效",
+    "zh-TW": "SM2 私鑰無效",
+    "es": "Clave privada SM2 no válida",
+    "it": "Chiave privata SM2 non valida",
+    "ja": "無効な SM2 秘密鍵です",
+    "pt-BR": "Chave privada SM2 inválida"
+  },
+  "SM2 encryption requires a public or private key": {
+    "en": "SM2 encryption requires a public or private key",
+    "zh-CN": "SM2 加密需要公钥或私钥",
+    "zh-TW": "SM2 加密需要公鑰或私鑰",
+    "es": "El cifrado SM2 requiere una clave pública o privada",
+    "it": "La cifratura SM2 richiede una chiave pubblica o privata",
+    "ja": "SM2 の暗号化には公開鍵または秘密鍵が必要です",
+    "pt-BR": "A criptografia SM2 requer uma chave pública ou privada"
+  },
+  "Provide keyId or keyMaterial": {
+    "en": "Provide keyId or keyMaterial",
+    "zh-CN": "请提供密钥或从密钥库选择",
+    "zh-TW": "請提供密鑰或從密鑰庫選擇",
+    "es": "Proporcione keyId o keyMaterial",
+    "it": "Fornisci keyId o keyMaterial",
+    "ja": "keyId または keyMaterial を指定してください",
+    "pt-BR": "Forneça keyId ou keyMaterial"
+  },
+  "XOR key is required": {
+    "en": "XOR key is required",
+    "zh-CN": "请提供 XOR 密钥",
+    "zh-TW": "請提供 XOR 密鑰",
+    "es": "Se requiere una clave XOR",
+    "it": "La chiave XOR è obbligatoria",
+    "ja": "XOR キーが必要です",
+    "pt-BR": "A chave XOR é obrigatória"
+  },
+  "Input is not hex": {
+    "en": "Input is not hex",
+    "zh-CN": "输入不是有效的 Hex",
+    "zh-TW": "輸入不是有效的 Hex",
+    "es": "La entrada no es hex válido",
+    "it": "L'input non è hex valido",
+    "ja": "入力は有効な Hex ではありません",
+    "pt-BR": "A entrada não é hex válido"
+  },
+  "op must be encrypt or decrypt": {
+    "en": "op must be encrypt or decrypt",
+    "zh-CN": "操作须为加密或解密",
+    "zh-TW": "操作須為加密或解密",
+    "es": "op debe ser encrypt o decrypt",
+    "it": "op deve essere encrypt o decrypt",
+    "ja": "op は encrypt または decrypt である必要があります",
+    "pt-BR": "op deve ser encrypt ou decrypt"
+  },
+  "Plaintext is not valid UTF-8; select Hex or Base64 output": {
+    "en": "Plaintext is not valid UTF-8; select Hex or Base64 output",
+    "zh-CN": "明文不是有效 UTF-8，请选择 Hex 或 Base64 输出",
+    "zh-TW": "明文不是有效 UTF-8，請選擇 Hex 或 Base64 輸出",
+    "es": "El texto en claro no es UTF-8 válido; seleccione salida Hex o Base64",
+    "it": "Il testo in chiaro non è UTF-8 valido; seleziona output Hex o Base64",
+    "ja": "平文が有効な UTF-8 ではありません。Hex または Base64 出力を選択してください",
+    "pt-BR": "O texto em claro não é UTF-8 válido; selecione saída Hex ou Base64"
+  },
+  "Unsupported HMAC algorithm": {
+    "en": "Unsupported HMAC algorithm",
+    "zh-CN": "不支持该 HMAC 算法",
+    "zh-TW": "不支援該 HMAC 演算法",
+    "es": "Algoritmo HMAC no compatible",
+    "it": "Algoritmo HMAC non supportato",
+    "ja": "サポートされていない HMAC アルゴリズムです",
+    "pt-BR": "Algoritmo HMAC não suportado"
+  },
+  "Invalid HMAC key": {
+    "en": "Invalid HMAC key",
+    "zh-CN": "HMAC 密钥无效",
+    "zh-TW": "HMAC 密鑰無效",
+    "es": "Clave HMAC no válida",
+    "it": "Chiave HMAC non valida",
+    "ja": "無効な HMAC キーです",
+    "pt-BR": "Chave HMAC inválida"
+  },
+  "Vault data is corrupt": {
+    "en": "Vault data is corrupt",
+    "zh-CN": "密钥库数据已损坏",
+    "zh-TW": "密鑰庫資料已損毀",
+    "es": "Los datos del almacén están corruptos",
+    "it": "I dati del vault sono corrotti",
+    "ja": "保管庫データが破損しています",
+    "pt-BR": "Os dados do cofre estão corrompidos"
+  },
+  "Vault file is truncated": {
+    "en": "Vault file is truncated",
+    "zh-CN": "密钥库文件不完整",
+    "zh-TW": "密鑰庫檔案不完整",
+    "es": "El archivo del almacén está truncado",
+    "it": "Il file del vault è troncato",
+    "ja": "保管庫ファイルが途切れています",
+    "pt-BR": "O arquivo do cofre está truncado"
+  },
+  "Vault file magic mismatch": {
+    "en": "Vault file magic mismatch",
+    "zh-CN": "不是有效的密钥库文件",
+    "zh-TW": "不是有效的密鑰庫檔案",
+    "es": "No es un archivo de almacén de claves válido",
+    "it": "Non è un file di vault delle chiavi valido",
+    "ja": "有効なキー保管庫ファイルではありません",
+    "pt-BR": "Não é um arquivo de cofre de chaves válido"
+  },
+  "Unsupported vault version": {
+    "en": "Unsupported vault version",
+    "zh-CN": "不支持的密钥库版本",
+    "zh-TW": "不支援的密鑰庫版本",
+    "es": "Versión del almacén no compatible",
+    "it": "Versione del vault non supportata",
+    "ja": "サポートされていない保管庫バージョンです",
+    "pt-BR": "Versão do cofre não suportada"
+  },
+  "Failed to encrypt vault": {
+    "en": "Failed to encrypt vault",
+    "zh-CN": "加密密钥库失败",
+    "zh-TW": "加密密鑰庫失敗",
+    "es": "Error al cifrar el almacén",
+    "it": "Cifratura del vault non riuscita",
+    "ja": "保管庫の暗号化に失敗しました",
+    "pt-BR": "Falha ao criptografar o cofre"
+  },
+  "Failed to init vault cipher": {
+    "en": "Failed to init vault cipher",
+    "zh-CN": "无法初始化密钥库加密",
+    "zh-TW": "無法初始化密鑰庫加密",
+    "es": "Error al inicializar el cifrado del almacén",
+    "it": "Impossibile inizializzare la cifratura del vault",
+    "ja": "保管庫暗号の初期化に失敗しました",
+    "pt-BR": "Falha ao inicializar a cifra do cofre"
+  },
+  "Unsupported JWT algorithm": {
+    "en": "Unsupported JWT algorithm",
+    "zh-CN": "不支持该 JWT 签名算法",
+    "zh-TW": "不支援該 JWT 簽章演算法",
+    "es": "Algoritmo JWT no compatible",
+    "it": "Algoritmo JWT non supportato",
+    "ja": "サポートされていない JWT アルゴリズムです",
+    "pt-BR": "Algoritmo JWT não suportado"
+  },
+  "JWT header algorithm does not match the selected algorithm": {
+    "en": "JWT header algorithm does not match the selected algorithm",
+    "zh-CN": "JWT Header 中的算法与所选算法不一致",
+    "zh-TW": "JWT Header 中的演算法與所選演算法不一致",
+    "es": "El algoritmo del encabezado JWT no coincide con el algoritmo seleccionado",
+    "it": "L'algoritmo dell'header JWT non corrisponde all'algoritmo selezionato",
+    "ja": "JWT ヘッダーのアルゴリズムが選択したアルゴリズムと一致しません",
+    "pt-BR": "O algoritmo do cabeçalho JWT não corresponde ao algoritmo selecionado"
+  },
+  "JWT signing failed": {
+    "en": "JWT signing failed",
+    "zh-CN": "JWT 签名失败",
+    "zh-TW": "JWT 簽章失敗",
+    "es": "Falló la firma JWT",
+    "it": "Firma JWT non riuscita",
+    "ja": "JWT の署名に失敗しました",
+    "pt-BR": "Falha na assinatura JWT"
+  },
+  "Cannot resolve user data directory": {
+    "en": "Cannot resolve user data directory",
+    "zh-CN": "无法确定用户数据目录",
+    "zh-TW": "無法確定使用者資料目錄",
+    "es": "No se puede resolver el directorio de datos del usuario",
+    "it": "Impossibile risolvere la directory dei dati utente",
+    "ja": "ユーザーデータディレクトリを特定できません",
+    "pt-BR": "Não é possível resolver o diretório de dados do usuário"
+  },
+  "The backend is still starting. Try again, or reopen the workbench.": {
+    "en": "The backend is still starting. Try again, or reopen the workbench.",
+    "zh-CN": "后端还在启动，请稍后再试，或重新打开工作台。",
+    "zh-TW": "後端還在啟動，請稍後再試，或重新開啟工作台。",
+    "es": "El backend aún se está iniciando. Inténtelo de nuevo o vuelva a abrir el banco de trabajo.",
+    "it": "Il backend sta ancora avviandosi. Riprova o riapri il workbench.",
+    "ja": "バックエンドはまだ起動中です。しばらくしてから再試行するか、ワークベンチを開き直してください。",
+    "pt-BR": "O backend ainda está iniciando. Tente novamente ou reabra o workbench."
+  },
+  "Text is not a valid JSON string escape (control characters such as newlines must be written as \\n, \\t)": {
+    "en": "Text is not a valid JSON string escape (control characters such as newlines must be written as \\n, \\t)",
+    "zh-CN": "不是有效的 JSON 字符串转义（换行、制表符等控制字符须写成 \\n、\\t）",
+    "zh-TW": "不是有效的 JSON 字串跳脫（換行、定位字元等控制字元須寫成 \\n、\\t）",
+    "es": "El texto no es un escape de cadena JSON válido (los caracteres de control como saltos de línea deben escribirse como \\n, \\t)",
+    "it": "Il testo non è un escape di stringa JSON valido (i caratteri di controllo come le newline devono essere scritti come \\n, \\t)",
+    "ja": "有効な JSON 文字列エスケープではありません（改行やタブなどの制御文字は \\n、\\t と書く必要があります）",
+    "pt-BR": "O texto não é um escape de string JSON válido (caracteres de controle como quebras de linha devem ser escritos como \\n, \\t)"
+  },
+  "Text is not an escaped JSON string (control characters such as newlines must be written as \\n, \\t)": {
+    "en": "Text is not an escaped JSON string (control characters such as newlines must be written as \\n, \\t)",
+    "zh-CN": "不是有效的 JSON 字符串转义（换行、制表符等控制字符须写成 \\n、\\t）",
+    "zh-TW": "不是有效的 JSON 字串跳脫（換行、定位字元等控制字元須寫成 \\n、\\t）",
+    "es": "El texto no es una cadena JSON escapada (los caracteres de control como saltos de línea deben escribirse como \\n, \\t)",
+    "it": "Il testo non è una stringa JSON con escape (i caratteri di controllo come le newline devono essere scritti come \\n, \\t)",
+    "ja": "エスケープされた JSON 文字列ではありません（改行やタブなどの制御文字は \\n、\\t と書く必要があります）",
+    "pt-BR": "O texto não é uma string JSON escapada (caracteres de controle como quebras de linha devem ser escritos como \\n, \\t)"
+  },
+  "JSON input is limited to 5 MB": {
+    "en": "JSON input is limited to 5 MB",
+    "zh-CN": "JSON 输入不能超过 5 MB",
+    "zh-TW": "JSON 輸入不能超過 5 MB",
+    "es": "La entrada JSON está limitada a 5 MB",
+    "it": "L'input JSON è limitato a 5 MB",
+    "ja": "JSON 入力は 5 MB までです",
+    "pt-BR": "A entrada JSON é limitada a 5 MB"
+  },
+  "Data input is limited to 5 MB": {
+    "en": "Data input is limited to 5 MB",
+    "zh-CN": "数据输入不能超过 5 MB",
+    "zh-TW": "資料輸入不能超過 5 MB",
+    "es": "La entrada de datos está limitada a 5 MB",
+    "it": "L'input dati è limitato a 5 MB",
+    "ja": "データ入力は 5 MB までです",
+    "pt-BR": "A entrada de dados é limitada a 5 MB"
+  },
+  "Invalid XML": {
+    "en": "Invalid XML",
+    "zh-CN": "XML 无效",
+    "zh-TW": "XML 無效",
+    "es": "XML no válido",
+    "it": "XML non valido",
+    "ja": "無効な XML です",
+    "pt-BR": "XML inválido"
+  },
+  "invalid XML": {
+    "en": "invalid XML",
+    "zh-CN": "XML 无效",
+    "zh-TW": "XML 無效",
+    "es": "XML no válido",
+    "it": "XML non valido",
+    "ja": "無効な XML です",
+    "pt-BR": "XML inválido"
+  },
+  "Unsupported data format": {
+    "en": "Unsupported data format",
+    "zh-CN": "不支持该数据格式",
+    "zh-TW": "不支援該資料格式",
+    "es": "Formato de datos no compatible",
+    "it": "Formato dati non supportato",
+    "ja": "サポートされていないデータ形式です",
+    "pt-BR": "Formato de dados não suportado"
+  },
+  "Cyclic data cannot be converted to this format": {
+    "en": "Cyclic data cannot be converted to this format",
+    "zh-CN": "含循环引用的数据无法转换到该格式",
+    "zh-TW": "含循環參照的資料無法轉換到該格式",
+    "es": "Los datos cíclicos no se pueden convertir a este formato",
+    "it": "I dati ciclici non possono essere convertiti in questo formato",
+    "ja": "循環参照を含むデータはこの形式に変換できません",
+    "pt-BR": "Dados cíclicos não podem ser convertidos para este formato"
+  },
+  "TOML needs an object at the document root. Wrap the data in a named property first.": {
+    "en": "TOML needs an object at the document root. Wrap the data in a named property first.",
+    "zh-CN": "TOML 文档根须为对象，请先用命名属性包一层",
+    "zh-TW": "TOML 文件根須為物件，請先用命名屬性包一層",
+    "es": "TOML necesita un objeto en la raíz del documento. Envuelva primero los datos en una propiedad con nombre.",
+    "it": "TOML richiede un oggetto alla radice del documento. Racchiudi prima i dati in una proprietà con nome.",
+    "ja": "TOML はドキュメントルートにオブジェクトが必要です。先に名前付きプロパティでデータを包んでください。",
+    "pt-BR": "TOML precisa de um objeto na raiz do documento. Envolva os dados em uma propriedade nomeada primeiro."
+  },
+  "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.": {
+    "en": "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.",
+    "zh-CN": "数据转换不支持 XML DOCTYPE，请改用 XML 格式化以保留文档",
+    "zh-TW": "資料轉換不支援 XML DOCTYPE，請改用 XML 格式化以保留文件",
+    "es": "La conversión de datos XML no admite DOCTYPE. Use el formateador XML para conservar el documento.",
+    "it": "La conversione dati XML non supporta DOCTYPE. Usa il formatter XML per preservare il documento.",
+    "ja": "XML データ変換は DOCTYPE をサポートしていません。ドキュメントを保持するには XML フォーマッタを使用してください。",
+    "pt-BR": "A conversão de dados XML não oferece suporte a DOCTYPE. Use o formatador XML para preservar o documento."
+  },
+  "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.": {
+    "en": "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.",
+    "zh-CN": "跨格式转换无法保留 XML 注释、CDATA 与处理指令的位置，请选择 XML 输出以保留文档",
+    "zh-TW": "跨格式轉換無法保留 XML 註解、CDATA 與處理指令的位置，請選擇 XML 輸出以保留文件",
+    "es": "Los comentarios XML, CDATA e instrucciones de procesamiento no pueden conservar sus posiciones entre formatos. Elija salida XML para conservar este documento.",
+    "it": "Commenti XML, CDATA e istruzioni di elaborazione non possono mantenere le posizioni tra i formati. Scegli output XML per preservare questo documento.",
+    "ja": "XML コメント、CDATA、処理命令は形式間で位置を保持できません。このドキュメントを保持するには XML 出力を選択してください。",
+    "pt-BR": "Comentários XML, CDATA e instruções de processamento não podem manter suas posições entre formatos. Escolha saída XML para preservar este documento."
+  },
+  "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.": {
+    "en": "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.",
+    "zh-CN": "交错的同级 XML 元素无法无损转换顺序，请选择 XML 输出以保留文档",
+    "zh-TW": "交錯的同級 XML 元素無法無損轉換順序，請選擇 XML 輸出以保留文件",
+    "es": "Los elementos hermanos XML intercalados no se pueden convertir sin perder el orden. Elija salida XML para conservar este documento.",
+    "it": "Gli elementi XML fratelli intercalati non possono essere convertiti senza perdere l'ordine. Scegli output XML per preservare questo documento.",
+    "ja": "入れ子になった同階層の XML 要素は順序を失わずに変換できません。このドキュメントを保持するには XML 出力を選択してください。",
+    "pt-BR": "Elementos irmãos XML intercalados não podem ser convertidos sem perder a ordem. Escolha saída XML para preservar este documento."
+  },
+  "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.": {
+    "en": "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.",
+    "zh-CN": "XML 文本与元素混排无法无损转换，请改用 XML 格式化",
+    "zh-TW": "XML 文字與元素混排無法無損轉換，請改用 XML 格式化",
+    "es": "El texto y los elementos XML mezclados no se pueden convertir sin perder el orden. Use el formateador XML en su lugar.",
+    "it": "Testo ed elementi XML misti non possono essere convertiti senza perdere l'ordine. Usa invece il formatter XML.",
+    "ja": "混在した XML テキストと要素は順序を失わずに変換できません。代わりに XML フォーマッタを使用してください。",
+    "pt-BR": "Texto e elementos XML mistos não podem ser convertidos sem perder a ordem. Use o formatador XML."
+  },
+  "Unexpected character after quoted TSV field": {
+    "en": "Unexpected character after quoted TSV field",
+    "zh-CN": "TSV 引号字段后出现意外字符",
+    "zh-TW": "TSV 引號欄位後出現意外字元",
+    "es": "Carácter inesperado después de un campo TSV entre comillas",
+    "it": "Carattere imprevisto dopo un campo TSV tra virgolette",
+    "ja": "引用符付き TSV フィールドの後に予期しない文字があります",
+    "pt-BR": "Caractere inesperado após campo TSV entre aspas"
+  },
+  "Unclosed quoted TSV field": {
+    "en": "Unclosed quoted TSV field",
+    "zh-CN": "TSV 引号字段未正确结束",
+    "zh-TW": "TSV 引號欄位未正確結束",
+    "es": "Campo TSV entre comillas sin cerrar",
+    "it": "Campo TSV tra virgolette non chiuso",
+    "ja": "引用符付き TSV フィールドが閉じられていません",
+    "pt-BR": "Campo TSV entre aspas não fechado"
+  },
+  "TSV headers must be unique": {
+    "en": "TSV headers must be unique",
+    "zh-CN": "TSV 表头须唯一",
+    "zh-TW": "TSV 表頭須唯一",
+    "es": "Los encabezados TSV deben ser únicos",
+    "it": "Le intestazioni TSV devono essere univoche",
+    "ja": "TSV ヘッダーは一意である必要があります",
+    "pt-BR": "Os cabeçalhos TSV devem ser exclusivos"
+  },
+  "TSV rows must have the same number of fields as the header": {
+    "en": "TSV rows must have the same number of fields as the header",
+    "zh-CN": "TSV 行字段数须与表头一致",
+    "zh-TW": "TSV 列欄位數須與表頭一致",
+    "es": "Las filas TSV deben tener el mismo número de campos que el encabezado",
+    "it": "Le righe TSV devono avere lo stesso numero di campi dell'intestazione",
+    "ja": "TSV 行のフィールド数はヘッダーと同じである必要があります",
+    "pt-BR": "As linhas TSV devem ter o mesmo número de campos que o cabeçalho"
+  },
+  "Unexpected character after quoted CSV field": {
+    "en": "Unexpected character after quoted CSV field",
+    "zh-CN": "CSV 引号字段后出现意外字符",
+    "zh-TW": "CSV 引號欄位後出現意外字元",
+    "es": "Carácter inesperado después de un campo CSV entre comillas",
+    "it": "Carattere imprevisto dopo un campo CSV tra virgolette",
+    "ja": "引用符付き CSV フィールドの後に予期しない文字があります",
+    "pt-BR": "Caractere inesperado após campo CSV entre aspas"
+  },
+  "Unexpected quote in CSV field": {
+    "en": "Unexpected quote in CSV field",
+    "zh-CN": "CSV 字段中出现意外引号",
+    "zh-TW": "CSV 欄位中出現意外引號",
+    "es": "Comilla inesperada en un campo CSV",
+    "it": "Virgoletta imprevista in un campo CSV",
+    "ja": "CSV フィールドに予期しない引用符があります",
+    "pt-BR": "Aspas inesperadas em campo CSV"
+  },
+  "Unclosed quoted CSV field": {
+    "en": "Unclosed quoted CSV field",
+    "zh-CN": "CSV 引号字段未正确结束",
+    "zh-TW": "CSV 引號欄位未正確結束",
+    "es": "Campo CSV entre comillas sin cerrar",
+    "it": "Campo CSV tra virgolette non chiuso",
+    "ja": "引用符付き CSV フィールドが閉じられていません",
+    "pt-BR": "Campo CSV entre aspas não fechado"
+  },
+  "CSV headers must be unique": {
+    "en": "CSV headers must be unique",
+    "zh-CN": "CSV 表头须唯一",
+    "zh-TW": "CSV 表頭須唯一",
+    "es": "Los encabezados CSV deben ser únicos",
+    "it": "Le intestazioni CSV devono essere univoche",
+    "ja": "CSV ヘッダーは一意である必要があります",
+    "pt-BR": "Os cabeçalhos CSV devem ser exclusivos"
+  },
+  "CSV rows must have the same number of fields as the header": {
+    "en": "CSV rows must have the same number of fields as the header",
+    "zh-CN": "CSV 行字段数须与表头一致",
+    "zh-TW": "CSV 列欄位數須與表頭一致",
+    "es": "Las filas CSV deben tener el mismo número de campos que el encabezado",
+    "it": "Le righe CSV devono avere lo stesso numero di campi dell'intestazione",
+    "ja": "CSV 行のフィールド数はヘッダーと同じである必要があります",
+    "pt-BR": "As linhas CSV devem ter o mesmo número de campos que o cabeçalho"
+  },
+  "Size & output": {
+    "en": "Size & output",
+    "zh-CN": "尺寸与输出"
+  },
+  "Width": {
+    "en": "Width",
+    "zh-CN": "全半角"
+  },
+  "Height": {
+    "en": "Height",
+    "zh-CN": "高度"
+  },
+  "Target size": {
+    "en": "Target size",
+    "zh-CN": "目标大小"
+  },
+  "Appearance": {
+    "en": "Appearance",
+    "zh-CN": "外观"
+  },
+  "Background": {
+    "en": "Background",
+    "zh-CN": "背景色"
+  },
+  "Text color": {
+    "en": "Text color",
+    "zh-CN": "文字色"
+  },
+  "JPEG does not support transparency": {
+    "en": "JPEG does not support transparency",
+    "zh-CN": "JPEG 不支持透明背景"
+  },
+  "Transparent": {
+    "en": "Transparent",
+    "zh-CN": "透明背景"
+  },
+  "Border": {
+    "en": "Border",
+    "zh-CN": "显示边框"
+  },
+  "JPEG uses the background color; no transparency": {
+    "en": "JPEG uses the background color; no transparency",
+    "zh-CN": "JPEG 将铺背景色，无法透明"
+  },
+  "Text & file": {
+    "en": "Text & file",
+    "zh-CN": "文案与文件"
+  },
+  "Custom text": {
+    "en": "Custom text",
+    "zh-CN": "自定义文案"
+  },
+  "Leave blank to show dimensions and size": {
+    "en": "Leave blank to show dimensions and size",
+    "zh-CN": "留空则显示尺寸与体积"
+  },
+  "File name": {
+    "en": "File name",
+    "zh-CN": "文件名"
+  },
+  "Custom file name without extension": {
+    "en": "Custom file name without extension",
+    "zh-CN": "自定义文件名（不含扩展名）"
+  },
+  "PNG, JPEG, GIF, WebP, BMP, SVG, ICO, TIFF, and AVIF when supported.": {
+    "en": "PNG, JPEG, GIF, WebP, BMP, SVG, ICO, TIFF, and AVIF when supported.",
+    "zh-CN": "支持 PNG / JPEG / GIF / WebP / BMP / SVG / ICO / TIFF，环境支持时还有 AVIF。"
+  },
+  "Target": {
+    "en": "Target",
+    "zh-CN": "目标"
+  },
+  "Generating…": {
+    "en": "Generating…",
+    "zh-CN": "生成中…"
+  },
+  "Generate": {
+    "en": "Generate",
+    "zh-CN": "随机生成"
+  },
+  "Download": {
+    "en": "Download",
+    "zh-CN": "下载当前"
+  },
+  "Generated image preview": {
+    "en": "Generated image preview",
+    "zh-CN": "生成的图片预览"
+  },
+  "Configure options, then generate": {
+    "en": "Configure options, then generate",
+    "zh-CN": "填写参数后点击生成"
+  },
+  "Saved: ": {
+    "en": "Saved: ",
+    "zh-CN": "已保存："
+  },
+  "Target size must be at least {0} bytes": {
+    "en": "Target size must be at least {0} bytes",
+    "zh-CN": "目标大小至少 {0} 字节"
+  },
+  "Encoded image exceeds the 50 MB limit; reduce dimensions": {
+    "en": "Encoded image exceeds the 50 MB limit; reduce dimensions",
+    "zh-CN": "压缩后超过 50 MB 上限，请减小宽高"
+  },
+  "Target size is limited to 50 MB": {
+    "en": "Target size is limited to 50 MB",
+    "zh-CN": "目标大小上限 50 MB"
+  },
+  "Too many pixels: {0}×{1} ≈ {2} MP; limit is 40 megapixels (about 6324×6324)": {
+    "en": "Too many pixels: {0}×{1} ≈ {2} MP; limit is 40 megapixels (about 6324×6324)",
+    "zh-CN": "像素过多：{0}×{1} ≈ {2} MP，上限 4000 万像素（约 6324×6324）"
+  },
+  "Output image is limited to 40 megapixels (width × height)": {
+    "en": "Output image is limited to 40 megapixels (width × height)",
+    "zh-CN": "输出图片上限 4000 万像素（宽×高）"
+  },
+  "Each side is limited to 12,000 px": {
+    "en": "Each side is limited to 12,000 px",
+    "zh-CN": "单边最长 12,000 像素"
+  },
+  "Custom text is limited to {0} characters": {
+    "en": "Custom text is limited to {0} characters",
+    "zh-CN": "自定义文案最多 {0} 个字符"
+  },
+  "Could not hit the exact target size; try a slightly different target": {
+    "en": "Could not hit the exact target size; try a slightly different target",
+    "zh-CN": "无法精确命中目标大小，请略微调整目标体积"
+  },
+  "Generation failed": {
+    "en": "Generation failed",
+    "zh-CN": "生成失败"
+  },
+  "Dimensions limited to {0}×{1} (was {2}×{3})": {
+    "en": "Dimensions limited to {0}×{1} (was {2}×{3})",
+    "zh-CN": "尺寸已限制为 {0}×{1}（原 {2}×{3}）"
+  },
+  "Generated {0}. Target {1} is below the minimum for these dimensions, so the smallest possible size was used": {
+    "en": "Generated {0}. Target {1} is below the minimum for these dimensions, so the smallest possible size was used",
+    "zh-CN": "已生成 {0}。目标 {1} 小于当前宽高可压到的最小体积，已按最小值输出"
+  },
+  "Save image": {
+    "en": "Save image",
+    "zh-CN": "保存图片"
+  },
+  "Choose an image file": {
+    "en": "Choose an image file",
+    "zh-CN": "选择图片文件"
+  },
+  "Add images": {
+    "en": "Add images",
+    "zh-CN": "添加图片"
+  },
+  "Replace image": {
+    "en": "Replace image",
+    "zh-CN": "更换图片"
+  },
+  "Clear all": {
+    "en": "Clear all",
+    "zh-CN": "清空全部"
+  },
+  "Exporting…": {
+    "en": "Exporting…",
+    "zh-CN": "导出中…"
+  },
+  "Export all ({0})": {
+    "en": "Export all ({0})",
+    "zh-CN": "导出全部（{0}）"
+  },
+  "Apply to all": {
+    "en": "Apply to all",
+    "zh-CN": "应用到全部"
+  },
+  "Save zip again": {
+    "en": "Save zip again",
+    "zh-CN": "再次保存打包"
+  },
+  "Paste or multi-select. Apply-to-all syncs every setting on this page (crop scales per image); export all packs a ZIP.": {
+    "en": "Paste or multi-select. Apply-to-all syncs every setting on this page (crop scales per image); export all packs a ZIP.",
+    "zh-CN": "支持粘贴与多选。应用到全部会同步本页全部配置（裁剪按比例适配各图）；导出全部打包为 ZIP。"
+  },
+  "Animated GIFs use the first frame.": {
+    "en": "Animated GIFs use the first frame.",
+    "zh-CN": "GIF 将按第一帧处理。"
+  },
+  "Image queue": {
+    "en": "Image queue",
+    "zh-CN": "图片队列"
+  },
+  "{0} images · click to switch; crop per image": {
+    "en": "{0} images · click to switch; crop per image",
+    "zh-CN": "{0} 张 · 点击切换，每张独立裁剪"
+  },
+  "Keep current only": {
+    "en": "Keep current only",
+    "zh-CN": "仅保留当前"
+  },
+  "Remove": {
+    "en": "Remove",
+    "zh-CN": "移除"
+  },
+  "Batch results": {
+    "en": "Batch results",
+    "zh-CN": "批量结果"
+  },
+  "Start with an image": {
+    "en": "Start with an image",
+    "zh-CN": "开始处理图片"
+  },
+  "Drop an image here, or click to choose one": {
+    "en": "Drop an image here, or click to choose one",
+    "zh-CN": "拖放图片到这里，或点击选择图片"
+  },
+  "Choose image": {
+    "en": "Choose image",
+    "zh-CN": "选择图片"
+  },
+  "PNG, JPEG, WebP, GIF, AVIF, BMP; up to 30 MB; multi-select builds a queue": {
+    "en": "PNG, JPEG, WebP, GIF, AVIF, BMP; up to 30 MB; multi-select builds a queue",
+    "zh-CN": "支持 PNG、JPEG、WebP、GIF、AVIF、BMP，最大 30 MB；可多选组成队列"
+  },
+  "Crop": {
+    "en": "Crop",
+    "zh-CN": "裁剪",
+    "zh-TW": "裁切",
+    "es": "Recortar",
+    "it": "Ritaglia",
+    "ja": "切り抜き",
+    "pt-BR": "Recortar"
+  },
+  "Full image": {
+    "en": "Full image",
+    "zh-CN": "使用整张图片"
+  },
+  "W": {
+    "en": "W",
+    "zh-CN": "宽"
+  },
+  "H": {
+    "en": "H",
+    "zh-CN": "高"
+  },
+  "Crop angle": {
+    "en": "Crop angle",
+    "zh-CN": "裁剪框角度"
+  },
+  "The crop may include canvas area outside the image; axes follow rotation": {
+    "en": "The crop may include canvas area outside the image; axes follow rotation",
+    "zh-CN": "可框选画布内的图片外区域，轴向随旋转"
+  },
+  "Reset": {
+    "en": "Reset",
+    "zh-CN": "重置参数"
+  },
+  "Resize": {
+    "en": "Resize",
+    "zh-CN": "缩放",
+    "zh-TW": "縮放",
+    "es": "Redimensionar",
+    "it": "Ridimensiona",
+    "ja": "サイズ変更",
+    "pt-BR": "Redimensionar"
+  },
+  "Match crop": {
+    "en": "Match crop",
+    "zh-CN": "匹配裁剪尺寸"
+  },
+  "Lock aspect ratio": {
+    "en": "Lock aspect ratio",
+    "zh-CN": "锁定宽高比"
+  },
+  "Rotate and flip": {
+    "en": "Rotate and flip",
+    "zh-CN": "旋转与翻转"
+  },
+  "Applies to the exported result": {
+    "en": "Applies to the exported result",
+    "zh-CN": "会作用于导出结果"
+  },
+  "Flip H": {
+    "en": "Flip H",
+    "zh-CN": "水平翻转"
+  },
+  "Flip V": {
+    "en": "Flip V",
+    "zh-CN": "垂直翻转"
+  },
+  "Rotation": {
+    "en": "Rotation",
+    "zh-CN": "当前旋转"
+  },
+  "Watermark": {
+    "en": "Watermark",
+    "zh-CN": "水印",
+    "zh-TW": "浮水印",
+    "es": "Marca de agua",
+    "it": "Filigrana",
+    "ja": "透かし",
+    "pt-BR": "Marca d'água"
+  },
+  "Leave blank for none": {
+    "en": "Leave blank for none",
+    "zh-CN": "留空则不添加"
+  },
+  "Size": {
+    "en": "Size",
+    "zh-CN": "尺寸"
+  },
+  "Opacity": {
+    "en": "Opacity",
+    "zh-CN": "透明度"
+  },
+  "Position": {
+    "en": "Position",
+    "zh-CN": "位置"
+  },
+  "Color": {
+    "en": "Color",
+    "zh-CN": "颜色"
+  },
+  "Tile watermark": {
+    "en": "Tile watermark",
+    "zh-CN": "平铺水印"
+  },
+  "Quality": {
+    "en": "Quality",
+    "zh-CN": "质量"
+  },
+  "Transparency background": {
+    "en": "Transparency background",
+    "zh-CN": "透明区域背景"
+  },
+  "Original": {
+    "en": "Original",
+    "zh-CN": "原图"
+  },
+  "Drag the frame to move, handles to resize, or drag outside to reselect; rotate the crop": {
+    "en": "Drag the frame to move, handles to resize, or drag outside to reselect; rotate the crop",
+    "zh-CN": "拖动选框移动，拖动边角调整大小，框外拖动重新框选；可旋转裁剪框"
+  },
+  "Original preview; drag to adjust the crop area": {
+    "en": "Original preview; drag to adjust the crop area",
+    "zh-CN": "原图预览，可拖动调整裁剪区域"
+  },
+  "Crop selection; drag to move or use the handles to resize": {
+    "en": "Crop selection; drag to move or use the handles to resize",
+    "zh-CN": "裁剪选区，可拖动调整位置或边角调整大小"
+  },
+  "Rotate crop selection": {
+    "en": "Rotate crop selection",
+    "zh-CN": "旋转裁剪选区"
+  },
+  "Drag to move; handles resize; rotate from handle": {
+    "en": "Drag to move; handles resize; rotate from handle",
+    "zh-CN": "拖动移动；边角调整大小；可旋转"
+  },
+  "Processed image preview": {
+    "en": "Processed image preview",
+    "zh-CN": "处理结果预览"
+  },
+  "Waiting for auto preview…": {
+    "en": "Waiting for auto preview…",
+    "zh-CN": "等待自动预览…"
+  },
+  "Could not decode this image.": {
+    "en": "Could not decode this image.",
+    "zh-CN": "无法解码这张图片。"
+  },
+  "Choose a PNG, JPEG, WebP, GIF, AVIF, or BMP image.": {
+    "en": "Choose a PNG, JPEG, WebP, GIF, AVIF, or BMP image.",
+    "zh-CN": "请选择 PNG、JPEG、WebP、GIF、AVIF 或 BMP 图片。"
+  },
+  "The image must be 30 MB or smaller.": {
+    "en": "The image must be 30 MB or smaller.",
+    "zh-CN": "图片不能超过 30 MB。"
+  },
+  "The image must not exceed 40 megapixels.": {
+    "en": "The image must not exceed 40 megapixels.",
+    "zh-CN": "图片不能超过 4000 万像素。"
+  },
+  "Batch input is limited to {0} images.": {
+    "en": "Batch input is limited to {0} images.",
+    "zh-CN": "批量最多 {0} 张。"
+  },
+  "Batch input is limited to {0} images and 100 MB total.": {
+    "en": "Batch input is limited to {0} images and 100 MB total.",
+    "zh-CN": "批量最多 {0} 张且总大小不超过 100 MB。"
+  },
+  "Synced all page settings to {0} images": {
+    "en": "Synced all page settings to {0} images",
+    "zh-CN": "已将当前页全部配置同步到 {0} 张图片"
+  },
+  "No images were processed successfully.": {
+    "en": "No images were processed successfully.",
+    "zh-CN": "没有成功处理的图片。"
+  },
+  "Export all images": {
+    "en": "Export all images",
+    "zh-CN": "导出全部图片"
+  },
+  "Processed {0} images; save cancelled": {
+    "en": "Processed {0} images; save cancelled",
+    "zh-CN": "已处理 {0} 张，已取消保存"
+  },
+  "Exported {0} images to {1}": {
+    "en": "Exported {0} images to {1}",
+    "zh-CN": "已导出 {0} 张到 {1}"
+  },
+  "Exported {0} images ({1})": {
+    "en": "Exported {0} images ({1})",
+    "zh-CN": "已导出 {0} 张（{1}）"
+  },
+  "Saved to {0}": {
+    "en": "Saved to {0}",
+    "zh-CN": "已保存到 {0}"
+  },
+  "Image is not ready.": {
+    "en": "Image is not ready.",
+    "zh-CN": "图片尚未就绪。"
+  },
+  "{0} is limited to {1} characters": {
+    "en": "{0} is limited to {1} characters",
+    "zh-CN": "{0}不能超过 {1} 个字符",
+    "zh-TW": "{0}不能超過 {1} 個字元",
+    "es": "{0} está limitado a {1} caracteres",
+    "it": "{0} è limitato a {1} caratteri",
+    "ja": "{0}は {1} 文字までに制限されています",
+    "pt-BR": "{0} está limitado a {1} caracteres"
+  },
+  "Expand": {
+    "en": "Expand",
+    "zh-CN": "展开"
+  },
+  "new_key": {
+    "en": "new_key",
+    "zh-CN": "新的属性"
+  },
+  "new value": {
+    "en": "new value",
+    "zh-CN": "新的属性值"
+  },
+  "Number {0} cannot be converted without losing precision.": {
+    "en": "Number {0} cannot be converted without losing precision.",
+    "zh-CN": "数字 {0} 无法无损转换。格式化和压缩会保留原值；树形编辑和当前格式转换已停止，避免精度丢失。",
+    "zh-TW": "數字 {0} 無法無損轉換。格式化和壓縮會保留原值；樹形編輯和目前格式轉換已停止，避免精度遺失。",
+    "es": "El número {0} no se puede convertir sin perder precisión. El formato y la minificación conservan el valor; se detuvo la edición en árbol y la conversión.",
+    "it": "Il numero {0} non può essere convertito senza perdita di precisione. Formattazione e minificazione conservano il valore; modifica ad albero e conversione interrotte.",
+    "ja": "数値 {0} は精度を失わずに変換できません。整形と圧縮は元の値を保持します。ツリー編集と現在の形式変換は停止しました。",
+    "pt-BR": "O número {0} não pode ser convertido sem perda de precisão. Formatação e minificação preservam o valor; a edição em árvore e a conversão foram interrompidas."
+  },
+  "TypeScript": {
+    "en": "TypeScript",
+    "zh-CN": "TypeScript"
+  },
+  "Python": {
+    "en": "Python",
+    "zh-CN": "Python"
+  },
+  "Go": {
+    "en": "Go",
+    "zh-CN": "Go"
+  },
+  "Java": {
+    "en": "Java",
+    "zh-CN": "Java"
+  },
+  "C#": {
+    "en": "C#",
+    "zh-CN": "C#"
+  },
+  "Rust": {
+    "en": "Rust",
+    "zh-CN": "Rust"
+  },
+  "Kotlin": {
+    "en": "Kotlin",
+    "zh-CN": "Kotlin"
+  },
+  "Swift": {
+    "en": "Swift",
+    "zh-CN": "Swift"
+  },
+  "Dart": {
+    "en": "Dart",
+    "zh-CN": "Dart"
+  },
+  "C++": {
+    "en": "C++",
+    "zh-CN": "C++"
+  },
+  "PHP array": {
+    "en": "PHP array",
+    "zh-CN": "PHP 数组"
+  },
+  "Ruby": {
+    "en": "Ruby",
+    "zh-CN": "Ruby"
+  },
+  "JSON Schema": {
+    "en": "JSON Schema",
+    "zh-CN": "JSON Schema"
+  },
+  "MySQL": {
+    "en": "MySQL",
+    "zh-CN": "MySQL"
+  },
+  "Query string": {
+    "en": "Query string",
+    "zh-CN": "GET 请求参数"
+  },
+  "YAML": {
+    "en": "YAML",
+    "zh-CN": "YAML"
+  },
+  "XML": {
+    "en": "XML",
+    "zh-CN": "XML"
+  },
+  "TOML": {
+    "en": "TOML",
+    "zh-CN": "TOML"
+  },
+  "CSV": {
+    "en": "CSV",
+    "zh-CN": "CSV"
+  },
+  "Delete": {
+    "en": "Delete",
+    "zh-CN": "删除"
+  },
+  "Add item": {
+    "en": "Add item",
+    "zh-CN": "添加元素"
+  },
+  "Add property": {
+    "en": "Add property",
+    "zh-CN": "添加属性"
+  },
+  "Minify": {
+    "en": "Minify",
+    "zh-CN": "压缩"
+  },
+  "More options": {
+    "en": "More options",
+    "zh-CN": "更多选项"
+  },
+  "Line numbers": {
+    "en": "Line numbers",
+    "zh-CN": "显示行号"
+  },
+  "Sort keys A–Z": {
+    "en": "Sort keys A–Z",
+    "zh-CN": "升序排列 key"
+  },
+  "Sort keys Z–A": {
+    "en": "Sort keys Z–A",
+    "zh-CN": "降序排列 key"
+  },
+  "JSON text editor": {
+    "en": "JSON text editor",
+    "zh-CN": "JSON 文本编辑器"
+  },
+  "Unicode and escaping": {
+    "en": "Unicode and escaping",
+    "zh-CN": "中文与转义"
+  },
+  "Resize panes": {
+    "en": "Resize panes",
+    "zh-CN": "调整左右宽度"
+  },
+  "JSON tools": {
+    "en": "JSON tools",
+    "zh-CN": "JSON 功能"
+  },
+  "JSONPath": {
+    "en": "JSONPath",
+    "zh-CN": "JSONPath"
+  },
+  "Expand all nodes": {
+    "en": "Expand all nodes",
+    "zh-CN": "展开全部节点"
+  },
+  "Expand all": {
+    "en": "Expand all",
+    "zh-CN": "全展开"
+  },
+  "Collapse all nodes": {
+    "en": "Collapse all nodes",
+    "zh-CN": "折叠全部节点"
+  },
+  "Collapse all": {
+    "en": "Collapse all",
+    "zh-CN": "全折叠"
+  },
+  "JSON input": {
+    "en": "JSON input",
+    "zh-CN": "JSON 输入"
+  },
+  "Copy failed. Select the text and copy it manually.": {
+    "en": "Copy failed. Select the text and copy it manually.",
+    "zh-CN": "复制失败，请选择文本后手动复制。"
+  },
+  "Normalize JWK / JWKS": {
+    "en": "Normalize JWK / JWKS",
+    "zh-CN": "规范化 JWK / JWKS"
+  },
+  "RSA JWK → PEM": {
+    "en": "RSA JWK → PEM",
+    "zh-CN": "RSA JWK → PEM"
+  },
+  "RSA PEM → JWK": {
+    "en": "RSA PEM → JWK",
+    "zh-CN": "RSA PEM → JWK"
+  },
+  "Select key": {
+    "en": "Select key",
+    "zh-CN": "选择密钥"
+  },
+  "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.": {
+    "en": "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.",
+    "zh-CN": "支持 JWK 对象和 JWKS（keys 数组）。RSA 密钥可在标准 PKCS#8 / SPKI PEM 间转换；本地处理，不上传内容。"
+  },
+  "Input JWK / JWKS": {
+    "en": "Input JWK / JWKS",
+    "zh-CN": "输入 JWK / JWKS"
+  },
+  "The converted result appears here.": {
+    "en": "The converted result appears here.",
+    "zh-CN": "转换结果会显示在这里。"
+  },
+  "Key": {
+    "en": "Key",
+    "zh-CN": "键"
+  },
+  "Verifying…": {
+    "en": "Verifying…",
+    "zh-CN": "验证中…"
+  },
+  "Signature valid": {
+    "en": "Signature valid",
+    "zh-CN": "签名有效"
+  },
+  "Signature invalid": {
+    "en": "Signature invalid",
+    "zh-CN": "签名无效"
+  },
+  "Expired": {
+    "en": "Expired",
+    "zh-CN": "已过期"
+  },
+  "Not expired": {
+    "en": "Not expired",
+    "zh-CN": "未过期"
+  },
+  "Active": {
+    "en": "Active",
+    "zh-CN": "已生效"
+  },
+  "Not active yet": {
+    "en": "Not active yet",
+    "zh-CN": "尚未生效"
+  },
+  "Invalid time claims: {0} (expected representable seconds)": {
+    "en": "Invalid time claims: {0} (expected representable seconds)",
+    "zh-CN": "无效的时间声明：{0}（需为可表示的秒数）"
+  },
+  "Paste a JWT to split header and payload.": {
+    "en": "Paste a JWT to split header and payload.",
+    "zh-CN": "粘贴 JWT 后会拆出 Header 与 Payload。"
+  },
+  "Payload JSON": {
+    "en": "Payload JSON",
+    "zh-CN": "Payload JSON"
+  },
+  "Signing…": {
+    "en": "Signing…",
+    "zh-CN": "正在签发…"
+  },
+  "JWT appears here as you edit the payload.": {
+    "en": "JWT appears here as you edit the payload.",
+    "zh-CN": "编辑 Payload 后自动生成 JWT。"
+  },
+  "Decode": {
+    "en": "Decode",
+    "zh-CN": "解码",
+    "zh-TW": "解碼",
+    "es": "Decodificar",
+    "it": "Decodifica",
+    "ja": "デコード",
+    "pt-BR": "Decodificar"
+  },
+  "Verify": {
+    "en": "Verify",
+    "zh-CN": "验签",
+    "zh-TW": "驗簽",
+    "es": "Verificar",
+    "it": "Verifica",
+    "ja": "検証",
+    "pt-BR": "Verificar"
+  },
+  "Sign": {
+    "en": "Sign",
+    "zh-CN": "签发",
+    "zh-TW": "簽發",
+    "es": "Firmar",
+    "it": "Firma",
+    "ja": "署名",
+    "pt-BR": "Assinar"
+  },
+  "Provide an RSA private key to sign automatically.": {
+    "en": "Provide an RSA private key to sign automatically.",
+    "zh-CN": "提供 RSA 私钥后会自动签发。"
+  },
+  "Provide an HMAC key to sign automatically.": {
+    "en": "Provide an HMAC key to sign automatically.",
+    "zh-CN": "提供 HMAC 密钥后会自动签发。"
+  },
+  "Provide an RSA public key to verify automatically.": {
+    "en": "Provide an RSA public key to verify automatically.",
+    "zh-CN": "提供 RSA 公钥后会自动验签。"
+  },
+  "Provide an HMAC key to verify automatically.": {
+    "en": "Provide an HMAC key to verify automatically.",
+    "zh-CN": "提供 HMAC 密钥后会自动验签。"
+  },
+  "{0}-bit": {
+    "en": "{0}-bit",
+    "zh-CN": "{0} 位"
+  },
+  "Save to vault": {
+    "en": "Save to vault",
+    "zh-CN": "写入密钥库"
+  },
+  "No, show once": {
+    "en": "No, show once",
+    "zh-CN": "否，仅显示一次"
+  },
+  "Name": {
+    "en": "Name",
+    "zh-CN": "名称"
+  },
+  "Generated public key": {
+    "en": "Generated public key",
+    "zh-CN": "生成的公钥"
+  },
+  "Appears after generate": {
+    "en": "Appears after generate",
+    "zh-CN": "生成后显示"
+  },
+  "Private key": {
+    "en": "Private key",
+    "zh-CN": "私钥"
+  },
+  "Generated private key": {
+    "en": "Generated private key",
+    "zh-CN": "生成的私钥"
+  },
+  "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.": {
+    "en": "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
+    "zh-CN": "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。"
+  },
+  "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.": {
+    "en": "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
+    "zh-CN": "RSA 可选 2048 / 3072 / 4096 位，PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。"
+  },
+  "Key source": {
+    "en": "Key source",
+    "zh-CN": "密钥来源"
+  },
+  "This time only": {
+    "en": "This time only",
+    "zh-CN": "当次输入"
+  },
+  "Choose a saved key": {
+    "en": "Choose a saved key",
+    "zh-CN": "选择已保存密钥"
+  },
+  "Unlock key vault": {
+    "en": "Unlock key vault",
+    "zh-CN": "解锁密钥库"
+  },
+  "Key material (hex/base64/PEM)": {
+    "en": "Key material (hex/base64/PEM)",
+    "zh-CN": "密钥材料（hex/base64/PEM）"
+  },
+  "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.": {
+    "en": "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.",
+    "zh-CN": "AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。"
+  },
+  "Key · {0}-byte hex": {
+    "en": "Key · {0}-byte hex",
+    "zh-CN": "密钥 · {0} 字节 hex"
+  },
+  "Generated symmetric key": {
+    "en": "Generated symmetric key",
+    "zh-CN": "生成的对称密钥"
+  },
+  "Key saved to vault; clear it from the UI when done": {
+    "en": "Key saved to vault; clear it from the UI when done",
+    "zh-CN": "密钥已写入密钥库；请确认后清除界面原文"
+  },
+  "Save the key now; clear it before leaving": {
+    "en": "Save the key now; clear it before leaving",
+    "zh-CN": "请立即保存；锁定工作台前请清空"
+  },
+  "QP text": {
+    "en": "QP text",
+    "zh-CN": "QP 文本"
+  },
+  "Encode": {
+    "en": "Encode",
+    "zh-CN": "编码",
+    "zh-TW": "編碼",
+    "es": "Codificar",
+    "it": "Codifica",
+    "ja": "エンコード",
+    "pt-BR": "Codificar"
+  },
+  "Hello=20world=21": {
+    "en": "Hello=20world=21",
+    "zh-CN": "Hello=20world=21"
+  },
+  "Hello world!": {
+    "en": "Hello world!",
+    "zh-CN": "Hello world!"
+  },
+  "Slug": {
+    "en": "Slug",
+    "zh-CN": "Slug"
+  },
+  "Hello World": {
+    "en": "Hello World",
+    "zh-CN": "Hello World 你好"
+  },
+  "HTML": {
+    "en": "HTML",
+    "zh-CN": "HTML"
+  },
+  "<p>Hello <b>world</b></p>": {
+    "en": "<p>Hello <b>world</b></p>",
+    "zh-CN": "<p>Hello <b>world</b></p>"
+  },
+  "SQL string": {
+    "en": "SQL string",
+    "zh-CN": "SQL 字符串"
+  },
+  "O'Reilly\nline two": {
+    "en": "O'Reilly\nline two",
+    "zh-CN": "O'Reilly\nline two"
+  },
+  "Comma after each line": {
+    "en": "Comma after each line",
+    "zh-CN": "每行后面加逗号"
+  },
+  "Match UI": {
+    "en": "Match UI",
+    "zh-CN": "跟随界面"
+  },
+  "简体中文": {
+    "en": "简体中文",
+    "zh-CN": "简体中文"
+  },
+  "繁體中文": {
+    "en": "繁體中文",
+    "zh-CN": "繁體中文"
+  },
+  "English": {
+    "en": "English",
+    "zh-CN": "English"
+  },
+  "日本語": {
+    "en": "日本語",
+    "zh-CN": "日本語"
+  },
+  "한국어": {
+    "en": "한국어",
+    "zh-CN": "한국어"
+  },
+  "Español": {
+    "en": "Español",
+    "zh-CN": "Español"
+  },
+  "Italiano": {
+    "en": "Italiano",
+    "zh-CN": "Italiano"
+  },
+  "Português": {
+    "en": "Português",
+    "zh-CN": "Português"
+  },
+  "Türkçe": {
+    "en": "Türkçe",
+    "zh-CN": "Türkçe"
+  },
+  "Azərbaycan": {
+    "en": "Azərbaycan",
+    "zh-CN": "Azərbaycan"
+  },
+  "Repeat count": {
+    "en": "Repeat count",
+    "zh-CN": "重复次数"
+  },
+  "Default copy language": {
+    "en": "Default copy language",
+    "zh-CN": "默认文案语言"
+  },
+  "Custom content (optional)": {
+    "en": "Custom content (optional)",
+    "zh-CN": "自定义内容（可选）"
+  },
+  "Leave blank for the default DBX copy. Multiple lines are supported.": {
+    "en": "Leave blank for the default DBX copy. Multiple lines are supported.",
+    "zh-CN": "留空使用默认 DBX 推广文案，可输入多行内容。"
+  },
+  "Each repetition is separated by a newline. 1–{0} repetitions; custom content up to {1} characters.": {
+    "en": "Each repetition is separated by a newline. 1–{0} repetitions; custom content up to {1} characters.",
+    "zh-CN": "每次重复之间换行；1–{0} 次，自定义内容最多 {1} 个字符。"
+  },
+  "Generated output": {
+    "en": "Generated output",
+    "zh-CN": "生成结果"
+  },
+  "Custom content is limited to 10,000 characters.": {
+    "en": "Custom content is limited to 10,000 characters.",
+    "zh-CN": "自定义内容最多 10,000 个字符。"
+  },
+  "Output is limited to 1,000,000 characters. Reduce the repeat count or content length.": {
+    "en": "Output is limited to 1,000,000 characters. Reduce the repeat count or content length.",
+    "zh-CN": "输出最多 1,000,000 个字符，请减少重复次数或内容长度。"
+  },
+  "Markdown": {
+    "en": "Markdown",
+    "zh-CN": "Markdown",
+    "zh-TW": "Markdown",
+    "es": "Markdown",
+    "it": "Markdown",
+    "ja": "Markdown",
+    "pt-BR": "Markdown"
+  },
+  "Type on the left; the preview updates as you type": {
+    "en": "Type on the left; the preview updates as you type",
+    "zh-CN": "在左侧输入，右侧即时渲染"
+  },
+  "Markdown input": {
+    "en": "Markdown input",
+    "zh-CN": "Markdown 输入"
+  },
+  "Address family": {
+    "en": "Address family",
+    "zh-CN": "地址族"
+  },
+  "IPv6 or CIDR": {
+    "en": "IPv6 or CIDR",
+    "zh-CN": "IPv6 或 CIDR"
+  },
+  "IPv4 or CIDR": {
+    "en": "IPv4 or CIDR",
+    "zh-CN": "IPv4 或 CIDR"
+  },
+  "For example, 2001:db8::1/64": {
+    "en": "For example, 2001:db8::1/64",
+    "zh-CN": "例如 2001:db8::1/64"
+  },
+  "For example, 192.168.1.10/24": {
+    "en": "For example, 192.168.1.10/24",
+    "zh-CN": "例如 192.168.1.10/24"
+  },
+  "Default prefix": {
+    "en": "Default prefix",
+    "zh-CN": "默认前缀"
+  },
+  "This is the broadcast address of the subnet.": {
+    "en": "This is the broadcast address of the subnet.",
+    "zh-CN": "这是当前网段的广播地址。"
+  },
+  " It belongs to {0} and normally cannot be assigned to a host.": {
+    "en": " It belongs to {0} and normally cannot be assigned to a host.",
+    "zh-CN": " 所属网段为 {0}，通常不能分配给主机。"
+  },
+  "Subnet": {
+    "en": "Subnet",
+    "zh-CN": "所属网段"
+  },
+  "Subnet mask": {
+    "en": "Subnet mask",
+    "zh-CN": "子网掩码"
+  },
+  "Network": {
+    "en": "Network",
+    "zh-CN": "网络地址"
+  },
+  "Broadcast": {
+    "en": "Broadcast",
+    "zh-CN": "广播地址"
+  },
+  "First usable": {
+    "en": "First usable",
+    "zh-CN": "首个可用地址"
+  },
+  "Last usable": {
+    "en": "Last usable",
+    "zh-CN": "最后可用地址"
+  },
+  "Total addresses": {
+    "en": "Total addresses",
+    "zh-CN": "地址总数"
+  },
+  "Usable addresses": {
+    "en": "Usable addresses",
+    "zh-CN": "可用地址数"
+  },
+  "Wildcard mask": {
+    "en": "Wildcard mask",
+    "zh-CN": "通配掩码"
+  },
+  "Address type": {
+    "en": "Address type",
+    "zh-CN": "地址类型"
+  },
+  "Address representations": {
+    "en": "Address representations",
+    "zh-CN": "地址表示"
+  },
+  "Unsigned integer": {
+    "en": "Unsigned integer",
+    "zh-CN": "无符号整数"
+  },
+  "Hexadecimal": {
+    "en": "Hexadecimal",
+    "zh-CN": "十六进制"
+  },
+  "Binary": {
+    "en": "Binary",
+    "zh-CN": "二进制"
+  },
+  "Subnet splitting": {
+    "en": "Subnet splitting",
+    "zh-CN": "子网切分"
+  },
+  "Target prefix": {
+    "en": "Target prefix",
+    "zh-CN": "目标前缀"
+  },
+  "Subnet count": {
+    "en": "Subnet count",
+    "zh-CN": "子网数量"
+  },
+  "At most 64 subnets are shown to keep the browser responsive.": {
+    "en": "At most 64 subnets are shown to keep the browser responsive.",
+    "zh-CN": "为避免浏览器卡顿，最多显示 64 个子网。"
+  },
+  "Mask to CIDR": {
+    "en": "Mask to CIDR",
+    "zh-CN": "掩码转 CIDR"
+  },
+  "CIDR prefix": {
+    "en": "CIDR prefix",
+    "zh-CN": "CIDR 前缀"
+  },
+  "Integer to IPv4": {
+    "en": "Integer to IPv4",
+    "zh-CN": "整数转 IPv4"
+  },
+  "IPv4 address": {
+    "en": "IPv4 address",
+    "zh-CN": "IPv4 地址"
+  },
+  "Increase": {
+    "en": "Increase",
+    "zh-CN": "增加"
+  },
+  "Decrease": {
+    "en": "Decrease",
+    "zh-CN": "减少"
+  },
+  "Password": {
+    "en": "Password",
+    "zh-CN": "密码"
+  },
+  "Random bytes": {
+    "en": "Random bytes",
+    "zh-CN": "随机字节"
+  },
+  "Include symbols": {
+    "en": "Include symbols",
+    "zh-CN": "含符号"
+  },
+  "No symbols": {
+    "en": "No symbols",
+    "zh-CN": "不含符号"
+  },
+  "Generated value": {
+    "en": "Generated value",
+    "zh-CN": "生成结果"
+  },
+  "Domain": {
+    "en": "Domain",
+    "zh-CN": "域名"
+  },
+  "Unicode output": {
+    "en": "Unicode output",
+    "zh-CN": "Unicode 输出"
+  },
+  "ACE output": {
+    "en": "ACE output",
+    "zh-CN": "ACE 输出"
+  },
+  "Enter a valid Unicode or xn-- domain": {
+    "en": "Enter a valid Unicode or xn-- domain",
+    "zh-CN": "请输入有效域名（Unicode 或 xn-- 编码）"
+  },
+  "QR Code": {
+    "en": "QR Code",
+    "zh-CN": "QR Code"
+  },
+  "Han Xin": {
+    "en": "Han Xin",
+    "zh-CN": "汉信码"
+  },
+  "PDF417": {
+    "en": "PDF417",
+    "zh-CN": "PDF417"
+  },
+  "Data Matrix": {
+    "en": "Data Matrix",
+    "zh-CN": "Data Matrix"
+  },
+  "Basic": {
+    "en": "Basic",
+    "zh-CN": "基础样式"
+  },
+  "Rounded": {
+    "en": "Rounded",
+    "zh-CN": "圆角"
+  },
+  "Dots": {
+    "en": "Dots",
+    "zh-CN": "圆点"
+  },
+  "Indigo": {
+    "en": "Indigo",
+    "zh-CN": "靛蓝"
+  },
+  "Inverted": {
+    "en": "Inverted",
+    "zh-CN": "反色"
+  },
+  "Text or URL": {
+    "en": "Text or URL",
+    "zh-CN": "文本或链接"
+  },
+  "ECC": {
+    "en": "ECC",
+    "zh-CN": "容错率"
+  },
+  "Custom size": {
+    "en": "Custom size",
+    "zh-CN": "自定义尺寸"
+  },
+  "Version": {
+    "en": "Version",
+    "zh-CN": "码版本"
+  },
+  "Auto": {
+    "en": "Auto",
+    "zh-CN": "自动"
+  },
+  "Quiet zone": {
+    "en": "Quiet zone",
+    "zh-CN": "码边距"
+  },
+  "{0} modules": {
+    "en": "{0} modules",
+    "zh-CN": "{0}个色块"
+  },
+  "Change logo": {
+    "en": "Change logo",
+    "zh-CN": "更换 Logo"
+  },
+  "Upload logo": {
+    "en": "Upload logo",
+    "zh-CN": "上传 Logo"
+  },
+  "Logo": {
+    "en": "Logo",
+    "zh-CN": "Logo"
+  },
+  "With a logo, 30% error correction scans more reliably.": {
+    "en": "With a logo, 30% error correction scans more reliably.",
+    "zh-CN": "带 Logo 时建议把容错率调到 30%。"
+  },
+  "Modules": {
+    "en": "Modules",
+    "zh-CN": "模块"
+  },
+  "Square": {
+    "en": "Square",
+    "zh-CN": "方形"
+  },
+  "Foreground": {
+    "en": "Foreground",
+    "zh-CN": "前景色"
+  },
+  "Decode image": {
+    "en": "Decode image",
+    "zh-CN": "图片识码"
+  },
+  "Detecting…": {
+    "en": "Detecting…",
+    "zh-CN": "识别中…"
+  },
+  "Choose or paste images": {
+    "en": "Choose or paste images",
+    "zh-CN": "选择或粘贴图片（可多选）"
+  },
+  "Use as content": {
+    "en": "Use as content",
+    "zh-CN": "作为生成内容"
+  },
+  "Decodes QR, Data Matrix, and PDF417 locally without uploading the image. Han Xin image decoding is not yet supported.": {
+    "en": "Decodes QR, Data Matrix, and PDF417 locally without uploading the image. Han Xin image decoding is not yet supported.",
+    "zh-CN": "离线识别 QR、Data Matrix 与 PDF417，不上传图片；暂不支持汉信码识别。"
+  },
+  "Switch": {
+    "en": "Switch",
+    "zh-CN": "切换"
+  },
+  "Use automatic size": {
+    "en": "Use automatic size",
+    "zh-CN": "改用自动尺寸"
+  },
+  "Saved": {
+    "en": "Saved",
+    "zh-CN": "已保存"
+  },
+  "Downloaded": {
+    "en": "Downloaded",
+    "zh-CN": "已下载"
+  },
+  "Download PNG": {
+    "en": "Download PNG",
+    "zh-CN": "下载 PNG"
+  },
+  "Download SVG": {
+    "en": "Download SVG",
+    "zh-CN": "下载 SVG"
+  },
+  "Copy image": {
+    "en": "Copy image",
+    "zh-CN": "复制图片"
+  },
+  "Saved to": {
+    "en": "Saved to",
+    "zh-CN": "已保存到"
+  },
+  "Show in folder": {
+    "en": "Show in folder",
+    "zh-CN": "打开所在文件夹"
+  },
+  "This host cannot copy images. Download instead.": {
+    "en": "This host cannot copy images. Download instead.",
+    "zh-CN": "当前环境无法复制图片，请下载。"
+  },
+  "Could not save the file. Try copying the image.": {
+    "en": "Could not save the file. Try copying the image.",
+    "zh-CN": "无法保存文件，请尝试复制图片。"
+  },
+  "Type text to generate a barcode.": {
+    "en": "Type text to generate a barcode.",
+    "zh-CN": "输入文本后生成条码。"
+  },
+  "Custom": {
+    "en": "Custom",
+    "zh-CN": "自定义"
+  },
+  "{0}, {1}, {2}×{3}px": {
+    "en": "{0}, {1}, {2}×{3}px",
+    "zh-CN": "{0}，{1}，{2}×{3}px"
+  },
+  "{0}, {1}×{2}px": {
+    "en": "{0}, {1}×{2}px",
+    "zh-CN": "{0}，{1}×{2}px"
+  },
+  "Could not read the logo image.": {
+    "en": "Could not read the logo image.",
+    "zh-CN": "无法读取 Logo 图片。"
+  },
+  "Could not load this barcode type.": {
+    "en": "Could not load this barcode type.",
+    "zh-CN": "无法加载该码制。"
+  },
+  "Content exceeds the {0} Data Matrix capacity. Use Auto or choose a larger version.": {
+    "en": "Content exceeds the {0} Data Matrix capacity. Use Auto or choose a larger version.",
+    "zh-CN": "内容超出 {0} Data Matrix 的容量，请使用「自动」或选择更大的码版本。"
+  },
+  "Data exceeds this version. Switch version to Auto or lower error correction.": {
+    "en": "Data exceeds this version. Switch version to Auto or lower error correction.",
+    "zh-CN": "数据超出当前码版本容量，请改成「自动」或降低容错率。"
+  },
+  "Data is too long. Lower error correction or shorten the text.": {
+    "en": "Data is too long. Lower error correction or shorten the text.",
+    "zh-CN": "数据太长，请降低容错率或缩短内容。"
+  },
+  "Save PNG": {
+    "en": "Save PNG",
+    "zh-CN": "保存 PNG"
+  },
+  "Choose an image file.": {
+    "en": "Choose an image file.",
+    "zh-CN": "请选择图片文件。"
+  },
+  "Keep the logo under 1.5 MB.": {
+    "en": "Keep the logo under 1.5 MB.",
+    "zh-CN": "Logo 请小于 1.5 MB。"
+  },
+  "Level {0}": {
+    "en": "Level {0}",
+    "zh-CN": "级别 {0}"
+  },
+  "Images are limited to 10 MB.": {
+    "en": "Images are limited to 10 MB.",
+    "zh-CN": "图片不能超过 10 MB。"
+  },
+  "No QR, Data Matrix, or PDF417 code was found. Han Xin image decoding is not yet supported; use a clear, complete image with a quiet zone.": {
+    "en": "No QR, Data Matrix, or PDF417 code was found. Han Xin image decoding is not yet supported; use a clear, complete image with a quiet zone.",
+    "zh-CN": "图片中未识别到 QR、Data Matrix 或 PDF417。汉信码暂不支持图片识别；请使用清晰、完整且边缘留白的图片。"
+  },
+  "Save SVG": {
+    "en": "Save SVG",
+    "zh-CN": "保存 SVG"
+  },
+  "Replace with": {
+    "en": "Replace with",
+    "zh-CN": "替换为"
+  },
+  "g: global; i: ignore case; m: multiline": {
+    "en": "g: global; i: ignore case; m: multiline",
+    "zh-CN": "g：全局匹配；i：忽略大小写；m：多行模式"
+  },
+  "Flags: g global · i ignore case · m multiline": {
+    "en": "Flags: g global · i ignore case · m multiline",
+    "zh-CN": "标志：g 全部匹配 · i 忽略大小写 · m 多行模式"
+  },
+  "Test text": {
+    "en": "Test text",
+    "zh-CN": "测试文本"
+  },
+  "Matches": {
+    "en": "Matches",
+    "zh-CN": "匹配预览"
+  },
+  "Matches highlight as you type.": {
+    "en": "Matches highlight as you type.",
+    "zh-CN": "输入文本后高亮匹配。"
+  },
+  "Replacement result": {
+    "en": "Replacement result",
+    "zh-CN": "替换结果"
+  },
+  "Replacement appears here": {
+    "en": "Replacement appears here",
+    "zh-CN": "替换结果会显示在这里"
+  },
+  "Only the first 10,000 matches are shown; replacement still includes all matches.": {
+    "en": "Only the first 10,000 matches are shown; replacement still includes all matches.",
+    "zh-CN": "仅显示前 10,000 处匹配；替换结果仍处理全部匹配。"
+  },
+  "Input is too large": {
+    "en": "Input is too large",
+    "zh-CN": "输入过大"
+  },
+  "Regex execution timed out": {
+    "en": "Regex execution timed out",
+    "zh-CN": "正则执行超时"
+  },
+  "Regex execution failed": {
+    "en": "Regex execution failed",
+    "zh-CN": "正则执行失败"
+  },
+  "Matching…": {
+    "en": "Matching…",
+    "zh-CN": "正在匹配…"
+  },
+  "{0} match(es)": {
+    "en": "{0} match(es)",
+    "zh-CN": "{0} 处匹配"
+  },
+  "Extract": {
+    "en": "Extract",
+    "zh-CN": "提取",
+    "zh-TW": "擷取",
+    "es": "Extraer",
+    "it": "Estrai",
+    "ja": "抽出",
+    "pt-BR": "Extrair"
+  },
+  "Difference": {
+    "en": "Difference",
+    "zh-CN": "时间差",
+    "zh-TW": "時間差",
+    "es": "Diferencia",
+    "it": "Differenza",
+    "ja": "時間差",
+    "pt-BR": "Diferença"
+  },
+  "Arithmetic": {
+    "en": "Arithmetic",
+    "zh-CN": "日期加减",
+    "zh-TW": "日期加減",
+    "es": "Aritmética",
+    "it": "Aritmetica",
+    "ja": "日時の加減算",
+    "pt-BR": "Aritmética"
+  },
+  "Picker": {
+    "en": "Picker",
+    "zh-CN": "取色",
+    "zh-TW": "取色",
+    "es": "Selector",
+    "it": "Selettore",
+    "ja": "色選択",
+    "pt-BR": "Seletor"
+  },
+  "Rotate": {
+    "en": "Rotate",
+    "zh-CN": "旋转",
+    "zh-TW": "旋轉",
+    "es": "Girar",
+    "it": "Ruota",
+    "ja": "回転",
+    "pt-BR": "Girar"
+  },
+  "Flip": {
+    "en": "Flip",
+    "zh-CN": "翻转",
+    "zh-TW": "翻轉",
+    "es": "Voltear",
+    "it": "Capovolgi",
+    "ja": "反転",
+    "pt-BR": "Virar"
+  },
+  "Compress": {
+    "en": "Compress",
+    "zh-CN": "压缩",
+    "zh-TW": "壓縮",
+    "es": "Comprimir",
+    "it": "Comprimi",
+    "ja": "圧縮",
+    "pt-BR": "Comprimir"
+  },
+  "Dedupe": {
+    "en": "Dedupe",
+    "zh-CN": "去重",
+    "zh-TW": "去重",
+    "es": "Quitar duplicados",
+    "it": "Rimuovi duplicati",
+    "ja": "重複削除",
+    "pt-BR": "Remover duplicados"
+  },
+  "Working…": {
+    "en": "Working…",
+    "zh-CN": "处理中…"
+  },
+  "Open spreadsheet": {
+    "en": "Open spreadsheet",
+    "zh-CN": "打开表格"
+  },
+  "Worksheet": {
+    "en": "Worksheet",
+    "zh-CN": "工作表"
+  },
+  "Worksheet actions": {
+    "en": "Worksheet actions",
+    "zh-CN": "工作表操作"
+  },
+  "New sheet": {
+    "en": "New sheet",
+    "zh-CN": "新增工作表"
+  },
+  "New": {
+    "en": "New",
+    "zh-CN": "新增"
+  },
+  "Rename sheet": {
+    "en": "Rename sheet",
+    "zh-CN": "重命名工作表"
+  },
+  "Rename": {
+    "en": "Rename",
+    "zh-CN": "重命名"
+  },
+  "Delete sheet": {
+    "en": "Delete sheet",
+    "zh-CN": "删除工作表"
+  },
+  "Edit history": {
+    "en": "Edit history",
+    "zh-CN": "编辑历史"
+  },
+  "Undo last change": {
+    "en": "Undo last change",
+    "zh-CN": "撤销上一步更改"
+  },
+  "Undo": {
+    "en": "Undo",
+    "zh-CN": "撤销"
+  },
+  "Restore the undone change": {
+    "en": "Restore the undone change",
+    "zh-CN": "恢复刚才撤销的更改"
+  },
+  "Redo": {
+    "en": "Redo",
+    "zh-CN": "恢复"
+  },
+  "Export": {
+    "en": "Export",
+    "zh-CN": "导出"
+  },
+  "Export CSV": {
+    "en": "Export CSV",
+    "zh-CN": "导出 CSV"
+  },
+  "Export TSV": {
+    "en": "Export TSV",
+    "zh-CN": "导出 TSV"
+  },
+  "Export JSON": {
+    "en": "Export JSON",
+    "zh-CN": "导出 JSON"
+  },
+  "Export XLSX": {
+    "en": "Export XLSX",
+    "zh-CN": "导出 XLSX"
+  },
+  "Search": {
+    "en": "Search",
+    "zh-CN": "搜索"
+  },
+  "Filter cells": {
+    "en": "Filter cells",
+    "zh-CN": "筛选单元格"
+  },
+  "Use first row as JSON headers": {
+    "en": "Use first row as JSON headers",
+    "zh-CN": "首行作为 JSON 列名"
+  },
+  "Files are processed locally in memory and are not uploaded.": {
+    "en": "Files are processed locally in memory and are not uploaded.",
+    "zh-CN": "文件只在本机内存中处理，不会上传。"
+  },
+  "Data-table editing: XLSX import reads cell values. Re-exporting does not preserve formulas, styles, images, or merged cells from the original file.": {
+    "en": "Data-table editing: XLSX import reads cell values. Re-exporting does not preserve formulas, styles, images, or merged cells from the original file.",
+    "zh-CN": "以数据表方式编辑：导入 XLSX 时读取单元格值，重新导出不会保留原文件的公式、样式、图片和合并单元格。"
+  },
+  "New spreadsheet": {
+    "en": "New spreadsheet",
+    "zh-CN": "新建表格"
+  },
+  "rows": {
+    "en": "rows",
+    "zh-CN": "行"
+  },
+  "columns": {
+    "en": "columns",
+    "zh-CN": "列"
+  },
+  "Filtered": {
+    "en": "Filtered",
+    "zh-CN": "已筛选"
+  },
+  "Delete column": {
+    "en": "Delete column",
+    "zh-CN": "删除此列"
+  },
+  "Delete row": {
+    "en": "Delete row",
+    "zh-CN": "删除此行"
+  },
+  "No matching cells.": {
+    "en": "No matching cells.",
+    "zh-CN": "没有匹配的单元格。"
+  },
+  "Add row": {
+    "en": "Add row",
+    "zh-CN": "添加一行"
+  },
+  "Add column": {
+    "en": "Add column",
+    "zh-CN": "添加一列"
+  },
+  "Rename worksheet": {
+    "en": "Rename worksheet",
+    "zh-CN": "重命名工作表"
+  },
+  "OK": {
+    "en": "OK",
+    "zh-CN": "确定"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "zh-CN": "取消"
+  },
+  "Delete worksheet": {
+    "en": "Delete worksheet",
+    "zh-CN": "删除工作表"
+  },
+  "Delete “{0}”? You can undo this.": {
+    "en": "Delete “{0}”? You can undo this.",
+    "zh-CN": "确定删除「{0}」？删除后可用撤销恢复。"
+  },
+  "Worksheet name cannot be empty.": {
+    "en": "Worksheet name cannot be empty.",
+    "zh-CN": "工作表名称不能为空。"
+  },
+  "Worksheet names must be unique.": {
+    "en": "Worksheet names must be unique.",
+    "zh-CN": "工作表名称不能重复。"
+  },
+  "The spreadsheet must be 50 MB or smaller.": {
+    "en": "The spreadsheet must be 50 MB or smaller.",
+    "zh-CN": "表格文件不能超过 50 MB。"
+  },
+  "Choose an XLSX, CSV, TSV, or JSON file.": {
+    "en": "Choose an XLSX, CSV, TSV, or JSON file.",
+    "zh-CN": "请选择 XLSX、CSV、TSV 或 JSON 文件。"
+  },
+  "Export failed.": {
+    "en": "Export failed.",
+    "zh-CN": "导出失败。"
+  },
+  "Chars": {
+    "en": "Chars",
+    "zh-CN": "字符"
+  },
+  "Words: each CJK character, or a Latin word.": {
+    "en": "Words: each CJK character, or a Latin word.",
+    "zh-CN": "词：汉字按字计，英文按单词计。"
+  },
+  "Text operation groups": {
+    "en": "Text operation groups",
+    "zh-CN": "文本处理分类"
+  },
+  "Use result as input": {
+    "en": "Use result as input",
+    "zh-CN": "将结果继续处理"
+  },
+  "Undo processing": {
+    "en": "Undo processing",
+    "zh-CN": "撤销处理"
+  },
+  "Reshuffle": {
+    "en": "Reshuffle",
+    "zh-CN": "重新打乱"
+  },
+  "Choose an operation to continue. Text counts are always shown below.": {
+    "en": "Choose an operation to continue. Text counts are always shown below.",
+    "zh-CN": "选择下一步操作，继续处理当前文本。字数统计始终显示在底部。"
+  },
+  "Regex": {
+    "en": "Regex",
+    "zh-CN": "正则"
+  },
+  "First only": {
+    "en": "First only",
+    "zh-CN": "仅首次"
+  },
+  "Start": {
+    "en": "Start",
+    "zh-CN": "起始序号"
+  },
+  "Zero-pad width": {
+    "en": "Zero-pad width",
+    "zh-CN": "补零位数"
+  },
+  "Separator": {
+    "en": "Separator",
+    "zh-CN": "分隔符"
+  },
+  "Column": {
+    "en": "Column",
+    "zh-CN": "列号"
+  },
+  "Delimiter (blank means whitespace)": {
+    "en": "Delimiter (blank means whitespace)",
+    "zh-CN": "分隔符（留空表示空白）"
+  },
+  "Minimum length": {
+    "en": "Minimum length",
+    "zh-CN": "最短字符数"
+  },
+  "Maximum length (blank for no limit)": {
+    "en": "Maximum length (blank for no limit)",
+    "zh-CN": "最长字符数（留空不限）"
+  },
+  "chars": {
+    "en": "chars",
+    "zh-CN": "字"
+  },
+  "words": {
+    "en": "words",
+    "zh-CN": "词"
+  },
+  "lines": {
+    "en": "lines",
+    "zh-CN": "行"
+  },
+  "bytes": {
+    "en": "bytes",
+    "zh-CN": "字节"
+  },
+  "Clean": {
+    "en": "Clean",
+    "zh-CN": "清理"
+  },
+  "Case & naming": {
+    "en": "Case & naming",
+    "zh-CN": "大小写"
+  },
+  "Convert": {
+    "en": "Convert",
+    "zh-CN": "转换"
+  },
+  "Current Unix timestamp": {
+    "en": "Current Unix timestamp",
+    "zh-CN": "当前时间戳"
+  },
+  "Timestamp precision": {
+    "en": "Timestamp precision",
+    "zh-CN": "时间戳精度"
+  },
+  "10-digit (seconds)": {
+    "en": "10-digit (seconds)",
+    "zh-CN": "10 位（秒级）"
+  },
+  "13-digit (milliseconds)": {
+    "en": "13-digit (milliseconds)",
+    "zh-CN": "13 位（毫秒级）"
+  },
+  "Timestamp → Beijing time": {
+    "en": "Timestamp → Beijing time",
+    "zh-CN": "时间戳 → 北京时间"
+  },
+  "Unix timestamp to convert": {
+    "en": "Unix timestamp to convert",
+    "zh-CN": "待转换的 Unix 时间戳"
+  },
+  "Converted Beijing time": {
+    "en": "Converted Beijing time",
+    "zh-CN": "转换后的北京时间"
+  },
+  "Beijing time → timestamp (fields)": {
+    "en": "Beijing time → timestamp (fields)",
+    "zh-CN": "北京时间 → 时间戳（逐项输入）"
+  },
+  "Increase {0}": {
+    "en": "Increase {0}",
+    "zh-CN": "增加{0}"
+  },
+  "Decrease {0}": {
+    "en": "Decrease {0}",
+    "zh-CN": "减少{0}"
+  },
+  "Timestamp from fields": {
+    "en": "Timestamp from fields",
+    "zh-CN": "逐项输入转换后的时间戳"
+  },
+  "Converted timestamp": {
+    "en": "Converted timestamp",
+    "zh-CN": "转换后的时间戳"
+  },
+  "Beijing time → timestamp (quick format: YYYYMMDDHHMMSS)": {
+    "en": "Beijing time → timestamp (quick format: YYYYMMDDHHMMSS)",
+    "zh-CN": "北京时间 → 时间戳（快速输入格式：YYYYMMDDHHMMSS）"
+  },
+  "Also accepts 2026-09-18 20:31:17, 2026/09/18 20:31:17, and ISO 8601.": {
+    "en": "Also accepts 2026-09-18 20:31:17, 2026/09/18 20:31:17, and ISO 8601.",
+    "zh-CN": "也支持 2026-09-18 20:31:17、2026/09/18 20:31:17 和 ISO 8601。"
+  },
+  "Quick date-time input": {
+    "en": "Quick date-time input",
+    "zh-CN": "快速时间输入"
+  },
+  "Timestamp from quick input": {
+    "en": "Timestamp from quick input",
+    "zh-CN": "快速输入转换后的时间戳"
+  },
+  "Millisecond": {
+    "en": "Millisecond",
+    "zh-CN": "毫秒"
+  },
+  "Not a valid Unix timestamp": {
+    "en": "Not a valid Unix timestamp",
+    "zh-CN": "不是有效的时间戳"
+  },
+  "Fill in year, month, day, hour, minute, second, and millisecond": {
+    "en": "Fill in year, month, day, hour, minute, second, and millisecond",
+    "zh-CN": "请填写完整的年月日时分秒毫秒"
+  },
+  "Fill in year, month, day, hour, minute, and second": {
+    "en": "Fill in year, month, day, hour, minute, and second",
+    "zh-CN": "请填写完整的年月日时分秒"
+  },
+  "Not a valid Beijing time": {
+    "en": "Not a valid Beijing time",
+    "zh-CN": "不是有效的北京时间"
+  },
+  "Unrecognized date-time format": {
+    "en": "Unrecognized date-time format",
+    "zh-CN": "无法识别的时间格式"
+  },
+  "Decimal": {
+    "en": "Decimal",
+    "zh-CN": "十进制"
+  },
+  "Hex": {
+    "en": "Hex",
+    "zh-CN": "Hex"
+  },
+  "Octal": {
+    "en": "Octal",
+    "zh-CN": "八进制"
+  },
+  "JSON → YAML": {
+    "en": "JSON → YAML",
+    "zh-CN": "JSON → YAML"
+  },
+  "YAML → JSON": {
+    "en": "YAML → JSON",
+    "zh-CN": "YAML → JSON"
+  },
+  "JSON → CSV": {
+    "en": "JSON → CSV",
+    "zh-CN": "JSON → CSV"
+  },
+  "CSV → JSON": {
+    "en": "CSV → JSON",
+    "zh-CN": "CSV → JSON"
+  },
+  "JSON → XML": {
+    "en": "JSON → XML",
+    "zh-CN": "JSON → XML"
+  },
+  "XML → JSON": {
+    "en": "XML → JSON",
+    "zh-CN": "XML → JSON"
+  },
+  "JSON → TOML": {
+    "en": "JSON → TOML",
+    "zh-CN": "JSON → TOML"
+  },
+  "TOML → JSON": {
+    "en": "TOML → JSON",
+    "zh-CN": "TOML → JSON"
+  },
+  "JSON → SQL INSERT": {
+    "en": "JSON → SQL INSERT",
+    "zh-CN": "JSON → SQL INSERT"
+  },
+  "JSON → TypeScript": {
+    "en": "JSON → TypeScript",
+    "zh-CN": "JSON → TypeScript"
+  },
+  "Base64 URL": {
+    "en": "Base64 URL",
+    "zh-CN": "Base64 URL"
+  },
+  "Base32": {
+    "en": "Base32",
+    "zh-CN": "Base32"
+  },
+  "Base58": {
+    "en": "Base58",
+    "zh-CN": "Base58"
+  },
+  "HMAC-SHA1": {
+    "en": "HMAC-SHA1",
+    "zh-CN": "HMAC-SHA1"
+  },
+  "HMAC-SHA256": {
+    "en": "HMAC-SHA256",
+    "zh-CN": "HMAC-SHA256"
+  },
+  "HMAC-SHA384": {
+    "en": "HMAC-SHA384",
+    "zh-CN": "HMAC-SHA384"
+  },
+  "HMAC-SHA512": {
+    "en": "HMAC-SHA512",
+    "zh-CN": "HMAC-SHA512"
+  },
+  "HMAC-SM3": {
+    "en": "HMAC-SM3",
+    "zh-CN": "HMAC-SM3"
+  },
+  "OAEP-SHA256": {
+    "en": "OAEP-SHA256",
+    "zh-CN": "OAEP-SHA256"
+  },
+  "PKCS#1 v1.5": {
+    "en": "PKCS#1 v1.5",
+    "zh-CN": "PKCS#1 v1.5"
+  },
+  "SQL": {
+    "en": "SQL",
+    "zh-CN": "SQL"
+  },
+  "CSS": {
+    "en": "CSS",
+    "zh-CN": "CSS"
+  },
+  "JavaScript": {
+    "en": "JavaScript",
+    "zh-CN": "JavaScript"
+  },
+  "PKCS#8 PEM": {
+    "en": "PKCS#8 PEM",
+    "zh-CN": "PKCS#8 PEM"
+  },
+  "PKCS#1 PEM": {
+    "en": "PKCS#1 PEM",
+    "zh-CN": "PKCS#1 PEM"
+  },
+  "Symmetric / XOR": {
+    "en": "Symmetric / XOR",
+    "zh-CN": "对称加密 / XOR"
+  },
+  "HMAC / JWT": {
+    "en": "HMAC / JWT",
+    "zh-CN": "HMAC / JWT"
+  },
+  "UPPER": {
+    "en": "UPPER",
+    "zh-CN": "大写"
+  },
+  "lower": {
+    "en": "lower",
+    "zh-CN": "小写"
+  },
+  "Title": {
+    "en": "Title",
+    "zh-CN": "标题"
+  },
+  "camelCase": {
+    "en": "camelCase",
+    "zh-CN": "camelCase"
+  },
+  "PascalCase": {
+    "en": "PascalCase",
+    "zh-CN": "PascalCase"
+  },
+  "snake_case": {
+    "en": "snake_case",
+    "zh-CN": "snake_case"
+  },
+  "kebab-case": {
+    "en": "kebab-case",
+    "zh-CN": "kebab-case"
+  },
+  "trim": {
+    "en": "trim",
+    "zh-CN": "trim"
+  },
+  "Empty lines": {
+    "en": "Empty lines",
+    "zh-CN": "去空行"
+  },
+  "Spaces → Tab": {
+    "en": "Spaces → Tab",
+    "zh-CN": "空格 → Tab"
+  },
+  "Tab → spaces": {
+    "en": "Tab → spaces",
+    "zh-CN": "Tab → 空格"
+  },
+  "Sort": {
+    "en": "Sort",
+    "zh-CN": "排序"
+  },
+  "Unique": {
+    "en": "Unique",
+    "zh-CN": "去重"
+  },
+  "Prefix": {
+    "en": "Prefix",
+    "zh-CN": "前缀"
+  },
+  "Suffix": {
+    "en": "Suffix",
+    "zh-CN": "后缀"
+  },
+  "Reverse": {
+    "en": "Reverse",
+    "zh-CN": "倒序"
+  },
+  "Fullwidth": {
+    "en": "Fullwidth",
+    "zh-CN": "转全角"
+  },
+  "Halfwidth": {
+    "en": "Halfwidth",
+    "zh-CN": "转半角"
+  },
+  "Secret (Base32)": {
+    "en": "Secret (Base32)",
+    "zh-CN": "密钥（Base32）"
+  },
+  "Digits": {
+    "en": "Digits",
+    "zh-CN": "位数"
+  },
+  "Period": {
+    "en": "Period",
+    "zh-CN": "周期"
+  },
+  "Refreshes in {0}s": {
+    "en": "Refreshes in {0}s",
+    "zh-CN": "{0} 秒后刷新"
+  },
+  "Paste an authenticator secret to see the current code.": {
+    "en": "Paste an authenticator secret to see the current code.",
+    "zh-CN": "粘贴身份验证器密钥后会显示当前口令。"
+  },
+  "Not a valid TOTP secret or URI": {
+    "en": "Not a valid TOTP secret or URI",
+    "zh-CN": "不是有效的 TOTP 密钥或 URI"
+  },
+  "Not a valid Base32 secret": {
+    "en": "Not a valid Base32 secret",
+    "zh-CN": "不是有效的 Base32 密钥"
+  },
+  "Paste characters to inspect": {
+    "en": "Paste characters to inspect",
+    "zh-CN": "粘贴要检查的字符"
+  },
+  "Char": {
+    "en": "Char",
+    "zh-CN": "字符"
+  },
+  "Each character’s code point will appear here.": {
+    "en": "Each character’s code point will appear here.",
+    "zh-CN": "输入后会列出每个字符的码位。"
+  },
+  "Count": {
+    "en": "Count",
+    "zh-CN": "数量"
+  },
+  "Hyphens": {
+    "en": "Hyphens",
+    "zh-CN": "带连字符"
+  },
+  "Uppercase": {
+    "en": "Uppercase",
+    "zh-CN": "大写"
+  },
+  "Braces": {
+    "en": "Braces",
+    "zh-CN": "花括号"
+  },
+  "Create key vault": {
+    "en": "Create key vault",
+    "zh-CN": "创建密钥库"
+  },
+  "Unlock the vault to choose a saved key.": {
+    "en": "Unlock the vault to choose a saved key.",
+    "zh-CN": "解锁后即可选择已保存的密钥。"
+  },
+  "Unlock the vault before saving a key.": {
+    "en": "Unlock the vault before saving a key.",
+    "zh-CN": "写入密钥前需要先解锁。"
+  },
+  "No vault yet. Set a master password (8+ characters) to save the key.": {
+    "en": "No vault yet. Set a master password (8+ characters) to save the key.",
+    "zh-CN": "还没有密钥库。设置主密码（至少 8 位）后即可保存。"
+  },
+  "Master password": {
+    "en": "Master password",
+    "zh-CN": "主密码"
+  },
+  "Unlocking…": {
+    "en": "Unlocking…",
+    "zh-CN": "解锁中…"
+  },
+  "Unlock": {
+    "en": "Unlock",
+    "zh-CN": "解锁"
+  },
+  "Confirm password": {
+    "en": "Confirm password",
+    "zh-CN": "再输入一次"
+  },
+  "Creating…": {
+    "en": "Creating…",
+    "zh-CN": "创建中…"
+  },
+  "Create and continue": {
+    "en": "Create and continue",
+    "zh-CN": "创建并继续"
+  },
+  "Passwords do not match": {
+    "en": "Passwords do not match",
+    "zh-CN": "两次输入的主密码不一致"
+  },
+  "URL or query string": {
+    "en": "URL or query string",
+    "zh-CN": "URL 或查询串"
+  },
+  "Parsed": {
+    "en": "Parsed",
+    "zh-CN": "解析结果"
+  },
+  "Structure": {
+    "en": "Structure",
+    "zh-CN": "结构"
+  },
+  "Value": {
+    "en": "Value",
+    "zh-CN": "值"
+  },
+  "Query": {
+    "en": "Query",
+    "zh-CN": "查询参数"
+  },
+  "Hash query": {
+    "en": "Hash query",
+    "zh-CN": "Hash 参数"
+  },
+  "Paste a URL, encoded URL, or query string.": {
+    "en": "Paste a URL, encoded URL, or query string.",
+    "zh-CN": "粘贴 URL、编码后的 URL，或查询串。"
+  },
+  "Params": {
+    "en": "Params",
+    "zh-CN": "参数表"
+  },
+  "Set a master password (8+ characters) to store keys for the cipher tools.": {
+    "en": "Set a master password (8+ characters) to store keys for the cipher tools.",
+    "zh-CN": "设置主密码（至少 8 位）后即可保存密钥，供加解密工具选用。"
+  },
+  "Create vault": {
+    "en": "Create vault",
+    "zh-CN": "创建密钥库"
+  },
+  "Enter the master password to unlock.": {
+    "en": "Enter the master password to unlock.",
+    "zh-CN": "输入主密码解锁。"
+  },
+  "Unlocked · {0} key{1}": {
+    "en": "Unlocked · {0} key{1}",
+    "zh-CN": "已解锁 · {0} 把密钥"
+  },
+  "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.": {
+    "en": "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.",
+    "zh-CN": "对称加密、HMAC、JWT、XOR、非对称加密都从这里选用密钥。"
+  },
+  "Auto-lock": {
+    "en": "Auto-lock",
+    "zh-CN": "自动锁定"
+  },
+  "Lock": {
+    "en": "Lock",
+    "zh-CN": "锁定"
+  },
+  "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.": {
+    "en": "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.",
+    "zh-CN": "还没有密钥。添加 AES / SM4、HMAC、RSA / SM2，供加密、签名和 XOR 选用。"
+  },
+  "Filter": {
+    "en": "Filter",
+    "zh-CN": "筛选"
+  },
+  "Filter by name, algorithm, or fingerprint": {
+    "en": "Filter by name, algorithm, or fingerprint",
+    "zh-CN": "按名称、算法或指纹筛选"
+  },
+  "Filter keys": {
+    "en": "Filter keys",
+    "zh-CN": "筛选密钥"
+  },
+  "Showing {0} / {1}": {
+    "en": "Showing {0} / {1}",
+    "zh-CN": "显示 {0} / {1}"
+  },
+  "Drag the handle or use ↑↓ to reorder": {
+    "en": "Drag the handle or use ↑↓ to reorder",
+    "zh-CN": "拖动手柄或用 ↑↓ 调整顺序"
+  },
+  "{0} key{1}": {
+    "en": "{0} key{1}",
+    "zh-CN": "{0} 把密钥"
+  },
+  "No matching keys": {
+    "en": "No matching keys",
+    "zh-CN": "没有匹配的密钥"
+  },
+  "Used by": {
+    "en": "Used by",
+    "zh-CN": "用途"
+  },
+  "Fingerprint": {
+    "en": "Fingerprint",
+    "zh-CN": "指纹"
+  },
+  "Created": {
+    "en": "Created",
+    "zh-CN": "创建时间"
+  },
+  "Reorder “{0}”": {
+    "en": "Reorder “{0}”",
+    "zh-CN": "调整「{0}」顺序"
+  },
+  "Clear the filter to reorder": {
+    "en": "Clear the filter to reorder",
+    "zh-CN": "筛选时不能排序"
+  },
+  "Drag or use Up/Down to reorder": {
+    "en": "Drag or use Up/Down to reorder",
+    "zh-CN": "拖动或使用上下方向键排序"
+  },
+  "Key name": {
+    "en": "Key name",
+    "zh-CN": "密钥名称"
+  },
+  "Save": {
+    "en": "Save",
+    "zh-CN": "保存"
+  },
+  "Public": {
+    "en": "Public",
+    "zh-CN": "公钥"
+  },
+  "Reveal": {
+    "en": "Reveal",
+    "zh-CN": "原文"
+  },
+  "Add key": {
+    "en": "Add key",
+    "zh-CN": "添加密钥"
+  },
+  "e.g. test-key": {
+    "en": "e.g. test-key",
+    "zh-CN": "例如：测试密钥"
+  },
+  "Asymmetric cipher": {
+    "en": "Asymmetric cipher",
+    "zh-CN": "非对称加密",
+    "zh-TW": "非對稱加密",
+    "es": "Cifrado asimétrico",
+    "it": "Cifratura asimmetrica",
+    "ja": "非対称暗号",
+    "pt-BR": "Criptografia assimétrica"
+  },
+  "How": {
+    "en": "How",
+    "zh-CN": "方式"
+  },
+  "Paste existing": {
+    "en": "Paste existing",
+    "zh-CN": "粘贴已有密钥"
+  },
+  "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)": {
+    "en": "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)",
+    "zh-CN": "RSA PEM（PKCS#8 或 PKCS#1；公钥加密 / 私钥解密）"
+  },
+  "SM2 key": {
+    "en": "SM2 key",
+    "zh-CN": "SM2 密钥"
+  },
+  "Material (hex / base64)": {
+    "en": "Material (hex / base64)",
+    "zh-CN": "材料（hex / base64）"
+  },
+  "Current password": {
+    "en": "Current password",
+    "zh-CN": "当前主密码"
+  },
+  "New password": {
+    "en": "New password",
+    "zh-CN": "新主密码"
+  },
+  "Confirm new": {
+    "en": "Confirm new",
+    "zh-CN": "再输入一次"
+  },
+  "Updating…": {
+    "en": "Updating…",
+    "zh-CN": "更新中…"
+  },
+  "Update": {
+    "en": "Update",
+    "zh-CN": "更新"
+  },
+  "Public · {0}": {
+    "en": "Public · {0}",
+    "zh-CN": "公钥 · {0}"
+  },
+  "Secret · {0}": {
+    "en": "Secret · {0}",
+    "zh-CN": "原文 · {0}"
+  },
+  "Public keys are safe to share. Closing clears them from the UI.": {
+    "en": "Public keys are safe to share. Closing clears them from the UI.",
+    "zh-CN": "公钥可安全分享；关闭后会从界面清除。"
+  },
+  "Closing clears it from the UI. Do not leave the secret on screen.": {
+    "en": "Closing clears it from the UI. Do not leave the secret on screen.",
+    "zh-CN": "关闭后会从界面清除。不要把原文留在屏幕上。"
+  },
+  "Verify master password again": {
+    "en": "Verify master password again",
+    "zh-CN": "再次验证主密码"
+  },
+  "Show secret": {
+    "en": "Show secret",
+    "zh-CN": "显示原文"
+  },
+  "Delete key": {
+    "en": "Delete key",
+    "zh-CN": "删除密钥"
+  },
+  "Delete “{0}”? This cannot be undone.": {
+    "en": "Delete “{0}”? This cannot be undone.",
+    "zh-CN": "确定删除「{0}」？删除后不能恢复。"
+  },
+  "Deleting…": {
+    "en": "Deleting…",
+    "zh-CN": "删除中…"
+  },
+  "Never": {
+    "en": "Never",
+    "zh-CN": "从不"
+  },
+  "{0} min": {
+    "en": "{0} min",
+    "zh-CN": "{0} 分钟"
+  },
+  "Symmetric · XOR": {
+    "en": "Symmetric · XOR",
+    "zh-CN": "对称加密 · XOR"
+  },
+  "HMAC · XOR": {
+    "en": "HMAC · XOR",
+    "zh-CN": "HMAC · XOR"
+  },
+  "HMAC · JWT · XOR": {
+    "en": "HMAC · JWT · XOR",
+    "zh-CN": "HMAC · JWT · XOR"
+  },
+  "Cipher tools": {
+    "en": "Cipher tools",
+    "zh-CN": "加解密工具"
+  },
+  "For Symmetric cipher; XOR can reuse these byte keys.": {
+    "en": "For Symmetric cipher; XOR can reuse these byte keys.",
+    "zh-CN": "给「对称加密」选用，也可给 XOR 当字节密钥。"
+  },
+  "For HMAC; XOR can reuse these byte keys.": {
+    "en": "For HMAC; XOR can reuse these byte keys.",
+    "zh-CN": "给 HMAC 选用，也可给 XOR 当字节密钥。"
+  },
+  "For HMAC and JWT; XOR can reuse these byte keys.": {
+    "en": "For HMAC and JWT; XOR can reuse these byte keys.",
+    "zh-CN": "给 HMAC、JWT 选用，也可给 XOR 当字节密钥。"
+  },
+  "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.": {
+    "en": "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.",
+    "zh-CN": "给「非对称加密」的 RSA 选用。随机生成可选位数和 PEM 格式。"
+  },
+  "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.": {
+    "en": "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.",
+    "zh-CN": "给「非对称加密」的 SM2 选用。可随机生成或粘贴已有密钥。"
+  },
+  "Wait, another action is still running": {
+    "en": "Wait, another action is still running",
+    "zh-CN": "请稍候，正在处理上一步操作"
+  },
+  "Vault created and unlocked": {
+    "en": "Vault created and unlocked",
+    "zh-CN": "密钥库已创建并解锁"
+  },
+  "Unlocked": {
+    "en": "Unlocked",
+    "zh-CN": "已解锁"
+  },
+  "New passwords do not match": {
+    "en": "New passwords do not match",
+    "zh-CN": "两次输入的新密码不一致"
+  },
+  "Master password updated": {
+    "en": "Master password updated",
+    "zh-CN": "主密码已更新"
+  },
+  "Enter a name": {
+    "en": "Enter a name",
+    "zh-CN": "请填写名称"
+  },
+  "Paste the key material": {
+    "en": "Paste the key material",
+    "zh-CN": "请粘贴密钥材料"
+  },
+  "Key saved": {
+    "en": "Key saved",
+    "zh-CN": "密钥已保存"
+  },
+  "Renamed": {
+    "en": "Renamed",
+    "zh-CN": "已重命名"
+  },
+  "Enter the current master password": {
+    "en": "Enter the current master password",
+    "zh-CN": "请输入当前主密码"
+  },
+  "Deleted": {
+    "en": "Deleted",
+    "zh-CN": "已删除"
+  },
+  "Space": {
+    "en": "Space",
+    "zh-CN": "空白"
+  },
+  "JSON workbench": {
+    "en": "JSON workbench",
+    "zh-CN": "JSON 工作台",
+    "zh-TW": "JSON 工作台",
+    "es": "Banco de trabajo JSON",
+    "it": "Area di lavoro JSON",
+    "ja": "JSON ワークベンチ",
+    "pt-BR": "Bancada JSON"
+  },
+  "Data format convert": {
+    "en": "Data format convert",
+    "zh-CN": "数据格式转换",
+    "zh-TW": "資料格式轉換",
+    "es": "Conversión de formatos",
+    "it": "Conversione formati",
+    "ja": "データ形式変換",
+    "pt-BR": "Conversão de formatos"
+  },
+  "Code formatter": {
+    "en": "Code formatter",
+    "zh-CN": "代码格式化",
+    "zh-TW": "程式碼格式化",
+    "es": "Formateador de código",
+    "it": "Formattatore di codice",
+    "ja": "コードフォーマッター",
+    "pt-BR": "Formatador de código"
+  },
+  "Spreadsheet": {
+    "en": "Spreadsheet",
+    "zh-CN": "电子表格",
+    "zh-TW": "電子表格",
+    "es": "Hoja de cálculo",
+    "it": "Foglio di calcolo",
+    "ja": "スプレッドシート",
+    "pt-BR": "Planilha"
+  },
+  "Base / Hex": {
+    "en": "Base / Hex",
+    "zh-CN": "Base / Hex",
+    "zh-TW": "Base / Hex",
+    "es": "Base / Hex",
+    "it": "Base / Hex",
+    "ja": "Base / Hex",
+    "pt-BR": "Base / Hex"
+  },
+  "URL encode": {
+    "en": "URL encode",
+    "zh-CN": "URL 编解码",
+    "zh-TW": "URL 編解碼",
+    "es": "Codificación URL",
+    "it": "Codifica URL",
+    "ja": "URL エンコード",
+    "pt-BR": "Codificação de URL"
+  },
+  "Character escape": {
+    "en": "Character escape",
+    "zh-CN": "字符转义",
+    "zh-TW": "字元轉義",
+    "es": "Escape de caracteres",
+    "it": "Escape caratteri",
+    "ja": "文字エスケープ",
+    "pt-BR": "Escape de caracteres"
+  },
+  "SQL escape": {
+    "en": "SQL escape",
+    "zh-CN": "SQL 转义",
+    "zh-TW": "SQL 轉義",
+    "es": "Escape SQL",
+    "it": "Escape SQL",
+    "ja": "SQL エスケープ",
+    "pt-BR": "Escape SQL"
+  },
+  "Data URI": {
+    "en": "Data URI",
+    "zh-CN": "Data URI",
+    "zh-TW": "Data URI",
+    "es": "URI de datos",
+    "it": "URI dati",
+    "ja": "データ URI",
+    "pt-BR": "URI de dados"
+  },
+  "Punycode / IDN": {
+    "en": "Punycode / IDN",
+    "zh-CN": "Punycode / IDN",
+    "zh-TW": "Punycode / IDN",
+    "es": "Punycode / IDN",
+    "it": "Punycode / IDN",
+    "ja": "Punycode / IDN",
+    "pt-BR": "Punycode / IDN"
+  },
+  "Quoted-Printable": {
+    "en": "Quoted-Printable",
+    "zh-CN": "Quoted-Printable",
+    "zh-TW": "Quoted-Printable",
+    "es": "Quoted-Printable",
+    "it": "Quoted-Printable",
+    "ja": "Quoted-Printable",
+    "pt-BR": "Quoted-Printable"
+  },
+  "Timestamp": {
+    "en": "Timestamp",
+    "zh-CN": "时间戳",
+    "zh-TW": "時間戳",
+    "es": "Marca de tiempo",
+    "it": "Timestamp",
+    "ja": "タイムスタンプ",
+    "pt-BR": "Timestamp"
+  },
+  "Color convert": {
+    "en": "Color convert",
+    "zh-CN": "颜色转换",
+    "zh-TW": "顏色轉換",
+    "es": "Conversión de color",
+    "it": "Conversione colori",
+    "ja": "色変換",
+    "pt-BR": "Conversão de cores"
+  },
+  "Number base": {
+    "en": "Number base",
+    "zh-CN": "进制转换",
+    "zh-TW": "進制轉換",
+    "es": "Conversión de bases",
+    "it": "Conversione di base",
+    "ja": "進数変換",
+    "pt-BR": "Conversão de bases"
+  },
+  "Network / CIDR": {
+    "en": "Network / CIDR",
+    "zh-CN": "网络 / CIDR",
+    "zh-TW": "網路 / CIDR",
+    "es": "Red / CIDR",
+    "it": "Rete / CIDR",
+    "ja": "ネットワーク / CIDR",
+    "pt-BR": "Rede / CIDR"
+  },
+  "Regex tester": {
+    "en": "Regex tester",
+    "zh-CN": "正则测试",
+    "zh-TW": "正規測試",
+    "es": "Prueba de expresiones regulares",
+    "it": "Test espressioni regolari",
+    "ja": "正規表現テスター",
+    "pt-BR": "Teste de expressões regulares"
+  },
+  "Text diff": {
+    "en": "Text diff",
+    "zh-CN": "文本对比",
+    "zh-TW": "文字對比",
+    "es": "Comparación de texto",
+    "it": "Confronto testi",
+    "ja": "テキスト比較",
+    "pt-BR": "Comparação de texto"
+  },
+  "Unicode inspector": {
+    "en": "Unicode inspector",
+    "zh-CN": "Unicode 检查",
+    "zh-TW": "Unicode 檢查",
+    "es": "Inspector Unicode",
+    "it": "Analisi Unicode",
+    "ja": "Unicode インスペクター",
+    "pt-BR": "Inspetor Unicode"
+  },
+  "Hash & checksum": {
+    "en": "Hash & checksum",
+    "zh-CN": "哈希校验",
+    "zh-TW": "雜湊校驗",
+    "es": "Hash y suma de verificación",
+    "it": "Hash e checksum",
+    "ja": "ハッシュとチェックサム",
+    "pt-BR": "Hash e checksum"
+  },
+  "JWT": {
+    "en": "JWT",
+    "zh-CN": "JWT",
+    "zh-TW": "JWT",
+    "es": "JWT",
+    "it": "JWT",
+    "ja": "JWT",
+    "pt-BR": "JWT"
+  },
+  "Symmetric cipher": {
+    "en": "Symmetric cipher",
+    "zh-CN": "对称加密",
+    "zh-TW": "對稱加密",
+    "es": "Cifrado simétrico",
+    "it": "Cifratura simmetrica",
+    "ja": "対称暗号",
+    "pt-BR": "Criptografia simétrica"
+  },
+  "HMAC": {
+    "en": "HMAC",
+    "zh-CN": "HMAC",
+    "zh-TW": "HMAC",
+    "es": "HMAC",
+    "it": "HMAC",
+    "ja": "HMAC",
+    "pt-BR": "HMAC"
+  },
+  "TOTP": {
+    "en": "TOTP",
+    "zh-CN": "TOTP",
+    "zh-TW": "TOTP",
+    "es": "TOTP",
+    "it": "TOTP",
+    "ja": "TOTP",
+    "pt-BR": "TOTP"
+  },
+  "Certificate & SSH": {
+    "en": "Certificate & SSH",
+    "zh-CN": "证书与 SSH",
+    "zh-TW": "憑證與 SSH",
+    "es": "Certificados y SSH",
+    "it": "Certificati e SSH",
+    "ja": "証明書と SSH",
+    "pt-BR": "Certificados e SSH"
+  },
+  "JWK / JWKS": {
+    "en": "JWK / JWKS",
+    "zh-CN": "JWK / JWKS",
+    "zh-TW": "JWK / JWKS",
+    "es": "JWK / JWKS",
+    "it": "JWK / JWKS",
+    "ja": "JWK / JWKS",
+    "pt-BR": "JWK / JWKS"
+  },
+  "Symmetric key": {
+    "en": "Symmetric key",
+    "zh-CN": "对称密钥",
+    "zh-TW": "對稱金鑰",
+    "es": "Clave simétrica",
+    "it": "Chiave simmetrica",
+    "ja": "対称鍵",
+    "pt-BR": "Chave simétrica"
+  },
+  "Key pair": {
+    "en": "Key pair",
+    "zh-CN": "密钥对",
+    "zh-TW": "金鑰對",
+    "es": "Par de claves",
+    "it": "Coppia di chiavi",
+    "ja": "鍵ペア",
+    "pt-BR": "Par de chaves"
+  },
+  "XOR (debug)": {
+    "en": "XOR (debug)",
+    "zh-CN": "XOR（调试）",
+    "zh-TW": "XOR（除錯）",
+    "es": "XOR (depuración)",
+    "it": "XOR (debug)",
+    "ja": "XOR（デバッグ）",
+    "pt-BR": "XOR (depuração)"
+  },
+  "Unique ID": {
+    "en": "Unique ID",
+    "zh-CN": "唯一 ID",
+    "zh-TW": "唯一 ID",
+    "es": "ID único",
+    "it": "ID univoco",
+    "ja": "一意の ID",
+    "pt-BR": "ID único"
+  },
+  "Random password": {
+    "en": "Random password",
+    "zh-CN": "随机密码",
+    "zh-TW": "隨機密碼",
+    "es": "Contraseña aleatoria",
+    "it": "Password casuale",
+    "ja": "ランダムパスワード",
+    "pt-BR": "Senha aleatória"
+  },
+  "QR & barcodes": {
+    "en": "QR & barcodes",
+    "zh-CN": "二维码 / 条码",
+    "zh-TW": "二維碼 / 條碼",
+    "es": "QR y códigos de barras",
+    "it": "QR e codici a barre",
+    "ja": "QR・バーコード",
+    "pt-BR": "QR e códigos de barras"
+  },
+  "Repeated text": {
+    "en": "Repeated text",
+    "zh-CN": "重复文本",
+    "zh-TW": "重複文字",
+    "es": "Texto repetido",
+    "it": "Testo ripetuto",
+    "ja": "繰り返しテキスト",
+    "pt-BR": "Texto repetido"
+  },
+  "Image editor": {
+    "en": "Image editor",
+    "zh-CN": "图片处理",
+    "zh-TW": "圖片處理",
+    "es": "Editor de imágenes",
+    "it": "Editor immagini",
+    "ja": "画像編集",
+    "pt-BR": "Editor de imagens"
+  },
+  "Placeholder image": {
+    "en": "Placeholder image",
+    "zh-CN": "占位图",
+    "zh-TW": "佔位圖",
+    "es": "Imagen de marcador",
+    "it": "Immagine segnaposto",
+    "ja": "プレースホルダー画像",
+    "pt-BR": "Imagem de espaço reservado"
+  },
+  "Trim": {
+    "en": "Trim",
+    "zh-CN": "去首尾空白"
+  },
+  "Remove empty lines": {
+    "en": "Remove empty lines",
+    "zh-CN": "去空行"
+  },
+  "Sort lines": {
+    "en": "Sort lines",
+    "zh-CN": "行排序"
+  },
+  "Deduplicate lines": {
+    "en": "Deduplicate lines",
+    "zh-CN": "行去重"
+  },
+  "Reverse lines": {
+    "en": "Reverse lines",
+    "zh-CN": "行倒序"
+  },
+  "Shuffle lines": {
+    "en": "Shuffle lines",
+    "zh-CN": "随机打乱"
+  },
+  "Add prefix": {
+    "en": "Add prefix",
+    "zh-CN": "添加前缀"
+  },
+  "Add suffix": {
+    "en": "Add suffix",
+    "zh-CN": "添加后缀"
+  },
+  "Add line numbers": {
+    "en": "Add line numbers",
+    "zh-CN": "添加序号"
+  },
+  "Remove line numbers": {
+    "en": "Remove line numbers",
+    "zh-CN": "移除序号"
+  },
+  "Extract column": {
+    "en": "Extract column",
+    "zh-CN": "按列截取"
+  },
+  "Filter by length": {
+    "en": "Filter by length",
+    "zh-CN": "按长度过滤"
+  },
+  "Find and replace": {
+    "en": "Find and replace",
+    "zh-CN": "查找替换"
+  },
+  "UPPERCASE": {
+    "en": "UPPERCASE",
+    "zh-CN": "转大写"
+  },
+  "lowercase": {
+    "en": "lowercase",
+    "zh-CN": "转小写"
+  },
+  "Title Case": {
+    "en": "Title Case",
+    "zh-CN": "标题大小写"
+  },
+  "Slugify": {
+    "en": "Slugify",
+    "zh-CN": "Slugify"
+  },
+  "Strip HTML": {
+    "en": "Strip HTML",
+    "zh-CN": "去 HTML 标签"
+  },
+  "Count only": {
+    "en": "Count only",
+    "zh-CN": "仅统计"
+  }
+}

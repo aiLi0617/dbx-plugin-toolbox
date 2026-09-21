@@ -61,12 +61,12 @@
     {#if kind === "nanoid"}
       <label class="field">
         <span>{t("长度", "Length")}</span>
-        <NumberInput class="size" min="4" max="64" ariaLabel={t("长度", "Length")} bind:value={size} />
+        <NumberInput {locale} class="size" min="4" max="64" ariaLabel={t("长度", "Length")} bind:value={size} />
       </label>
     {/if}
     <label class="field">
       <span>{t("数量", "Count")}</span>
-      <NumberInput class="size" min="1" max="100" ariaLabel={t("数量", "Count")} bind:value={count} />
+      <NumberInput {locale} class="size" min="1" max="100" ariaLabel={t("数量", "Count")} bind:value={count} />
     </label>
     {#if kind === "uuid"}
       <label class="check">

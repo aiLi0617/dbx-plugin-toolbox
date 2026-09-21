@@ -47,6 +47,7 @@
   --dbx-selection-background: var(--color-primary);
   --dbx-selection-foreground: var(--color-primary-foreground);
   --dbx-selection-border: var(--color-primary);
+  --dbx-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-ring, var(--color-primary)) 50%, transparent);
   --ui-gap: 12px;
   --ui-field-gap: 6px;
   --ui-caption: 20px;
@@ -233,11 +234,19 @@ code, kbd, samp, pre, .mono {
   resize: vertical;
   font-family: var(--font-mono);
 }
-:where(.dbx-input:focus), :where(select.dbx-select:focus), :where(.dbx-textarea:focus) {
-  /* Inset ring so parents with overflow:auto/hidden do not clip the top/side edges. */
-  outline: 2px solid var(--color-ring, var(--color-primary));
-  outline-offset: -2px;
+.dbx-input.dbx-input:focus-visible,
+select.dbx-select.dbx-select:focus-visible,
+.dbx-textarea.dbx-textarea:focus-visible {
+  outline: none;
   border-color: var(--color-ring, var(--color-primary));
+  box-shadow: var(--dbx-focus-ring);
+}
+.dbx-input.dbx-input:focus:not(:focus-visible):not(.invalid):not([aria-invalid="true"]),
+select.dbx-select.dbx-select:focus:not(:focus-visible):not(.invalid):not([aria-invalid="true"]),
+.dbx-textarea.dbx-textarea:focus:not(:focus-visible):not(.invalid):not([aria-invalid="true"]) {
+  outline: none;
+  border-color: var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 18%, transparent)));
+  box-shadow: none;
 }
 
 :where(input[type="checkbox"]),
@@ -269,8 +278,9 @@ code, kbd, samp, pre, .mono {
 }
 :where(input[type="checkbox"]:focus-visible),
 :where(input[type="radio"]:focus-visible) {
-  outline: 2px solid var(--color-ring, var(--color-primary));
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--color-ring, var(--color-primary));
+  box-shadow: var(--dbx-focus-ring);
 }
 :where(input[type="checkbox"]:checked) {
   background-color: var(--color-primary);
