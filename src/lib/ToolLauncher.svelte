@@ -1,11 +1,11 @@
 <script>
   import { onMount } from "svelte";
   import { searchTools } from "./catalog.js";
-  import { categories, pick } from "./i18n.js";
+  import { categories, chrome, pick } from "./i18n.js";
   import { intentLabelForTool } from "./navigation.js";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], onClose, onTool } = $props();
-  const t = (zh, en) => pick(locale, zh, en);
+  const t = (dict) => pick(locale, dict);
   let query = $state("");
   let selected = $state(0);
   let inputEl = $state(null);
@@ -51,22 +51,22 @@
 </script>
 
 <div class="backdrop" role="presentation" onclick={(event) => { if (event.target === event.currentTarget) onClose?.(); }}>
-  <div class="launcher-dialog" bind:this={dialogEl} role="dialog" aria-modal="true" aria-label={t("搜索工具", "Search tools")} tabindex="-1" onkeydown={onKeydown}>
+  <div class="launcher-dialog" bind:this={dialogEl} role="dialog" aria-modal="true" aria-label={t(chrome.search)} tabindex="-1" onkeydown={onKeydown}>
     <div class="search-row">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input bind:this={inputEl} bind:value={query} name="toolbox-launcher-query" autocomplete="off" aria-label={t("搜索工具", "Search tools")} aria-controls="tool-launcher-results" aria-activedescendant={results.length ? `tool-result-${selected}` : undefined} placeholder={t("搜索名称、功能或关键字…", "Search names, features, or keywords…")} />
+      <input bind:this={inputEl} bind:value={query} name="toolbox-launcher-query" autocomplete="off" aria-label={t(chrome.search)} aria-controls="tool-launcher-results" aria-activedescendant={results.length ? `tool-result-${selected}` : undefined} placeholder={t(chrome.searchPlaceholderEllipsis)} />
       <kbd>Esc</kbd>
     </div>
-    <div class="results" role="listbox" id="tool-launcher-results" aria-label={t("工具搜索结果", "Tool search results")}>
-      <div class="result-label">{query.trim() ? t("搜索结果", "Results") : t("常用与最近", "Favorites and recent")}</div>
+    <div class="results" role="listbox" id="tool-launcher-results" aria-label={t(chrome.searchResultsLabel)}>
+      <div class="result-label">{query.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
       {#each results as item, index (item.id)}
         <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmouseenter={() => (selected = index)} onclick={() => choose(item)}>
               <span><strong>{pick(locale,item.name)}{#if destination(item)} · {destination(item)}{/if}</strong><small>{pick(locale,item.summary)}</small></span>
           <em>{pick(locale,categories[item.category])}</em>
         </button>
-      {:else}<p class="empty">{t("没有匹配的工具", "No matching tools")}</p>{/each}
+      {:else}<p class="empty">{t(chrome.empty)}</p>{/each}
     </div>
-    <footer><span>↑↓ {t("选择", "Select")}</span><span>Enter {t("打开", "Open")}</span><span>Esc {t("关闭", "Close")}</span></footer>
+    <footer><span>↑↓ {t(chrome.select)}</span><span>Enter {t(chrome.open)}</span><span>Esc {t(chrome.close)}</span></footer>
   </div>
 </div>
 
