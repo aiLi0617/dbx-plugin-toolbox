@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: DBX 宿主 / 数据库客户端问题
+    url: https://github.com/t8y2/dbx/issues/new/choose
+    about: 连接失败、查询异常、schema、SQL 方言等属于 DBX 主程序，请到 DBX 仓库反馈（本仓库只是工具箱插件）。
+  - name: DBX 文档
+    url: https://dbxio.com/cn/docs/what-is-dbx
+    about: 提交前可先查看 DBX 宿主文档。

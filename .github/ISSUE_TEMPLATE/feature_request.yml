@@ -1,0 +1,78 @@
+name: "💡 Feature Request / 功能建议"
+description: 提议工具箱新工具、现有工具增强或体验改进（非 DBX 宿主 / 数据库功能）。
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **本仓库是 DBX 的「工具箱」插件**，建议应针对本机小工具 / 密钥库等插件能力。
+        > 数据库连接、查询结果、SQL 编辑器等宿主能力请到 [DBX](https://github.com/t8y2/dbx/issues/new/choose) 提建议。
+
+        好的建议最好说明使用场景和期望效果，避免只写「支持 X」。
+  - type: dropdown
+    id: category
+    attributes:
+      label: 建议类型 / Category
+      options:
+        - 新增工具 / New tool
+        - 现有工具增强 / Enhance existing tool
+        - 交互 / 体验改进 / UX
+        - 密钥库 / Keystore
+        - 性能 / 稳定性 / Performance
+        - 文档 / Docs
+        - 其他 / Other
+    validations:
+      required: true
+  - type: input
+    id: tool-name
+    attributes:
+      label: 相关工具（如有） / Related tool
+      placeholder: "例如：数据格式转换 / Cron · Example: Data convert"
+    validations:
+      required: false
+  - type: textarea
+    id: support-info
+    attributes:
+      label: DBX 支持信息 / Host support information
+      description: 粘贴宿主「复制支持信息」，便于确认兼容版本。
+      placeholder: |
+        DBX 版本 / Version: v0.5.68
+        运行环境 / Runtime: Desktop
+        操作系统 / OS: Windows 11
+        系统架构 / Architecture: x86_64
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 当前痛点 / Current pain point
+      description: 现在做这件事有什么不方便？ / What is inconvenient about the current workflow?
+      placeholder: "例如：每次要把 JSON 手工转成 YAML，希望一键互转。"
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望方案 / Proposed solution
+      description: 希望怎么支持？ / How would you like this to work?
+      placeholder: "例如：在数据格式转换里增加 JSON ↔ YAML，并保留缩进选项。"
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级（是否紧急） / Priority (urgency)
+      description: 紧急 = 希望下个版本优先做；维护者可调整。
+      options:
+        - "🔴 P0 紧急 · 下个版本必须做 / Urgent · Must do next release"
+        - "🟠 P1 重要 · 尽快处理 / Important · Do soon"
+        - "🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate"
+        - "🟢 P3 低优 · 有空再做 / Low · Do when possible"
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充信息 / Additional information
+      description: 参考截图、替代方案、特殊环境等。
