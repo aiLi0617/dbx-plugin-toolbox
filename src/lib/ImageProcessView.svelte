@@ -985,6 +985,7 @@
     try {
       if (window.dbxPlugin?.invoke) {
         const saved = await invoke("toolbox/save-file", { fileName: outputName(), mimeType: format, data: await blobBase64(resultBlob), title: t("保存图片", "Save image") }, 120000);
+        if (saved?.cancelled) return;
         savedPath = saved?.path || "";
       } else triggerDownload(resultBlob, outputName());
     } catch (cause) { error = String(cause.message || cause); }
