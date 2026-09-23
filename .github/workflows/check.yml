@@ -21,14 +21,19 @@ jobs:
       - run: npm run build
 
   backend:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-      - name: Install Linux native dialog dependencies
-        run: sudo apt-get update && sudo apt-get install -y libwayland-dev
+      - name: Install Linux native dialog and port query dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwayland-dev lsof
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy

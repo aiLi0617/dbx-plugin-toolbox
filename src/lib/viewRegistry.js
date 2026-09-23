@@ -36,6 +36,7 @@ export const VIEW_LOADERS = {
   "image-process": () => import("./ImageProcessView.svelte"),
   "image-generate": () => import("./ImageGenerateView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
+  "windows-port": () => import("./PortProcessesView.svelte"),
   "live-io": () => import("./LiveIoView.svelte"),
   aes: loadCipherView,
   rsa: loadCipherView,

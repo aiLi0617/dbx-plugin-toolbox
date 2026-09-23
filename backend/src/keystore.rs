@@ -22,7 +22,6 @@ use crate::helpers::{bad, bool_param, err, opt_str, str_param};
 
 const MAGIC: &[u8; 4] = b"DBXK";
 const VERSION: u8 = 1;
-const PLUGIN_ID: &str = "io.github.aili0617.toolbox";
 const MAX_KEYS: usize = 512;
 const MAX_NAME_CHARS: usize = 128;
 const MAX_KEY_MATERIAL_BYTES: usize = 1024 * 1024;
@@ -643,8 +642,7 @@ fn validate_loaded_keys(keys: &[StoredKey]) -> Result<(), PluginError> {
 }
 
 fn vault_path() -> Result<PathBuf, PluginError> {
-    let base = dirs::data_dir().ok_or_else(|| err("Cannot resolve user data directory"))?;
-    Ok(base.join(PLUGIN_ID).join("keystore"))
+    Ok(crate::data_dir::data_dir()?.join("keystore"))
 }
 
 fn vault_backup_path(path: &std::path::Path) -> PathBuf {
@@ -653,7 +651,13 @@ fn vault_backup_path(path: &std::path::Path) -> PathBuf {
 
 fn vault_exists() -> Result<bool, PluginError> {
     let path = vault_path()?;
-    Ok(path.exists() || vault_backup_path(&path).exists())
+    let primary = path
+        .try_exists()
+        .map_err(|error| err(format!("Failed to access key vault: {error}")))?;
+    let backup = vault_backup_path(&path)
+        .try_exists()
+        .map_err(|error| err(format!("Failed to access key vault backup: {error}")))?;
+    Ok(primary || backup)
 }
 
 fn persist_atomically(path: &std::path::Path, bytes: &[u8]) -> Result<(), PluginError> {

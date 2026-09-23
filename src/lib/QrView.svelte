@@ -1,4 +1,5 @@
 <script>
+  import { loadAssetModule } from "./assetModules.js";
   import CopyButton from "./CopyButton.svelte";
   import { chrome, pick } from "./i18n.js";
   import NumberInput from "./NumberInput.svelte";
@@ -409,10 +410,7 @@
   }
 
   async function decodeWithZxing(blob) {
-    const [{ BarcodeFormat, BrowserMultiFormatReader }, { DecodeHintType }] = await Promise.all([
-      import("@zxing/browser"),
-      import("@zxing/library"),
-    ]);
+    const { BarcodeFormat, BrowserMultiFormatReader, DecodeHintType } = await loadAssetModule("scanner");
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
       BarcodeFormat.QR_CODE,

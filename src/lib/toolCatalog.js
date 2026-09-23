@@ -7,6 +7,7 @@ import { L } from "./locale.js";
 // silently fall back to English. Keep the compact row format and layer the
 // host's other four locales on top of it here.
 const LOCALIZED_NAMES = {
+  "windows-port": ["Procesos por puerto", "Processi per porta", "ポート別プロセス", "Processos por porta"],
   json: ["Banco de trabajo JSON", "Area di lavoro JSON", "JSON ワークベンチ", "Bancada JSON"],
   "data-convert": ["Conversión de formatos", "Conversione formati", "データ形式変換", "Conversão de formatos"],
   "code-format": ["Formateador de código", "Formattatore di codice", "コードフォーマッター", "Formatador de código"],
@@ -114,6 +115,10 @@ const rows = [
   ]],
 
   // —— 文本工具 ——
+  ["windows-port", "convert", "端口进程", "連接埠程序", "Port processes", "windows-port", [
+    "win", "windows", "mac", "macos", "linux", "lsof", "sigterm", "sigkill", "port", "kill", "taskkill", "端口", "端口占用", "杀进程", "结束进程", "释放端口", "pid", "tcp", "udp",
+  ]],
+
   ["whitespace", "text", "文本处理", "文字處理", "Text tools", "whitespace", [
     "空白与行", "查找替换", "全半角", "去重", "排序", "前缀", "后缀", "去空行",
     "大小写", "命名", "序号", "流水号", "随机打乱", "按列截取", "长度过滤",

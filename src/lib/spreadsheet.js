@@ -1,4 +1,4 @@
-import ExcelJS from "exceljs";
+import { loadAssetModule } from "./assetModules.js";
 
 const MAX_ROWS = 20_000;
 const MAX_COLUMNS = 256;
@@ -45,6 +45,7 @@ export async function readXlsx(bytes) {
   if (!(bytes instanceof ArrayBuffer) && !ArrayBuffer.isView(bytes)) throw new Error("Workbook data is required");
   const byteLength = bytes instanceof ArrayBuffer ? bytes.byteLength : bytes.byteLength;
   if (byteLength > MAX_FILE_BYTES) throw new Error("Workbook file is too large (maximum 50 MB)");
+  const { default: ExcelJS } = await loadAssetModule("excel");
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(bytes instanceof ArrayBuffer ? bytes : bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
   if (!workbook.worksheets.length) throw new Error("Workbook contains no worksheets");
@@ -140,6 +141,7 @@ export function objectsToGrid(value) {
 }
 
 export async function writeXlsx(sheets) {
+  const { default: ExcelJS } = await loadAssetModule("excel");
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "DBX Toolbox";
   const usedNames = new Set();

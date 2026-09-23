@@ -1,7 +1,9 @@
 mod crypto;
+mod data_dir;
 mod fsutil;
 mod helpers;
 mod keystore;
+mod ports;
 mod prefs;
 
 use std::sync::Mutex;
@@ -43,6 +45,7 @@ impl PluginHandler for Plugin {
             return fsutil::handle(method, params);
         }
         match method {
+            "toolbox/ports/list" | "toolbox/ports/kill" => ports::handle(method, params),
             "toolbox/json" => crypto::json_op(params),
             "toolbox/hash" => crypto::hash_op(params),
             "toolbox/crypto" => {

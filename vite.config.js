@@ -1,10 +1,12 @@
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
+import { assetModules } from "./scripts/asset-modules.mjs";
 
 export default defineConfig({
   base: "./",
   plugins: [
     svelte(),
+    assetModules(),
     {
       name: "dbx-build-signal",
       closeBundle() {
@@ -13,7 +15,8 @@ export default defineConfig({
     },
   ],
   // DBX inlines the entry module and its CSP only permits inline/blob scripts.
-  // Keep one JS module and one stylesheet so no lazy asset needs a blocked URL.
+  // Keep UI code/CSS inline; heavy libraries are separate self-contained assets
+  // loaded through readAssetUrl, never through relative module URLs.
   build: {
     outDir: "ui",
     emptyOutDir: true,

@@ -45,6 +45,15 @@ export function canonicalToolId(id) {
 }
 
 const SUMMARIES = {
+  "windows-port": L(
+    "Find and terminate processes using a TCP or UDP port",
+    "查询并结束占用 TCP 或 UDP 端口的进程",
+    "查詢並終止占用 TCP 或 UDP 連接埠的程序",
+    "Buscar y finalizar procesos que usan un puerto TCP o UDP",
+    "Trova e termina i processi che usano una porta TCP o UDP",
+    "TCP・UDP ポートを使用するプロセスを検索して終了",
+    "Localize e encerre processos que usam uma porta TCP ou UDP",
+  ),
   json: L(
     "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL",
     "格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript / SQL 等",
@@ -491,7 +500,8 @@ export const tools = catalog.map((tool) => {
   return { ...tool, ...(summary ? { summary } : {}), ...(aliases ? { aliases } : {}) };
 });
 
-export const DEFAULT_ENABLED_IDS = ["json", "base64", "timestamp", "hash", "uuid", "code-format"];
+// Keep first-run state empty; favorites are an explicit user choice.
+export const DEFAULT_ENABLED_IDS = [];
 
 export function toolsByIds(ids) {
   const map = new Map(tools.map((tool) => [tool.id, tool]));

@@ -1,7 +1,8 @@
 [package]
 name = "dbx-plugin-toolbox"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
+rust-version = "1.89"
 license = "Apache-2.0"
 
 [workspace]
@@ -40,6 +41,9 @@ zeroize = { version = "1", features = ["derive"] }
 # the DBX plugin CLI so ordinary Cargo and CI builds resolve it locally.
 [patch.crates-io]
 dbx-plugin-sdk = { path = "../shared/sdk/rust/dbx-plugin-sdk" }
+
+[target.'cfg(any(target_os = "linux", target_os = "macos"))'.dependencies]
+libc = "0.2"
 
 [profile.release]
 strip = true

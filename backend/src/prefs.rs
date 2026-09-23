@@ -13,7 +13,6 @@ use uuid::Uuid;
 
 use crate::helpers::{bad, err};
 
-const PLUGIN_ID: &str = "io.github.aili0617.toolbox";
 const PREFS_VERSION: u32 = 3;
 const DEFAULT_VAULT_AUTO_LOCK_MINUTES: u32 = 15;
 static PREFS_LOCK: Mutex<()> = Mutex::new(());
@@ -26,6 +25,7 @@ const KNOWN_TOOL_IDS: &[&str] = &[
     "json",
     "base-convert",
     "network-calc",
+    "windows-port",
     "timestamp",
     "color",
     "cron",
@@ -63,7 +63,8 @@ const KNOWN_TOOL_IDS: &[&str] = &[
     "key-pair",
 ];
 
-const DEFAULT_ENABLED: &[&str] = &["json", "base64", "code-format", "hash", "uuid", "color"];
+// A first-run install starts with no favorites. Users choose the tools they want.
+const DEFAULT_ENABLED: &[&str] = &[];
 
 #[derive(Serialize, Deserialize)]
 struct PrefsFile {
@@ -143,21 +144,30 @@ fn filter_known(ids: Vec<String>) -> Vec<String> {
 }
 
 fn prefs_path() -> Result<PathBuf, PluginError> {
-    let base = dirs::data_dir().ok_or_else(|| err("Cannot resolve user data directory"))?;
-    Ok(base.join(PLUGIN_ID).join("prefs.json"))
+    Ok(crate::data_dir::data_dir()?.join("prefs.json"))
 }
 
 fn read_preferences() -> Result<(Vec<String>, u32), PluginError> {
     let path = prefs_path()?;
-    if !path.exists() {
+    read_preferences_at(&path)
+}
+
+fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
+    if !path
+        .try_exists()
+        .map_err(|error| err(format!("Failed to access prefs: {error}")))?
+    {
         let backup = path.with_extension("json.bak");
-        return if backup.exists() {
+        return if backup
+            .try_exists()
+            .map_err(|error| err(format!("Failed to access prefs backup: {error}")))?
+        {
             read_preferences_file(&backup)
         } else {
             Ok((default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES))
         };
     }
-    match read_preferences_file(&path) {
+    match read_preferences_file(path) {
         Ok(preferences) => Ok(preferences),
         Err(primary_error) => {
             read_preferences_file(&path.with_extension("json.bak")).or(Err(primary_error))
@@ -306,6 +316,39 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn missing_preferences_default_and_corrupt_primary_uses_backup() {
+        let directory =
+            std::env::temp_dir().join(format!("toolbox-prefs-recovery-{}", Uuid::new_v4()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("prefs.json");
+        assert_eq!(
+            read_preferences_at(&path).unwrap(),
+            (default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES)
+        );
+        let backup = path.with_extension("json.bak");
+        fs::write(
+            &backup,
+            r#"{"version":3,"favoriteToolIds":["hash"],"vaultAutoLockMinutes":30}"#,
+        )
+        .unwrap();
+        assert_eq!(
+            read_preferences_at(&path).unwrap(),
+            (vec!["hash".to_string()], 30)
+        );
+        fs::write(&path, b"broken json").unwrap();
+        assert_eq!(
+            read_preferences_at(&path).unwrap(),
+            (vec!["hash".to_string()], 30)
+        );
+        fs::write(&backup, b"also broken").unwrap();
+        assert!(read_preferences_at(&path).is_err());
+        assert_eq!(fs::read(&path).unwrap(), b"broken json");
+        fs::remove_file(&path).unwrap();
+        fs::remove_file(&backup).unwrap();
+        fs::remove_dir(&directory).unwrap();
+    }
 
     #[test]
     fn defaults_are_known_and_unique() {

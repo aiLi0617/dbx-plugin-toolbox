@@ -1,4 +1,5 @@
 import { pick } from './locale.js';
+import { loadAssetModule } from "./assetModules.js";
 
 export const CODE_TYPES = [
   { id: "qr", zh: "QR Code", en: "QR Code" },
@@ -245,7 +246,7 @@ export async function renderQr(text, options = {}) {
 }
 
 async function renderBwip(type, text, options = {}) {
-  const { toCanvas } = await import("@bwip-js/browser");
+  const { toCanvas } = await loadAssetModule("barcode");
   const requested = clampQrSize(options.width);
   const dark = options.dark || "#111111";
   const light = options.light || "#ffffff";
