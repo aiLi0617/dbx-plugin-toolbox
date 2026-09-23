@@ -15,7 +15,8 @@ use rsa::pkcs8::{DecodePrivateKey, DecodePublicKey};
 use rsa::{Oaep, Pkcs1v15Encrypt, Pkcs1v15Sign, Pss, RsaPrivateKey, RsaPublicKey};
 use serde_json::{json, Map, Value};
 use sha1::Sha1;
-use sha2::{Digest, Sha256, Sha384, Sha512};
+use sha2::{Digest, Sha224, Sha256, Sha384, Sha512};
+use sha3::Sha3_256;
 use sm3::Sm3;
 use x509_parser::prelude::*;
 use zeroize::Zeroizing;
@@ -126,9 +127,16 @@ pub fn hash_op(params: Value) -> Result<Value, PluginError> {
         text.as_bytes()
     };
     let digest = match algorithm.as_str() {
-        "md5" => hex::encode(Md5::digest(bytes)),
+        "md5" | "md5-32" => hex::encode(Md5::digest(bytes)),
+        "md5-16" => {
+            let full = hex::encode(Md5::digest(bytes));
+            full[8..24].to_string()
+        }
         "sha-1" | "sha1" => hex::encode(Sha1::digest(bytes)),
+        "sha-224" | "sha224" => hex::encode(Sha224::digest(bytes)),
         "sha-256" | "sha256" => hex::encode(Sha256::digest(bytes)),
+        "sha3" | "sha3-256" | "sha3_256" => hex::encode(Sha3_256::digest(bytes)),
+        "sha-384" | "sha384" => hex::encode(Sha384::digest(bytes)),
         "sha-512" | "sha512" => hex::encode(Sha512::digest(bytes)),
         "sm3" => hex::encode(Sm3::digest(bytes)),
         "crc32" => format!("{:08x}", {
@@ -1435,6 +1443,27 @@ mod crypto_tests {
         .unwrap();
         assert_eq!(hex_output["text"], hex::encode(b"hello"));
         assert_eq!(hex_output["textEncoding"], "hex");
+    }
+
+    #[test]
+    fn hash_supports_md5_variants_sha224_sha384_and_sha3() {
+        let digest = |algorithm| {
+            hash_op(json!({ "algorithm": algorithm, "text": "" })).unwrap()["digest"]
+                .as_str()
+                .unwrap()
+                .to_string()
+        };
+        assert_eq!(digest("md5-16"), "8f00b204e9800998");
+        assert_eq!(digest("md5"), "d41d8cd98f00b204e9800998ecf8427e");
+        assert_eq!(
+            digest("sha-224"),
+            "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f"
+        );
+        assert_eq!(digest("sha-384"), "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b");
+        assert_eq!(
+            digest("sha3-256"),
+            "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a"
+        );
     }
 
     #[test]

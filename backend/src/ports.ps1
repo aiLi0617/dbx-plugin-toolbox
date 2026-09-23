@@ -4,22 +4,41 @@ try {
     $request = $env:DBX_PORT_REQUEST | ConvertFrom-Json
     $portNumber = [int]$request.port
     function Get-PortEndpoints {
-        # Filter numerically by LOCAL port, never by a substring or remote port.
-        if ($request.protocol -eq 'tcp') {
-            @(Get-NetTCPConnection -ErrorAction Stop | Where-Object { $_.LocalPort -eq $portNumber })
-        } else {
-            @(Get-NetUDPEndpoint -ErrorAction Stop | Where-Object { $_.LocalPort -eq $portNumber })
+        # Get-NetTCPConnection performs a slow CIM scan (and its LocalPort
+        # filter can require elevated access on some Windows versions).
+        # netstat reads the same kernel tables in about 100 ms and needs no
+        # localization-sensitive parsing beyond stable numeric columns.
+        $netstat = Join-Path $env:SystemRoot 'System32\netstat.exe'
+        $lines = @(& $netstat -ano -p $request.protocol)
+        if ($LASTEXITCODE -ne 0) { throw 'PORT_QUERY_FAILED' }
+        $rows = @()
+        foreach ($line in $lines) {
+            $parts = @($line.Trim() -split '\s+')
+            $expected = if ($request.protocol -eq 'tcp') { 5 } else { 4 }
+            if ($parts.Count -ne $expected -or $parts[0].ToLowerInvariant() -ne $request.protocol) { continue }
+            $local = $parts[1]
+            $colon = $local.LastIndexOf(':')
+            if ($colon -lt 0) { continue }
+            $parsedPort = 0
+            if (![int]::TryParse($local.Substring($colon + 1), [ref]$parsedPort) -or $parsedPort -ne $portNumber) { continue }
+            $address = $local.Substring(0, $colon).Trim('[', ']')
+            $pidIndex = if ($request.protocol -eq 'tcp') { 4 } else { 3 }
+            $owner = 0
+            if (![int]::TryParse($parts[$pidIndex], [ref]$owner)) { continue }
+            $rows += [pscustomobject]@{
+                OwningProcess = $owner
+                LocalAddress = $address
+                State = if ($request.protocol -eq 'tcp') { $parts[3] } else { 'UDP' }
+            }
         }
+        @($rows)
     }
     $endpoints = @(Get-PortEndpoints)
-    # Protect the sidecar, DBX, and its ancestors as well as Windows system PIDs.
+    # Rust snapshots the process tree through Toolhelp before launching
+    # PowerShell. This avoids several slow CIM round trips per request.
     $protected = @{}
-    $ancestor = [int]$request.backendPid
-    while ($ancestor -gt 0 -and !$protected.ContainsKey($ancestor)) {
-        $protected[$ancestor] = $true
-        $parent = Get-CimInstance Win32_Process -Filter "ProcessId = $ancestor" -ErrorAction Stop
-        if (!$parent) { break }
-        $ancestor = [int]$parent.ParentProcessId
+    foreach ($protectedId in @($request.protectedPids)) {
+        $protected[[int]$protectedId] = $true
     }
     if ($request.action -eq 'kill') {
         $targetId = [int]$request.pid

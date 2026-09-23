@@ -506,6 +506,14 @@
     "en": "MD5",
     "zh-CN": "MD5"
   },
+  "MD5 - 16 chars": {
+    "en": "MD5 - 16 chars",
+    "zh-CN": "MD5 - 16 位"
+  },
+  "MD5 - 32 chars": {
+    "en": "MD5 - 32 chars",
+    "zh-CN": "MD5 - 32 位"
+  },
   "Tag": {
     "en": "Tag",
     "zh-CN": "标签"
@@ -1456,6 +1464,14 @@
   "Diff": {
     "en": "Diff",
     "zh-CN": "差异"
+  },
+  "Top/bottom": {
+    "en": "Top/bottom",
+    "zh-CN": "上下对比"
+  },
+  "Side by side": {
+    "en": "Side by side",
+    "zh-CN": "左右对比"
   },
   "Left input": {
     "en": "Left input",

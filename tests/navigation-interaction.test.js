@@ -26,6 +26,9 @@ test("resolveIntent maps action phrases to tools and options", () => {
   assert.equal(resolveIntent("url解码")[0]?.toolId, "url");
   assert.deepEqual(resolveIntent("url解码")[0]?.options, { mode: "decode" });
   assert.equal(resolveIntent("md5")[0]?.toolId, "hash");
+  assert.deepEqual(toolOptionsForQuery("hash", "md5 16"), { algorithm: "md5-16" });
+  assert.deepEqual(toolOptionsForQuery("hash", "sha224"), { algorithm: "sha224" });
+  assert.deepEqual(toolOptionsForQuery("hash", "sha3"), { algorithm: "sha3-256" });
   assert.deepEqual(toolOptionsForQuery("hash", "sha256"), { algorithm: "sha256" });
   assert.deepEqual(toolOptionsForQuery("base64", "base64 decode"), { format: "base64", op: "decode" });
   assert.deepEqual(toolOptionsForQuery("qrcode", "二维码识别"), { mode: "decode" });

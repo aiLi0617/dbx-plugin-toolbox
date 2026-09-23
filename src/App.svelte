@@ -261,6 +261,7 @@
     {:else if item.view === "aes" || item.view === "rsa" || item.view === "xor"}<ActiveView {locale} kind={item.view} {initialOptions} />
     {:else if item.view === "keypair" || item.view === "symmetric-key"}<ActiveView {locale} onVaultChange={refreshKeys} />
     {:else if item.view === "whitespace"}<ActiveView {locale} initialAction={initialOptions.action || "trim"} />
+    {:else if item.view === "image-utility"}<ActiveView {locale} toolId={item.id} />
     {:else}<ActiveView {locale} {initialOptions} />{/if}
   {:else if viewLoadErrors[item.view]}
     <div class="view-load-state" role="alert">

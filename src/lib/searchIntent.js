@@ -178,10 +178,13 @@ function optionsTimestamp(q) {
 }
 
 function optionsHash(q) {
+  if (/\bmd5\b.*\b16\b|\b16\b.*\bmd5\b/.test(q)) return { algorithm: "md5-16" };
   if (/\bmd5\b/.test(q)) return { algorithm: "md5" };
   if (/sha.?512|sha512/.test(q)) return { algorithm: "sha512" };
   if (/sha.?384|sha384/.test(q)) return { algorithm: "sha384" };
+  if (/sha3(?:.?256)?/.test(q)) return { algorithm: "sha3-256" };
   if (/sha.?256|sha256/.test(q)) return { algorithm: "sha256" };
+  if (/sha.?224|sha224/.test(q)) return { algorithm: "sha224" };
   if (/sha.?1\b|sha1/.test(q)) return { algorithm: "sha1" };
   if (/\bsm3\b/.test(q)) return { algorithm: "sm3" };
   if (/crc32/.test(q)) return { algorithm: "crc32" };

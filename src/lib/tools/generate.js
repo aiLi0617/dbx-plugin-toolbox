@@ -2,19 +2,24 @@ import { invoke } from "../host.js";
 import { crc32, crc32Bytes, encodeUlid, nanoId, randomPassword, shaDigest, toBase64 } from "../codec.js";
 
 export const HASH_ALGORITHMS = [
-  { id: "md5", label: "MD5" },
-  { id: "sha-1", label: "SHA-1" },
-  { id: "sha-256", label: "SHA-256" },
-  { id: "sha-512", label: "SHA-512" },
+  { id: "md5-16", label: "MD5 - 16", labelZh: "MD5 - 16 位", labelEn: "MD5 - 16 chars" },
+  { id: "md5", label: "MD5 - 32", labelZh: "MD5 - 32 位", labelEn: "MD5 - 32 chars" },
+  { id: "sha-1", label: "SHA1" },
+  { id: "sha-224", label: "SHA224" },
+  { id: "sha-256", label: "SHA256" },
+  { id: "sha3-256", label: "SHA3" },
+  { id: "sha-384", label: "SHA384" },
+  { id: "sha-512", label: "SHA512" },
   { id: "sm3", label: "SM3" },
   { id: "crc32", label: "CRC32" },
 ];
 
-const WEB_HASH = { "sha-1": "SHA-1", "sha-256": "SHA-256", "sha-512": "SHA-512" };
+const WEB_HASH = { "sha-1": "SHA-1", "sha-256": "SHA-256", "sha-384": "SHA-384", "sha-512": "SHA-512" };
+const SIDECAR_HASH = new Set(["md5-16", "md5", "sha-224", "sha3-256", "sm3"]);
 
 export async function hashText(algorithm, text) {
   if (algorithm === "crc32") return crc32(text);
-  if (algorithm === "md5" || algorithm === "sm3") {
+  if (SIDECAR_HASH.has(algorithm)) {
     const result = await invoke("toolbox/hash", { algorithm, text });
     return result.digest;
   }
@@ -31,7 +36,7 @@ export async function hashBytes(algorithm, bytes) {
     const result = await crypto.subtle.digest(web, data);
     return [...new Uint8Array(result)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
   }
-  if (algorithm === "md5" || algorithm === "sm3") {
+  if (SIDECAR_HASH.has(algorithm)) {
     const result = await invoke("toolbox/hash", { algorithm, dataBase64: toBase64(data) }, 120000);
     return result.digest;
   }

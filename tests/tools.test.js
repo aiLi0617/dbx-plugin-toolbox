@@ -8,6 +8,7 @@ const codec = await import("../src/lib/codec.js");
 const convert = await import("../src/lib/tools/convert.js");
 const encode = await import("../src/lib/tools/encode.js");
 const format = await import("../src/lib/tools/format.js");
+const generate = await import("../src/lib/tools/generate.js");
 const cron = await import("../src/lib/cron.js");
 const jsonToLang = await import("../src/lib/jsonToLang.js");
 const textTools = await import("../src/lib/tools/text.js");
@@ -325,6 +326,55 @@ test("line diff keeps replacements adjacent when lines repeat", () => {
       ["same", "as"],
     ],
   );
+});
+
+test("hash catalog includes MD5 variants, SHA-224, SHA3-256, and SHA-384", async () => {
+  assert.deepEqual(
+    generate.HASH_ALGORITHMS.slice(0, 8).map((algorithm) => algorithm.id),
+    ["md5-16", "md5", "sha-1", "sha-224", "sha-256", "sha3-256", "sha-384", "sha-512"],
+  );
+  assert.equal(
+    await generate.hashText("sha-384", ""),
+    "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b",
+  );
+});
+
+test("side-by-side line diff keeps change runs and following context aligned", () => {
+  const rows = [
+    { mark: "same", line: "first", pfx: " " },
+    { mark: "del", line: "old one", pfx: "-" },
+    { mark: "del", line: "old two", pfx: "-" },
+    { mark: "add", line: "new", pfx: "+" },
+    { mark: "same", line: "last", pfx: " " },
+  ];
+  const aligned = textTools.alignSideBySideRows(rows);
+  assert.deepEqual(
+    aligned.map((row) => [row.left?.line ?? null, row.right?.line ?? null]),
+    [
+      ["first", "first"],
+      ["old one", "new"],
+      ["old two", null],
+      ["last", "last"],
+    ],
+  );
+});
+
+test("line replacements expose character-level changes inside aligned rows", () => {
+  const rows = textTools.decorateInlineLineChanges([
+    { mark: "same", line: "你好", pfx: " " },
+    { mark: "del", line: "测试 测试", pfx: "-" },
+    { mark: "add", line: "测试 不测试", pfx: "+" },
+    { mark: "same", line: "测一测", pfx: " " },
+  ]);
+  assert.deepEqual(rows[1].segments, [
+    { mark: "same", value: "测试 " },
+    { mark: "same", value: "测试" },
+  ]);
+  assert.deepEqual(rows[2].segments, [
+    { mark: "same", value: "测试 " },
+    { mark: "add", value: "不" },
+    { mark: "same", value: "测试" },
+  ]);
 });
 
 test("code formatting respects indentation", () => {

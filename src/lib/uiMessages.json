@@ -935,6 +935,30 @@
     "ko": "MD5",
     "tr": "MD5"
   },
+  "MD5 - 16 chars": {
+    "en": "MD5 - 16 chars",
+    "zh-CN": "MD5 - 16 位",
+    "zh-TW": "MD5 - 16 位字元",
+    "es": "MD5 - 16 caracteres",
+    "it": "MD5 - 16 caratteri",
+    "ja": "MD5 - 16文字",
+    "pt-BR": "MD5 - 16 caracteres",
+    "ko": "MD5 - 16자",
+    "tr": "MD5 - 16 karakter",
+    "az": "MD5 - 16 simvol"
+  },
+  "MD5 - 32 chars": {
+    "en": "MD5 - 32 chars",
+    "zh-CN": "MD5 - 32 位",
+    "zh-TW": "MD5 - 32 位字元",
+    "es": "MD5 - 32 caracteres",
+    "it": "MD5 - 32 caratteri",
+    "ja": "MD5 - 32文字",
+    "pt-BR": "MD5 - 32 caracteres",
+    "ko": "MD5 - 32자",
+    "tr": "MD5 - 32 karakter",
+    "az": "MD5 - 32 simvol"
+  },
   "Tag": {
     "en": "Tag",
     "zh-CN": "标签",
@@ -3538,6 +3562,30 @@
     "ko": "차이",
     "tr": "Fark",
     "az": "Fərq"
+  },
+  "Top/bottom": {
+    "en": "Top/bottom",
+    "zh-CN": "上下对比",
+    "zh-TW": "上下對比",
+    "es": "Arriba/abajo",
+    "it": "Sopra/sotto",
+    "ja": "上下比較",
+    "pt-BR": "Acima/abaixo",
+    "ko": "위아래 비교",
+    "tr": "Alt alta",
+    "az": "Üst/alt"
+  },
+  "Side by side": {
+    "en": "Side by side",
+    "zh-CN": "左右对比",
+    "zh-TW": "左右對比",
+    "es": "Lado a lado",
+    "it": "Affiancato",
+    "ja": "左右比較",
+    "pt-BR": "Lado a lado",
+    "ko": "좌우 비교",
+    "tr": "Yan yana",
+    "az": "Yan-yana"
   },
   "Left input": {
     "en": "Left input",
@@ -14578,5 +14626,41 @@
     "az": "Normal çıxış (SIGTERM) tələb edin; çıxanda bütün portları bağlanacaq.",
     "ko": "정상 종료(SIGTERM)를 요청합니다. 종료하면 모든 포트가 닫힙니다.",
     "tr": "Normal çıkış (SIGTERM) isteyin; işlem kapandığında tüm bağlantı noktaları kapanır."
+  },
+  "MD5 collision check": {
+    "en": "MD5 collision check", "zh-CN": "MD5 碰撞检查", "zh-TW": "MD5 碰撞檢查", "es": "Colisión MD5", "it": "Collisione MD5", "ja": "MD5 衝突チェック", "pt-BR": "Colisão MD5", "az": "MD5 toqquşma yoxlaması", "ko": "MD5 충돌 검사", "tr": "MD5 çakışma denetimi"
+  },
+  "File type identifier": {
+    "en": "File type identifier", "zh-CN": "文件格式识别", "zh-TW": "檔案格式識別", "es": "Identificar formato", "it": "Riconosci formato", "ja": "ファイル形式判定", "pt-BR": "Identificar formato", "az": "Fayl formatının müəyyənləşdirilməsi", "ko": "파일 형식 식별", "tr": "Dosya biçimi tanıma"
+  },
+  "Image pixelate": {
+    "en": "Image pixelate", "zh-CN": "图片像素化", "zh-TW": "圖片像素化", "es": "Pixelar imagen", "it": "Pixel art", "ja": "画像のピクセル化", "pt-BR": "Pixelizar imagem", "az": "Şəkli pikselləşdir", "ko": "이미지 픽셀화", "tr": "Görüntüyü pikselleştir"
+  },
+  "Image grid slicer": {
+    "en": "Image grid slicer", "zh-CN": "多格切图", "zh-TW": "多格切圖", "es": "Dividir en cuadrícula", "it": "Taglio a griglia", "ja": "画像グリッド分割", "pt-BR": "Cortar em grade", "az": "Şəkil toru bölücüsü", "ko": "이미지 격자 분할", "tr": "Görüntü ızgara dilimleyici"
+  },
+  "Image compressor": {
+    "en": "Image compressor", "zh-CN": "图片压缩", "zh-TW": "圖片壓縮", "es": "Comprimir imagen", "it": "Comprimi immagine", "ja": "画像圧縮", "pt-BR": "Comprimir imagem", "az": "Şəkil sıxışdırıcı", "ko": "이미지 압축", "tr": "Görüntü sıkıştırıcı"
+  },
+  "Image to Base64": {
+    "en": "Image to Base64", "zh-CN": "图片转 Base64", "zh-TW": "圖片轉 Base64", "es": "Imagen a Base64", "it": "Immagine in Base64", "ja": "画像を Base64 に変換", "pt-BR": "Imagem para Base64", "az": "Şəkli Base64-ə çevir", "ko": "이미지를 Base64로 변환", "tr": "Görüntüyü Base64'e dönüştür"
+  },
+  "Compare two files and flag equal MD5 hashes with different bytes": {
+    "en": "Compare two files and flag equal MD5 hashes with different bytes", "zh-CN": "比较两个文件，识别 MD5 相同但内容不同的碰撞", "zh-TW": "比較兩個檔案，識別 MD5 相同但內容不同的碰撞", "es": "Compara dos archivos y detecta hashes MD5 iguales con bytes diferentes", "it": "Confronta due file e rileva hash MD5 uguali con byte diversi", "ja": "2 つのファイルを比較し、内容が異なる同一 MD5 ハッシュを検出", "pt-BR": "Compare dois arquivos e detecte hashes MD5 iguais com bytes diferentes", "az": "İki faylı müqayisə edin və fərqli baytlarla eyni MD5 heşlərini aşkarlayın", "ko": "두 파일을 비교하여 바이트가 다른 동일한 MD5 해시를 탐지합니다", "tr": "İki dosyayı karşılaştırıp farklı baytlara sahip eşit MD5 karmalarını belirleyin"
+  },
+  "Identify a file from its signature instead of its extension": {
+    "en": "Identify a file from its signature instead of its extension", "zh-CN": "根据文件头魔数识别真实格式、MIME 与扩展名", "zh-TW": "根據檔案頭魔數識別真實格式、MIME 與副檔名", "es": "Identifica un archivo por su firma en lugar de su extensión", "it": "Identifica un file dalla firma anziché dall'estensione", "ja": "拡張子ではなくファイルシグネチャから形式を判定", "pt-BR": "Identifique um arquivo pela assinatura, não pela extensão", "az": "Faylı uzantısına deyil, imzasına əsasən müəyyənləşdirin", "ko": "확장자가 아닌 파일 시그니처로 형식을 식별합니다", "tr": "Dosyayı uzantısı yerine imzasından tanımlayın"
+  },
+  "Pixelate an image with an adjustable block size": {
+    "en": "Pixelate an image with an adjustable block size", "zh-CN": "按可调像素块将图片像素化", "zh-TW": "按可調像素塊將圖片像素化", "es": "Pixela una imagen con un tamaño de bloque ajustable", "it": "Pixelizza un'immagine con blocchi regolabili", "ja": "ブロックサイズを調整して画像をピクセル化", "pt-BR": "Pixelize uma imagem com tamanho de bloco ajustável", "az": "Tənzimlənən blok ölçüsü ilə şəkli pikselləşdirin", "ko": "조절 가능한 블록 크기로 이미지를 픽셀화합니다", "tr": "Ayarlanabilir blok boyutuyla görüntüyü pikselleştirin"
+  },
+  "Split an image into a rows × columns ZIP archive": {
+    "en": "Split an image into a rows × columns ZIP archive", "zh-CN": "按行列网格切图并打包为 ZIP", "zh-TW": "按行列網格切圖並打包為 ZIP", "es": "Divide una imagen en una cuadrícula y crea un ZIP", "it": "Divide un'immagine in una griglia e crea uno ZIP", "ja": "画像を行列グリッドに分割して ZIP に出力", "pt-BR": "Divida uma imagem em uma grade e crie um ZIP", "az": "Şəkli sətir və sütunlara bölüb ZIP yaradın", "ko": "이미지를 행과 열로 분할하여 ZIP으로 만듭니다", "tr": "Görüntüyü satır ve sütunlara bölüp ZIP oluşturun"
+  },
+  "Compress PNG, JPEG, or WebP locally with a size comparison": {
+    "en": "Compress PNG, JPEG, or WebP locally with a size comparison", "zh-CN": "本地压缩 PNG、JPEG 或 WebP，并对比文件体积", "zh-TW": "本機壓縮 PNG、JPEG 或 WebP，並比較檔案大小", "es": "Comprime PNG, JPEG o WebP localmente y compara el tamaño", "it": "Comprimi PNG, JPEG o WebP localmente e confronta le dimensioni", "ja": "PNG、JPEG、WebP をローカルで圧縮しサイズを比較", "pt-BR": "Comprima PNG, JPEG ou WebP localmente e compare o tamanho", "az": "PNG, JPEG və ya WebP-ni yerli sıxışdırın və ölçünü müqayisə edin", "ko": "PNG, JPEG 또는 WebP를 로컬에서 압축하고 크기를 비교합니다", "tr": "PNG, JPEG veya WebP'yi yerel olarak sıkıştırıp boyutu karşılaştırın"
+  },
+  "Convert an image to raw Base64 or a Data URL": {
+    "en": "Convert an image to raw Base64 or a Data URL", "zh-CN": "将图片转换为纯 Base64 或 Data URL", "zh-TW": "將圖片轉換為純 Base64 或 Data URL", "es": "Convierte una imagen a Base64 puro o Data URL", "it": "Converte un'immagine in Base64 puro o Data URL", "ja": "画像を生の Base64 または Data URL に変換", "pt-BR": "Converta uma imagem em Base64 puro ou Data URL", "az": "Şəkli xam Base64 və ya Data URL-ə çevirin", "ko": "이미지를 원시 Base64 또는 Data URL로 변환합니다", "tr": "Görüntüyü ham Base64 veya Data URL'ye dönüştürün"
   }
 }

@@ -7,6 +7,9 @@
   let { locale = "zh-CN" } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
+  const algorithmLabel = (algorithm) => algorithm.labelZh
+    ? t(algorithm.labelZh, algorithm.labelEn)
+    : algorithm.label;
 
   let input = $state("");
   let fileBytes = $state(null);
@@ -128,7 +131,7 @@
       <input class="dbx-input mono" spellcheck="false" bind:value={expected} placeholder="SHA-256 / MD5 / …" />
     </label>
     {#if expectedMatch}
-      <span class="match">✓ {HASH_ALGORITHMS.find((item) => item.id === expectedMatch)?.label}</span>
+      <span class="match">✓ {algorithmLabel(HASH_ALGORITHMS.find((item) => item.id === expectedMatch))}</span>
     {:else if expectedMatch === false}
       <span class="mismatch">{t("不匹配", "No match")}</span>
     {/if}
@@ -137,17 +140,17 @@
   <div class="rows">
     {#each HASH_ALGORITHMS as alg (alg.id)}
       <div class="row">
-        <span class="name">{alg.label}</span>
+        <span class="name">{algorithmLabel(alg)}</span>
         <input
           class="dbx-input mono"
           class:invalid={Boolean(errors[alg.id])}
           readonly
           placeholder={errors[alg.id] || ""}
           title={errors[alg.id] || ""}
-          aria-label={t(`${alg.label} 摘要`, `${alg.label} digest`)}
+          aria-label={algorithmLabel(alg)}
           value={digests[alg.id]}
         />
-        <CopyButton {locale} text={digests[alg.id]} labelZh={`复制 ${alg.label}`} labelEn={`Copy ${alg.label}`} />
+        <CopyButton {locale} text={digests[alg.id]} labelZh={`复制 ${algorithmLabel(alg)}`} labelEn={`Copy ${algorithmLabel(alg)}`} />
       </div>
     {/each}
   </div>

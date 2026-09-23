@@ -1,6 +1,7 @@
 <script>
   import { pick } from "./i18n.js";
   import { invoke } from "./host.js";
+  import { localizePortState } from "./portStates.js";
 
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -49,12 +50,13 @@
     signalSent = null;
     try {
       const response = await invoke("toolbox/ports/kill", { ...query, pid: target.pid, started: target.started, confirm: true, force: !result.supportsGraceful || force });
-      if (response.killed) killed = target.pid;
-      else signalSent = target.pid;
-      result = null;
-      result = await invoke("toolbox/ports/list", query);
+      if (response.killed) {
+        killed = target.pid;
+        result = { ...result, processes: result.processes.filter((process) => process.pid !== target.pid) };
+      } else {
+        signalSent = target.pid;
+      }
     } catch (err) {
-      result = null;
       showError(err);
     } finally { busy = false; }
   }
@@ -62,11 +64,11 @@
 
 <div class="port-page">
   <p class="dbx-hint">{t("查询本机 TCP / UDP 端口占用，支持 Windows、macOS 和 Linux。", "Find local TCP / UDP port owners on Windows, macOS, and Linux.")}</p>
-  <form class="port-form" onsubmit={(event) => { event.preventDefault(); search(); }}>
-    <label>{t("端口号", "Port number")}<input class="dbx-input" inputmode="numeric" bind:value={port} oninput={reset} disabled={busy} placeholder="3000" /></label>
+  <div class="port-form">
+    <label>{t("端口号", "Port number")}<input class="dbx-input" inputmode="numeric" bind:value={port} oninput={reset} onkeydown={(event) => { if (event.key === "Enter") search(); }} disabled={busy} placeholder="3000" /></label>
     <label>{t("协议", "Protocol")}<select class="dbx-input" bind:value={protocol} onchange={reset} disabled={busy}><option value="tcp">TCP</option><option value="udp">UDP</option></select></label>
-    <button class="dbx-btn dbx-btn--primary" type="submit" disabled={busy || !valid}>{busy ? t("处理中…", "Working…") : t("查询端口", "Find port")}</button>
-  </form>
+    <button class="dbx-btn dbx-btn--primary" type="button" onclick={search} disabled={busy || !valid}>{busy ? t("处理中…", "Working…") : t("查询端口", "Find port")}</button>
+  </div>
   {#if !valid}<p class="error">{t(...errors.PORT_INVALID)}</p>{/if}
   {#if error}<p class="error" role="alert">{error in errors ? t(...errors[error]) : error}</p>{/if}
   {#if killed !== null}<p role="status">{t("已结束进程", "Process terminated")}: {killed}</p>{/if}
@@ -81,7 +83,7 @@
         <table>
           <thead><tr><th>PID</th><th>{t("进程名称", "Process name")}</th><th>{t("本地地址", "Local address")}</th><th>{t("状态", "State")}</th><th>{t("操作", "Actions")}</th></tr></thead>
           <tbody>{#each result.processes as process (process.pid)}
-            <tr><td>{process.pid}</td><td>{process.name || "—"}</td><td>{process.addresses.join(", ")}</td><td>{process.states.join(", ")}</td><td>
+            <tr><td>{process.pid}</td><td>{process.name || "—"}</td><td>{process.addresses.join(", ")}</td><td>{process.states.map((state) => localizePortState(locale, state)).join(", ")}</td><td>
               <button class="dbx-btn dbx-btn--danger" disabled={busy || !process.canKill} onclick={() => { pending = process; force = false; }}>{t("结束进程", "Terminate process")}</button>
               {#if !process.canKill}<span class="dbx-hint">{t("受保护或无法访问", "Protected or inaccessible")}</span>{/if}
             </td></tr>
@@ -90,15 +92,18 @@
       </div>
     {/if}
   {/if}
-  {#if pending}
-    <section class="confirm" role="alert" aria-label={t("确认结束进程", "Confirm termination")}>
-      <strong>{t("确认结束进程", "Confirm termination")}: {pending.name} (PID {pending.pid})</strong>
+</div>
+
+{#if pending}
+  <div class="confirm-backdrop">
+    <div class="confirm" role="alertdialog" aria-modal="true" aria-labelledby="port-process-confirm-title" tabindex="-1">
+      <strong id="port-process-confirm-title">{t("确认结束进程", "Confirm termination")}: {pending.name} (PID {pending.pid})</strong>
       {#if result?.supportsGraceful}<label class="force-option"><input type="checkbox" bind:checked={force} />{t("强制结束（SIGKILL）", "Force termination (SIGKILL)")}</label>{/if}
       {#if !result?.supportsGraceful || force}<p>{t("将强制结束整个进程，该进程的所有端口都会关闭，未保存的数据可能丢失。", "This forcibly terminates the entire process and closes all its ports. Unsaved data may be lost.")}</p>{:else}<p>{t("将请求整个进程正常退出（SIGTERM），退出后会关闭其所有端口。", "Request a graceful process exit (SIGTERM), closing all its ports when it exits.")}</p>{/if}
       <div class="buttons"><button class="dbx-btn dbx-btn--danger" onclick={terminate}>{t("确认结束", "Confirm termination")}</button><button class="dbx-btn" onclick={() => { pending = null; }}>{t("取消", "Cancel")}</button></div>
-    </section>
-  {/if}
-</div>
+    </div>
+  </div>
+{/if}
 
 <style>
   .port-page { display: grid; gap: 16px; padding: 20px; }
@@ -113,5 +118,6 @@
   th, td { padding: 12px; border-bottom: 1px solid var(--color-border); }
   td .dbx-hint { display: block; margin-top: 4px; }
   .error { color: var(--color-destructive); }
-  .confirm { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--color-destructive); border-radius: 8px; }
+  .confirm-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgb(0 0 0 / 0.45); }
+  .confirm { display: grid; gap: 14px; width: min(520px, calc(100vw - 40px)); padding: 20px; border: 1px solid var(--color-destructive); border-radius: 10px; background: var(--color-background); color: var(--color-foreground); box-shadow: 0 18px 48px rgb(0 0 0 / 0.28); }
 </style>

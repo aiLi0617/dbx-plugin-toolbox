@@ -46,6 +46,12 @@ const LOCALIZED_NAMES = {
   lorem: ["Texto repetido", "Testo ripetuto", "繰り返しテキスト", "Texto repetido"],
   "image-process": ["Editor de imágenes", "Editor immagini", "画像編集", "Editor de imagens"],
   "image-generate": ["Imagen de marcador", "Immagine segnaposto", "プレースホルダー画像", "Imagem de espaço reservado"],
+  "md5-collision": ["Colisión MD5", "Collisione MD5", "MD5 衝突チェック", "Colisão MD5"],
+  "file-type": ["Identificar formato", "Riconosci formato", "ファイル形式判定", "Identificar formato"],
+  "image-pixelate": ["Pixelar imagen", "Pixel art", "画像のピクセル化", "Pixelizar imagem"],
+  "image-grid": ["Dividir en cuadrícula", "Taglio a griglia", "画像グリッド分割", "Cortar em grade"],
+  "image-compress": ["Comprimir imagen", "Comprimi immagine", "画像圧縮", "Comprimir imagem"],
+  "image-base64": ["Imagen a Base64", "Immagine in Base64", "画像を Base64 に変換", "Imagem para Base64"],
 };
 
 const rows = [
@@ -141,8 +147,14 @@ const rows = [
 
   // —— 安全加密 ——
   ["hash", "security", "哈希校验", "雜湊校驗", "Hash & checksum", "hash", [
-    "hash", "md5", "sha", "sha1", "sha256", "sha384", "sha512", "sm3", "crc32",
+    "hash", "md5", "md5 16", "md5 32", "sha", "sha1", "sha224", "sha256", "sha3", "sha384", "sha512", "sm3", "crc32",
     "checksum", "摘要", "哈希", "校验和",
+  ]],
+  ["md5-collision", "security", "MD5 碰撞检查", "MD5 碰撞檢查", "MD5 collision check", "md5-collision", [
+    "md5碰撞", "md5 collision", "双文件md5", "相同摘要", "hash collision", "文件碰撞",
+  ]],
+  ["file-type", "security", "文件格式识别", "檔案格式識別", "File type identifier", "file-type", [
+    "文件类型", "文件识别", "魔数", "magic bytes", "file signature", "mime", "扩展名识别",
   ]],
   ["jwt", "security", "JWT", "JWT", "JWT", "jwt", [
     "验签", "decode token", "json web token", "令牌", "签发", "jwt解码", "jwt验签", "jwt签发",
@@ -197,6 +209,18 @@ const rows = [
   ]],
   ["image-generate", "image", "占位图", "佔位圖", "Placeholder image", "image-generate", [
     "占位图", "指定大小", "文件大小", "placeholder", "dummy image", "generate image", "假图",
+  ]],
+  ["image-pixelate", "image", "图片像素化", "圖片像素化", "Image pixelate", "image-utility", [
+    "像素化", "马赛克", "pixelate", "pixel art", "mosaic",
+  ]],
+  ["image-grid", "image", "多格切图", "多格切圖", "Image grid slicer", "image-utility", [
+    "九宫格", "宫格切图", "grid slicer", "split image", "切片", "图片分割",
+  ]],
+  ["image-compress", "image", "图片压缩", "圖片壓縮", "Image compressor", "image-utility", [
+    "压缩图片", "compress image", "减小图片", "图片瘦身", "jpeg quality", "webp quality",
+  ]],
+  ["image-base64", "image", "图片转 Base64", "圖片轉 Base64", "Image to Base64", "image-utility", [
+    "图片base64", "image base64", "data uri", "data url", "图片编码",
   ]],
 ];
 

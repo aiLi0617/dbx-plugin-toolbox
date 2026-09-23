@@ -519,6 +519,79 @@ export function lineDiffParts(left, right) {
   });
 }
 
+function inlineSegments(value, mark) {
+  return value === "" ? [] : [{ mark, value }];
+}
+
+/**
+ * Add character-level segments to changed line pairs. The surrounding line
+ * remains useful for alignment, while only the characters that changed need
+ * the stronger insertion/deletion treatment in the UI.
+ */
+export function decorateInlineLineChanges(rows) {
+  const decorated = rows.map((row) => ({
+    ...row,
+    segments: inlineSegments(row.line, row.mark === "same" ? "same" : row.mark),
+  }));
+  let start = 0;
+  const decorateRun = (end) => {
+    const deleted = [];
+    const added = [];
+    for (let index = start; index < end; index++) {
+      if (decorated[index].mark === "del") deleted.push(decorated[index]);
+      if (decorated[index].mark === "add") added.push(decorated[index]);
+    }
+    const paired = Math.min(deleted.length, added.length);
+    for (let index = 0; index < paired; index++) {
+      const parts = diffChars(deleted[index].line, added[index].line);
+      deleted[index].segments = parts
+        .filter((part) => !part.added)
+        .map((part) => ({ mark: part.removed ? "del" : "same", value: part.value }));
+      added[index].segments = parts
+        .filter((part) => !part.removed)
+        .map((part) => ({ mark: part.added ? "add" : "same", value: part.value }));
+    }
+  };
+  for (let index = 0; index <= decorated.length; index++) {
+    if (index === decorated.length || decorated[index].mark === "same") {
+      decorateRun(index);
+      start = index + 1;
+    }
+  }
+  return decorated;
+}
+
+/**
+ * Pair adjacent deletion/addition runs for a side-by-side line diff.
+ * Unchanged rows are mirrored into both columns while uneven change runs are
+ * padded with null cells so following context remains vertically aligned.
+ */
+export function alignSideBySideRows(rows) {
+  const aligned = [];
+  let deleted = [];
+  let added = [];
+  const flush = () => {
+    const count = Math.max(deleted.length, added.length);
+    for (let index = 0; index < count; index++) {
+      aligned.push({ left: deleted[index] ?? null, right: added[index] ?? null });
+    }
+    deleted = [];
+    added = [];
+  };
+  for (const row of rows) {
+    if (row.mark === "same") {
+      flush();
+      aligned.push({ left: row, right: row });
+    } else if (row.mark === "del") {
+      deleted.push(row);
+    } else if (row.mark === "add") {
+      added.push(row);
+    }
+  }
+  flush();
+  return aligned;
+}
+
 export function diffParts(left, right, opts = {}) {
   const normalize = (value) => {
     let text = String(value ?? "");

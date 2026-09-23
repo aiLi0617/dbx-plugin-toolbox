@@ -396,9 +396,37 @@ const SUMMARIES = {
     "Generate placeholders at exact pixel size and file size",
     "Generate placeholders at exact pixel size and file size",
   ),
+  "md5-collision": L(
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "比较两个文件，识别 MD5 相同但内容不同的碰撞",
+    "比較兩個檔案，識別 MD5 相同但內容不同的碰撞",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+  ),
+  "file-type": L(
+    "Identify a file from its signature instead of its extension",
+    "根据文件头魔数识别真实格式、MIME 与扩展名",
+    "根據檔案頭魔數識別真實格式、MIME 與副檔名",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+  ),
+  "image-pixelate": L("Pixelate an image with an adjustable block size", "按可调像素块将图片像素化", "按可調像素塊將圖片像素化", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size"),
+  "image-grid": L("Split an image into a rows × columns ZIP archive", "按行列网格切图并打包为 ZIP", "按行列網格切圖並打包為 ZIP", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive"),
+  "image-compress": L("Compress PNG, JPEG, or WebP locally with a size comparison", "本地压缩 PNG、JPEG 或 WebP，并对比文件体积", "本機壓縮 PNG、JPEG 或 WebP，並比較檔案大小", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison"),
+  "image-base64": L("Convert an image to raw Base64 or a Data URL", "将图片转换为纯 Base64 或 Data URL", "將圖片轉換為純 Base64 或 Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL"),
 };
 
 const JAPANESE_SUMMARIES = {
+  "md5-collision": "2 つのファイルを比較し、内容が異なる同一 MD5 ハッシュを検出",
+  "file-type": "拡張子ではなくファイルシグネチャから形式を判定",
+  "image-pixelate": "ブロックサイズを調整して画像をピクセル化",
+  "image-grid": "画像を行列グリッドに分割して ZIP に出力",
+  "image-compress": "PNG、JPEG、WebP をローカルで圧縮しサイズを比較",
+  "image-base64": "画像を生の Base64 または Data URL に変換",
   json: "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
   "data-convert": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
   "code-format": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
@@ -442,6 +470,12 @@ const JAPANESE_SUMMARIES = {
 // [es, it, pt-BR]. English remains the canonical source text, while every
 // locale advertised by the host gets native catalog copy.
 const ROMANCE_SUMMARIES = {
+  "md5-collision": ["Compara dos archivos y detecta hashes MD5 iguales con bytes diferentes", "Confronta due file e rileva hash MD5 uguali con byte diversi", "Compare dois arquivos e detecte hashes MD5 iguais com bytes diferentes"],
+  "file-type": ["Identifica un archivo por su firma en lugar de su extensión", "Identifica un file dalla firma anziché dall'estensione", "Identifique um arquivo pela assinatura, não pela extensão"],
+  "image-pixelate": ["Pixela una imagen con un tamaño de bloque ajustable", "Pixelizza un'immagine con blocchi regolabili", "Pixelize uma imagem com tamanho de bloco ajustável"],
+  "image-grid": ["Divide una imagen en una cuadrícula y crea un ZIP", "Divide un'immagine in una griglia e crea uno ZIP", "Divida uma imagem em uma grade e crie um ZIP"],
+  "image-compress": ["Comprime PNG, JPEG o WebP localmente y compara el tamaño", "Comprimi PNG, JPEG o WebP localmente e confronta le dimensioni", "Comprima PNG, JPEG ou WebP localmente e compare o tamanho"],
+  "image-base64": ["Convierte una imagen a Base64 puro o Data URL", "Converte un'immagine in Base64 puro o Data URL", "Converta uma imagem em Base64 puro ou Data URL"],
   json: ["Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL", "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL", "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"],
   "data-convert": ["Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML", "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML", "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"],
   "code-format": ["Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript", "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript", "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"],

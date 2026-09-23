@@ -15,6 +15,8 @@ export const VIEW_LOADERS = {
   "unique-id": () => import("./UniqueIdView.svelte"),
   password: () => import("./PasswordView.svelte"),
   hash: () => import("./HashView.svelte"),
+  "md5-collision": () => import("./Md5CollisionView.svelte"),
+  "file-type": () => import("./FileTypeView.svelte"),
   "unicode-inspect": () => import("./UnicodeInspectView.svelte"),
   qrcode: () => import("./QrView.svelte"),
   markdown: () => import("./MarkdownView.svelte"),
@@ -35,6 +37,7 @@ export const VIEW_LOADERS = {
   spreadsheet: () => import("./SpreadsheetView.svelte"),
   "image-process": () => import("./ImageProcessView.svelte"),
   "image-generate": () => import("./ImageGenerateView.svelte"),
+  "image-utility": () => import("./ImageUtilityView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
   "windows-port": () => import("./PortProcessesView.svelte"),
   "live-io": () => import("./LiveIoView.svelte"),
@@ -48,7 +51,7 @@ export const VIEW_LOADERS = {
 
 export const FILL_VIEWS = new Set([
   "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa",
-  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "lorem",
+  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "lorem",
   "whitespace", "regex", "diff", "keypair", "symmetric-key", "unicode-inspect",
 ]);
 
@@ -64,6 +67,12 @@ const TOOL_LIMITS = Object.freeze({
   jwt: { inputBytes: 1_000_000 },
   jwk: { inputBytes: 1_000_000 },
   hash: { inputBytes: 16_000_000 },
+  "md5-collision": { inputBytes: 16_000_000 },
+  "file-type": { inputBytes: 100_000_000 },
+  "image-pixelate": { inputBytes: 30_000_000 },
+  "image-grid": { inputBytes: 30_000_000 },
+  "image-compress": { inputBytes: 30_000_000 },
+  "image-base64": { inputBytes: 10_000_000 },
   hmac: { inputBytes: 5_000_000 },
   "hmac-sha256": { inputBytes: 5_000_000 },
   cert: { inputBytes: 2_000_000 },
