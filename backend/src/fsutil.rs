@@ -478,7 +478,7 @@ fn pick_save_path_binary(
     #[cfg(target_os = "macos")]
     {
         let _ = extension;
-        return pick_save_path_via_osascript(title, name, start_dir);
+        pick_save_path_via_osascript(title, name, start_dir)
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -522,7 +522,7 @@ fn pick_save_path(
     #[cfg(target_os = "macos")]
     {
         let _ = format;
-        return pick_save_path_via_osascript(title, name, start_dir);
+        pick_save_path_via_osascript(title, name, start_dir)
     }
     #[cfg(not(target_os = "macos"))]
     {
