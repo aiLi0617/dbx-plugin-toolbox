@@ -1581,12 +1581,8 @@ mod crypto_tests {
     fn streamed_hashes_match_single_request_digests_across_chunks() {
         let input = vec![b'a'; MAX_HASH_CHUNK_BYTES + 17];
         let mut sessions = HashSessions::default();
-        let started = hash_stream_op(
-            &mut sessions,
-            "toolbox/hash-stream/begin",
-            json!({}),
-        )
-        .unwrap();
+        let started =
+            hash_stream_op(&mut sessions, "toolbox/hash-stream/begin", json!({})).unwrap();
         let session_id = started["sessionId"].as_str().unwrap();
         for chunk in input.chunks(128 * 1024) {
             hash_stream_op(

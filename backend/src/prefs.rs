@@ -82,7 +82,13 @@ fn filter_known(ids: Vec<String>) -> Vec<String> {
         let valid = !id.is_empty()
             && id.len() <= 80
             && id.as_bytes()[0].is_ascii_alphanumeric()
-            && id.bytes().all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == b'-' || ch == b'_' || ch == b'.');
+            && id.bytes().all(|ch| {
+                ch.is_ascii_lowercase()
+                    || ch.is_ascii_digit()
+                    || ch == b'-'
+                    || ch == b'_'
+                    || ch == b'.'
+            });
         if valid && seen.insert(id.clone()) {
             out.push(id);
         }
@@ -307,7 +313,10 @@ mod tests {
     fn defaults_are_known_and_unique() {
         let mut seen = HashSet::new();
         for id in DEFAULT_ENABLED {
-            assert_eq!(filter_known(vec![(*id).to_string()]), vec![(*id).to_string()]);
+            assert_eq!(
+                filter_known(vec![(*id).to_string()]),
+                vec![(*id).to_string()]
+            );
             assert!(seen.insert(*id), "duplicate default id {id}");
         }
     }
@@ -321,7 +330,14 @@ mod tests {
             "uuid".into(),
             "".into(),
         ]);
-        assert_eq!(cleaned, vec!["json".to_string(), "missing-tool".to_string(), "uuid".to_string()]);
+        assert_eq!(
+            cleaned,
+            vec![
+                "json".to_string(),
+                "missing-tool".to_string(),
+                "uuid".to_string()
+            ]
+        );
     }
 
     #[test]

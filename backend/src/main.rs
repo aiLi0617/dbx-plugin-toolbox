@@ -41,9 +41,10 @@ impl PluginHandler for Plugin {
             return prefs::handle(method, params);
         }
         if method.starts_with("toolbox/hash-stream/") {
-            let mut sessions = self.hash_sessions.lock().map_err(|_| {
-                PluginError::new(-32000, "Hash session lock is poisoned")
-            })?;
+            let mut sessions = self
+                .hash_sessions
+                .lock()
+                .map_err(|_| PluginError::new(-32000, "Hash session lock is poisoned"))?;
             return crypto::hash_stream_op(&mut sessions, method, params);
         }
         if method == "toolbox/save-file"
@@ -51,9 +52,10 @@ impl PluginHandler for Plugin {
             || method == "toolbox/reveal-file"
             || method == "toolbox/copy-image"
         {
-            let mut sessions = self.save_sessions.lock().map_err(|_| {
-                PluginError::new(-32000, "Save session lock is poisoned")
-            })?;
+            let mut sessions = self
+                .save_sessions
+                .lock()
+                .map_err(|_| PluginError::new(-32000, "Save session lock is poisoned"))?;
             return fsutil::handle(&mut sessions, method, params);
         }
         match method {
