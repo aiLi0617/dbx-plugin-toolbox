@@ -1,5 +1,5 @@
 import { sortValue } from "./jsonOps.js";
-import { parseSafeJson } from "./jsonPrecision.js";
+import { isLosslessNumber, parseLosslessJson, stringifyLosslessJson } from "./jsonPrecision.js";
 import { jsonToInsert } from "./tools/convert.js";
 import { convertData } from "./dataConvert.js";
 
@@ -26,7 +26,7 @@ export const jsonLanguages = [
 ];
 
 export function convertJsonToLang(text, lang, opts = {}) {
-  let value = parseSafeJson(text);
+  let value = parseLosslessJson(text);
   if (opts.sortKeys) value = sortValue(value, opts.sortKeys === true ? "asc" : opts.sortKeys);
   switch (lang) {
     case "python":
@@ -41,7 +41,7 @@ export function convertJsonToLang(text, lang, opts = {}) {
     case "xml":
     case "toml":
     case "csv":
-      return convertData(JSON.stringify(value), "json", lang);
+      return convertData(stringifyLosslessJson(value), "json", lang);
     case "mysql":
       return mysqlOut(value, opts.table);
     case "json-schema":
@@ -108,6 +108,9 @@ function shapeOf(value) {
   if (Array.isArray(value)) {
     if (!value.length) return { k: "array", item: { k: "any" } };
     return { k: "array", item: value.map(shapeOf).reduce(mergeShapes) };
+  }
+  if (isLosslessNumber(value) || typeof value === "bigint") {
+    return { k: /^-?\d+$/.test(String(value)) ? "int" : "float" };
   }
   const type = typeof value;
   if (type === "object") {
@@ -280,7 +283,7 @@ function pyValue(value, indent = 0) {
   const inner = "    ".repeat(indent + 1);
   if (value === null) return "None";
   if (typeof value === "boolean") return value ? "True" : "False";
-  if (typeof value === "number") return String(value);
+  if (typeof value === "number" || typeof value === "bigint" || isLosslessNumber(value)) return String(value);
   if (typeof value === "string") return JSON.stringify(value);
   if (Array.isArray(value)) {
     if (!value.length) return "[]";
@@ -296,7 +299,7 @@ function phpValue(value, indent = 0) {
   const inner = "    ".repeat(indent + 1);
   if (value === null) return "null";
   if (typeof value === "boolean") return value ? "true" : "false";
-  if (typeof value === "number") return String(value);
+  if (typeof value === "number" || typeof value === "bigint" || isLosslessNumber(value)) return String(value);
   if (typeof value === "string") return `'${String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
   if (Array.isArray(value)) {
     if (!value.length) return "[]";
@@ -311,7 +314,7 @@ function rubyValue(value, indent = 0) {
   const pad = "  ".repeat(indent);
   const inner = "  ".repeat(indent + 1);
   if (value === null) return "nil";
-  if (typeof value === "boolean" || typeof value === "number") return String(value);
+  if (typeof value === "boolean" || typeof value === "number" || typeof value === "bigint" || isLosslessNumber(value)) return String(value);
   if (typeof value === "string") return JSON.stringify(value);
   if (Array.isArray(value)) {
     if (!value.length) return "[]";
@@ -324,6 +327,7 @@ function rubyValue(value, indent = 0) {
 
 function toQuery(value, prefix = "") {
   if (value == null) return "";
+  if (isLosslessNumber(value) || typeof value === "bigint") return `${prefix}=${encodeURIComponent(String(value))}`;
   if (Array.isArray(value)) {
     return value
       .map((item, i) => toQuery(item, prefix ? `${prefix}[]` : String(i)))
@@ -344,6 +348,7 @@ function toQuery(value, prefix = "") {
 
 function toSchema(value) {
   if (value === null) return { type: "null" };
+  if (isLosslessNumber(value) || typeof value === "bigint") return { type: /^-?\d+$/.test(String(value)) ? "integer" : "number" };
   if (Array.isArray(value)) {
     if (!value.length) return { type: "array", items: {} };
     const variants = [...new Map(value.map((item) => {
@@ -372,8 +377,8 @@ function mysqlOut(value, table) {
     const values = records.map((row) => row?.[key]).filter((val) => val != null);
     const val = values[0];
     let typ = "TEXT";
-    if (values.length && values.every((item) => typeof item === "number")) {
-      typ = values.every(Number.isInteger) ? "BIGINT" : "DOUBLE";
+    if (values.length && values.every((item) => typeof item === "number" || typeof item === "bigint" || isLosslessNumber(item))) {
+      typ = values.every((item) => typeof item === "bigint" || isLosslessNumber(item) ? /^-?\d+$/.test(String(item)) : Number.isInteger(item)) ? "BIGINT" : "DOUBLE";
     } else if (values.length && values.every((item) => typeof item === "boolean")) typ = "TINYINT(1)";
     else if (val && typeof val === "object") typ = "JSON";
     return `  \`${String(key).replace(/`/g, "``")}\` ${typ}`;

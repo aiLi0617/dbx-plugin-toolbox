@@ -2,7 +2,7 @@ import { parseDocument, visit, isScalar, stringify as stringifyYaml } from "yaml
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 import { XMLParser, XMLBuilder, XMLValidator } from "fast-xml-parser";
 import { csvToJson, jsonToCsv } from "./tools/convert.js";
-import { parseLosslessJson, stringifyLosslessJson, toSafeJsonValue, safeNumber } from "./jsonPrecision.js";
+import { isLosslessNumber, parseLosslessJson, stringifyLosslessJson, toExactIntegerValue, safeNumber } from "./jsonPrecision.js";
 import { formatXmlPreservingText } from "./xmlFormat.js";
 
 export const DATA_FORMATS = ["json", "yaml", "csv", "tsv", "ndjson", "xml", "toml"].map((value) => ({ value, label: value.toUpperCase() }));
@@ -46,13 +46,13 @@ export function tsvToJson(text) {
 }
 
 function tsvCell(value) {
-  const text = value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+  const text = value == null ? "" : typeof value === "object" && !isLosslessNumber(value) ? stringifyLosslessJson(value) : String(value);
   return /[\t\r\n"]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
 export function jsonToTsv(value) {
   const rows = (Array.isArray(value) ? value : [value]).map((row) =>
-    row && typeof row === "object" && !Array.isArray(row) ? row : { value: row },
+    row && typeof row === "object" && !Array.isArray(row) && !isLosslessNumber(row) ? row : { value: row },
   );
   if (!rows.length) return "";
   const headers = [...new Set(rows.flatMap((row) => Object.keys(row)))];
@@ -109,7 +109,9 @@ function assertTomlNumberPrecision(text) {
     while (i < text.length && !/[\s,\[\]{}=#"']/.test(text[i])) i++;
     const token = text.slice(start, i);
     const next = text.slice(i).trimStart()[0];
-    if (next !== "=" && /^[+-]?\d[\d_]*(?:\.[\d_]+)?(?:[eE][+-]?[\d_]+)?$/.test(token)) safeNumber(token.replaceAll("_", ""));
+    if (next !== "=" && /^[+-]?\d[\d_]*(?:\.[\d_]+)?(?:[eE][+-]?[\d_]+)?$/.test(token) && /[.eE]/.test(token)) {
+      safeNumber(token.replaceAll("_", ""));
+    }
   }
 }
 
@@ -140,6 +142,7 @@ function readXml(input) {
 }
 
 function noUnsupportedValues(value, format, path = "$", seen = new Set()) {
+  if (isLosslessNumber(value) || typeof value === "bigint") return;
   if (value instanceof Date) throw new Error(`Date/time at ${path} cannot be converted without changing its type. Quote it as a string first.`);
   if (value instanceof Set || value instanceof Map || ArrayBuffer.isView(value)) throw new Error(`Unsupported collection at ${path}. Use a plain object or array before converting.`);
   if (value === null && format === "toml") throw new Error(`TOML cannot represent null at ${path}. Remove it or choose another format.`);
@@ -170,12 +173,12 @@ export function convertData(input, from = "json", to = "yaml") {
     assertTomlNumberPrecision(text);
   }
   noUnsupportedValues(value, to);
-  value = toSafeJsonValue(value);
   if (to === "json") return stringifyLosslessJson(value, 2);
-  if (to === "yaml") return stringifyYaml(value, { indent: 2 });
   if (to === "csv") return jsonToCsv(value);
   if (to === "tsv") return jsonToTsv(value);
   if (to === "ndjson") return jsonToNdjson(value);
+  value = toExactIntegerValue(value);
+  if (to === "yaml") return stringifyYaml(value, { indent: 2 });
   if (to === "toml") {
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("TOML needs an object at the document root. Wrap the data in a named property first.");
     return stringifyToml(value);

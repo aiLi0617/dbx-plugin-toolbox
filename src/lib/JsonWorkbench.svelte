@@ -3,7 +3,7 @@
   import { chrome, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { copyText as copyToClipboard } from "./clipboard.js";
-  import { parseLosslessJson, parseSafeJson, toSafeJsonValue, precisionErrorMessage } from "./jsonPrecision.js";
+  import { parseLosslessJson, precisionErrorMessage } from "./jsonPrecision.js";
   import { jsonLanguages, convertJsonToLang } from "./jsonToLang.js";
   import { runJsonPath } from "./tools/convert.js";
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
@@ -27,7 +27,7 @@
     unicodeToChinese,
   } from "./jsonOps.js";
 
-  let { locale = "zh-CN", initialOptions = {} } = $props();
+  let { locale = "zh-CN", initialOptions = {}, demo = null, demoRequest = 0 } = $props();
 
   let jsonText = $state("");
   let pretty = $state(true);
@@ -51,6 +51,12 @@
   let collapsed = $state({});
   let copied = $state("");
   let seededFold = false;
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    jsonText = demo.input;
+  });
 
   const t = (zhText, en) => pick(locale, zhText, en);
   const rightError = $derived(actionError || parseError || (rightMode === "tree" ? "" : convertError));
@@ -77,7 +83,7 @@
         return;
       }
       try {
-        const value = parseSafeJson(text);
+        const value = parseLosslessJson(text);
         parsed = value;
         parseError = "";
         if (!seededFold) {
@@ -209,7 +215,6 @@
   }
 
   function writeTree(next) {
-    next = toSafeJsonValue(next);
     if (sortKeys && unsortedValue === undefined) {
       try {
         unsortedValue = parseLosslessJson(jsonText);
@@ -224,7 +229,7 @@
   }
 
   function currentJson() {
-    return parseSafeJson(jsonText);
+    return parseLosslessJson(jsonText);
   }
 
   function onToggle(path) {

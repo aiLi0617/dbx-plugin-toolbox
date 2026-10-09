@@ -38,6 +38,35 @@ export const LEGACY_TOOL_IDS = {
   slugify: "whitespace",
   "strip-html": "whitespace",
   lines: "whitespace",
+  "image-pixelate": "image-utility",
+  "image-grid": "image-utility",
+  "image-compress": "image-utility",
+  "image-base64": "image-utility",
+  "text-clean": "whitespace",
+  "text-lines": "whitespace",
+  "text-replace": "whitespace",
+  "text-case": "whitespace",
+  "text-naming": "whitespace",
+  "text-inspect": "whitespace",
+  "base64-codec": "base64",
+  "base32-codec": "base64",
+  "base58-codec": "base64",
+  "hex-codec": "base64",
+  "format-sql": "code-format",
+  "format-xml": "code-format",
+  "format-yaml": "code-format",
+  "format-javascript": "code-format",
+  "format-typescript": "code-format",
+  "convert-json-yaml": "data-convert",
+  "convert-json-csv": "data-convert",
+  "convert-json-xml": "data-convert",
+  "convert-json-toml": "data-convert",
+  "convert-json-ndjson": "data-convert",
+  "image-crop": "image-process",
+  "image-resize": "image-process",
+  "image-transform": "image-process",
+  "image-watermark": "image-process",
+  "image-format-convert": "image-process",
 };
 
 export function canonicalToolId(id) {
@@ -206,6 +235,15 @@ const SUMMARIES = {
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
+  ),
+  gzip: L(
+    "Compress UTF-8 text to Gzip Base64 or decompress it back to text",
+    "将 UTF-8 文本压缩为 Gzip Base64，或解压还原为文本",
+    "將 UTF-8 文字壓縮為 Gzip Base64，或解壓還原為文字",
+    "Comprime texto UTF-8 a Gzip Base64 o descomprímelo de nuevo a texto",
+    "Comprimi testo UTF-8 in Gzip Base64 o decomprimilo nuovamente in testo",
+    "UTF-8 テキストを Gzip Base64 に圧縮、またはテキストへ解凍",
+    "Comprima texto UTF-8 em Gzip Base64 ou descompacte-o de volta para texto",
   ),
   regex: L(
     "Test regexes, inspect matches, and preview replacements",
@@ -414,19 +452,13 @@ const SUMMARIES = {
     "Identify a file from its signature instead of its extension",
     "Identify a file from its signature instead of its extension",
   ),
-  "image-pixelate": L("Pixelate an image with an adjustable block size", "按可调像素块将图片像素化", "按可調像素塊將圖片像素化", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size", "Pixelate an image with an adjustable block size"),
-  "image-grid": L("Split an image into a rows × columns ZIP archive", "按行列网格切图并打包为 ZIP", "按行列網格切圖並打包為 ZIP", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive", "Split an image into a rows × columns ZIP archive"),
-  "image-compress": L("Compress PNG, JPEG, or WebP locally with a size comparison", "本地压缩 PNG、JPEG 或 WebP，并对比文件体积", "本機壓縮 PNG、JPEG 或 WebP，並比較檔案大小", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison", "Compress PNG, JPEG, or WebP locally with a size comparison"),
-  "image-base64": L("Convert an image to raw Base64 or a Data URL", "将图片转换为纯 Base64 或 Data URL", "將圖片轉換為純 Base64 或 Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL", "Convert an image to raw Base64 or a Data URL"),
+  "image-utility": L("Pixelate, split, compress, or convert images to and from Base64", "图片像素化、切图、压缩及 Base64 双向转换", "圖片像素化、切圖、壓縮及 Base64 雙向轉換", "Pixelar, dividir, comprimir o convertir imágenes desde y hacia Base64", "Pixelizza, dividi, comprimi o converti immagini da e verso Base64", "画像のピクセル化、分割、圧縮、Base64 双方向変換", "Pixelize, divida, comprima ou converta imagens de e para Base64"),
 };
 
 const JAPANESE_SUMMARIES = {
   "md5-collision": "2 つのファイルを比較し、内容が異なる同一 MD5 ハッシュを検出",
   "file-type": "拡張子ではなくファイルシグネチャから形式を判定",
-  "image-pixelate": "ブロックサイズを調整して画像をピクセル化",
-  "image-grid": "画像を行列グリッドに分割して ZIP に出力",
-  "image-compress": "PNG、JPEG、WebP をローカルで圧縮しサイズを比較",
-  "image-base64": "画像を生の Base64 または Data URL に変換",
+  "image-utility": "画像のピクセル化、分割、圧縮、Base64 変換",
   json: "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
   "data-convert": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
   "code-format": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
@@ -472,10 +504,7 @@ const JAPANESE_SUMMARIES = {
 const ROMANCE_SUMMARIES = {
   "md5-collision": ["Compara dos archivos y detecta hashes MD5 iguales con bytes diferentes", "Confronta due file e rileva hash MD5 uguali con byte diversi", "Compare dois arquivos e detecte hashes MD5 iguais com bytes diferentes"],
   "file-type": ["Identifica un archivo por su firma en lugar de su extensión", "Identifica un file dalla firma anziché dall'estensione", "Identifique um arquivo pela assinatura, não pela extensão"],
-  "image-pixelate": ["Pixela una imagen con un tamaño de bloque ajustable", "Pixelizza un'immagine con blocchi regolabili", "Pixelize uma imagem com tamanho de bloco ajustável"],
-  "image-grid": ["Divide una imagen en una cuadrícula y crea un ZIP", "Divide un'immagine in una griglia e crea uno ZIP", "Divida uma imagem em uma grade e crie um ZIP"],
-  "image-compress": ["Comprime PNG, JPEG o WebP localmente y compara el tamaño", "Comprimi PNG, JPEG o WebP localmente e confronta le dimensioni", "Comprima PNG, JPEG ou WebP localmente e compare o tamanho"],
-  "image-base64": ["Convierte una imagen a Base64 puro o Data URL", "Converte un'immagine in Base64 puro o Data URL", "Converta uma imagem em Base64 puro ou Data URL"],
+  "image-utility": ["Pixela, divide, comprime o convierte imágenes a Base64", "Pixelizza, dividi, comprimi o converti immagini in Base64", "Pixelize, divida, comprima ou converta imagens em Base64"],
   json: ["Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL", "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL", "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"],
   "data-convert": ["Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML", "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML", "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"],
   "code-format": ["Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript", "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript", "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"],
@@ -521,13 +550,27 @@ const catalog = TOOL_DEFS;
 export const tools = catalog.map((tool) => {
   const baseSummary = SUMMARIES[tool.id];
   const [es, it, ptBR] = ROMANCE_SUMMARIES[tool.id] || [];
+  const genericSummary = {
+    ...L(
+      `Open ${tool.name.en} directly with ready-to-use defaults`,
+      `使用预设参数直接打开${tool.name["zh-CN"]}`,
+      `使用預設參數直接開啟${tool.name["zh-TW"]}`,
+      `Abre directamente ${tool.name.es} con valores preparados`,
+      `Apri direttamente ${tool.name.it} con valori pronti`,
+      `${tool.name.ja}を既定値ですぐに開く`,
+      `Abra ${tool.name["pt-BR"]} diretamente com valores prontos`,
+    ),
+    az: `${tool.name.az} hazır parametrlərlə birbaşa açılsın`,
+    ko: `${tool.name.ko} 도구를 준비된 기본값으로 바로 엽니다`,
+    tr: `${tool.name.tr} aracını hazır varsayılanlarla doğrudan açın`,
+  };
   const summary = baseSummary ? {
     ...baseSummary,
     ...(es ? { es } : {}),
     ...(it ? { it } : {}),
     ...(JAPANESE_SUMMARIES[tool.id] ? { ja: JAPANESE_SUMMARIES[tool.id] } : {}),
     ...(ptBR ? { "pt-BR": ptBR } : {}),
-  } : baseSummary;
+  } : genericSummary;
   const aliases = tool.id === "whitespace"
     ? [...(tool.aliases || []), ...TEXT_ACTIONS.flatMap((action) => [action.id, action.zh, action.en, ...action.aliases])]
     : tool.aliases;

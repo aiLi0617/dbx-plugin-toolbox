@@ -15,6 +15,8 @@ test("merged tool searches open the requested operation", () => {
   assert.deepEqual(toolOptionsForQuery("code-format", "TS"), { language: "typescript" });
   assert.deepEqual(toolOptionsForQuery("timestamp", "时间差"), { action: "difference" });
   assert.deepEqual(toolOptionsForQuery("uuid", ""), {});
+  assert.deepEqual(toolOptionsForQuery("http-status", "HTTP 404"), { query: "404" });
+  assert.deepEqual(toolOptionsForQuery("http-status", "5xx"), { query: "5xx" });
 });
 
 test("resolveIntent maps action phrases to tools and options", () => {
@@ -35,6 +37,8 @@ test("resolveIntent maps action phrases to tools and options", () => {
   assert.deepEqual(toolOptionsForQuery("image-process", "裁剪"), { op: "crop" });
   assert.equal(resolveIntent("去重")[0]?.toolId, "whitespace");
   assert.deepEqual(resolveIntent("去重")[0]?.options, { action: "unique" });
+  assert.equal(resolveIntent("429")[0]?.toolId, "http-status");
+  assert.deepEqual(resolveIntent("429")[0]?.options, { query: "429" });
 });
 
 test("intent search understands every non-English host locale", () => {

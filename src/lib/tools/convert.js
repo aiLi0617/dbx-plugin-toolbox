@@ -3,7 +3,7 @@ import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 import { JSONPath } from "jsonpath-plus";
 import { sqlEscape } from "../simpleTransforms.js";
-import { parseSafeJson } from "../jsonPrecision.js";
+import { isLosslessNumber, parseSafeJson, stringifyLosslessJson } from "../jsonPrecision.js";
 
 export { sqlEscape } from "../simpleTransforms.js";
 
@@ -72,12 +72,12 @@ function splitCsv(text) {
 
 export function jsonToCsv(value) {
   const rows = (Array.isArray(value) ? value : [value]).map((row) =>
-    row && typeof row === "object" && !Array.isArray(row) ? row : { value: row },
+    row && typeof row === "object" && !Array.isArray(row) && !isLosslessNumber(row) ? row : { value: row },
   );
   if (!rows.length) return "";
   const headers = [...new Set(rows.flatMap((row) => Object.keys(row)))];
   const esc = (v) => {
-    const s = v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
+    const s = v == null ? "" : typeof v === "object" && !isLosslessNumber(v) ? stringifyLosslessJson(v) : String(v);
     return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return [headers.map(esc).join(","), ...rows.map((row) => headers.map((h) => esc(row?.[h])).join(","))].join("\n");
@@ -113,9 +113,10 @@ export function jsonToInsert(value, table) {
 
 function sqlLit(v) {
   if (v == null) return "NULL";
+  if (isLosslessNumber(v) || typeof v === "bigint") return String(v);
   if (typeof v === "number") return String(v);
   if (typeof v === "boolean") return v ? "1" : "0";
-  if (typeof v === "object") return sqlQuote(JSON.stringify(v));
+  if (typeof v === "object") return sqlQuote(stringifyLosslessJson(v));
   return sqlQuote(String(v));
 }
 

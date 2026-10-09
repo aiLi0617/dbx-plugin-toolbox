@@ -25,6 +25,7 @@ const LOCALIZED_NAMES = {
   "base-convert": ["Conversión de bases", "Conversione di base", "進数変換", "Conversão de bases"],
   "network-calc": ["Red / CIDR", "Rete / CIDR", "ネットワーク / CIDR", "Rede / CIDR"],
   whitespace: ["Herramientas de texto", "Strumenti di testo", "テキスト処理", "Ferramentas de texto"],
+  gzip: ["Gzip de texto", "Gzip testo", "テキスト Gzip", "Gzip de texto"],
   regex: ["Prueba de expresiones regulares", "Test espressioni regolari", "正規表現テスター", "Teste de expressões regulares"],
   diff: ["Comparación de texto", "Confronto testi", "テキスト比較", "Comparação de texto"],
   markdown: ["Markdown", "Markdown", "Markdown", "Markdown"],
@@ -48,10 +49,7 @@ const LOCALIZED_NAMES = {
   "image-generate": ["Imagen de marcador", "Immagine segnaposto", "プレースホルダー画像", "Imagem de espaço reservado"],
   "md5-collision": ["Colisión MD5", "Collisione MD5", "MD5 衝突チェック", "Colisão MD5"],
   "file-type": ["Identificar formato", "Riconosci formato", "ファイル形式判定", "Identificar formato"],
-  "image-pixelate": ["Pixelar imagen", "Pixel art", "画像のピクセル化", "Pixelizar imagem"],
-  "image-grid": ["Dividir en cuadrícula", "Taglio a griglia", "画像グリッド分割", "Cortar em grade"],
-  "image-compress": ["Comprimir imagen", "Comprimi immagine", "画像圧縮", "Comprimir imagem"],
-  "image-base64": ["Imagen a Base64", "Immagine in Base64", "画像を Base64 に変換", "Imagem para Base64"],
+  "image-utility": ["Utilidades de imagen", "Strumenti immagine", "画像ユーティリティ", "Utilitários de imagem"],
 };
 
 const rows = [
@@ -132,6 +130,9 @@ const rows = [
     "去 HTML 标签", "strip-html", "trim", "unique", "sort", "replace",
     "camel", "snake", "kebab", "文本清理",
   ]],
+  ["gzip", "text", "文本 Gzip", "文字 Gzip", "Text Gzip", "gzip", [
+    "gzip", "gunzip", "gz", "文本压缩", "文本解压", "压缩解压", "gzip base64", "compress text", "decompress text",
+  ]],
   ["regex", "text", "正则测试", "正規測試", "Regex tester", "regex", [
     "正则", "正则表达式", "regexp", "pattern", "正则匹配", "正则替换",
   ]],
@@ -210,27 +211,39 @@ const rows = [
   ["image-generate", "image", "占位图", "佔位圖", "Placeholder image", "image-generate", [
     "占位图", "指定大小", "文件大小", "placeholder", "dummy image", "generate image", "假图",
   ]],
-  ["image-pixelate", "image", "图片像素化", "圖片像素化", "Image pixelate", "image-utility", [
+  ["image-utility", "image", "图片工具", "圖片工具", "Image utilities", "image-utility", [
     "像素化", "马赛克", "pixelate", "pixel art", "mosaic",
-  ]],
-  ["image-grid", "image", "多格切图", "多格切圖", "Image grid slicer", "image-utility", [
     "九宫格", "宫格切图", "grid slicer", "split image", "切片", "图片分割",
-  ]],
-  ["image-compress", "image", "图片压缩", "圖片壓縮", "Image compressor", "image-utility", [
     "压缩图片", "compress image", "减小图片", "图片瘦身", "jpeg quality", "webp quality",
-  ]],
-  ["image-base64", "image", "图片转 Base64", "圖片轉 Base64", "Image to Base64", "image-utility", [
     "图片base64", "image base64", "data uri", "data url", "图片编码",
+    "base64转图片", "base64 to image", "图片解码",
   ]],
 ];
 
-export const TOOL_DEFS = rows.map(([id, category, zhCN, zhTW, en, view, aliases]) => {
+const utilityRows = [
+  ["json-schema", "format", "JSON Schema 校验", "JSON Schema 校驗", "JSON Schema validator", "developer-utility", ["draft 2020-12", "schema validate"]],
+  ["dotenv", "format", ".env 工具", ".env 工具", ".env converter", "developer-utility", ["environment variables", "dotenv", "env json"]],
+  ["semver", "convert", "语义版本", "語意版本", "Semantic version", "developer-utility", ["version compare", "version range", "版本比较"]],
+  ["chmod", "convert", "chmod 权限计算", "chmod 權限計算", "chmod calculator", "developer-utility", ["unix permissions", "octal", "rwx"]],
+  ["http-status", "format", "HTTP 状态码速查", "HTTP 狀態碼速查", "HTTP status codes", "http-status", ["404", "401", "500", "5xx", "http code", "status code", "状态码", "狀態碼", "teapot"]],
+];
+
+const DEMO_VIEWS = new Set(["json-workbench", "whitespace", "gzip", "base64", "code-format", "data-convert", "live-io", "developer-utility"]);
+const NO_DEMO_IDS = new Set(["uuid", "color", "cron", "timestamp", "chmod", "http-status"]);
+
+export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
   const [es = en, it = en, ja = en, ptBR = en] = LOCALIZED_NAMES[id] || [];
+  const supportsDemo = DEMO_VIEWS.has(view) && !NO_DEMO_IDS.has(id);
   return {
     id,
     category,
     name: L(en, zhCN, zhTW, es, it, ja, ptBR),
     view,
     ...(aliases ? { aliases } : {}),
+    kind: metadata.parentId ? "shortcut" : "tool",
+    parentId: metadata.parentId || null,
+    defaultOptions: metadata.defaultOptions || {},
+    demoPreset: supportsDemo ? id : null,
+    actions: supportsDemo ? ["demo", "reset", "copy", "save", "drop"] : ["reset", "copy", "save", "drop"],
   };
 });

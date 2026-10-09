@@ -16,6 +16,7 @@ export const HASH_ALGORITHMS = [
 
 const WEB_HASH = { "sha-1": "SHA-1", "sha-256": "SHA-256", "sha-384": "SHA-384", "sha-512": "SHA-512" };
 const SIDECAR_HASH = new Set(["md5-16", "md5", "sha-224", "sha3-256", "sm3"]);
+const HASH_CHUNK_BYTES = 256 * 1024;
 
 export async function hashText(algorithm, text) {
   if (algorithm === "crc32") return crc32(text);
@@ -29,18 +30,51 @@ export async function hashText(algorithm, text) {
 }
 
 export async function hashBytes(algorithm, bytes) {
-  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-  if (algorithm === "crc32") return crc32Bytes(data);
-  const web = WEB_HASH[algorithm];
-  if (web) {
-    const result = await crypto.subtle.digest(web, data);
-    return [...new Uint8Array(result)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-  }
-  if (SIDECAR_HASH.has(algorithm)) {
-    const result = await invoke("toolbox/hash", { algorithm, dataBase64: toBase64(data) }, 120000);
-    return result.digest;
-  }
+  const result = await hashFileBytes(bytes);
+  if (result.errors[algorithm]) throw new Error(result.errors[algorithm]);
+  if (result.digests[algorithm] !== undefined) return result.digests[algorithm];
   throw new Error("unsupported hash");
+}
+
+async function hashSidecarBytes(data) {
+  const started = await invoke("toolbox/hash-stream/begin");
+  const sessionId = started.sessionId;
+  try {
+    for (let offset = 0; offset < data.length; offset += HASH_CHUNK_BYTES) {
+      await invoke("toolbox/hash-stream/update", {
+        sessionId,
+        dataBase64: toBase64(data.subarray(offset, offset + HASH_CHUNK_BYTES)),
+      }, 30000);
+    }
+    const result = await invoke("toolbox/hash-stream/finalize", { sessionId }, 30000);
+    return result.digests;
+  } catch (error) {
+    await invoke("toolbox/hash-stream/cancel", { sessionId }, 5000).catch(() => {});
+    throw error;
+  }
+}
+
+export async function hashFileBytes(bytes) {
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const digests = { crc32: crc32Bytes(data) };
+  const errors = {};
+  const browserAlgorithms = Object.entries(WEB_HASH).map(async ([id, web]) => {
+    try {
+      const result = await crypto.subtle.digest(web, data);
+      digests[id] = [...new Uint8Array(result)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    } catch (error) {
+      errors[id] = error?.message || String(error);
+    }
+  });
+  const sidecar = hashSidecarBytes(data).then(
+    (result) => Object.assign(digests, result),
+    (error) => {
+      const message = error?.message || String(error);
+      for (const id of SIDECAR_HASH) errors[id] = message;
+    },
+  );
+  await Promise.all([...browserAlgorithms, sidecar]);
+  return { digests, errors };
 }
 
 export function formatUuid(id, options = {}) {

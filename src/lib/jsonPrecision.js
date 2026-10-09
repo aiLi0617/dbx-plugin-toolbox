@@ -73,6 +73,20 @@ export function toSafeJsonValue(value) {
   return value;
 }
 
+export function toExactIntegerValue(value) {
+  if (isLosslessNumber(value)) {
+    const text = String(value);
+    if (/^-?\d+$/.test(text)) return BigInt(text);
+    return safeNumber(text);
+  }
+  if (typeof value === "bigint") return value;
+  if (Array.isArray(value)) return value.map(toExactIntegerValue);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, toExactIntegerValue(child)]));
+  }
+  return value;
+}
+
 export function parseSafeJson(text) {
   return toSafeJsonValue(parseLosslessJson(text));
 }

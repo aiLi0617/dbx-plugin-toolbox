@@ -1,4 +1,4 @@
-export const ASSET_MODULE_NAMES = Object.freeze(["excel", "barcode", "scanner", "sql", "beautify", "script"]);
+export const ASSET_MODULE_NAMES = Object.freeze(["excel", "barcode", "scanner", "sql", "beautify", "script", "schema", "semver"]);
 
 // Each asset is a self-contained ESM bundle: blob URLs cannot resolve relative
 // imports. Cache the promise as well as the module to coalesce concurrent calls.

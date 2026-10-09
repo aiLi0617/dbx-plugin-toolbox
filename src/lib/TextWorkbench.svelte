@@ -4,7 +4,7 @@
   import { applyWhitespace, applyCaseStyle, CASE_STYLES, textStats, slugify, stripHtml } from "./tools/text.js";
   import { TEXT_ACTIONS } from "./textActions.js";
 
-  let { locale = "zh-CN", initialAction = "trim" } = $props();
+  let { locale = "zh-CN", initialAction = "trim", shortcut = false, shortcutId = "", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   const groups = [
     { id: "clean", zh: "清理", en: "Clean", actions: ["trim", "empty", "tabs", "spaces", "strip-html"] },
@@ -13,6 +13,14 @@
     { id: "case", zh: "大小写", en: "Case & naming", actions: ["upper", "lower", "title", "camel", "pascal", "snake", "kebab"] },
     { id: "convert", zh: "转换", en: "Convert", actions: ["full", "half", "slugify"] },
   ];
+  const shortcutActions = {
+    "text-clean": ["trim", "empty", "tabs", "spaces", "strip-html"],
+    "text-lines": ["unique", "sort", "reverse", "shuffle"],
+    "text-replace": ["replace"],
+    "text-case": ["upper", "lower", "title"],
+    "text-naming": ["camel", "pascal", "snake", "kebab"],
+    "text-inspect": ["stats", "strip-html"],
+  };
   const STATS_DEBOUNCE_CHARS = 40_000;
   const emptyStats = { chars: 0, words: 0, lines: 0, bytes: 0 };
 
@@ -41,6 +49,12 @@
   let history = $state([]);
   let inputStats = $state(emptyStats);
   let outputStats = $state(emptyStats);
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    input = demo.input;
+  });
 
   const transform = $derived.by(() => {
     try {
@@ -83,7 +97,11 @@
     return () => clearTimeout(timer);
   });
 
-  const actions = $derived((groups.find((group) => group.id === groupId)?.actions || []).map((id) => TEXT_ACTIONS.find((item) => item.id === id)));
+  const actions = $derived((shortcut
+    ? shortcutActions[shortcutId] || [initialAction]
+    : groups.find((group) => group.id === groupId)?.actions || [])
+    .map((id) => TEXT_ACTIONS.find((item) => item.id === id))
+    .filter(Boolean));
   function selectGroup(group) {
     groupId = group.id;
     mode = group.actions[0];
@@ -102,18 +120,22 @@
 </script>
 
 <div class="page">
-  <div class="group-bar">
-    <div class="groups" role="group" aria-label={t("文本处理分类", "Text operation groups")}>
-      {#each groups as group (group.id)}
-        <button class:active={groupId === group.id} aria-pressed={groupId === group.id} onclick={() => selectGroup(group)} type="button">{t(group.zh, group.en)}</button>
-      {/each}
-    </div>
+  <div class="group-bar" class:shortcut-bar={shortcut}>
+    {#if !shortcut}
+      <div class="groups" role="group" aria-label={t("文本处理分类", "Text operation groups")}>
+        {#each groups as group (group.id)}
+          <button class:active={groupId === group.id} aria-pressed={groupId === group.id} onclick={() => selectGroup(group)} type="button">{t(group.zh, group.en)}</button>
+        {/each}
+      </div>
+    {:else}
+      <span class="hint">{t("只显示与当前任务相关的操作", "Only operations relevant to this task are shown")}</span>
+    {/if}
     <div class="history-actions">
       <button class="dbx-btn" disabled={input === output || Boolean(error)} onclick={continueProcessing} type="button">{t("将结果继续处理", "Use result as input")}</button>
       <button class="dbx-btn" disabled={!history.length} onclick={undo} type="button">{t("撤销处理", "Undo processing")}</button>
     </div>
   </div>
-  {#if groupId !== "replace"}
+  {#if shortcut ? actions.length > 1 : groupId !== "replace"}
     <div class="actions" role="group" aria-label={t("处理方式", "Operation")}>
       {#each actions as action (action.id)}
         <button class="dbx-btn" class:selected={mode === action.id} aria-pressed={mode === action.id} onclick={() => (mode = action.id)} type="button">{t(action.zh, action.en)}</button>
@@ -162,6 +184,7 @@
 <style>
   .page { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
   .group-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; }
+  .group-bar.shortcut-bar { border-bottom-style: dashed; }
   .groups, .actions, .history-actions { display: flex; flex-wrap: wrap; gap: 6px; }
   .groups button { border: 0; border-radius: 6px; background: transparent; color: var(--color-muted-foreground); font: inherit; font-size: 13px; padding: 7px 12px; cursor: pointer; }
   .groups button:hover { background: var(--color-muted); color: var(--color-foreground); }

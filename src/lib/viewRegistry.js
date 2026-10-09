@@ -31,6 +31,7 @@ export const VIEW_LOADERS = {
   "code-format": () => import("./CodeFormatView.svelte"),
   lorem: () => import("./LoremView.svelte"),
   whitespace: () => import("./TextWorkbench.svelte"),
+  gzip: () => import("./GzipView.svelte"),
   regex: () => import("./RegexView.svelte"),
   diff: () => import("./DiffView.svelte"),
   "data-convert": () => import("./DataConvertView.svelte"),
@@ -38,6 +39,8 @@ export const VIEW_LOADERS = {
   "image-process": () => import("./ImageProcessView.svelte"),
   "image-generate": () => import("./ImageGenerateView.svelte"),
   "image-utility": () => import("./ImageUtilityView.svelte"),
+  "developer-utility": () => import("./DeveloperUtilityView.svelte"),
+  "http-status": () => import("./HttpStatusView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
   "windows-port": () => import("./PortProcessesView.svelte"),
   "live-io": () => import("./LiveIoView.svelte"),
@@ -52,7 +55,7 @@ export const VIEW_LOADERS = {
 export const FILL_VIEWS = new Set([
   "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa",
   "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "lorem",
-  "whitespace", "regex", "diff", "keypair", "symmetric-key", "unicode-inspect",
+  "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "unicode-inspect", "developer-utility", "http-status",
 ]);
 
 export const EPHEMERAL_TOOL_IDS = new Set([
@@ -69,10 +72,7 @@ const TOOL_LIMITS = Object.freeze({
   hash: { inputBytes: 16_000_000 },
   "md5-collision": { inputBytes: 16_000_000 },
   "file-type": { inputBytes: 100_000_000 },
-  "image-pixelate": { inputBytes: 30_000_000 },
-  "image-grid": { inputBytes: 30_000_000 },
-  "image-compress": { inputBytes: 30_000_000 },
-  "image-base64": { inputBytes: 10_000_000 },
+  "image-utility": { inputBytes: 30_000_000 },
   hmac: { inputBytes: 5_000_000 },
   "hmac-sha256": { inputBytes: 5_000_000 },
   cert: { inputBytes: 2_000_000 },
@@ -80,6 +80,12 @@ const TOOL_LIMITS = Object.freeze({
   markdown: { inputBytes: 1_000_000 },
   regex: { inputBytes: 1_000_000 },
   whitespace: { inputBytes: 5_000_000 },
+  gzip: { inputBytes: 5_000_000 },
+  "json-schema": { inputBytes: 5_000_000 },
+  dotenv: { inputBytes: 1_000_000 },
+  semver: { inputBytes: 1_000_000 },
+  chmod: { inputBytes: 10_000 },
+  "http-status": { inputBytes: 10_000 },
 });
 
 export const TOOL_VIEW_CONFIG = Object.freeze(
@@ -101,10 +107,14 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   aliases: Object.freeze([...(tool.aliases || [])]),
   loader: VIEW_LOADERS[tool.view],
   view: tool.view,
+  kind: tool.kind || "tool",
+  parentId: tool.parentId || null,
   defaultOptions: Object.freeze({ ...(tool.defaultOptions || {}) }),
+  demoPreset: tool.demoPreset,
+  actions: Object.freeze([...(tool.actions || [])]),
   ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id),
   fill: FILL_VIEWS.has(tool.view),
-  limits: TOOL_LIMITS[tool.id] || null,
+  limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || null,
 })));
 
 export const TOOL_IDS = Object.freeze(TOOL_REGISTRY.map((tool) => tool.id));

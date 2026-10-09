@@ -19,10 +19,15 @@
   import ToolCatalog from "./lib/ToolCatalog.svelte";
   import ToolLauncher from "./lib/ToolLauncher.svelte";
   import VaultView from "./lib/VaultView.svelte";
+  import { createToolDemo } from "./lib/demoCatalog.js";
 
   const RECENT_KEY = "toolbox.recentToolIds";
   const SIDEBAR_KEY = "toolbox.sidebarCollapsed";
   const MAX_SESSION_VIEWS = 8;
+  // Keep demo payloads referentially stable. Tool views use the payload in an
+  // effect keyed by demoRequest; recreating it during normal renders can make
+  // that effect restore the sample while the user is editing or clearing it.
+  const demoByToolId = new Map(tools.map((item) => [item.id, createToolDemo(item)]));
 
   let locale = $state("zh-CN");
   let page = $state("home");
@@ -40,6 +45,7 @@
   let vaultAutoLockMinutes = $state(DEFAULT_VAULT_AUTO_LOCK_MINUTES);
   let loadedViews = $state({});
   let viewLoadErrors = $state({});
+  let demoRevisions = $state({});
   const pendingViewLoads = new Map();
   let persistSeq = 0;
   let autoLockPersistSeq = 0;
@@ -129,7 +135,7 @@
     closeOverlays();
     void ensureViewLoaded(item.view);
     activeToolId = sanitizeToolIds([item.id])[0] || item.id;
-    const options = toolOptionsForQuery(activeToolId, query);
+    const options = { ...(item.defaultOptions || {}), ...toolOptionsForQuery(activeToolId, query) };
     if (Object.keys(options).length || !toolOptions[activeToolId]) toolOptions[activeToolId] = options;
     if (!EPHEMERAL_TOOL_IDS.has(activeToolId)) {
       // Keep a bounded working set. Tool views can own workers, timers, and
@@ -140,6 +146,12 @@
     persistRecent(pushRecent(recentIds, item.id, 10));
   }
   function openVault() { closeOverlays(); page = "vault"; launcherOpen = false; }
+  function loadDemo() {
+    if (!tool) return;
+    const demo = demoByToolId.get(tool.id);
+    toolOptions[tool.id] = { ...(tool.defaultOptions || {}), ...(demo?.options || {}), demo: true };
+    demoRevisions = { ...demoRevisions, [tool.id]: (demoRevisions[tool.id] || 0) + 1 };
+  }
 
   function ensureViewLoaded(view) {
     const loader = VIEW_LOADERS[view];
@@ -256,13 +268,31 @@
 {#snippet renderTool(item)}
   {@const ActiveView = loadedViews[item.view]}
   {@const initialOptions = toolOptions[item.id] || {}}
+  {@const demo = demoByToolId.get(item.id)}
+  {@const shortcut = item.kind === "shortcut"}
+  {@const parentTool = shortcut ? tools.find((candidate) => candidate.id === item.parentId) : null}
   {#if ActiveView}
-    {#if item.view === "live-io"}<ActiveView {locale} toolId={item.id} />
-    {:else if item.view === "aes" || item.view === "rsa" || item.view === "xor"}<ActiveView {locale} kind={item.view} {initialOptions} />
+    {#key `${item.id}:${demoRevisions[item.id] || 0}`}
+    {#if shortcut && parentTool}
+      <div class="shortcut-context">
+        <div>
+          <span class="shortcut-kicker">{pick(locale, chrome.focusedTool)}</span>
+          <strong>{pick(locale, item.name)}</strong>
+        </div>
+        <button class="dbx-btn dbx-btn--ghost" type="button" onclick={() => openTool(parentTool)}>
+          {pick(locale, chrome.openFullWorkbench)}
+        </button>
+      </div>
+    {/if}
+    {#if item.view === "live-io"}<ActiveView {locale} toolId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
+    {:else if item.view === "aes" || item.view === "rsa" || item.view === "xor"}<ActiveView {locale} kind={item.view} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
     {:else if item.view === "keypair" || item.view === "symmetric-key"}<ActiveView {locale} onVaultChange={refreshKeys} />
-    {:else if item.view === "whitespace"}<ActiveView {locale} initialAction={initialOptions.action || "trim"} />
-    {:else if item.view === "image-utility"}<ActiveView {locale} toolId={item.id} />
-    {:else}<ActiveView {locale} {initialOptions} />{/if}
+    {:else if item.view === "whitespace"}<ActiveView {locale} initialAction={initialOptions.action || "trim"} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
+    {:else if item.view === "image-utility"}<ActiveView {locale} {demo} />
+    {:else if item.view === "image-process"}<ActiveView {locale} {shortcut} focusedOperation={initialOptions.op || ""} />
+    {:else if item.view === "developer-utility"}<ActiveView {locale} toolId={item.id} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
+    {:else}<ActiveView {locale} {initialOptions} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />{/if}
+    {/key}
   {:else if viewLoadErrors[item.view]}
     <div class="view-load-state" role="alert">
       <span>{pick(locale, chrome.toolLoadFailed)}: {viewLoadErrors[item.view]}</span>
@@ -282,6 +312,7 @@
       <h2>{title}</h2>
       <div class="toolbar-end">
         {#if page === "tool" && tool}
+          {#if tool.actions?.includes("demo")}<button class="dbx-btn" onclick={loadDemo} type="button">{pick(locale, chrome.loadDemo)}</button>{/if}
           <button class="dbx-btn dbx-btn--ghost icon-btn favorite-action" class:active={favoriteSet.has(tool.id)} disabled={savingPrefs} onclick={() => toggleFavorite(tool.id)} type="button" aria-label={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)} title={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)}>{favoriteSet.has(tool.id) ? "★" : "☆"}</button>
         {/if}
       </div>
@@ -315,4 +346,9 @@
   .tool-session.fill { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; overflow: hidden; }
   .tool-session[hidden] { display: none; }
   .view-load-state { display: flex; align-items: center; gap: 10px; color: var(--color-muted-foreground); }
+  .shortcut-context { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 9px; background: color-mix(in srgb, var(--color-card) 86%, var(--color-primary) 14%); }
+  .shortcut-context > div { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+  .shortcut-context strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+  .shortcut-kicker { color: var(--color-muted-foreground); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+  @media (max-width: 560px) { .shortcut-context { align-items: stretch; flex-direction: column; }.shortcut-context button { align-self: flex-start; } }
 </style>

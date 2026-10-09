@@ -4,13 +4,19 @@
   import { localizeError, pick } from "./i18n.js";
   import { LIVE_IO_TOOLS } from "./liveIo.js";
 
-  let { locale = "zh-CN", toolId = "quoted-printable" } = $props();
+  let { locale = "zh-CN", toolId = "quoted-printable", demo = null, demoRequest = 0 } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
   const spec = $derived(LIVE_IO_TOOLS[toolId]);
 
   let input = $state("");
   let optionValues = $state({});
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    input = demo.input;
+  });
 
   $effect(() => {
     optionValues = { ...(LIVE_IO_TOOLS[toolId]?.defaults || {}) };

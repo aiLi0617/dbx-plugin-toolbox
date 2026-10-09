@@ -7,7 +7,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 当前版本 | `0.1.3` |
+| 当前版本 | `0.2.0` |
 | 运行要求 | DBX `>= 0.5.68`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |
@@ -26,7 +26,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 ## 核心特点
 
 - **本地优先**：工作台不声明网络权限；格式转换、图像处理和密码学运算均在本机执行。
-- **覆盖高频场景**：提供 7 类、约 38 个工具页，支持搜索、收藏、最近使用与分类筛选。
+- **覆盖高频场景**：提供 7 类、约 48 个工具页，支持搜索、收藏、最近使用与分类筛选。
 - **精度与边界明确**：数据转换设有 5 MB 输入上限；可能造成结构或数字精度丢失的操作会给出明确提示或拒绝执行。
 - **密钥不离开 Sidecar**：密钥库通过 `keyId` 引用密钥，避免将明文密钥放入 UI 持久化存储或 Workbench context。
 - **适合桌面工作流**：支持本地文件导入导出、二维码/条码生成与识别、批量图片处理和电子表格编辑。
@@ -60,14 +60,18 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 数据格式转换 | JSON、YAML、CSV、TSV、NDJSON、XML、TOML 互转 |
 | 代码格式化 | SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript |
 | 电子表格 | 本地打开、编辑与导出 XLSX、CSV、TSV、JSON；支持批量粘贴、撤销重做、工作表管理、搜索和筛选 |
+| JSON Schema 校验 | Draft 2020-12、本地 `$ref`、常见格式校验与结构化错误路径，不加载远程 Schema |
+| .env 工具 | `.env` 与 JSON 互转，检查重复键、非法变量名、引号与多行值，不展开环境变量 |
 
 > XLSX 导入只保留单元格值；公式、样式、图片和合并单元格不会保留。
 
 ### 编码、转换与计算
 
 - **编码与转义**：Base64 / Base32 / Base58 / Hex、URL、HTML、Unicode、JavaScript、JSON、CSS、SQL 字符串、Data URI、Punycode / IDN、Quoted-Printable。
+- **文本压缩**：UTF-8 文本与 Gzip Base64 双向转换；图片 Base64 支持编码、解码、预览与保存。
 - **时间与颜色**：Unix 时间戳与日期互转、时区与时间差计算；HEX / RGB / CMYK / HSV 转换、色环与屏幕取色。
 - **开发计算**：Cron 表达式可视化与下次触发预览、2–36 进制转换、IPv4 / IPv6 CIDR 计算及受限子网切分。
+- **开发查询**：SemVer 解析、比较、排序和范围检查；chmod 数字/符号权限互转；离线 HTTP 状态码查询。
 
 - **端口进程（Windows / macOS / Linux）**：按 TCP / UDP 本地端口查询 PID、名称、地址和状态，确认后结束并刷新。Windows 强制结束；macOS / Linux 默认 SIGTERM，可勾选 SIGKILL。执行前重新核对启动时间和端口归属，保护系统 PID、DBX 与工具箱自身及祖先进程。Unix 查询依赖系统路径下的 lsof（Linux 需自行安装），仅显示当前权限可见的进程；Linux 安全终止使用 pidfd，需要内核 5.3+。macOS 使用微秒级启动时间复核身份，但系统按 PID 发送信号，仍存在极短的 PID 复用竞态。强制结束可能丢失未保存数据。
 

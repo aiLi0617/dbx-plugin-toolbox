@@ -1,7 +1,16 @@
 export async function copyText(text) {
   const value = String(text ?? "");
-  if (copyWithExecCommand(value)) return;
-  await copyWithClipboardApi(value);
+  let clipboardError = null;
+  if (globalThis.navigator?.clipboard?.writeText) {
+    try {
+      await copyWithClipboardApi(value);
+      return;
+    } catch (error) {
+      clipboardError = error;
+    }
+  }
+  if (typeof document !== "undefined" && copyWithExecCommand(value)) return;
+  throw clipboardError || new Error("Clipboard is not available");
 }
 
 function copyWithExecCommand(value) {
@@ -33,15 +42,18 @@ function copyWithExecCommand(value) {
 }
 
 async function copyWithClipboardApi(value) {
-  if (!navigator.clipboard?.writeText) {
+  if (!globalThis.navigator?.clipboard?.writeText) {
     throw new Error("Clipboard is not available");
   }
   let timer = 0;
+  // Multi-megabyte Data URLs can take noticeably longer than ordinary text.
+  // Keep the fallback bounded without aborting healthy large clipboard writes at 400 ms.
+  const timeoutMs = Math.min(10_000, Math.max(1_500, Math.ceil(value.length / 500_000) * 1_000));
   try {
     await Promise.race([
-      navigator.clipboard.writeText(value),
+      globalThis.navigator.clipboard.writeText(value),
       new Promise((_, reject) => {
-        timer = window.setTimeout(() => reject(new Error("clipboard timeout")), 400);
+        timer = globalThis.setTimeout(() => reject(new Error("clipboard timeout")), timeoutMs);
       }),
     ]);
   } finally {

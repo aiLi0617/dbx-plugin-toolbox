@@ -17,58 +17,6 @@ const PREFS_VERSION: u32 = 3;
 const DEFAULT_VAULT_AUTO_LOCK_MINUTES: u32 = 15;
 static PREFS_LOCK: Mutex<()> = Mutex::new(());
 
-const KNOWN_TOOL_IDS: &[&str] = &[
-    "data-convert",
-    "spreadsheet",
-    "image-process",
-    "image-generate",
-    "image-pixelate",
-    "image-grid",
-    "image-compress",
-    "image-base64",
-    "json",
-    "base-convert",
-    "network-calc",
-    "windows-port",
-    "timestamp",
-    "color",
-    "cron",
-    "base64",
-    "url",
-    "html-entities",
-    "punycode",
-    "data-uri",
-    "quoted-printable",
-    "jwt",
-    "aes",
-    "hmac-sha256",
-    "xor",
-    "rsa",
-    "jwk",
-    "cert",
-    "code-format",
-    "hash",
-    "md5-collision",
-    "file-type",
-    "uuid",
-    "password",
-    "qrcode",
-    "lorem",
-    "totp",
-    "whitespace",
-    "case",
-    "stats",
-    "regex",
-    "diff",
-    "markdown",
-    "slugify",
-    "strip-html",
-    "sql-escape",
-    "unicode-inspect",
-    "symmetric-key",
-    "key-pair",
-];
-
 // A first-run install starts with no favorites. Users choose the tools they want.
 const DEFAULT_ENABLED: &[&str] = &[];
 
@@ -96,10 +44,6 @@ fn sanitize_vault_auto_lock_minutes(value: u32) -> u32 {
         0 | 5 | 15 | 30 | 60 => value,
         _ => DEFAULT_VAULT_AUTO_LOCK_MINUTES,
     }
-}
-
-fn known_ids() -> HashSet<&'static str> {
-    KNOWN_TOOL_IDS.iter().copied().collect()
 }
 
 fn default_ids() -> Vec<String> {
@@ -131,12 +75,15 @@ fn canonical_id(id: String) -> String {
 fn filter_known(ids: Vec<String>) -> Vec<String> {
     let split_old_json_tools =
         ids.iter().any(|id| id == "json-convert") && ids.iter().any(|id| id == "json");
-    let known = known_ids();
     let mut seen = HashSet::new();
     let mut out = Vec::new();
-    for id in ids {
+    for id in ids.into_iter().take(256) {
         let id = canonical_id(id);
-        if known.contains(id.as_str()) && seen.insert(id.clone()) {
+        let valid = !id.is_empty()
+            && id.len() <= 80
+            && id.as_bytes()[0].is_ascii_alphanumeric()
+            && id.bytes().all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == b'-' || ch == b'_' || ch == b'.');
+        if valid && seen.insert(id.clone()) {
             out.push(id);
         }
     }
@@ -358,16 +305,15 @@ mod tests {
 
     #[test]
     fn defaults_are_known_and_unique() {
-        let known = known_ids();
         let mut seen = HashSet::new();
         for id in DEFAULT_ENABLED {
-            assert!(known.contains(id), "unknown default id {id}");
+            assert_eq!(filter_known(vec![(*id).to_string()]), vec![(*id).to_string()]);
             assert!(seen.insert(*id), "duplicate default id {id}");
         }
     }
 
     #[test]
-    fn filter_known_drops_unknown_and_dedupes() {
+    fn filter_known_keeps_forward_compatible_ids_and_dedupes() {
         let cleaned = filter_known(vec![
             "json".into(),
             "missing-tool".into(),
@@ -375,7 +321,7 @@ mod tests {
             "uuid".into(),
             "".into(),
         ]);
-        assert_eq!(cleaned, vec!["json".to_string(), "uuid".to_string()]);
+        assert_eq!(cleaned, vec!["json".to_string(), "missing-tool".to_string(), "uuid".to_string()]);
     }
 
     #[test]
@@ -446,7 +392,8 @@ mod tests {
             vec![
                 "hash".to_string(),
                 "json".to_string(),
-                "whitespace".to_string()
+                "whitespace".to_string(),
+                "missing-tool".to_string()
             ]
         );
     }

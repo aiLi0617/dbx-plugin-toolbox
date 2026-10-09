@@ -2,7 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { bytesEqual, classifyMd5Comparison } from "../src/lib/collision.js";
 import { extensionMatches, identifyFileType } from "../src/lib/fileType.js";
-import { compressionRatio, dataUrlParts, gridSlices } from "../src/lib/imageUtility.js";
+import { LARGE_DATA_URL_CHARS, base64EncodedLength, compressionRatio, dataUrlParts, gridSlices, imageDataUrlLength } from "../src/lib/imageUtility.js";
+import { saveBlobThroughHost } from "../src/lib/fileSave.js";
+import { copyText } from "../src/lib/clipboard.js";
 
 test("MD5 comparison only calls different bytes with equal digests a collision", () => {
   assert.equal(classifyMd5Comparison("same", "same", false), "collision");
@@ -32,4 +34,65 @@ test("image utility helpers parse Data URLs and compare compression size", () =>
   assert.deepEqual(dataUrlParts("data:image/png;base64,AA=="), { mime: "image/png", base64: "AA==" });
   assert.equal(compressionRatio(1000, 725), 27.5);
   assert.equal(compressionRatio(1000, 1100), -10);
+});
+
+test("image utility estimates large Base64 output without materializing it", () => {
+  assert.equal(base64EncodedLength(0), 0);
+  assert.equal(base64EncodedLength(1), 4);
+  assert.equal(base64EncodedLength(3), 4);
+  assert.equal(imageDataUrlLength(3, "image/png"), "data:image/png;base64,".length + 4);
+  assert.ok(imageDataUrlLength(1.86 * 1024 * 1024, "image/png") > LARGE_DATA_URL_CHARS);
+});
+
+test("large clipboard text uses the async API without truncation", async () => {
+  const previousNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const payload = `data:image/png;base64,${"a".repeat(2_500_000)}`;
+  let copied = "";
+  Object.defineProperty(globalThis, "navigator", {
+    configurable: true,
+    value: { clipboard: { async writeText(value) { copied = value; } } },
+  });
+  try {
+    await copyText(payload);
+    assert.equal(copied.length, payload.length);
+    assert.equal(copied, payload);
+  } finally {
+    if (previousNavigator) Object.defineProperty(globalThis, "navigator", previousNavigator);
+    else delete globalThis.navigator;
+  }
+});
+
+test("large file saves stay below the bridge limit by streaming chunks", async () => {
+  const previousWindow = globalThis.window;
+  const chunks = [];
+  globalThis.window = {
+    dbxPlugin: {
+      ready: Promise.resolve(),
+      async invoke(method, params) {
+        if (method === "toolbox/save-file-stream/begin") {
+          assert.equal(params.size, 700_000);
+          return { sessionId: "save-session" };
+        }
+        if (method === "toolbox/save-file-stream/update") {
+          assert.equal(params.sessionId, "save-session");
+          assert.ok(JSON.stringify(params).length < 2 * 1024 * 1024);
+          chunks.push(Buffer.from(params.dataBase64, "base64"));
+          return { ok: true };
+        }
+        if (method === "toolbox/save-file-stream/finalize") return { path: "saved.zip" };
+        throw new Error(`Unexpected method: ${method}`);
+      },
+    },
+  };
+  try {
+    const blob = new Blob([new Uint8Array(700_000).fill(0x61)], { type: "application/zip" });
+    const saved = await saveBlobThroughHost(blob, { fileName: "slices.zip", binary: true });
+    assert.equal(saved.path, "saved.zip");
+    assert.equal(Buffer.concat(chunks).length, blob.size);
+    assert.ok(chunks.length > 1);
+    assert.ok(chunks.every((chunk) => chunk.length <= 256 * 1024));
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
 });

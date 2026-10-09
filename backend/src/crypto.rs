@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::time::{Duration, Instant};
+
 use aes::Aes128;
 use aes::Aes256;
 use aes_gcm::aead::{Aead, KeyInit as GcmKeyInit, Payload};
@@ -45,6 +48,36 @@ const MAX_CRYPTO_INPUT_BYTES: usize = 16 * 1024 * 1024;
 const MAX_PACKED_CRYPTO_BYTES: usize = MAX_CRYPTO_INPUT_BYTES + 64;
 const MAX_CERT_INPUT_BYTES: usize = 2 * 1024 * 1024;
 const MAX_KEY_INPUT_BYTES: usize = 1024 * 1024;
+const MAX_HASH_CHUNK_BYTES: usize = 512 * 1024;
+const MAX_HASH_SESSIONS: usize = 8;
+const HASH_SESSION_TTL: Duration = Duration::from_secs(5 * 60);
+
+struct HashSession {
+    total_bytes: usize,
+    last_updated: Instant,
+    md5: Md5,
+    sha224: Sha224,
+    sha3_256: Sha3_256,
+    sm3: Sm3,
+}
+
+impl Default for HashSession {
+    fn default() -> Self {
+        Self {
+            total_bytes: 0,
+            last_updated: Instant::now(),
+            md5: Md5::new(),
+            sha224: Sha224::new(),
+            sha3_256: Sha3_256::new(),
+            sm3: Sm3::new(),
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct HashSessions {
+    sessions: HashMap<String, HashSession>,
+}
 
 fn ensure_input_size(value: &str, label: &str, max: usize) -> Result<(), PluginError> {
     if value.len() > max {
@@ -147,6 +180,84 @@ pub fn hash_op(params: Value) -> Result<Value, PluginError> {
         _ => return Err(bad("Unsupported hash algorithm")),
     };
     Ok(json!({ "ok": true, "digest": digest, "algorithm": algorithm }))
+}
+
+pub fn hash_stream_op(
+    sessions: &mut HashSessions,
+    method: &str,
+    params: Value,
+) -> Result<Value, PluginError> {
+    match method {
+        "toolbox/hash-stream/begin" => {
+            sessions
+                .sessions
+                .retain(|_, session| session.last_updated.elapsed() < HASH_SESSION_TTL);
+            if sessions.sessions.len() >= MAX_HASH_SESSIONS {
+                return Err(err("Too many active hash sessions"));
+            }
+            let session_id = loop {
+                let mut id = [0_u8; 16];
+                rand::thread_rng().fill_bytes(&mut id);
+                let candidate = hex::encode(id);
+                if !sessions.sessions.contains_key(&candidate) {
+                    break candidate;
+                }
+            };
+            sessions
+                .sessions
+                .insert(session_id.clone(), HashSession::default());
+            Ok(json!({ "ok": true, "sessionId": session_id }))
+        }
+        "toolbox/hash-stream/update" => {
+            let session_id = str_param(&params, "sessionId")?.to_string();
+            let data = str_param(&params, "dataBase64")?;
+            let bytes = decode_base64_limited(data, "Hash chunk", MAX_HASH_CHUNK_BYTES)?;
+            let Some(session) = sessions.sessions.get_mut(&session_id) else {
+                return Err(bad("Unknown or expired hash session"));
+            };
+            let Some(total_bytes) = session.total_bytes.checked_add(bytes.len()) else {
+                sessions.sessions.remove(&session_id);
+                return Err(bad("Hash input exceeds the input limit"));
+            };
+            if total_bytes > MAX_HASH_INPUT_BYTES {
+                sessions.sessions.remove(&session_id);
+                return Err(bad(format!(
+                    "Hash input exceeds the {MAX_HASH_INPUT_BYTES} byte input limit"
+                )));
+            }
+            Digest::update(&mut session.md5, &bytes);
+            Digest::update(&mut session.sha224, &bytes);
+            Digest::update(&mut session.sha3_256, &bytes);
+            Digest::update(&mut session.sm3, &bytes);
+            session.total_bytes = total_bytes;
+            session.last_updated = Instant::now();
+            Ok(json!({ "ok": true, "receivedBytes": total_bytes }))
+        }
+        "toolbox/hash-stream/finalize" => {
+            let session_id = str_param(&params, "sessionId")?;
+            let Some(session) = sessions.sessions.remove(session_id) else {
+                return Err(bad("Unknown or expired hash session"));
+            };
+            let md5 = hex::encode(session.md5.finalize());
+            Ok(json!({
+                "ok": true,
+                "bytes": session.total_bytes,
+                "digests": {
+                    "md5-16": &md5[8..24],
+                    "md5": md5,
+                    "sha-224": hex::encode(session.sha224.finalize()),
+                    "sha3-256": hex::encode(session.sha3_256.finalize()),
+                    "sm3": hex::encode(session.sm3.finalize()),
+                }
+            }))
+        }
+        "toolbox/hash-stream/cancel" => {
+            let session_id = str_param(&params, "sessionId")?;
+            sessions.sessions.remove(session_id);
+            Ok(json!({ "ok": true }))
+        }
+        _ => Err(PluginError::method_not_found(method)),
+    }
 }
 
 pub fn crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
@@ -1464,6 +1575,43 @@ mod crypto_tests {
             digest("sha3-256"),
             "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a"
         );
+    }
+
+    #[test]
+    fn streamed_hashes_match_single_request_digests_across_chunks() {
+        let input = vec![b'a'; MAX_HASH_CHUNK_BYTES + 17];
+        let mut sessions = HashSessions::default();
+        let started = hash_stream_op(
+            &mut sessions,
+            "toolbox/hash-stream/begin",
+            json!({}),
+        )
+        .unwrap();
+        let session_id = started["sessionId"].as_str().unwrap();
+        for chunk in input.chunks(128 * 1024) {
+            hash_stream_op(
+                &mut sessions,
+                "toolbox/hash-stream/update",
+                json!({ "sessionId": session_id, "dataBase64": B64.encode(chunk) }),
+            )
+            .unwrap();
+        }
+        let streamed = hash_stream_op(
+            &mut sessions,
+            "toolbox/hash-stream/finalize",
+            json!({ "sessionId": session_id }),
+        )
+        .unwrap();
+        assert_eq!(streamed["bytes"], input.len());
+        let encoded = B64.encode(&input);
+        for algorithm in ["md5-16", "md5", "sha-224", "sha3-256", "sm3"] {
+            let expected = hash_op(json!({
+                "algorithm": algorithm,
+                "dataBase64": encoded,
+            }))
+            .unwrap();
+            assert_eq!(streamed["digests"][algorithm], expected["digest"]);
+        }
     }
 
     #[test]

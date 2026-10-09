@@ -242,6 +242,16 @@ function optionsColor(q) {
   return {};
 }
 
+function optionsHttpStatus(q) {
+  const code = q.match(/(?:^|\s)([1-5]\d{2})(?:\s|$)/)?.[1];
+  if (code) return { query: code };
+  const statusClass = q.match(/(?:^|\s)([1-5]xx)(?:\s|$)/i)?.[1];
+  if (statusClass) return { query: statusClass.toLowerCase() };
+  const name = q.match(/\b(?:bad request|unauthorized|forbidden|not found|no content|too many requests|internal server error|bad gateway|service unavailable|gateway timeout|teapot)\b/i)?.[0];
+  if (name) return { query: name };
+  return {};
+}
+
 const OPTION_PARSERS = {
   uuid: optionsUuid,
   password: optionsPassword,
@@ -259,6 +269,7 @@ const OPTION_PARSERS = {
   url: optionsUrl,
   "image-process": optionsImage,
   color: optionsColor,
+  "http-status": optionsHttpStatus,
 };
 
 function push(out, toolId, options, label, priority) {
@@ -371,6 +382,13 @@ export function resolveIntent(query = "") {
   else if (/\burl\b/.test(q)) push(out, "url", {}, "", 8);
 
   if (/正则|regex|regexp/.test(q)) push(out, "regex", {}, "", 10);
+
+  const httpStatus = optionsHttpStatus(q);
+  if (Object.keys(httpStatus).length) {
+    push(out, "http-status", httpStatus, httpStatus.query, 13);
+  } else if (/http\s*(?:status|code)|status\s*code|状态码|狀態碼/.test(q)) {
+    push(out, "http-status", {}, "", 10);
+  }
 
   if (/crontab|cron\s*表达|cron\s*expr|定时任务|计划任务|\bcron\b|quartz/.test(q)) {
     push(out, "cron", {}, "", 10);

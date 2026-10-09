@@ -4,7 +4,7 @@
   import { pick } from "./i18n.js";
   import { CODE_LANGUAGES, formatCode, SQL_DIALECTS } from "./tools/format.js";
 
-  let { locale = "zh-CN", initialOptions = {} } = $props();
+  let { locale = "zh-CN", initialOptions = {}, shortcut = false, demo = null, demoRequest = 0 } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -15,6 +15,12 @@
   let input = $state("");
   let result = $state({ text: "", error: "", notice: "" });
   let busy = $state(false);
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    input = demo.input;
+  });
   $effect(() => {
     const next = ({ js: "javascript", ts: "typescript" })[initialOptions.language] || initialOptions.language;
     if (CODE_LANGUAGES.some((item) => item.value === next)) language = next;
@@ -48,13 +54,15 @@
 
 <div class="page">
   <div class="options">
-    <label class="field">
-      <span>{t("语言", "Language")}</span>
-      <Select
-        bind:value={language}
-        options={CODE_LANGUAGES.map((item) => ({ value: item.value, label: t(item.zh, item.en) }))}
-      />
-    </label>
+    {#if !shortcut}
+      <label class="field">
+        <span>{t("语言", "Language")}</span>
+        <Select
+          bind:value={language}
+          options={CODE_LANGUAGES.map((item) => ({ value: item.value, label: t(item.zh, item.en) }))}
+        />
+      </label>
+    {/if}
     {#if language === "sql"}
       <label class="field">
         <span>{t("方言", "Dialect")}</span>
