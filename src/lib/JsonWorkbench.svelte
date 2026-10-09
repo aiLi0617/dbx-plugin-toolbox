@@ -3,7 +3,7 @@
   import { chrome, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { copyText as copyToClipboard } from "./clipboard.js";
-  import { parseLosslessJson, parseSafeJson, toSafeJsonValue, precisionErrorMessage } from "./jsonPrecision.js";
+  import { parseLosslessJson, precisionErrorMessage } from "./jsonPrecision.js";
   import { jsonLanguages, convertJsonToLang } from "./jsonToLang.js";
   import { runJsonPath } from "./tools/convert.js";
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
@@ -27,7 +27,7 @@
     unicodeToChinese,
   } from "./jsonOps.js";
 
-  let { locale = "zh-CN", initialOptions = {} } = $props();
+  let { locale = "zh-CN", initialOptions = {}, demo = null, demoRequest = 0 } = $props();
 
   let jsonText = $state("");
   let pretty = $state(true);
@@ -51,6 +51,12 @@
   let collapsed = $state({});
   let copied = $state("");
   let seededFold = false;
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    jsonText = demo.input;
+  });
 
   const t = (zhText, en) => pick(locale, zhText, en);
   const rightError = $derived(actionError || parseError || (rightMode === "tree" ? "" : convertError));
@@ -77,7 +83,7 @@
         return;
       }
       try {
-        const value = parseSafeJson(text);
+        const value = parseLosslessJson(text);
         parsed = value;
         parseError = "";
         if (!seededFold) {
@@ -209,7 +215,6 @@
   }
 
   function writeTree(next) {
-    next = toSafeJsonValue(next);
     if (sortKeys && unsortedValue === undefined) {
       try {
         unsortedValue = parseLosslessJson(jsonText);
@@ -224,7 +229,7 @@
   }
 
   function currentJson() {
-    return parseSafeJson(jsonText);
+    return parseLosslessJson(jsonText);
   }
 
   function onToggle(path) {
@@ -509,7 +514,7 @@
     ></button>
 
     <section class="json-pane json-pane-right">
-      <div class="json-pane-bar">
+      <div class="json-pane-bar" class:json-tree-bar={rightMode === "tree"}>
         <div class="json-pane-bar-start">
           <div class="json-modes" role="group" aria-label={t("JSON 功能", "JSON tools")}>
             {#each [["tree", "树形编辑", "Tree"], ["extract", "路径提取", "Extract"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
@@ -539,22 +544,31 @@
         <div class="json-pane-bar-end">
           {#if rightMode === "tree"}
             <button
-              class="dbx-btn"
+              class="dbx-btn dbx-btn--ghost json-icon-btn"
               disabled={parsed === undefined}
               onclick={expandAll}
               type="button"
               title={t("展开全部节点", "Expand all nodes")}
+              aria-label={t("展开全部节点", "Expand all nodes")}
             >
-              {t("全展开", "Expand all")}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                <path d="M12 8v8"></path>
+                <path d="M8 12h8"></path>
+              </svg>
             </button>
             <button
-              class="dbx-btn"
+              class="dbx-btn dbx-btn--ghost json-icon-btn"
               disabled={parsed === undefined}
               onclick={collapseAll}
               type="button"
               title={t("折叠全部节点", "Collapse all nodes")}
+              aria-label={t("折叠全部节点", "Collapse all nodes")}
             >
-              {t("全折叠", "Collapse all")}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                <path d="M8 12h8"></path>
+              </svg>
             </button>
           {:else}
             <button
@@ -596,7 +610,17 @@
 </div>
 
 <style>
-  .json-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .json-modes {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .json-modes::-webkit-scrollbar { display: none; }
+  .json-modes :global(.dbx-btn) { flex: 0 0 auto; }
   .json-modes .active { background: var(--dbx-selection-background); border-color: var(--dbx-selection-border); color: var(--dbx-selection-foreground); }
   .json-workbench {
     flex: 1;
@@ -672,6 +696,7 @@
     gap: 6px;
     align-items: center;
     flex-shrink: 0;
+    min-width: 0;
   }
   .json-pane-bar-start {
     display: flex;
@@ -680,12 +705,14 @@
     align-items: center;
     min-width: 0;
   }
+  .json-tree-bar { flex-wrap: nowrap; }
+  .json-tree-bar .json-pane-bar-start { flex: 1 1 auto; flex-wrap: nowrap; }
   .json-pane-bar-end {
     display: flex;
     gap: 6px;
     align-items: center;
     margin-left: auto;
-    flex-shrink: 0;
+    flex: 0 0 auto;
   }
   .json-icon-btn {
     width: 30px;

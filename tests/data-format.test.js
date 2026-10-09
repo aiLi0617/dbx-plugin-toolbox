@@ -3,7 +3,7 @@ import test from "node:test";
 import { convertData, jsonToNdjson, ndjsonToJson, jsonToTsv, tsvToJson } from "../src/lib/dataConvert.js";
 import { formatCode } from "../src/lib/tools/format.js";
 import { jsonToCsv, csvToJson, runJsonPath } from "../src/lib/tools/convert.js";
-import { collapseAllPaths, formatJson, minifyJson, sortValue, restoreKeyOrder, serializeJson, parseLeaf } from "../src/lib/jsonOps.js";
+import { collapseAllPaths, formatJson, minifyJson, sortValue, restoreKeyOrder, serializeJson, parseLeaf, setPath } from "../src/lib/jsonOps.js";
 import { convertJsonToLang } from "../src/lib/jsonToLang.js";
 import { parseLosslessJson, toSafeJsonValue, parseSafeJson } from "../src/lib/jsonPrecision.js";
 
@@ -37,15 +37,20 @@ test("lossless handling cannot confuse user marker properties or lose prototype-
   assert.equal(JSON.parse(formatJson('{"isLosslessNumber":true,"value":"1"}')).isLosslessNumber, true);
 });
 
-test("unsafe numbers cannot silently reach tree edits, queries, or code generators", () => {
+test("unsafe numbers cannot silently reach number-only queries", () => {
   for (const value of ["9007199254740993", "9007199254740993.0", "0.1234567890123456789", "1e400", "1e-400"]) {
     const input = `{"id":${value}}`;
     assert.throws(() => parseSafeJson(input), /precision/);
-    assert.throws(() => convertJsonToLang(input, "typescript"), /precision/);
     assert.throws(() => runJsonPath(input, "$.id"), /precision/);
   }
   assert.throws(() => toSafeJsonValue(parseLeaf("9007199254740993")), /precision/);
   assert.deepEqual(parseSafeJson('{"number":12.5,"id":"9007199254740993"}'), { number: 12.5, id: "9007199254740993" });
+});
+
+test("tree edits preserve lossless integer leaves", () => {
+  const value = parseLosslessJson('{"id":12312321312312313,"name":"before"}');
+  const edited = setPath(value, "/name", "after");
+  assert.equal(serializeJson(edited, false), '{"id":12312321312312313,"name":"after"}');
 });
 
 test("data conversion works in both directions for YAML, CSV, XML, and TOML", () => {
@@ -74,10 +79,15 @@ test("TSV and NDJSON conversions preserve rows and escaped fields", () => {
   assert.throws(() => ndjsonToJson('{"ok":1}\nnope'), /line 2/);
 });
 
-test("conversion rejects precision loss and unsupported target values", () => {
+test("conversion preserves large integers and rejects unsupported target values", () => {
   for (const [input, from] of [['{"id":9007199254740993}', "json"], ['id: 9007199254740993', "yaml"], ['id = 9007199254740993', "toml"]]) {
-    assert.throws(() => convertData(input, from, "csv"), /precision/);
+    assert.match(convertData(input, from, "csv"), /9007199254740993/);
   }
+  assert.match(convertData('{"id":12312321312312313}', "json", "yaml"), /12312321312312313/);
+  assert.match(convertData('{"id":12312321312312313}', "json", "toml"), /12312321312312313/);
+  assert.match(convertData('{"id":12312321312312313}', "json", "xml"), /12312321312312313/);
+  assert.match(convertData('12312321312312313', "json", "csv"), /12312321312312313/);
+  assert.match(convertJsonToLang('{"id":12312321312312313}', "python"), /12312321312312313/);
   assert.throws(() => convertData('x: 0.1234567890123456789', "yaml", "json"), /precision/);
   assert.throws(() => convertData('x = 0.1234567890123456789', "toml", "json"), /precision/);
   assert.deepEqual(JSON.parse(convertData('x = "0.1234567890123456789" # 9007199254740993', "toml", "json")), { x: "0.1234567890123456789" });

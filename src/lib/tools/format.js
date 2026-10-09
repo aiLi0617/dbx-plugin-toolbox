@@ -1,6 +1,5 @@
 import { XMLValidator } from "fast-xml-parser";
-import { format as formatSql } from "sql-formatter";
-import beautify from "js-beautify";
+import { loadAssetModule } from "../assetModules.js";
 import { jsonConvertModes, runJsonConvert } from "./convert.js";
 import { parseYamlDocument } from "../dataConvert.js";
 import { formatXmlPreservingText } from "../xmlFormat.js";
@@ -29,10 +28,9 @@ export const SQL_DIALECTS = [
 export function formatCode(input, language = "sql", action = "format", sqlDialect = "sql", indent = 2) {
   if (String(input ?? "").length > 2_000_000) throw new Error("Formatting input is limited to 2 MB");
   const indentSize = [2, 4, 8].includes(Number(indent)) ? Number(indent) : 2;
-  if (language === "sql") return formatSql(input, { language: SQL_DIALECTS.some((item) => item.value === sqlDialect) ? sqlDialect : "sql", tabWidth: indentSize });
+  if (language === "sql") return loadAssetModule("sql").then(({ format }) => format(input, { language: SQL_DIALECTS.some((item) => item.value === sqlDialect) ? sqlDialect : "sql", tabWidth: indentSize }));
   if (language === "yaml") return parseYamlDocument(input).toString({ indent: indentSize });
-  if (language === "html") return beautify.html(input, { indent_size: indentSize });
-  if (language === "css") return beautify.css(input, { indent_size: indentSize });
+  if (language === "html" || language === "css") return loadAssetModule("beautify").then(({ default: beautify }) => beautify[language](input, { indent_size: indentSize }));
   if (language === "javascript" || language === "typescript" || language === "js" || language === "ts") return formatScript(input, language, indentSize);
   if (language !== "xml") throw new Error("Unsupported formatting language");
   const check = XMLValidator.validate(input);
@@ -46,10 +44,6 @@ export function formatCode(input, language = "sql", action = "format", sqlDialec
 }
 
 async function formatScript(input, language, indent) {
-  const [prettier, estree, parser] = await Promise.all([
-    import("prettier/standalone"),
-    import("prettier/plugins/estree"),
-    language === "typescript" || language === "ts" ? import("prettier/plugins/typescript") : import("prettier/plugins/babel"),
-  ]);
-  return prettier.format(input, { parser: language === "typescript" || language === "ts" ? "typescript" : "babel", plugins: [estree, parser], tabWidth: indent });
+  const module = await loadAssetModule("script");
+  return module.formatScript(input, language, indent);
 }

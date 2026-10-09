@@ -7,6 +7,7 @@ import { L } from "./locale.js";
 // silently fall back to English. Keep the compact row format and layer the
 // host's other four locales on top of it here.
 const LOCALIZED_NAMES = {
+  "windows-port": ["Procesos por puerto", "Processi per porta", "ポート別プロセス", "Processos por porta"],
   json: ["Banco de trabajo JSON", "Area di lavoro JSON", "JSON ワークベンチ", "Bancada JSON"],
   "data-convert": ["Conversión de formatos", "Conversione formati", "データ形式変換", "Conversão de formatos"],
   "code-format": ["Formateador de código", "Formattatore di codice", "コードフォーマッター", "Formatador de código"],
@@ -24,6 +25,7 @@ const LOCALIZED_NAMES = {
   "base-convert": ["Conversión de bases", "Conversione di base", "進数変換", "Conversão de bases"],
   "network-calc": ["Red / CIDR", "Rete / CIDR", "ネットワーク / CIDR", "Rede / CIDR"],
   whitespace: ["Herramientas de texto", "Strumenti di testo", "テキスト処理", "Ferramentas de texto"],
+  gzip: ["Gzip de texto", "Gzip testo", "テキスト Gzip", "Gzip de texto"],
   regex: ["Prueba de expresiones regulares", "Test espressioni regolari", "正規表現テスター", "Teste de expressões regulares"],
   diff: ["Comparación de texto", "Confronto testi", "テキスト比較", "Comparação de texto"],
   markdown: ["Markdown", "Markdown", "Markdown", "Markdown"],
@@ -45,6 +47,9 @@ const LOCALIZED_NAMES = {
   lorem: ["Texto repetido", "Testo ripetuto", "繰り返しテキスト", "Texto repetido"],
   "image-process": ["Editor de imágenes", "Editor immagini", "画像編集", "Editor de imagens"],
   "image-generate": ["Imagen de marcador", "Immagine segnaposto", "プレースホルダー画像", "Imagem de espaço reservado"],
+  "md5-collision": ["Colisión MD5", "Collisione MD5", "MD5 衝突チェック", "Colisão MD5"],
+  "file-type": ["Identificar formato", "Riconosci formato", "ファイル形式判定", "Identificar formato"],
+  "image-utility": ["Utilidades de imagen", "Strumenti immagine", "画像ユーティリティ", "Utilitários de imagem"],
 };
 
 const rows = [
@@ -114,12 +119,19 @@ const rows = [
   ]],
 
   // —— 文本工具 ——
+  ["windows-port", "convert", "端口进程", "連接埠程序", "Port processes", "windows-port", [
+    "win", "windows", "mac", "macos", "linux", "lsof", "sigterm", "sigkill", "port", "kill", "taskkill", "端口", "端口占用", "杀进程", "结束进程", "释放端口", "pid", "tcp", "udp",
+  ]],
+
   ["whitespace", "text", "文本处理", "文字處理", "Text tools", "whitespace", [
     "空白与行", "查找替换", "全半角", "去重", "排序", "前缀", "后缀", "去空行",
     "大小写", "命名", "序号", "流水号", "随机打乱", "按列截取", "长度过滤",
     "case", "naming", "字数统计", "stats", "word count", "slugify",
     "去 HTML 标签", "strip-html", "trim", "unique", "sort", "replace",
     "camel", "snake", "kebab", "文本清理",
+  ]],
+  ["gzip", "text", "文本 Gzip", "文字 Gzip", "Text Gzip", "gzip", [
+    "gzip", "gunzip", "gz", "文本压缩", "文本解压", "压缩解压", "gzip base64", "compress text", "decompress text",
   ]],
   ["regex", "text", "正则测试", "正規測試", "Regex tester", "regex", [
     "正则", "正则表达式", "regexp", "pattern", "正则匹配", "正则替换",
@@ -136,8 +148,14 @@ const rows = [
 
   // —— 安全加密 ——
   ["hash", "security", "哈希校验", "雜湊校驗", "Hash & checksum", "hash", [
-    "hash", "md5", "sha", "sha1", "sha256", "sha384", "sha512", "sm3", "crc32",
+    "hash", "md5", "md5 16", "md5 32", "sha", "sha1", "sha224", "sha256", "sha3", "sha384", "sha512", "sm3", "crc32",
     "checksum", "摘要", "哈希", "校验和",
+  ]],
+  ["md5-collision", "security", "MD5 碰撞检查", "MD5 碰撞檢查", "MD5 collision check", "md5-collision", [
+    "md5碰撞", "md5 collision", "双文件md5", "相同摘要", "hash collision", "文件碰撞",
+  ]],
+  ["file-type", "security", "文件格式识别", "檔案格式識別", "File type identifier", "file-type", [
+    "文件类型", "文件识别", "魔数", "magic bytes", "file signature", "mime", "扩展名识别",
   ]],
   ["jwt", "security", "JWT", "JWT", "JWT", "jwt", [
     "验签", "decode token", "json web token", "令牌", "签发", "jwt解码", "jwt验签", "jwt签发",
@@ -193,15 +211,39 @@ const rows = [
   ["image-generate", "image", "占位图", "佔位圖", "Placeholder image", "image-generate", [
     "占位图", "指定大小", "文件大小", "placeholder", "dummy image", "generate image", "假图",
   ]],
+  ["image-utility", "image", "图片工具", "圖片工具", "Image utilities", "image-utility", [
+    "像素化", "马赛克", "pixelate", "pixel art", "mosaic",
+    "九宫格", "宫格切图", "grid slicer", "split image", "切片", "图片分割",
+    "压缩图片", "compress image", "减小图片", "图片瘦身", "jpeg quality", "webp quality",
+    "图片base64", "image base64", "data uri", "data url", "图片编码",
+    "base64转图片", "base64 to image", "图片解码",
+  ]],
 ];
 
-export const TOOL_DEFS = rows.map(([id, category, zhCN, zhTW, en, view, aliases]) => {
+const utilityRows = [
+  ["json-schema", "format", "JSON Schema 校验", "JSON Schema 校驗", "JSON Schema validator", "developer-utility", ["draft 2020-12", "schema validate"]],
+  ["dotenv", "format", ".env 工具", ".env 工具", ".env converter", "developer-utility", ["environment variables", "dotenv", "env json"]],
+  ["semver", "convert", "语义版本", "語意版本", "Semantic version", "developer-utility", ["version compare", "version range", "版本比较"]],
+  ["chmod", "convert", "chmod 权限计算", "chmod 權限計算", "chmod calculator", "developer-utility", ["unix permissions", "octal", "rwx"]],
+  ["http-status", "format", "HTTP 状态码速查", "HTTP 狀態碼速查", "HTTP status codes", "http-status", ["404", "401", "500", "5xx", "http code", "status code", "状态码", "狀態碼", "teapot"]],
+];
+
+const DEMO_VIEWS = new Set(["json-workbench", "whitespace", "gzip", "base64", "code-format", "data-convert", "live-io", "developer-utility"]);
+const NO_DEMO_IDS = new Set(["uuid", "color", "cron", "timestamp", "chmod", "http-status"]);
+
+export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
   const [es = en, it = en, ja = en, ptBR = en] = LOCALIZED_NAMES[id] || [];
+  const supportsDemo = DEMO_VIEWS.has(view) && !NO_DEMO_IDS.has(id);
   return {
     id,
     category,
     name: L(en, zhCN, zhTW, es, it, ja, ptBR),
     view,
     ...(aliases ? { aliases } : {}),
+    kind: metadata.parentId ? "shortcut" : "tool",
+    parentId: metadata.parentId || null,
+    defaultOptions: metadata.defaultOptions || {},
+    demoPreset: supportsDemo ? id : null,
+    actions: supportsDemo ? ["demo", "reset", "copy", "save", "drop"] : ["reset", "copy", "save", "drop"],
   };
 });

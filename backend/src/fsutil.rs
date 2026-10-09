@@ -1,9 +1,11 @@
+use std::collections::HashMap;
 use std::fs;
 #[cfg(target_os = "windows")]
 use std::num::NonZeroIsize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::Mutex;
+use std::time::{Duration, Instant};
 
 use base64::{engine::general_purpose::STANDARD as B64, Engine};
 use dbx_plugin_sdk::PluginError;
@@ -13,7 +15,23 @@ use crate::helpers::{bad, err, opt_str, str_param};
 
 const MAX_BYTES: usize = 10 * 1024 * 1024;
 const MAX_BASE64_BYTES: usize = MAX_BYTES.div_ceil(3) * 4;
+const MAX_SAVE_BYTES: usize = 128 * 1024 * 1024;
+const MAX_SAVE_CHUNK_BYTES: usize = 512 * 1024;
+const MAX_SAVE_SESSIONS: usize = 4;
+const SAVE_SESSION_TTL: Duration = Duration::from_secs(5 * 60);
 const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
+
+struct SaveSession {
+    params: Value,
+    expected_bytes: usize,
+    bytes: Vec<u8>,
+    last_updated: Instant,
+}
+
+#[derive(Default)]
+pub struct SaveSessions {
+    sessions: HashMap<String, SaveSession>,
+}
 
 #[derive(Clone, Copy)]
 struct ImageFormat {
@@ -157,11 +175,88 @@ fn escape_applescript(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
-pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
+pub fn handle(
+    sessions: &mut SaveSessions,
+    method: &str,
+    params: Value,
+) -> Result<Value, PluginError> {
     match method {
         "toolbox/save-file" => save_file(params),
+        "toolbox/save-file-stream/begin"
+        | "toolbox/save-file-stream/update"
+        | "toolbox/save-file-stream/finalize"
+        | "toolbox/save-file-stream/cancel" => save_file_stream(sessions, method, params),
         "toolbox/reveal-file" => reveal_file(params),
         "toolbox/copy-image" => copy_image(params),
+        _ => Err(PluginError::method_not_found(method)),
+    }
+}
+
+fn save_file_stream(
+    sessions: &mut SaveSessions,
+    method: &str,
+    params: Value,
+) -> Result<Value, PluginError> {
+    match method {
+        "toolbox/save-file-stream/begin" => {
+            sessions
+                .sessions
+                .retain(|_, session| session.last_updated.elapsed() < SAVE_SESSION_TTL);
+            if sessions.sessions.len() >= MAX_SAVE_SESSIONS {
+                return Err(err("Too many active save sessions"));
+            }
+            let expected_bytes = params
+                .get("size")
+                .and_then(Value::as_u64)
+                .and_then(|value| usize::try_from(value).ok())
+                .filter(|value| *value > 0 && *value <= MAX_SAVE_BYTES)
+                .ok_or_else(|| bad("Invalid or unsupported file size"))?;
+            let session_id = uuid::Uuid::new_v4().simple().to_string();
+            sessions.sessions.insert(
+                session_id.clone(),
+                SaveSession {
+                    params,
+                    expected_bytes,
+                    bytes: Vec::with_capacity(expected_bytes.min(1024 * 1024)),
+                    last_updated: Instant::now(),
+                },
+            );
+            Ok(json!({ "ok": true, "sessionId": session_id }))
+        }
+        "toolbox/save-file-stream/update" => {
+            let session_id = str_param(&params, "sessionId")?.to_string();
+            let encoded = str_param(&params, "dataBase64")?;
+            let chunk = decode_save_chunk(encoded)?;
+            let Some(session) = sessions.sessions.get_mut(&session_id) else {
+                return Err(bad("Unknown or expired save session"));
+            };
+            let Some(received_bytes) = session.bytes.len().checked_add(chunk.len()) else {
+                sessions.sessions.remove(&session_id);
+                return Err(bad("File is too large"));
+            };
+            if received_bytes > session.expected_bytes || received_bytes > MAX_SAVE_BYTES {
+                sessions.sessions.remove(&session_id);
+                return Err(bad("File is too large"));
+            }
+            session.bytes.extend_from_slice(&chunk);
+            session.last_updated = Instant::now();
+            Ok(json!({ "ok": true, "receivedBytes": received_bytes }))
+        }
+        "toolbox/save-file-stream/finalize" => {
+            let session_id = str_param(&params, "sessionId")?;
+            let Some(session) = sessions.sessions.remove(session_id) else {
+                return Err(bad("Unknown or expired save session"));
+            };
+            if session.bytes.len() != session.expected_bytes {
+                return Err(bad("Incomplete file transfer"));
+            }
+            save_file_bytes(session.params, session.bytes)
+        }
+        "toolbox/save-file-stream/cancel" => {
+            let session_id = str_param(&params, "sessionId")?;
+            sessions.sessions.remove(session_id);
+            Ok(json!({ "ok": true }))
+        }
         _ => Err(PluginError::method_not_found(method)),
     }
 }
@@ -255,6 +350,10 @@ fn copy_png_to_clipboard(_bytes: &[u8]) -> Result<(), PluginError> {
 
 fn save_file(params: Value) -> Result<Value, PluginError> {
     let bytes = decode_data(str_param(&params, "data")?)?;
+    save_file_bytes(params, bytes)
+}
+
+fn save_file_bytes(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError> {
     let binary = params
         .get("binary")
         .and_then(|value| value.as_bool())
@@ -379,7 +478,7 @@ fn pick_save_path_binary(
     #[cfg(target_os = "macos")]
     {
         let _ = extension;
-        return pick_save_path_via_osascript(title, name, start_dir);
+        pick_save_path_via_osascript(title, name, start_dir)
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -423,7 +522,7 @@ fn pick_save_path(
     #[cfg(target_os = "macos")]
     {
         let _ = format;
-        return pick_save_path_via_osascript(title, name, start_dir);
+        pick_save_path_via_osascript(title, name, start_dir)
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -460,6 +559,18 @@ fn decode_data(data: &str) -> Result<Vec<u8>, PluginError> {
     }
     if bytes.len() > MAX_BYTES {
         return Err(bad("File is too large"));
+    }
+    Ok(bytes)
+}
+
+fn decode_save_chunk(data: &str) -> Result<Vec<u8>, PluginError> {
+    let raw = data.trim();
+    if raw.is_empty() || raw.len() > MAX_SAVE_CHUNK_BYTES.div_ceil(3) * 4 + 4 {
+        return Err(bad("Invalid save chunk"));
+    }
+    let bytes = B64.decode(raw).map_err(|_| bad("Invalid save chunk"))?;
+    if bytes.is_empty() || bytes.len() > MAX_SAVE_CHUNK_BYTES {
+        return Err(bad("Invalid save chunk"));
     }
     Ok(bytes)
 }

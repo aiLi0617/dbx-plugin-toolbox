@@ -38,6 +38,35 @@ export const LEGACY_TOOL_IDS = {
   slugify: "whitespace",
   "strip-html": "whitespace",
   lines: "whitespace",
+  "image-pixelate": "image-utility",
+  "image-grid": "image-utility",
+  "image-compress": "image-utility",
+  "image-base64": "image-utility",
+  "text-clean": "whitespace",
+  "text-lines": "whitespace",
+  "text-replace": "whitespace",
+  "text-case": "whitespace",
+  "text-naming": "whitespace",
+  "text-inspect": "whitespace",
+  "base64-codec": "base64",
+  "base32-codec": "base64",
+  "base58-codec": "base64",
+  "hex-codec": "base64",
+  "format-sql": "code-format",
+  "format-xml": "code-format",
+  "format-yaml": "code-format",
+  "format-javascript": "code-format",
+  "format-typescript": "code-format",
+  "convert-json-yaml": "data-convert",
+  "convert-json-csv": "data-convert",
+  "convert-json-xml": "data-convert",
+  "convert-json-toml": "data-convert",
+  "convert-json-ndjson": "data-convert",
+  "image-crop": "image-process",
+  "image-resize": "image-process",
+  "image-transform": "image-process",
+  "image-watermark": "image-process",
+  "image-format-convert": "image-process",
 };
 
 export function canonicalToolId(id) {
@@ -45,6 +74,15 @@ export function canonicalToolId(id) {
 }
 
 const SUMMARIES = {
+  "windows-port": L(
+    "Find and terminate processes using a TCP or UDP port",
+    "查询并结束占用 TCP 或 UDP 端口的进程",
+    "查詢並終止占用 TCP 或 UDP 連接埠的程序",
+    "Buscar y finalizar procesos que usan un puerto TCP o UDP",
+    "Trova e termina i processi che usano una porta TCP o UDP",
+    "TCP・UDP ポートを使用するプロセスを検索して終了",
+    "Localize e encerre processos que usam uma porta TCP ou UDP",
+  ),
   json: L(
     "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL",
     "格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript / SQL 等",
@@ -197,6 +235,15 @@ const SUMMARIES = {
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
     "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
+  ),
+  gzip: L(
+    "Compress UTF-8 text to Gzip Base64 or decompress it back to text",
+    "将 UTF-8 文本压缩为 Gzip Base64，或解压还原为文本",
+    "將 UTF-8 文字壓縮為 Gzip Base64，或解壓還原為文字",
+    "Comprime texto UTF-8 a Gzip Base64 o descomprímelo de nuevo a texto",
+    "Comprimi testo UTF-8 in Gzip Base64 o decomprimilo nuovamente in testo",
+    "UTF-8 テキストを Gzip Base64 に圧縮、またはテキストへ解凍",
+    "Comprima texto UTF-8 em Gzip Base64 ou descompacte-o de volta para texto",
   ),
   regex: L(
     "Test regexes, inspect matches, and preview replacements",
@@ -387,9 +434,31 @@ const SUMMARIES = {
     "Generate placeholders at exact pixel size and file size",
     "Generate placeholders at exact pixel size and file size",
   ),
+  "md5-collision": L(
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "比较两个文件，识别 MD5 相同但内容不同的碰撞",
+    "比較兩個檔案，識別 MD5 相同但內容不同的碰撞",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+    "Compare two files and flag equal MD5 hashes with different bytes",
+  ),
+  "file-type": L(
+    "Identify a file from its signature instead of its extension",
+    "根据文件头魔数识别真实格式、MIME 与扩展名",
+    "根據檔案頭魔數識別真實格式、MIME 與副檔名",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+    "Identify a file from its signature instead of its extension",
+  ),
+  "image-utility": L("Pixelate, split, compress, or convert images to and from Base64", "图片像素化、切图、压缩及 Base64 双向转换", "圖片像素化、切圖、壓縮及 Base64 雙向轉換", "Pixelar, dividir, comprimir o convertir imágenes desde y hacia Base64", "Pixelizza, dividi, comprimi o converti immagini da e verso Base64", "画像のピクセル化、分割、圧縮、Base64 双方向変換", "Pixelize, divida, comprima ou converta imagens de e para Base64"),
 };
 
 const JAPANESE_SUMMARIES = {
+  "md5-collision": "2 つのファイルを比較し、内容が異なる同一 MD5 ハッシュを検出",
+  "file-type": "拡張子ではなくファイルシグネチャから形式を判定",
+  "image-utility": "画像のピクセル化、分割、圧縮、Base64 変換",
   json: "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
   "data-convert": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
   "code-format": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
@@ -433,6 +502,9 @@ const JAPANESE_SUMMARIES = {
 // [es, it, pt-BR]. English remains the canonical source text, while every
 // locale advertised by the host gets native catalog copy.
 const ROMANCE_SUMMARIES = {
+  "md5-collision": ["Compara dos archivos y detecta hashes MD5 iguales con bytes diferentes", "Confronta due file e rileva hash MD5 uguali con byte diversi", "Compare dois arquivos e detecte hashes MD5 iguais com bytes diferentes"],
+  "file-type": ["Identifica un archivo por su firma en lugar de su extensión", "Identifica un file dalla firma anziché dall'estensione", "Identifique um arquivo pela assinatura, não pela extensão"],
+  "image-utility": ["Pixela, divide, comprime o convierte imágenes a Base64", "Pixelizza, dividi, comprimi o converti immagini in Base64", "Pixelize, divida, comprima ou converta imagens em Base64"],
   json: ["Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL", "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL", "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"],
   "data-convert": ["Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML", "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML", "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"],
   "code-format": ["Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript", "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript", "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"],
@@ -478,20 +550,35 @@ const catalog = TOOL_DEFS;
 export const tools = catalog.map((tool) => {
   const baseSummary = SUMMARIES[tool.id];
   const [es, it, ptBR] = ROMANCE_SUMMARIES[tool.id] || [];
+  const genericSummary = {
+    ...L(
+      `Open ${tool.name.en} directly with ready-to-use defaults`,
+      `使用预设参数直接打开${tool.name["zh-CN"]}`,
+      `使用預設參數直接開啟${tool.name["zh-TW"]}`,
+      `Abre directamente ${tool.name.es} con valores preparados`,
+      `Apri direttamente ${tool.name.it} con valori pronti`,
+      `${tool.name.ja}を既定値ですぐに開く`,
+      `Abra ${tool.name["pt-BR"]} diretamente com valores prontos`,
+    ),
+    az: `${tool.name.az} hazır parametrlərlə birbaşa açılsın`,
+    ko: `${tool.name.ko} 도구를 준비된 기본값으로 바로 엽니다`,
+    tr: `${tool.name.tr} aracını hazır varsayılanlarla doğrudan açın`,
+  };
   const summary = baseSummary ? {
     ...baseSummary,
     ...(es ? { es } : {}),
     ...(it ? { it } : {}),
     ...(JAPANESE_SUMMARIES[tool.id] ? { ja: JAPANESE_SUMMARIES[tool.id] } : {}),
     ...(ptBR ? { "pt-BR": ptBR } : {}),
-  } : baseSummary;
+  } : genericSummary;
   const aliases = tool.id === "whitespace"
     ? [...(tool.aliases || []), ...TEXT_ACTIONS.flatMap((action) => [action.id, action.zh, action.en, ...action.aliases])]
     : tool.aliases;
   return { ...tool, ...(summary ? { summary } : {}), ...(aliases ? { aliases } : {}) };
 });
 
-export const DEFAULT_ENABLED_IDS = ["json", "base64", "timestamp", "hash", "uuid", "code-format"];
+// Keep first-run state empty; favorites are an explicit user choice.
+export const DEFAULT_ENABLED_IDS = [];
 
 export function toolsByIds(ids) {
   const map = new Map(tools.map((tool) => [tool.id, tool]));

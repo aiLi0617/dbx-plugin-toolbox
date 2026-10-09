@@ -53,7 +53,7 @@ export function collapseAllPaths(value) {
 }
 
 function cloneJson(value) {
-  return JSON.parse(JSON.stringify(value));
+  return parseLosslessJson(stringifyLosslessJson(value));
 }
 
 function parentAndKey(root, path) {
@@ -356,7 +356,7 @@ export function jsonFoldLines(value, indent = 2) {
         path,
         foldable: false,
         kind: "leaf",
-        text: `${pad}${prefix}${JSON.stringify(val)}${comma}`,
+        text: `${pad}${prefix}${stringifyLosslessJson(val)}${comma}`,
       });
       return;
     }

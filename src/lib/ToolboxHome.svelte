@@ -127,7 +127,7 @@
 
 <div class="home-page">
   <section class="hero">
-    <div><h2>{t(chrome.homeTitle)}</h2><p>{t(chrome.homeSubtitle)}</p></div>
+    <div class="hero-copy"><h2>{t(chrome.homeTitle)}</h2><p>{t(chrome.homeSubtitle)}</p></div>
     <div class="home-search" onfocusout={searchFocusOut}>
       <div class="home-search-box">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
@@ -258,9 +258,10 @@
 {/if}
 
 <style>
-  .home-page { width:min(1080px,100%); margin:0 auto; padding:28px; display:flex; flex-direction:column; gap:28px; }
-  .hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,480px); align-items:end; gap:28px; padding:22px; border:1px solid var(--color-border); border-radius:12px; background:linear-gradient(135deg,color-mix(in srgb,var(--color-primary) 8%,var(--color-card)),var(--color-card)); }
-  h2,h3,p { margin:0; } h2 { font-size:20px; } h3 { font-size:14px; } .hero p,.section-head p { margin-top:5px; color:var(--color-muted-foreground); font-size:12px; }
+  .home-page { container-type:inline-size; width:min(1080px,100%); margin:0 auto; padding:28px; display:flex; flex-direction:column; gap:28px; }
+  .hero { display:grid; grid-template-columns:minmax(190px,.8fr) minmax(280px,1.6fr); align-items:center; gap:24px; padding:24px; border:1px solid var(--color-border); border-radius:12px; background:linear-gradient(135deg,color-mix(in srgb,var(--color-primary) 8%,var(--color-card)),var(--color-card)); }
+  .hero-copy { min-width:0; }
+  h2,h3,p { margin:0; } h2 { font-size:20px; line-height:1.3; text-wrap:balance; } h3 { font-size:14px; } .hero p,.section-head p { margin-top:7px; color:var(--color-muted-foreground); font-size:12px; line-height:1.55; }
   .home-search { position:relative; min-width:0; }
   .home-search-box { display:flex; align-items:center; gap:9px; height:42px; padding:0 12px; border:1px solid var(--color-input); border-radius:8px; background:var(--color-background); color:var(--color-muted-foreground); }
   .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:var(--dbx-focus-ring); }
@@ -303,5 +304,6 @@
   .recent-grid button:hover,.category-grid button:hover { background:var(--color-muted); }.recent-grid strong{font-size:12px}.recent-grid span,.category-grid small{color:var(--color-muted-foreground);font-size:10px}
   .category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:7px; }
   .empty { padding:24px; border:1px dashed var(--color-border); border-radius:9px; text-align:center; }.empty p{margin-bottom:12px;color:var(--color-muted-foreground);font-size:12px}
-  @media(max-width:760px){.home-page{padding:16px}.hero{grid-template-columns:1fr}.tool-grid{grid-template-columns:1fr}}
+  @container(max-width:600px){.hero{grid-template-columns:1fr;gap:18px}.hero-copy{max-width:420px}.tool-grid{grid-template-columns:1fr}}
+  @media(max-width:760px){.home-page{padding:16px}}
 </style>

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { webcrypto } from "node:crypto";
+import { createHash, webcrypto } from "node:crypto";
 import test from "node:test";
 
 globalThis.crypto ??= webcrypto;
@@ -8,12 +8,15 @@ const codec = await import("../src/lib/codec.js");
 const convert = await import("../src/lib/tools/convert.js");
 const encode = await import("../src/lib/tools/encode.js");
 const format = await import("../src/lib/tools/format.js");
+const generate = await import("../src/lib/tools/generate.js");
 const cron = await import("../src/lib/cron.js");
 const jsonToLang = await import("../src/lib/jsonToLang.js");
 const textTools = await import("../src/lib/tools/text.js");
 const catalog = await import("../src/lib/catalog.js");
 const navigation = await import("../src/lib/navigation.js");
 const registry = await import("../src/lib/viewRegistry.js");
+const gzip = await import("../src/lib/gzip.js");
+const imageUtility = await import("../src/lib/imageUtility.js");
 
 test("tool catalog contains unique, complete entries", () => {
   assert.ok(catalog.tools.length > 0);
@@ -45,7 +48,8 @@ test("runtime tool registry has a loader and stable metadata for every catalog e
     assert.equal(typeof tool.ephemeral, "boolean");
     assert.equal(typeof tool.fill, "boolean");
     assert.ok(Array.isArray(tool.aliases));
-    assert.deepEqual(tool.defaultOptions, {});
+    assert.equal(typeof tool.defaultOptions, "object");
+    if (tool.kind === "shortcut") assert.ok(Object.keys(tool.defaultOptions).length > 0);
   }
 });
 
@@ -78,6 +82,14 @@ test("navigation sanitizes legacy ids and preserves favorite order", () => {
   assert.deepEqual(
     navigation.sanitizeToolIds(["json-yaml", "missing", "hash", "json", "hash"]),
     ["json", "hash"],
+  );
+  assert.deepEqual(
+    navigation.sanitizeToolIds(["image-pixelate", "image-grid", "image-compress", "image-base64"]),
+    ["image-utility"],
+  );
+  assert.deepEqual(
+    navigation.sanitizeToolIds(["image-crop", "format-sql", "base32-codec", "text-clean", "convert-json-yaml"]),
+    ["image-process", "code-format", "base64", "whitespace", "data-convert"],
   );
   assert.deepEqual(navigation.moveToolId(["json", "hash", "uuid"], "uuid", "json"), ["uuid", "json", "hash"]);
   assert.deepEqual(navigation.moveToolId(["json", "hash", "uuid"], "json", "hash", true), ["hash", "json", "uuid"]);
@@ -288,6 +300,28 @@ test("Data URI supports base64 and percent-encoded round trips", () => {
   );
 });
 
+test("Base64 image decoding accepts raw data and verifies the real image type", () => {
+  const png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+  const raw = imageUtility.parseBase64Image(png);
+  assert.equal(raw.mime, "image/png");
+  assert.equal(raw.extension, "png");
+  assert.deepEqual([...raw.bytes.slice(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.equal(imageUtility.parseBase64Image(`data:image/png;base64,${png}`).mime, "image/png");
+  assert.throws(() => imageUtility.parseBase64Image(`data:image/jpeg;base64,${png}`), /does not match/i);
+  assert.throws(() => imageUtility.parseBase64Image("SGVsbG8="), /unrecognized/i);
+});
+
+test("text Gzip round-trips UTF-8 through Base64 and rejects invalid input", async () => {
+  const source = "DBX 工具箱\nHello, gzip! 👋";
+  const compressed = await gzip.gzipCompressText(source);
+  assert.ok(compressed.base64.startsWith("H4sI"));
+  assert.ok(compressed.outputBytes > 0);
+  const restored = await gzip.gzipDecompressText(compressed.base64);
+  assert.equal(restored.text, source);
+  assert.equal(restored.outputBytes, new TextEncoder().encode(source).length);
+  await assert.rejects(() => gzip.gzipDecompressText("SGVsbG8="), /Gzip/i);
+});
+
 test("JWT claim inspection reports expiry and activation state", () => {
   const claims = encode.inspectJwtClaims({ exp: 99, nbf: 50, iat: 101 }, 100_000);
   assert.equal(claims.expired, true);
@@ -325,6 +359,106 @@ test("line diff keeps replacements adjacent when lines repeat", () => {
       ["same", "as"],
     ],
   );
+});
+
+test("hash catalog includes MD5 variants, SHA-224, SHA3-256, and SHA-384", async () => {
+  assert.deepEqual(
+    generate.HASH_ALGORITHMS.slice(0, 8).map((algorithm) => algorithm.id),
+    ["md5-16", "md5", "sha-1", "sha-224", "sha-256", "sha3-256", "sha-384", "sha-512"],
+  );
+  assert.equal(
+    await generate.hashText("sha-384", ""),
+    "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b",
+  );
+});
+
+test("large-file hashes are chunked through the sidecar and match independent implementations", async () => {
+  const bytes = new Uint8Array(10 * 1024 * 1024 + 17).fill(0x61);
+  const expected = (algorithm) => createHash(algorithm).update(bytes).digest("hex");
+  const previousWindow = globalThis.window;
+  const chunks = [];
+  globalThis.window = {
+    dbxPlugin: {
+      ready: Promise.resolve(),
+      async invoke(method, params = {}) {
+        if (method === "toolbox/hash-stream/begin") return { sessionId: "test-session" };
+        if (method === "toolbox/hash-stream/update") {
+          assert.equal(params.sessionId, "test-session");
+          const chunk = Buffer.from(params.dataBase64, "base64");
+          assert.ok(chunk.length <= 256 * 1024);
+          chunks.push(chunk);
+          return { ok: true };
+        }
+        if (method === "toolbox/hash-stream/finalize") {
+          const streamed = Buffer.concat(chunks);
+          const md5 = createHash("md5").update(streamed).digest("hex");
+          return { digests: {
+            "md5-16": md5.slice(8, 24),
+            md5,
+            "sha-224": createHash("sha224").update(streamed).digest("hex"),
+            "sha3-256": createHash("sha3-256").update(streamed).digest("hex"),
+            sm3: createHash("sm3").update(streamed).digest("hex"),
+          } };
+        }
+        if (method === "toolbox/hash-stream/cancel") return { ok: true };
+        throw new Error(`Unexpected method: ${method}`);
+      },
+    },
+  };
+  let result;
+  try {
+    result = await generate.hashFileBytes(bytes);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+
+  assert.ok(chunks.length > 1);
+  assert.equal(chunks.reduce((total, chunk) => total + chunk.length, 0), bytes.length);
+  assert.equal(result.errors.md5, undefined);
+  assert.equal(result.digests.md5, expected("md5"));
+  assert.equal(result.digests["md5-16"], expected("md5").slice(8, 24));
+  assert.equal(result.digests["sha-224"], expected("sha224"));
+  assert.equal(result.digests["sha3-256"], expected("sha3-256"));
+  assert.equal(result.digests.sm3, expected("sm3"));
+});
+
+test("side-by-side line diff keeps change runs and following context aligned", () => {
+  const rows = [
+    { mark: "same", line: "first", pfx: " " },
+    { mark: "del", line: "old one", pfx: "-" },
+    { mark: "del", line: "old two", pfx: "-" },
+    { mark: "add", line: "new", pfx: "+" },
+    { mark: "same", line: "last", pfx: " " },
+  ];
+  const aligned = textTools.alignSideBySideRows(rows);
+  assert.deepEqual(
+    aligned.map((row) => [row.left?.line ?? null, row.right?.line ?? null]),
+    [
+      ["first", "first"],
+      ["old one", "new"],
+      ["old two", null],
+      ["last", "last"],
+    ],
+  );
+});
+
+test("line replacements expose character-level changes inside aligned rows", () => {
+  const rows = textTools.decorateInlineLineChanges([
+    { mark: "same", line: "你好", pfx: " " },
+    { mark: "del", line: "测试 测试", pfx: "-" },
+    { mark: "add", line: "测试 不测试", pfx: "+" },
+    { mark: "same", line: "测一测", pfx: " " },
+  ]);
+  assert.deepEqual(rows[1].segments, [
+    { mark: "same", value: "测试 " },
+    { mark: "same", value: "测试" },
+  ]);
+  assert.deepEqual(rows[2].segments, [
+    { mark: "same", value: "测试 " },
+    { mark: "add", value: "不" },
+    { mark: "same", value: "测试" },
+  ]);
 });
 
 test("code formatting respects indentation", () => {

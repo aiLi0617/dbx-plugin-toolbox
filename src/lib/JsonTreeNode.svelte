@@ -2,6 +2,7 @@
   import { pick } from "./i18n.js";
   import JsonTreeNode from "./JsonTreeNode.svelte";
   import { childCount, encodePointer, hoverDistance, hoverRelation, hoverTint, isContainer, parseLeaf } from "./jsonOps.js";
+  import { isLosslessNumber } from "./jsonPrecision.js";
 
   let {
     value,
@@ -179,7 +180,7 @@
       <button
         class="json-val"
         class:json-val--string={typeof value === "string"}
-        class:json-val--number={typeof value === "number"}
+        class:json-val--number={typeof value === "number" || typeof value === "bigint" || isLosslessNumber(value)}
         class:json-val--boolean={typeof value === "boolean"}
         class:json-val--null={value === null}
         onclick={startEdit}

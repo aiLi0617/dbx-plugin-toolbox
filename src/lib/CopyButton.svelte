@@ -5,6 +5,7 @@
   let {
     locale = "zh-CN",
     text = "",
+    getText = null,
     labelZh = "复制",
     labelEn = "Copy",
     label = null,
@@ -12,6 +13,7 @@
 
   let copied = $state(false);
   let failed = $state(false);
+  let copying = $state(false);
 
   const t = (zh, en) => pick(locale, zh, en);
   const defaultLabel = L("Copy", "复制", "複製", "Copiar", "Copia", "コピー", "Copiar");
@@ -19,10 +21,13 @@
   const title = $derived(copied ? pick(locale, chrome.copied) : labelText);
 
   async function copy() {
-    if (!text) return;
+    if ((!text && !getText) || copying) return;
     failed = false;
+    copying = true;
     try {
-      await copyText(text);
+      const value = getText ? await getText() : text;
+      if (!value) return;
+      await copyText(value);
       copied = true;
       setTimeout(() => {
         copied = false;
@@ -30,13 +35,15 @@
     } catch {
       copied = false;
       failed = true;
+    } finally {
+      copying = false;
     }
   }
 </script>
 
 <button
   class="dbx-btn dbx-btn--ghost copy-btn"
-  disabled={!text}
+  disabled={(!text && !getText) || copying}
   onclick={copy}
   title={title}
   aria-label={title}

@@ -906,8 +906,10 @@
     min-width: 0;
     min-height: 0;
     flex: 1;
-    width: 100%;
+    width: calc(100% + 6px);
     max-width: 960px;
+    margin-inline: -3px;
+    padding-inline: 3px;
     overflow: auto;
   }
   .lead, .dialog p {

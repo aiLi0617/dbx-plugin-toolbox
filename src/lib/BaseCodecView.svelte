@@ -3,12 +3,22 @@
   import { pick } from "./i18n.js";
   import { BASE_FIELDS, decodeBytes, encodeBytes } from "./tools/encode.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {}, shortcut = false, demo = null, demoRequest = 0 } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
   let values = $state(Object.fromEntries(BASE_FIELDS.map((field) => [field.id, ""])));
   let invalidId = $state("");
+  let appliedDemoRequest = 0;
+  const visibleFields = $derived(shortcut
+    ? BASE_FIELDS.filter((field) => field.id === "text" || field.id === initialOptions.format)
+    : BASE_FIELDS);
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
+    appliedDemoRequest = demoRequest;
+    const field = BASE_FIELDS.some((item) => item.id === initialOptions.format) ? initialOptions.format : "text";
+    update(field, field === "text" ? demo.input : encodeBytes(field, new TextEncoder().encode(demo.input)));
+  });
 
   function paint(exceptId, bytes) {
     for (const field of BASE_FIELDS) {
@@ -48,7 +58,7 @@
 <div class="page">
   {#if invalidId}<p class="dbx-hint" role="alert">{t("输入不是有效的编码，其他结果已清空。请检查字符、长度和填充。", "Invalid encoding. Other results were cleared; check the characters, length, and padding.")}</p>{/if}
   <div class="rows">
-    {#each BASE_FIELDS as field (field.id)}
+    {#each visibleFields as field (field.id)}
       <div class="row" class:stack={field.id === "text"}>
         <span class="name">{t(field.zh, field.en)}</span>
         {#if field.id === "text"}
