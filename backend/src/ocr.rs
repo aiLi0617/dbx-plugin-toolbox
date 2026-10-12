@@ -261,17 +261,7 @@ impl OcrService {
             (bytes, upload.cancelled.clone())
         };
 
-        let result = self.run_ocr(
-            &request.session_id,
-            bytes,
-            request.region,
-            request.quality,
-            request.enhance,
-            request.layout,
-            request.smart_correction,
-            &cancelled,
-            emitter,
-        );
+        let result = self.run_ocr(&request, bytes, &cancelled, emitter);
         if let Ok(mut uploads) = self.uploads.lock() {
             uploads.remove(&request.session_id);
         }
@@ -280,16 +270,17 @@ impl OcrService {
 
     fn run_ocr(
         &self,
-        session_id: &str,
+        request: &RecognizeRequest,
         bytes: Vec<u8>,
-        region: Option<Region>,
-        quality: OcrQuality,
-        enhance: bool,
-        layout: bool,
-        smart_correction: bool,
         cancelled: &AtomicBool,
         emitter: &PluginEmitter,
     ) -> Result<Value, PluginError> {
+        let session_id = request.session_id.as_str();
+        let region = request.region;
+        let quality = request.quality;
+        let enhance = request.enhance;
+        let layout = request.layout;
+        let smart_correction = request.smart_correction;
         progress(emitter, session_id, "decode", 0.03)?;
         check_cancelled(cancelled)?;
         let mut reader = image::ImageReader::new(Cursor::new(bytes))
@@ -376,7 +367,7 @@ impl OcrService {
                     .enumerate()
                     .filter_map(|(index, line)| {
                         line.as_ref()
-                            .is_none_or(|line| line_needs_refinement(line))
+                            .is_none_or(line_needs_refinement)
                             .then_some(index)
                     })
                     .collect::<Vec<_>>();
@@ -554,7 +545,7 @@ fn recognize_line_regions(
     line_regions: &[Vec<RotatedRect>],
 ) -> Result<Vec<Option<RecognizedLine>>, PluginError> {
     let lines = engine
-        .recognize_text(&input, &line_regions)
+        .recognize_text(input, line_regions)
         .map_err(|error| internal(format!("OCR text recognition failed: {error}")))?;
     let mut recognized = Vec::with_capacity(line_regions.len());
     for (line, region) in lines.into_iter().zip(line_regions) {

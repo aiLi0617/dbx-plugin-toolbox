@@ -1,4 +1,3 @@
-use core::f32;
 use std::collections::HashMap;
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -363,7 +362,7 @@ impl TextRecognizer {
     pub fn from_model(model: impl Model + Send + Sync + 'static) -> anyhow::Result<TextRecognizer> {
         let input_shape = model.input_shape()?;
         let input_channels = match input_shape.get(1) {
-            Some(Dimension::Fixed(c)) => *c as usize,
+            Some(Dimension::Fixed(c)) => *c,
             _ => 1,
         };
         Ok(TextRecognizer {

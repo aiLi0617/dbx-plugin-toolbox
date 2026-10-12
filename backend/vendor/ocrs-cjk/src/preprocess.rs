@@ -89,7 +89,7 @@ impl<'a> ImageSource<'a> {
             return Err(ImageSourceError::UnsupportedChannelCount);
         }
 
-        if !bytes.len().is_multiple_of(channel_len) {
+        if bytes.len() % channel_len != 0 {
             return Err(ImageSourceError::InvalidDataLength);
         }
 
@@ -358,10 +358,10 @@ fn convert_pixels<
 
         // We assume the input is likely contiguous, so this should be cheap.
         let src = src.to_contiguous();
-        let (src_pixels, remainder) = src.data().as_chunks::<PIXEL_STRIDE>();
-        debug_assert!(remainder.is_empty());
+        let src_pixels = src.data().chunks_exact(PIXEL_STRIDE);
+        debug_assert!(src_pixels.remainder().is_empty());
 
-        out_pixels.extend(src_pixels.iter().map(|in_pixel| {
+        out_pixels.extend(src_pixels.map(|in_pixel| {
             let mut pixel = BLACK_VALUE;
             for c in 0..chan_weights.len() {
                 pixel += in_pixel[c].as_f32() * chan_weights[c]
