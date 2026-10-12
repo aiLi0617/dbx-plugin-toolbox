@@ -35,7 +35,9 @@ sha3 = "0.10"
 sm3 = "0.4"
 sm4 = "0.5"
 smcrypto = "0.3.1"
-rten = { version = "0.24.0", default-features = false, features = ["rten_format"] }
+# Keep RTen's feature graph identical on every release runner. Without
+# `onnx_format`, Cargo 1.89+ produces host-dependent lockfile changes.
+rten = { version = "0.24.0", default-features = false, features = ["rten_format", "onnx_format"] }
 rten-imageproc = "0.24.0"
 uuid = { version = "1", features = ["v4"] }
 rfd = "0.15"
