@@ -177,12 +177,23 @@ export function encodePunycode(input) {
   return url.hostname;
 }
 
+export const PASSWORD_CHARSETS = {
+  lower: "abcdefghijklmnopqrstuvwxyz",
+  upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  digits: "0123456789",
+  symbols: "!@#$%^&*()-_=+[]{};:,.?",
+};
+
+export const AMBIGUOUS_PASSWORD_CHARS = "0O1lI";
+
 export function randomPassword(length, sets) {
+  const excluded = sets.excludeAmbiguous ? new Set(AMBIGUOUS_PASSWORD_CHARS) : null;
+  const available = (characters) => excluded ? [...characters].filter((char) => !excluded.has(char)).join("") : characters;
   const groups = [
-    sets.lower !== false ? "abcdefghijklmnopqrstuvwxyz" : "",
-    sets.upper !== false ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "",
-    sets.digits !== false ? "0123456789" : "",
-    sets.symbols ? "!@#$%^&*()-_=+[]{};:,.?" : "",
+    sets.lower !== false ? available(PASSWORD_CHARSETS.lower) : "",
+    sets.upper !== false ? available(PASSWORD_CHARSETS.upper) : "",
+    sets.digits !== false ? available(PASSWORD_CHARSETS.digits) : "",
+    sets.symbols ? available(PASSWORD_CHARSETS.symbols) : "",
   ].filter(Boolean);
   if (!groups.length) throw new Error("Select at least one character set");
   const size = Math.trunc(Number(length));
@@ -203,22 +214,130 @@ export function randomPassword(length, sets) {
   return chars.join("");
 }
 
-export function encodeUlid() {
-  const time = BigInt(Date.now());
-  const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const ULID_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const UUID_NAMESPACES = Object.freeze({
+  dns: "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  url: "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
+  oid: "6ba7b812-9dad-11d1-80b4-00c04fd430c8",
+  x500: "6ba7b814-9dad-11d1-80b4-00c04fd430c8",
+});
+
+function encodeUlidParts(time, randomValue) {
   const encodePart = (value, width) => {
     let out = "";
     for (let i = 0; i < width; i++) {
-      out = alphabet[Number(value & 31n)] + out;
+      out = ULID_ALPHABET[Number(value & 31n)] + out;
       value >>= 5n;
     }
     return out;
   };
-  const random = crypto.getRandomValues(new Uint8Array(10));
-  let randomValue = 0n;
-  for (const byte of random) randomValue = (randomValue << 8n) | BigInt(byte);
   return encodePart(time, 10) + encodePart(randomValue, 16);
 }
+
+function randomBigInt(byteLength) {
+  const random = crypto.getRandomValues(new Uint8Array(byteLength));
+  let value = 0n;
+  for (const byte of random) value = (value << 8n) | BigInt(byte);
+  return value;
+}
+
+export function encodeUlid(now = Date.now()) {
+  const time = BigInt(Math.trunc(now));
+  if (time < 0n || time > 0xffffffffffffn) throw new Error("ULID timestamp is out of range");
+  return encodeUlidParts(time, randomBigInt(10));
+}
+
+let lastMonotonicUlidTime = -1n;
+let lastMonotonicUlidRandom = 0n;
+
+export function encodeMonotonicUlid(now = Date.now()) {
+  let time = BigInt(Math.trunc(now));
+  if (time < 0n || time > 0xffffffffffffn) throw new Error("ULID timestamp is out of range");
+  if (time > lastMonotonicUlidTime) {
+    lastMonotonicUlidTime = time;
+    lastMonotonicUlidRandom = randomBigInt(10);
+  } else {
+    time = lastMonotonicUlidTime;
+    lastMonotonicUlidRandom += 1n;
+    if (lastMonotonicUlidRandom > 0xffffffffffffffffffffn) {
+      time += 1n;
+      if (time > 0xffffffffffffn) throw new Error("ULID timestamp is out of range");
+      lastMonotonicUlidTime = time;
+      lastMonotonicUlidRandom = 0n;
+    }
+  }
+  return encodeUlidParts(time, lastMonotonicUlidRandom);
+}
+
+function uuidBytes(value) {
+  const hex = String(value ?? "").trim().replace(/^\{(.*)\}$/, "$1").replaceAll("-", "").toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(hex)) throw new Error("Invalid UUID");
+  return Uint8Array.from(hex.match(/.{2}/g), (pair) => Number.parseInt(pair, 16));
+}
+
+function formatUuidBytes(bytes) {
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+export function uuidV7(now = Date.now()) {
+  const timestamp = BigInt(Math.trunc(now));
+  if (timestamp < 0n || timestamp > 0xffffffffffffn) throw new Error("UUID v7 timestamp is out of range");
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  let value = timestamp;
+  for (let i = 5; i >= 0; i--) {
+    bytes[i] = Number(value & 0xffn);
+    value >>= 8n;
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x70;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  return formatUuidBytes(bytes);
+}
+
+export async function uuidV5(name, namespace = UUID_NAMESPACES.dns) {
+  const namespaceId = UUID_NAMESPACES[String(namespace).toLowerCase()] || namespace;
+  const namespaceBytes = uuidBytes(namespaceId);
+  const nameBytes = new TextEncoder().encode(String(name ?? ""));
+  const input = new Uint8Array(namespaceBytes.length + nameBytes.length);
+  input.set(namespaceBytes);
+  input.set(nameBytes, namespaceBytes.length);
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-1", input));
+  const bytes = digest.slice(0, 16);
+  bytes[6] = (bytes[6] & 0x0f) | 0x50;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  return formatUuidBytes(bytes);
+}
+
+export function inspectUniqueId(value) {
+  const input = String(value ?? "").trim();
+  if (!input) return null;
+  const uuid = input.replace(/^\{(.*)\}$/, "$1");
+  const match = uuid.match(/^([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})$/i);
+  if (match) {
+    const version = Number.parseInt(match[3][0], 16);
+    const variantNibble = Number.parseInt(match[4][0], 16);
+    const result = {
+      type: "UUID",
+      version: version >= 1 && version <= 8 ? version : null,
+      variant: (variantNibble & 0x8) === 0 ? "NCS" : (variantNibble & 0xc) === 0x8 ? "RFC 4122" : (variantNibble & 0xe) === 0xc ? "Microsoft" : "Future",
+      normalized: `${match[1]}-${match[2]}-${match[3]}-${match[4]}-${match[5]}`.toLowerCase(),
+    };
+    if (version === 7) {
+      const timestamp = Number.parseInt(match[1] + match[2], 16);
+      if (Number.isSafeInteger(timestamp)) result.timestamp = timestamp;
+    }
+    return result;
+  }
+  const upper = input.toUpperCase();
+  if (/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/.test(upper)) {
+    let timestamp = 0n;
+    for (const character of upper.slice(0, 10)) timestamp = timestamp * 32n + BigInt(ULID_ALPHABET.indexOf(character));
+    return { type: "ULID", timestamp: Number(timestamp), normalized: upper };
+  }
+  return { type: "Unknown", normalized: input };
+}
+
+export const UUID_NAMESPACE_IDS = UUID_NAMESPACES;
 
 export function nanoId(size = 21) {
   const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-";
@@ -249,20 +368,52 @@ export function parseTotpConfig(input, defaults = {}) {
   return config;
 }
 
-export async function totp(secret, digits = 6, step = 30, algorithm = "SHA-1", now = Date.now()) {
+async function createTotpSigner(config) {
+  const keyBytes = decodeBase32(config.secret.replace(/[\s-]+/g, ""));
+  if (!keyBytes.length) throw new Error("TOTP secret is required");
+  const key = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: config.algorithm }, false, ["sign"]);
+  return async (counter) => {
+    if (counter < 0n) throw new Error("TOTP counter must not be negative");
+    const buf = new ArrayBuffer(8);
+    const view = new DataView(buf);
+    view.setUint32(0, Number((counter >> 32n) & 0xffffffffn));
+    view.setUint32(4, Number(counter & 0xffffffffn));
+    const sig = new Uint8Array(await crypto.subtle.sign("HMAC", key, buf));
+    const offset = sig[sig.length - 1] & 0xf;
+    const bin = ((sig[offset] & 0x7f) << 24) | (sig[offset + 1] << 16) | (sig[offset + 2] << 8) | sig[offset + 3];
+    return String(bin % 10 ** config.digits).padStart(config.digits, "0");
+  };
+}
+
+export async function totpWindows(secret, digits = 6, step = 30, algorithm = "SHA-1", now = Date.now(), offsets = [-1, 0, 1]) {
   const config = parseTotpConfig(secret, { digits, step, algorithm });
-  const key = decodeBase32(config.secret.replace(/[\s-]+/g, ""));
-  if (!key.length) throw new Error("TOTP secret is required");
-  const counter = BigInt(Math.floor(now / 1000 / config.step));
-  const buf = new ArrayBuffer(8);
-  const view = new DataView(buf);
-  view.setUint32(0, Number((counter >> 32n) & 0xffffffffn));
-  view.setUint32(4, Number(counter & 0xffffffffn));
-  const cryptoKey = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: config.algorithm }, false, ["sign"]);
-  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, buf));
-  const offset = sig[sig.length - 1] & 0xf;
-  const bin = ((sig[offset] & 0x7f) << 24) | (sig[offset + 1] << 16) | (sig[offset + 2] << 8) | sig[offset + 3];
-  return String(bin % 10 ** config.digits).padStart(config.digits, "0");
+  const normalizedOffsets = offsets.map((offset) => Number(offset));
+  if (!normalizedOffsets.length || normalizedOffsets.some((offset) => !Number.isInteger(offset))) {
+    throw new Error("TOTP window offsets must be integers");
+  }
+  const baseCounter = BigInt(Math.floor(Number(now) / 1000 / config.step));
+  const sign = await createTotpSigner(config);
+  const windows = await Promise.all(normalizedOffsets.map(async (offset) => {
+    const counter = baseCounter + BigInt(offset);
+    const startsAt = Number(counter) * config.step * 1000;
+    return {
+      offset,
+      code: await sign(counter),
+      startsAt,
+      expiresAt: startsAt + config.step * 1000,
+    };
+  }));
+  return {
+    digits: config.digits,
+    step: config.step,
+    algorithm: config.algorithm,
+    windows,
+  };
+}
+
+export async function totp(secret, digits = 6, step = 30, algorithm = "SHA-1", now = Date.now()) {
+  const result = await totpWindows(secret, digits, step, algorithm, now, [0]);
+  return result.windows[0].code;
 }
 
 export function crc32Bytes(bytes) {

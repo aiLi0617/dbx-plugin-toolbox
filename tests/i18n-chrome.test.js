@@ -32,6 +32,11 @@ test("categories and tool names resolve Traditional Chinese for zh-TW", () => {
   assert.equal(pick("zh-TW", dataConvert.name), "資料格式轉換");
   assert.match(pick("zh-TW", dataConvert.summary), /互轉/);
   assert.match(pick("zh-CN", dataConvert.summary), /互转/);
+
+  const color = tools.find((tool) => tool.id === "color");
+  assert.equal(pick("zh-CN", color.name), "颜色与对比度");
+  assert.equal(pick("zh-TW", color.name), "顏色與對比度");
+  assert.match(pick("zh-CN", color.summary), /WCAG 对比度/);
 });
 
 test("Japanese shell, tool names, and summaries do not fall back to English", () => {

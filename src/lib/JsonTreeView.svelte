@@ -1,7 +1,7 @@
 <script>
   import JsonTreeNode from "./JsonTreeNode.svelte";
 
-  let { value, collapsed = {}, onToggle, onAdd, onDelete, onEdit, onRename, locale = "zh-CN" } = $props();
+  let { value, collapsed = {}, onToggle, onAdd, onDelete, onEdit, onRename, parseEmbedded = false, locale = "zh-CN" } = $props();
 
   let hoverPath = $state(null);
 
@@ -24,6 +24,7 @@
       {onEdit}
       {onRename}
       {onHover}
+      {parseEmbedded}
       isLast={true}
       {locale}
     />

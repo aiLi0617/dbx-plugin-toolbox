@@ -115,12 +115,10 @@ function textActionMatch(q) {
 
 /** Option parsers — preserve previous toolOptionsForQuery behavior. */
 function optionsUuid(q) {
-  const kind = ["ulid", "nanoid", "uuid"].find((value) => q.includes(value));
+  const kind = /uuid\s*(?:v)?7/.test(q) ? "uuid-v7"
+    : /uuid\s*(?:v)?5/.test(q) ? "uuid-v5"
+      : ["ulid", "nanoid", "uuid"].find((value) => q.includes(value));
   return kind ? { kind } : {};
-}
-
-function optionsPassword(q) {
-  return /bytes|字节/.test(q) ? { kind: "bytes" } : {};
 }
 
 function optionsAes(q) {
@@ -254,7 +252,6 @@ function optionsHttpStatus(q) {
 
 const OPTION_PARSERS = {
   uuid: optionsUuid,
-  password: optionsPassword,
   aes: optionsAes,
   rsa: optionsRsa,
   "hmac-sha256": optionsHmac,
@@ -294,9 +291,9 @@ export function resolveIntent(query = "") {
     push(out, "uuid", {}, "", 10);
   }
 
-  const password = optionsPassword(q);
-  if (Object.keys(password).length) push(out, "password", password, labelFrom(password), 11);
-  else if (/随机密码|密码生成|生成密码|强密码|password\s*generat/.test(q)) {
+  if (/随机字节|隨機位元組|random\s*(?:bytes?|hex)|secure\s*random\s*bytes?/.test(q)) {
+    push(out, "random-bytes", {}, "", 11);
+  } else if (/随机密码|密码生成|生成密码|强密码|password\s*generat/.test(q)) {
     push(out, "password", {}, "", 10);
   }
 
@@ -396,7 +393,7 @@ export function resolveIntent(query = "") {
 
   const color = optionsColor(q);
   if (Object.keys(color).length) push(out, "color", color, labelFrom(color), 11);
-  else if (/\brgb\b|\bcmyk\b|\bhsv\b|\bhsl\b|颜色转换|颜色/.test(q) && !/图片|image/.test(q)) {
+  else if (/\brgba?\b|\bcmyk\b|\bhs[lv]a?\b|\bwcag\b|\bcontrast\b|颜色转换|颜色|对比度|無障礙|无障碍/.test(q) && !/图片|image/.test(q)) {
     push(out, "color", {}, "", 9);
   }
 

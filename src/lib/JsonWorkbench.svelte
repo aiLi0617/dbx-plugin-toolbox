@@ -9,6 +9,7 @@
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
   import JsonTreeView from "./JsonTreeView.svelte";
   import Select from "./Select.svelte";
+  import { loadAssetModule } from "./assetModules.js";
   import {
     addJsonEscape,
     chineseToUnicode,
@@ -36,7 +37,10 @@
   let showLineNumbers = $state(true);
   let moreOpen = $state(false);
   let moreEl = $state(null);
+  let treeOptionsOpen = $state(false);
+  let treeOptionsEl = $state(null);
   let rightMode = $state("tree");
+  let parseEmbedded = $state(false);
   let jsonPath = $state("");
   let textActionsHeight = $state(42);
   const formatLanguages = new Set(["yaml", "xml", "toml", "csv", "query"]);
@@ -44,6 +48,10 @@
   let convertLang = $state("typescript");
   let tableName = $state("");
   let convertOut = $state("");
+  let schemaText = $state('{\n  "type": "object"\n}');
+  let schemaDiagnostics = $state([]);
+  let schemaStatus = $state("idle");
+  let schemaRun = 0;
   let actionError = $state("");
   let parseError = $state("");
   let convertError = $state("");
@@ -172,13 +180,26 @@
     moreOpen = !moreOpen;
   }
 
+  function toggleTreeOptions() {
+    treeOptionsOpen = !treeOptionsOpen;
+  }
+
+  function setParseEmbedded(checked) {
+    parseEmbedded = checked;
+    if (checked) collapsed = {};
+  }
+
   $effect(() => {
-    if (!moreOpen) return;
+    if (!moreOpen && !treeOptionsOpen) return;
     const onPointerDown = (event) => {
       if (moreEl && !moreEl.contains(event.target)) moreOpen = false;
+      if (treeOptionsEl && !treeOptionsEl.contains(event.target)) treeOptionsOpen = false;
     };
     const onKey = (event) => {
-      if (event.key === "Escape") moreOpen = false;
+      if (event.key === "Escape") {
+        moreOpen = false;
+        treeOptionsOpen = false;
+      }
     };
     document.addEventListener("pointerdown", onPointerDown, true);
     document.addEventListener("keydown", onKey);
@@ -404,6 +425,44 @@
     return () => clearTimeout(timer);
   });
 
+  $effect(() => {
+    if (rightMode !== "schema") return;
+    const text = jsonText; const schema = schemaText;
+    const runId = ++schemaRun;
+    convertOut = ""; convertError = "";
+    schemaDiagnostics = [];
+    schemaStatus = "idle";
+    const timer = setTimeout(async () => {
+      if (!text.trim() || !schema.trim()) return;
+      let parsedSchema;
+      let value;
+      try {
+        try {
+          parsedSchema = JSON.parse(schema);
+        } catch (err) {
+          if (runId !== schemaRun) return;
+          const message = precisionErrorMessage(err, locale);
+          schemaDiagnostics = [{ source: "schema", path: "#", keyword: "syntax", message, messageZh: message }];
+          schemaStatus = "invalid-schema";
+          convertOut = JSON.stringify(schemaDiagnostics, null, 2);
+          return;
+        }
+        value = JSON.parse(text);
+        const module = await loadAssetModule("schema");
+        if (runId !== schemaRun) return;
+        const result = module.validateJsonSchema(parsedSchema, value);
+        schemaDiagnostics = result.errors;
+        schemaStatus = result.valid ? "valid" : result.schemaValid === false ? "invalid-schema" : "invalid-document";
+        convertOut = result.valid ? t("✓ 数据符合 Schema", "✓ Document is valid") : JSON.stringify(result.errors, null, 2);
+      } catch (err) {
+        if (runId !== schemaRun) return;
+        convertError = precisionErrorMessage(err, locale);
+        schemaStatus = "error";
+      }
+    }, 220);
+    return () => { clearTimeout(timer); schemaRun += 1; };
+  });
+
   function showMode(mode) {
     rightMode = mode;
     if (mode === "convert" && !formatLanguages.has(convertLang)) convertLang = "yaml";
@@ -514,11 +573,11 @@
     ></button>
 
     <section class="json-pane json-pane-right">
-      <div class="json-pane-bar" class:json-tree-bar={rightMode === "tree"}>
+      <div class="json-pane-bar json-mode-bar">
         <div class="json-pane-bar-start">
-          <div class="json-modes" role="group" aria-label={t("JSON 功能", "JSON tools")}>
-            {#each [["tree", "树形编辑", "Tree"], ["extract", "路径提取", "Extract"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
-              <button class="dbx-btn" class:active={rightMode === mode} aria-pressed={rightMode === mode} onclick={() => showMode(mode)} type="button">{t(labelZh, labelEn)}</button>
+          <div class="dbx-tabs dbx-tabs--compact json-modes" role="tablist" aria-label={t("JSON 功能", "JSON tools")}>
+      {#each [["tree", "树形编辑", "Tree"], ["schema", "Schema 校验", "Schema"], ["extract", "路径提取", "Extract"], ["convert", "格式转换", "Convert"], ["generate", "代码生成", "Generate code"]] as [mode, labelZh, labelEn]}
+              <button class:active={rightMode === mode} aria-selected={rightMode === mode} onclick={() => showMode(mode)} role="tab" type="button">{t(labelZh, labelEn)}</button>
             {/each}
           </div>
           {#if rightMode === "extract"}
@@ -543,6 +602,35 @@
         </div>
         <div class="json-pane-bar-end">
           {#if rightMode === "tree"}
+            <div class="json-more json-tree-options" bind:this={treeOptionsEl}>
+              <button
+                class="dbx-btn dbx-btn--ghost json-icon-btn"
+                class:active={treeOptionsOpen || parseEmbedded}
+                aria-expanded={treeOptionsOpen}
+                aria-haspopup="true"
+                onclick={toggleTreeOptions}
+                type="button"
+                title={t("树形显示设置", "Tree display settings")}
+                aria-label={t("树形显示设置", "Tree display settings")}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 7h10"></path><path d="M18 7h2"></path><circle cx="16" cy="7" r="2"></circle>
+                  <path d="M4 17h2"></path><path d="M10 17h10"></path><circle cx="8" cy="17" r="2"></circle>
+                </svg>
+              </button>
+              {#if treeOptionsOpen}
+                <div class="json-more-menu" role="group" aria-label={t("树形显示设置", "Tree display settings") }>
+                  <label class="json-more-item">
+                    <input
+                      type="checkbox"
+                      checked={parseEmbedded}
+                      onchange={(event) => setParseEmbedded(event.currentTarget.checked)}
+                    />
+                    <span>{t("解析嵌套 JSON", "Parse nested JSON")}</span>
+                  </label>
+                </div>
+              {/if}
+            </div>
             <button
               class="dbx-btn dbx-btn--ghost json-icon-btn"
               disabled={parsed === undefined}
@@ -599,8 +687,38 @@
         {/if}
         {#if rightMode === "tree"}
           {#if parsed !== undefined || !rightError}
-            <JsonTreeView value={parsed} {collapsed} {onToggle} {onAdd} {onDelete} {onEdit} {onRename} {locale} />
+            <JsonTreeView value={parsed} {collapsed} {onToggle} {onAdd} {onDelete} {onEdit} {onRename} {parseEmbedded} {locale} />
           {/if}
+        {:else if rightMode === "schema"}
+          <div class="schema-workspace">
+            <label><span>JSON Schema</span><textarea class="dbx-textarea mono" bind:value={schemaText} spellcheck="false"></textarea></label>
+            <section class="schema-diagnostics" aria-live="polite">
+              <header>
+                <strong>{t("诊断结果", "Diagnostics")}</strong>
+                {#if schemaStatus === "valid"}<span class="schema-state success">{t("校验通过", "Valid")}</span>
+                {:else if schemaStatus === "invalid-schema"}<span class="schema-state error">{t("Schema 无效", "Invalid schema")}</span>
+                {:else if schemaStatus === "invalid-document"}<span class="schema-state error">{t("数据不符合 Schema", "Invalid document")}</span>{/if}
+              </header>
+              {#if schemaStatus === "valid"}
+                <div class="schema-valid" role="status">✓ {t("Schema 有效，数据校验通过", "The schema is valid and the document matches it")}</div>
+              {:else if schemaDiagnostics.length}
+                <div class="schema-issue-list">
+                  {#each schemaDiagnostics as diagnostic}
+                    <article class="schema-issue">
+                      <div class="schema-issue-meta">
+                        <span class:document={diagnostic.source === "document"} class="schema-source">{diagnostic.source === "schema" ? "Schema" : t("数据", "Document")}</span>
+                        <code>{diagnostic.path || "/"}</code>
+                        {#if diagnostic.keyword}<span class="schema-keyword">{diagnostic.keyword}</span>{/if}
+                      </div>
+                      <p>{locale.startsWith("zh") && diagnostic.messageZh ? diagnostic.messageZh : diagnostic.message}</p>
+                    </article>
+                  {/each}
+                </div>
+              {:else}
+                <p class="schema-empty">{t("输入 JSON 和 Schema 后自动校验", "Enter JSON and a schema to validate automatically")}</p>
+              {/if}
+            </section>
+          </div>
         {:else}
           <pre class="out json-convert-out">{convertOut}</pre>
         {/if}
@@ -619,9 +737,8 @@
     overflow-x: auto;
     scrollbar-width: none;
   }
+  .schema-workspace{display:grid;grid-template-rows:minmax(180px,1fr) minmax(120px,.55fr);gap:10px;height:100%;padding:10px}.schema-workspace label,.schema-workspace section{display:flex;min-height:0;flex-direction:column;gap:6px}.schema-workspace textarea{flex:1;resize:none}.schema-workspace section{padding:10px;border:1px solid var(--color-border);border-radius:8px}.schema-diagnostics header{display:flex;align-items:center;justify-content:space-between;gap:10px}.schema-state,.schema-source,.schema-keyword{display:inline-flex;align-items:center;border-radius:999px;font-size:10px;line-height:1}.schema-state{padding:4px 7px;font-weight:650}.schema-state.success{background:var(--color-success-bg);color:var(--color-success)}.schema-state.error{background:color-mix(in srgb,var(--color-destructive) 12%,transparent);color:var(--color-destructive)}.schema-valid{padding:10px;border-radius:7px;background:var(--color-success-bg);color:var(--color-success);font-size:12px}.schema-issue-list{display:flex;min-height:0;flex-direction:column;gap:7px;overflow:auto}.schema-issue{padding:8px 9px;border-left:3px solid var(--color-destructive);border-radius:6px;background:color-mix(in srgb,var(--color-destructive) 7%,var(--color-background))}.schema-issue-meta{display:flex;align-items:center;gap:7px;min-width:0}.schema-source{padding:3px 6px;background:color-mix(in srgb,var(--color-warning) 14%,transparent);color:var(--color-warning);font-weight:700}.schema-source.document{background:color-mix(in srgb,var(--color-primary) 11%,transparent);color:var(--color-primary)}.schema-issue-meta code{overflow:hidden;color:var(--color-foreground);font-size:11px;text-overflow:ellipsis;white-space:nowrap}.schema-keyword{margin-left:auto;padding:3px 6px;background:var(--color-muted);color:var(--color-muted-foreground)}.schema-issue p,.schema-empty{margin:6px 0 0;font-size:11px;line-height:1.5}.schema-empty{color:var(--color-muted-foreground)}
   .json-modes::-webkit-scrollbar { display: none; }
-  .json-modes :global(.dbx-btn) { flex: 0 0 auto; }
-  .json-modes .active { background: var(--dbx-selection-background); border-color: var(--dbx-selection-border); color: var(--dbx-selection-foreground); }
   .json-workbench {
     flex: 1;
     min-height: 0;
@@ -705,8 +822,23 @@
     align-items: center;
     min-width: 0;
   }
-  .json-tree-bar { flex-wrap: nowrap; }
-  .json-tree-bar .json-pane-bar-start { flex: 1 1 auto; flex-wrap: nowrap; }
+  .json-mode-bar {
+    flex-wrap: nowrap;
+    min-height: 32px;
+  }
+  .json-mode-bar .json-pane-bar-start {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .json-mode-bar .json-modes {
+    flex: 0 0 auto;
+  }
+  .json-mode-bar .json-pane-bar-end {
+    flex: 0 0 auto;
+    min-width: 66px;
+    justify-content: flex-end;
+  }
   .json-pane-bar-end {
     display: flex;
     gap: 6px;
@@ -717,6 +849,10 @@
   .json-icon-btn {
     width: 30px;
     padding: 0;
+  }
+  .json-tree-options .json-more-menu {
+    right: 0;
+    left: auto;
   }
   .json-pane-bar :global(.dbx-btn.active) {
     background: var(--dbx-selection-background);

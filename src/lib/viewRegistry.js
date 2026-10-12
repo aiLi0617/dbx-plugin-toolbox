@@ -15,7 +15,6 @@ export const VIEW_LOADERS = {
   "unique-id": () => import("./UniqueIdView.svelte"),
   password: () => import("./PasswordView.svelte"),
   hash: () => import("./HashView.svelte"),
-  "md5-collision": () => import("./Md5CollisionView.svelte"),
   "file-type": () => import("./FileTypeView.svelte"),
   "unicode-inspect": () => import("./UnicodeInspectView.svelte"),
   qrcode: () => import("./QrView.svelte"),
@@ -39,6 +38,10 @@ export const VIEW_LOADERS = {
   "image-process": () => import("./ImageProcessView.svelte"),
   "image-generate": () => import("./ImageGenerateView.svelte"),
   "image-utility": () => import("./ImageUtilityView.svelte"),
+  "image-stitch": () => import("./ImageStitchView.svelte"),
+  "gif-tools": () => import("./GifToolsView.svelte"),
+  "image-ocr": () => import("./ImageOcrView.svelte"),
+  "utility-suite": () => import("./UtilitySuiteView.svelte"),
   "developer-utility": () => import("./DeveloperUtilityView.svelte"),
   "http-status": () => import("./HttpStatusView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
@@ -50,16 +53,17 @@ export const VIEW_LOADERS = {
   xor: loadCipherView,
   keypair: () => import("./KeyPairView.svelte"),
   "symmetric-key": () => import("./KeyView.svelte"),
+  "key-generator": () => import("./KeyGeneratorView.svelte"),
 };
 
 export const FILL_VIEWS = new Set([
   "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa",
-  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "lorem",
-  "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "unicode-inspect", "developer-utility", "http-status",
+  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "image-stitch", "gif-tools", "image-ocr", "utility-suite", "lorem",
+  "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "key-generator", "unicode-inspect", "developer-utility", "http-status",
 ]);
 
 export const EPHEMERAL_TOOL_IDS = new Set([
-  "aes", "rsa", "xor", "jwt", "jwk", "hmac-sha256", "totp", "password", "symmetric-key", "key-pair",
+  "aes", "rsa", "xor", "jwt", "jwk", "hmac-sha256", "totp", "password", "random-bytes", "key-generator",
 ]);
 
 const TOOL_LIMITS = Object.freeze({
@@ -70,9 +74,15 @@ const TOOL_LIMITS = Object.freeze({
   jwt: { inputBytes: 1_000_000 },
   jwk: { inputBytes: 1_000_000 },
   hash: { inputBytes: 16_000_000 },
-  "md5-collision": { inputBytes: 16_000_000 },
   "file-type": { inputBytes: 100_000_000 },
   "image-utility": { inputBytes: 30_000_000 },
+  "image-compress": { inputBytes: 30_000_000 },
+  "image-grid": { inputBytes: 30_000_000 },
+  "image-pixelate": { inputBytes: 30_000_000 },
+  "image-base64": { inputBytes: 30_000_000 },
+  "image-stitch": { inputBytes: 90_000_000 },
+  "gif-tools": { inputBytes: 90_000_000 },
+  "image-ocr": { inputBytes: 20_000_000 },
   hmac: { inputBytes: 5_000_000 },
   "hmac-sha256": { inputBytes: 5_000_000 },
   cert: { inputBytes: 2_000_000 },
@@ -99,6 +109,20 @@ export const TOOL_VIEW_CONFIG = Object.freeze(
 // A single runtime shape consumed by catalog/search/persistence integrations.
 // Keeping defaults and limits on every entry makes new tools explicit even
 // when they do not currently need options or a special input cap.
+const CALCULATOR_IDS = new Set(["timestamp", "color", "cron", "base-convert", "semver", "chmod", "phone", "bandwidth", "network-calc"]);
+const LIVE_IDS = new Set(["base64", "url", "html-entities", "sql-escape", "punycode", "quoted-printable"]);
+const FILE_IDS = new Set(["hash", "file-type", "cert", "image-ocr"]);
+const GENERATOR_IDS = new Set(["uuid", "password", "random-bytes", "qrcode", "lorem", "fake-data", "chart", "key-generator"]);
+const EXPLICIT_IDS = new Set(["hash", "file-type", "cert", "image-process", "image-compress", "image-grid", "image-pixelate", "image-base64", "image-stitch", "gif-tools", "image-ocr", "aes", "rsa", "hmac-sha256", "password", "random-bytes", "key-generator", "windows-port"]);
+function layoutKind(tool) {
+  if (LIVE_IDS.has(tool.id)) return "live-io";
+  if (CALCULATOR_IDS.has(tool.id)) return "calculator";
+  if (FILE_IDS.has(tool.id)) return "file";
+  if (GENERATOR_IDS.has(tool.id)) return "generator";
+  if (["json", "code-format", "regex", "diff", "markdown", "dotenv"].includes(tool.id)) return "editor";
+  return "custom";
+}
+
 export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   id: tool.id,
   category: tool.category,
@@ -115,6 +139,8 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id),
   fill: FILL_VIEWS.has(tool.view),
   limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || null,
+  layoutKind: layoutKind(tool),
+  executionKind: EXPLICIT_IDS.has(tool.id) ? "explicit" : LIVE_IDS.has(tool.id) ? "live" : "debounced",
 })));
 
 export const TOOL_IDS = Object.freeze(TOOL_REGISTRY.map((tool) => tool.id));

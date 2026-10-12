@@ -1,7 +1,22 @@
 <script>
   import { pick } from "./i18n.js";
   import JsonTreeNode from "./JsonTreeNode.svelte";
-  import { childCount, encodePointer, hoverDistance, hoverRelation, hoverTint, isContainer, parseLeaf } from "./jsonOps.js";
+  import {
+    addChild,
+    childCount,
+    deletePath,
+    embeddedJsonParseError,
+    encodePointer,
+    hoverDistance,
+    hoverRelation,
+    hoverTint,
+    isContainer,
+    parseEmbeddedJsonInfo,
+    parseTreeEdit,
+    renamePath,
+    serializeEmbeddedJson,
+    setPath,
+  } from "./jsonOps.js";
   import { isLosslessNumber } from "./jsonPrecision.js";
 
   let {
@@ -17,7 +32,9 @@
     onEdit,
     onRename,
     onHover,
+    parseEmbedded = false,
     locale = "zh-CN",
+    embeddedDepth = 0,
   } = $props();
 
   let editing = $state(false);
@@ -27,15 +44,20 @@
   let keyDraft = $state("");
   let keyInputEl = $state(null);
 
-  const container = $derived(isContainer(value));
-  const count = $derived(childCount(value));
+  const embeddedInfo = $derived(parseEmbedded && embeddedDepth < 8 ? parseEmbeddedJsonInfo(value, 8 - embeddedDepth) : undefined);
+  const embeddedValue = $derived(embeddedInfo?.value);
+  const embeddedError = $derived(parseEmbedded && embeddedDepth < 8 && !embeddedInfo ? embeddedJsonParseError(value, 8 - embeddedDepth) : "");
+  const renderedValue = $derived(embeddedValue ?? value);
+  const embedded = $derived(embeddedValue !== undefined);
+  const container = $derived(isContainer(renderedValue));
+  const count = $derived(childCount(renderedValue));
   const folded = $derived(Boolean(collapsed[path]));
-  const isArray = $derived(Array.isArray(value));
+  const isArray = $derived(Array.isArray(renderedValue));
   const entries = $derived(
     container
       ? isArray
-        ? value.map((item, i) => [String(i), item])
-        : Object.entries(value)
+        ? renderedValue.map((item, i) => [String(i), item])
+        : Object.entries(renderedValue)
       : [],
   );
   const openBrace = $derived(isArray ? "[" : "{");
@@ -47,9 +69,18 @@
   const relation = $derived(hoverRelation(path, hoverPath));
   const distance = $derived(hoverDistance(path, hoverPath));
   const tint = $derived(relation === "none" ? 0 : hoverTint(distance));
+  const multilineValue = $derived(typeof value === "string" && /[\r\n]/.test(value));
+  const editColumns = $derived(editColumnCount(draft, 60));
+  const keyEditColumns = $derived(Math.min(40, Math.max(2, Array.from(keyDraft).length || 1)));
+
+  function editColumnCount(text, max) {
+    let longest = 0;
+    for (const line of String(text).split(/\r\n|\r|\n/)) longest = Math.max(longest, Array.from(line).length);
+    return Math.min(max, Math.max(2, longest || 1));
+  }
 
   function displayValue(v) {
-    if (typeof v === "string") return JSON.stringify(v);
+    if (typeof v === "string") return v;
     if (v === null) return "null";
     return String(v);
   }
@@ -64,7 +95,7 @@
   function commit() {
     if (!editing) return;
     editing = false;
-    onEdit?.(path, parseLeaf(draft));
+    onEdit?.(path, parseTreeEdit(draft, parseEmbedded, value));
   }
 
   function cancel() {
@@ -73,6 +104,16 @@
 
   function onEditKey(event) {
     if (event.key === "Enter") {
+      event.preventDefault();
+      commit();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      cancel();
+    }
+  }
+
+  function onMultilineEditKey(event) {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
       commit();
     } else if (event.key === "Escape") {
@@ -109,6 +150,32 @@
       cancelKey();
     }
   }
+
+  function embeddedPath(targetPath) {
+    if (!path) return targetPath;
+    if (targetPath === path) return "";
+    return targetPath.startsWith(`${path}/`) ? targetPath.slice(path.length) : targetPath;
+  }
+
+  function writeEmbedded(next) {
+    onEdit?.(path, serializeEmbeddedJson(next, embeddedInfo?.layers));
+  }
+
+  function addEmbedded(targetPath) {
+    writeEmbedded(addChild(embeddedValue, embeddedPath(targetPath), locale));
+  }
+
+  function deleteEmbedded(targetPath) {
+    writeEmbedded(deletePath(embeddedValue, embeddedPath(targetPath)));
+  }
+
+  function editEmbedded(targetPath, nextValue) {
+    writeEmbedded(setPath(embeddedValue, embeddedPath(targetPath), nextValue));
+  }
+
+  function renameEmbedded(targetPath, nextKey) {
+    writeEmbedded(renamePath(embeddedValue, embeddedPath(targetPath), nextKey));
+  }
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -130,6 +197,7 @@
           class="json-edit json-edit-key"
           bind:this={keyInputEl}
           bind:value={keyDraft}
+          size={keyEditColumns}
           onblur={commitKey}
           onkeydown={onKeyNameKey}
         />
@@ -153,43 +221,65 @@
         </button>
       {/if}
       <span class="json-brace">
+        {#if embedded}<span class="json-embedded" title={t("原始值是 JSON 字符串，内部修改会自动写回字符串", "The original value is a JSON string; nested edits are written back to the string")}>{t("JSON 字符串", "JSON string")}</span>{/if}
         {#if count === 0}
           {openBrace}
         {:else}
           <span class="json-count" title={isArray ? `${count} items` : `${count} keys`}>{openBrace} {count}</span>
         {/if}
       </span>
-      <button class="json-plus" onclick={() => onAdd?.(path)} type="button" title={addTitle} aria-label={addTitle}>+</button>
+      <button class="json-plus" onclick={() => embedded ? addEmbedded(path) : onAdd?.(path)} type="button" title={addTitle} aria-label={addTitle}>+</button>
       {#if folded || count === 0}
         <span class="json-brace">{closeBrace}</span>
-        {#if !isLast}<span class="json-comma">,</span>{/if}
+      {/if}
+      {#if canDelete && (folded || count === 0)}
+        <button class="json-del" onclick={() => onDelete?.(path)} type="button">{delLabel}</button>
+      {/if}
+      {#if (folded || count === 0) && !isLast}<span class="json-comma">,</span>{/if}
+    {:else if editing}
+      {#if multilineValue}
+        <span class="json-multiline-edit-shell">
+          <span class="json-val json-val--string json-multiline-sizer" aria-hidden="true">{displayValue(value)}</span>
+          <textarea
+            class="json-edit json-edit-multiline"
+            bind:this={inputEl}
+            bind:value={draft}
+            onblur={commit}
+            onkeydown={onMultilineEditKey}
+          ></textarea>
+        </span>
+      {:else}
+        <input
+          class="json-edit"
+          bind:this={inputEl}
+          bind:value={draft}
+          size={editColumns}
+          onblur={commit}
+          onkeydown={onEditKey}
+        />
       {/if}
       {#if canDelete}
         <button class="json-del" onclick={() => onDelete?.(path)} type="button">{delLabel}</button>
       {/if}
-    {:else if editing}
-      <input
-        class="json-edit"
-        bind:this={inputEl}
-        bind:value={draft}
-        onblur={commit}
-        onkeydown={onEditKey}
-      />
       {#if !isLast}<span class="json-comma">,</span>{/if}
     {:else}
+      {#if embeddedError}
+        <span class="json-embedded-error" title={embeddedError}>{t("嵌套解析失败", "Nested parse failed")}</span>
+      {/if}
       <button
         class="json-val"
         class:json-val--string={typeof value === "string"}
+        class:json-val--empty-string={typeof value === "string" && value.length === 0}
         class:json-val--number={typeof value === "number" || typeof value === "bigint" || isLosslessNumber(value)}
         class:json-val--boolean={typeof value === "boolean"}
         class:json-val--null={value === null}
         onclick={startEdit}
         type="button"
-      >{displayValue(value)}</button>
-      {#if !isLast}<span class="json-comma">,</span>{/if}
+      >{typeof value === "string" && value.length === 0 ? t("字符串值", "String value") : displayValue(value)}</button>
       {#if canDelete}
         <button class="json-del" onclick={() => onDelete?.(path)} type="button">{delLabel}</button>
       {/if}
+      {#if !isLast}<span class="json-comma">,</span>{/if}
     {/if}
   </div>
 
@@ -204,12 +294,14 @@
           {collapsed}
           {hoverPath}
           {onToggle}
-          {onAdd}
-          {onDelete}
-          {onEdit}
-          {onRename}
+          onAdd={embedded ? addEmbedded : onAdd}
+          onDelete={embedded ? deleteEmbedded : onDelete}
+          onEdit={embedded ? editEmbedded : onEdit}
+          onRename={embedded ? renameEmbedded : onRename}
           {onHover}
+          {parseEmbedded}
           {locale}
+          embeddedDepth={embeddedDepth + (embeddedInfo?.layers ?? 0)}
         />
       {/each}
     </div>
@@ -219,10 +311,10 @@
       onmouseenter={() => onHover?.(path)}
     >
       <span class="json-brace">{closeBrace}</span>
-      {#if !isLast}<span class="json-comma">,</span>{/if}
       {#if canDelete}
         <button class="json-del" onclick={() => onDelete?.(path)} type="button">{delLabel}</button>
       {/if}
+      {#if !isLast}<span class="json-comma">,</span>{/if}
     </div>
   {/if}
 </div>
@@ -235,7 +327,7 @@
   .json-node.hover-fill {
     background: color-mix(
       in srgb,
-      var(--color-accent, var(--color-muted, var(--json-ink, CanvasText))) calc(var(--hover-tint, 4) * 1%),
+      var(--json-ink, CanvasText) calc(var(--hover-tint, 4) * 1%),
       transparent
     );
   }
@@ -247,6 +339,7 @@
     min-height: 24px;
     padding: 1px 4px 1px 0;
     border-radius: var(--radius-sm, 4px);
+    width: 100%;
   }
   .json-children {
     padding-left: 18px;
@@ -254,9 +347,9 @@
     margin-left: 7px;
   }
   .json-key {
-    border: 0;
+    border: 1px solid transparent;
     background: transparent;
-    padding: 0;
+    padding: 0 4px;
     font: inherit;
     color: var(--color-warning);
     font-weight: 500;
@@ -264,6 +357,7 @@
     border-radius: var(--radius-sm, 4px);
   }
   .json-key:hover {
+    border-color: var(--color-border, color-mix(in srgb, CanvasText 20%, transparent));
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .json-colon,
@@ -273,6 +367,35 @@
   }
   .json-count {
     font-variant-numeric: tabular-nums;
+  }
+  .json-embedded {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    margin-right: 5px;
+    padding: 0 5px;
+    border: 1px solid color-mix(in srgb, var(--color-info) 35%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-info) 10%, transparent);
+    color: var(--color-info);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    line-height: 16px;
+    white-space: nowrap;
+  }
+  .json-embedded-error {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 5px;
+    border: 1px solid color-mix(in srgb, var(--color-destructive) 35%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-destructive) 9%, transparent);
+    color: var(--color-destructive);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    line-height: 16px;
+    white-space: nowrap;
   }
   .json-twist {
     flex: 0 0 20px;
@@ -336,9 +459,10 @@
     background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
   }
   .json-val {
-    border: 0;
+    min-height: 22px;
+    border: 1px solid transparent;
     background: transparent;
-    padding: 0;
+    padding: 0 6px;
     font: inherit;
     text-align: left;
     cursor: text;
@@ -348,10 +472,14 @@
     border-radius: var(--radius-sm, 4px);
   }
   .json-val:hover {
+    border-color: var(--color-border, color-mix(in srgb, CanvasText 20%, transparent));
     background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent));
   }
   .json-val--string {
     color: var(--color-success);
+  }
+  .json-val--empty-string {
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 55%, transparent));
   }
   .json-val--number {
     color: var(--color-info);
@@ -361,8 +489,10 @@
     color: var(--color-destructive);
   }
   .json-edit {
-    min-width: 8em;
-    max-width: 100%;
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 3ch;
+    max-width: min(100%, 64ch);
     height: 22px;
     padding: 0 6px;
     border: 1px solid var(--color-ring, var(--color-primary));
@@ -372,14 +502,38 @@
     font: inherit;
   }
   .json-edit-key {
-    min-width: 6em;
+    min-width: 3ch;
+    max-width: min(100%, 44ch);
     color: var(--color-warning);
     font-weight: 500;
+  }
+  .json-edit-multiline {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    line-height: 1.5;
+    resize: none;
+    overflow: auto;
+  }
+  .json-multiline-edit-shell {
+    position: relative;
+    display: inline-flex;
+    min-width: 3ch;
+    max-width: 100%;
+  }
+  .json-multiline-sizer {
+    visibility: hidden;
+    pointer-events: none;
   }
   .json-del {
     opacity: 0;
     pointer-events: none;
-    margin-left: auto;
+    flex: 0 0 auto;
+    margin: 0 2px 0 5px;
     height: 20px;
     padding: 0 7px;
     border: 1px solid transparent;

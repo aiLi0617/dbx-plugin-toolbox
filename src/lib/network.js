@@ -237,3 +237,96 @@ export function splitIpv4Subnets(value, newPrefix, limit = 1024) {
 export function splitSubnets(value, newPrefix, limit = 1024) {
   return String(value ?? "").includes(":") ? splitIpv6Subnets(value, newPrefix, limit) : splitIpv4Subnets(value, newPrefix, limit);
 }
+
+export function previewSubnets(value, newPrefix, limit = 64) {
+  const previewLimit = Number(limit);
+  if (!Number.isSafeInteger(previewLimit) || previewLimit < 1) throw new Error("Preview limit must be a positive integer");
+
+  if (String(value ?? "").includes(":")) {
+    const { ip, prefix } = parseIpv6Cidr(value);
+    const target = Number(newPrefix);
+    prefixToIpv6Mask(target);
+    if (target < prefix) throw new Error("Subnet prefix must be equal to or longer than the source prefix");
+    const total = 1n << BigInt(target - prefix);
+    const shown = Number(total > BigInt(previewLimit) ? BigInt(previewLimit) : total);
+    const base = ip & prefixToIpv6Mask(prefix);
+    const size = 1n << BigInt(128 - target);
+    return {
+      subnets: Array.from({ length: shown }, (_, index) => `${formatIpv6(base + BigInt(index) * size)}/${target}`),
+      total,
+      truncated: total > BigInt(previewLimit),
+    };
+  }
+
+  const { ip, prefix } = parseCidr(value);
+  const target = Number(newPrefix);
+  prefixToMask(target);
+  if (target < prefix) throw new Error("Subnet prefix must be equal to or longer than the source prefix");
+  const total = 1n << BigInt(target - prefix);
+  const shown = Number(total > BigInt(previewLimit) ? BigInt(previewLimit) : total);
+  const base = (ip & prefixToMask(prefix)) >>> 0;
+  const size = 2 ** (32 - target);
+  return {
+    subnets: Array.from({ length: shown }, (_, index) => `${formatIpv4(base + index * size)}/${target}`),
+    total,
+    truncated: total > BigInt(previewLimit),
+  };
+}
+
+export function expandIpv4Range(value, limit = 256) {
+  const raw = String(value ?? "").trim();
+  let start;
+  let end;
+  if (raw.includes("/")) {
+    const result = calculateIpv4(raw);
+    start = parseIpv4(result.network);
+    end = parseIpv4(result.broadcast);
+  } else {
+    const parts = raw.split("-").map((part) => part.trim());
+    if (parts.length !== 2) throw new Error("Use CIDR or start-end IPv4 range");
+    start = parseIpv4(parts[0]);
+    end = parseIpv4(parts[1]);
+  }
+  if (end < start) throw new Error("Range end must not be before range start");
+  if (end - start + 1 > limit) throw new Error(`Range contains more than ${limit} addresses`);
+  return Array.from({ length: end - start + 1 }, (_, index) => formatIpv4(start + index));
+}
+
+function secureBytes(size) {
+  const bytes = new Uint8Array(size);
+  if (!globalThis.crypto?.getRandomValues) throw new Error("Secure random generation is unavailable");
+  globalThis.crypto.getRandomValues(bytes);
+  return bytes;
+}
+
+export function generateIpv6Ula() {
+  const random = secureBytes(10);
+  const groups = [
+    `fd${random[0].toString(16).padStart(2, "0")}`,
+    ((random[1] << 8) | random[2]).toString(16),
+    ((random[3] << 8) | random[4]).toString(16),
+    "0", "0", "0", "0", "0",
+  ];
+  return `${formatIpv6(parseIpv6(groups.join(":")))}/48`;
+}
+
+export function generateMacAddress() {
+  const bytes = secureBytes(6);
+  bytes[0] = (bytes[0] | 0x02) & 0xfe;
+  return [...bytes].map((byte) => byte.toString(16).toUpperCase().padStart(2, "0")).join(":");
+}
+
+const OFFLINE_OUI = new Map([
+  ["00163E", "Xensource / Xen"], ["001B63", "Apple"], ["3C5A37", "Google"],
+  ["525400", "QEMU / KVM"], ["000C29", "VMware"], ["005056", "VMware"],
+  ["B827EB", "Raspberry Pi Foundation"], ["DCA632", "Raspberry Pi Trading"],
+]);
+
+export function lookupOui(mac) {
+  const normalized = String(mac ?? "").toUpperCase().replace(/[^0-9A-F]/g, "");
+  if (normalized.length < 6) throw new Error("Enter at least the first three MAC address bytes");
+  const prefix = normalized.slice(0, 6);
+  const first = parseInt(prefix.slice(0, 2), 16);
+  if (first & 0x02) return { prefix, vendor: "Locally administered", local: true };
+  return { prefix, vendor: OFFLINE_OUI.get(prefix) || "Not found in bundled OUI subset", local: false };
+}

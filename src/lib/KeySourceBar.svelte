@@ -10,6 +10,9 @@
     multiline = false,
     materialLabel = "",
     materialPlaceholder = "",
+    encodingLabel = "",
+    encodingOptions = [],
+    encoding = $bindable(""),
     source = $bindable("once"),
     material = $bindable(""),
     keyId = $bindable(""),
@@ -89,6 +92,12 @@
         </button>
       {/if}
     {:else if !multiline}
+      {#if encodingOptions.length}
+        <label class="field">
+          <span class="dbx-label">{encodingLabel}</span>
+          <Select bind:value={encoding} options={encodingOptions} />
+        </label>
+      {/if}
       <label class="field grow">
         <span class="dbx-label">{keyLabel}</span>
         <input class="dbx-input" type="password" autocomplete="off" placeholder={materialPlaceholder} bind:value={material} />

@@ -118,7 +118,7 @@
       </button>
     </div>
     <div class="pane-head">
-      <div class="seg" role="tablist" aria-label={t("结果", "Result")}>
+      <div class="dbx-tabs dbx-tabs--compact" role="tablist" aria-label={t("结果", "Result")}>
         <button
           type="button"
           role="tab"
@@ -284,34 +284,6 @@
     min-height: 28px;
     padding: 0 8px;
     font-size: 12px;
-  }
-  .seg {
-    display: inline-flex;
-    flex-shrink: 0;
-    height: 28px;
-    box-sizing: border-box;
-    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    border-radius: var(--radius-md, 8px);
-    overflow: hidden;
-  }
-  .seg button {
-    height: 100%;
-    padding: 0 10px;
-    border: 0;
-    border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  .seg button:last-child {
-    border-right: 0;
-  }
-  .seg button.active {
-    background: var(--dbx-selection-background);
-    border-color: var(--dbx-selection-border);
-    color: var(--dbx-selection-foreground);
-    font-weight: 600;
   }
   .count,
   .hint,

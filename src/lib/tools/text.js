@@ -149,6 +149,56 @@ export function inspectUnicodeRows(text) {
   });
 }
 
+export function maskSensitiveText(text) {
+  return String(text ?? "")
+    .replace(/([\w.+-]{1,2})[\w.+-]*(@[\w.-]+\.[A-Za-z]{2,})/g, "$1***$2")
+    .replace(/(?<!\d)(1\d{2})\d{4}(\d{4})(?!\d)/g, "$1****$2")
+    .replace(/\b(\d{4})\d{8,11}(\d{4})\b/g, "$1********$2");
+}
+
+export function numeronym(text) {
+  return String(text ?? "").replace(/\b([A-Za-z])([A-Za-z]{2,})([A-Za-z])\b/g, (_, first, middle, last) =>
+    `${first}${middle.length}${last}`);
+}
+
+export function pluralizeEnglish(text) {
+  return String(text ?? "").replace(/\b([A-Za-z]+)\b/g, (word) => {
+    if (/[^aeiou]y$/i.test(word)) return `${word.slice(0, -1)}ies`;
+    if (/(?:s|x|z|ch|sh)$/i.test(word)) return `${word}es`;
+    if (/s$/i.test(word)) return word;
+    return `${word}s`;
+  });
+}
+
+export function normalizeEmails(text) {
+  return String(text ?? "").split(/\r?\n/).map((line) => {
+    const value = line.trim();
+    const at = value.lastIndexOf("@");
+    if (at <= 0) return value;
+    return `${value.slice(0, at)}@${value.slice(at + 1).toLocaleLowerCase()}`;
+  }).join("\n");
+}
+
+export function extractEmails(text) {
+  return [...new Set(String(text ?? "").match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [])].join("\n");
+}
+
+export function extractUrls(text) {
+  return [...new Set((String(text ?? "").match(/https?:\/\/[^\s<>"']+/gi) || [])
+    .map((value) => value.replace(/[),.;!?]+$/u, "")))].join("\n");
+}
+
+export function asciiBanner(text) {
+  const value = String(text ?? "").trim().toUpperCase().slice(0, 40);
+  if (!value) return "";
+  const cells = [...value].map((char) => ` ${char} `);
+  return [
+    cells.map((cell) => `+${"-".repeat(cell.length)}+`).join(" "),
+    cells.map((cell) => `|${cell}|`).join(" "),
+    cells.map((cell) => `+${"-".repeat(cell.length)}+`).join(" "),
+  ].join("\n");
+}
+
 const MARKDOWN_REMOVE_TAGS = new Set([
   "SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "LINK", "META", "FORM", "TEXTAREA", "SVG", "MATH", "BASE",
 ]);

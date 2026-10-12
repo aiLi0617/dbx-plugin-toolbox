@@ -18,8 +18,7 @@
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
     appliedDemoRequest = demoRequest;
-    mode = "compress";
-    input = demo.input;
+    input = demo.modes?.[mode]?.input || demo.input;
     output = "";
     error = "";
     stats = null;
@@ -71,8 +70,8 @@
 <div class="page">
   <div class="toolbar">
     <div class="tabs" role="group" aria-label={t("Gzip 操作", "Gzip operation")}>
-      <button class:active={mode === "compress"} type="button" onclick={() => setMode("compress")}>{t("压缩", "Compress")}</button>
-      <button class:active={mode === "decompress"} type="button" onclick={() => setMode("decompress")}>{t("解压", "Decompress")}</button>
+      <button class:active={mode === "compress"} aria-pressed={mode === "compress"} type="button" onclick={() => setMode("compress")}>{t("压缩", "Compress")}</button>
+      <button class:active={mode === "decompress"} aria-pressed={mode === "decompress"} type="button" onclick={() => setMode("decompress")}>{t("解压", "Decompress")}</button>
     </div>
     <span class="hint">{mode === "compress" ? t("UTF-8 文本 → Gzip Base64", "UTF-8 text → Gzip Base64") : t("Gzip Base64 → UTF-8 文本", "Gzip Base64 → UTF-8 text")} · {busy ? t("处理中…", "Working…") : t("输入后自动转换", "Updates as you type")}</span>
   </div>

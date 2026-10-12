@@ -19,7 +19,7 @@
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
     appliedDemoRequest = demoRequest;
-    input = demo.input;
+    input = demo.inputs?.[language] || demo.input;
   });
   $effect(() => {
     const next = ({ js: "javascript", ts: "typescript" })[initialOptions.language] || initialOptions.language;

@@ -3,13 +3,16 @@ mod data_dir;
 mod fsutil;
 mod helpers;
 mod keystore;
+mod ocr;
+mod ocr_alphabet;
 mod ports;
 mod prefs;
 
 use std::sync::Mutex;
 
 use dbx_plugin_sdk::{
-    PluginEmitter, PluginError, PluginHandler, PluginMetadata, PluginServer, RequestContext,
+    PluginEmitter, PluginError, PluginHandler, PluginMetadata, PluginServer, PluginTransport,
+    RequestContext,
 };
 use serde_json::Value;
 
@@ -20,6 +23,7 @@ struct Plugin {
     vault: Mutex<Vault>,
     hash_sessions: Mutex<crypto::HashSessions>,
     save_sessions: Mutex<fsutil::SaveSessions>,
+    ocr: ocr::OcrService,
 }
 
 impl PluginHandler for Plugin {
@@ -28,7 +32,7 @@ impl PluginHandler for Plugin {
         _context: RequestContext,
         method: &str,
         params: Value,
-        _emitter: &PluginEmitter,
+        emitter: &PluginEmitter,
     ) -> Result<Value, PluginError> {
         if method.starts_with("toolbox/keys/") {
             let mut vault = self
@@ -46,6 +50,9 @@ impl PluginHandler for Plugin {
                 .lock()
                 .map_err(|_| PluginError::new(-32000, "Hash session lock is poisoned"))?;
             return crypto::hash_stream_op(&mut sessions, method, params);
+        }
+        if method.starts_with("toolbox/ocr/") {
+            return self.ocr.handle(method, params, emitter);
         }
         if method == "toolbox/save-file"
             || method.starts_with("toolbox/save-file-stream/")
@@ -73,9 +80,20 @@ impl PluginHandler for Plugin {
             _ => Err(PluginError::method_not_found(method)),
         }
     }
+
+    fn handle_binary(
+        &self,
+        channel: &str,
+        data: Vec<u8>,
+        _emitter: &PluginEmitter,
+    ) -> Result<(), PluginError> {
+        self.ocr.handle_binary(channel, data)
+    }
 }
 
 fn main() -> std::io::Result<()> {
     let metadata = PluginMetadata::new("io.github.aili0617.toolbox", env!("CARGO_PKG_VERSION"));
-    PluginServer::new(metadata, Plugin::default()).serve()
+    PluginServer::new(metadata, Plugin::default())
+        .transport(PluginTransport::Framed)
+        .serve()
 }

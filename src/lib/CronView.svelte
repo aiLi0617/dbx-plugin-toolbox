@@ -81,6 +81,7 @@
   let dragEnd = $state(null);
   let dragVisited = $state([]);
   let presetsOpen = $state(false);
+  let resultCount = $state(10);
 
   const flavor = $derived(flavorById(flavorId));
   const keys = $derived(flavor.keys);
@@ -105,6 +106,7 @@
   $effect(() => {
     const expr = expression;
     const tz = tzOption;
+    const count = resultCount;
     const timer = setTimeout(() => {
       if (!expr.trim()) {
         result = null;
@@ -112,7 +114,7 @@
         return;
       }
       try {
-        result = explainCron(expr, { tz, flavorId });
+        result = explainCron(expr, { tz, flavorId, count });
         error = "";
       } catch {
         result = null;
@@ -472,17 +474,26 @@
   </div>
 
   <aside class="next">
-    <p class="next-title">{t("接下来 5 次", "Next 5 runs")}</p>
+    <div class="next-head">
+      <p class="next-title">{t(`接下来 ${resultCount} 次`, `Next ${resultCount} runs`)}</p>
+      <div class="result-count" role="group" aria-label={t("展示数量", "Number of runs")}>
+        {#each [10, 20, 50] as count}
+          <button class:active={resultCount === count} onclick={() => (resultCount = count)} type="button">{count}</button>
+        {/each}
+      </div>
+    </div>
     <p class="dbx-hint next-sub">{t("按执行顺序", "In run order")}</p>
     {#if result}
-      {#each result.next as iso, i}
-        {@const run = formatNext(iso)}
-        <div class="next-row">
-          <span class="idx">{String(i + 1).padStart(2, "0")}</span>
-          <span class="when">{run.date}</span>
-          <span class="dow">{run.weekday}</span>
-        </div>
-      {/each}
+      <div class="next-list">
+        {#each result.next as iso, i}
+          {@const run = formatNext(iso)}
+          <div class="next-row">
+            <span class="idx">{String(i + 1).padStart(2, "0")}</span>
+            <span class="when">{run.date}</span>
+            <span class="dow">{run.weekday}</span>
+          </div>
+        {/each}
+      </div>
     {:else}
       <p class="dbx-hint">{t("有效表达式才会列出时间。", "Next runs appear for a valid expression.")}</p>
     {/if}
@@ -832,8 +843,41 @@
     font-size: 13px;
     font-weight: 600;
   }
+  .next-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .result-count {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-muted, color-mix(in srgb, CanvasText 6%, transparent));
+  }
+  .result-count button {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 5px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    font-size: 11px;
+  }
+  .result-count button.active {
+    background: var(--dbx-selection-background);
+    color: var(--dbx-selection-foreground);
+    font-weight: 600;
+  }
   .next-sub {
     margin: 4px 0 10px;
+  }
+  .next-list {
+    max-height: min(60vh, 680px);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
   .next-row {
     display: grid;

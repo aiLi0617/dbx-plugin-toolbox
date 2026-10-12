@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { installFormNavigationGuard } from "../src/formGuard.js";
 
 test("form navigation guard keeps component submit handlers reachable", () => {
@@ -16,4 +17,10 @@ test("form navigation guard keeps component submit handlers reachable", () => {
   assert.equal(event.defaultPrevented, true);
   assert.equal(handled, true);
   removeGuard();
+});
+
+test("password regeneration does not depend on form submission", () => {
+  const source = readFileSync(new URL("../src/lib/PasswordView.svelte", import.meta.url), "utf8");
+  assert.match(source, /onclick=\{generate\}/);
+  assert.doesNotMatch(source, /type="submit"|onsubmit=/);
 });

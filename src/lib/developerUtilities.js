@@ -44,6 +44,43 @@ export function stringifyDotEnv(value) {
   }).join("\n");
 }
 
+export function dotenvExample(source) {
+  const lines = String(source || "").replace(/^\uFEFF/, "").split(/\r?\n/);
+  return lines.map((line) => {
+    if (!line.trim() || line.trim().startsWith("#")) return line;
+    const match = line.match(/^(\s*(?:export\s+)?[A-Za-z_][A-Za-z0-9_]*\s*=).*/);
+    return match ? match[1] : line;
+  }).join("\n");
+}
+
+export function compareDotEnv(leftSource, rightSource) {
+  const left = parseDotEnv(leftSource); const right = parseDotEnv(rightSource);
+  const keys = [...new Set([...Object.keys(left.value), ...Object.keys(right.value)])].sort();
+  return {
+    rows: keys.map((key) => ({
+      key,
+      status: !(key in left.value) ? "missing-left" : !(key in right.value) ? "missing-right" : left.value[key] === right.value[key] ? "same" : "different",
+      leftSet: key in left.value,
+      rightSet: key in right.value,
+    })),
+    diagnostics: [...left.diagnostics.map((item) => ({ ...item, side: "left" })), ...right.diagnostics.map((item) => ({ ...item, side: "right" }))],
+  };
+}
+
+export function syncDotEnvTemplate(templateSource, valueSource) {
+  const template = parseDotEnv(templateSource); const values = parseDotEnv(valueSource);
+  const used = new Set();
+  const lines = String(templateSource || "").split(/\r?\n/).map((line) => {
+    const match = line.match(/^(\s*(?:export\s+)?)([A-Za-z_][A-Za-z0-9_]*)(\s*=).*/);
+    if (!match) return line;
+    const key = match[2]; used.add(key);
+    const next = key in values.value ? stringifyDotEnv({ [key]: values.value[key] }).slice(key.length + 1) : "";
+    return `${match[1]}${key}${match[3]}${next}`;
+  });
+  for (const key of Object.keys(values.value)) if (!used.has(key)) lines.push(stringifyDotEnv({ [key]: values.value[key] }));
+  return { output: lines.join("\n"), diagnostics: [...template.diagnostics, ...values.diagnostics] };
+}
+
 export const HTTP_STATUS_CLASSES = Object.freeze({
   "1xx": { label: { zh: "信息响应", en: "Informational" }, description: { zh: "请求已收到，处理仍在继续", en: "The request was received and processing continues." } },
   "2xx": { label: { zh: "成功", en: "Success" }, description: { zh: "请求已成功接收、理解并处理", en: "The request was successfully received, understood, and accepted." } },

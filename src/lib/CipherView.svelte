@@ -23,6 +23,7 @@
   let source = $state("once");
   let material = $state("");
   let keyId = $state("");
+  let keyEncoding = $state("auto");
   let output = $state("");
   let extra = $state("");
   let error = $state("");
@@ -114,7 +115,7 @@
   $effect(() => {
     const text = input;
     const next = ctx;
-    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, iv, aad, aadEncoding, tag };
+    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, keyEncoding, iv, aad, aadEncoding, tag };
     const nextKind = kind;
     output = "";
     extra = "";
@@ -320,8 +321,16 @@
     {locale}
     {picker}
     multiline={kind === "rsa"}
-    materialLabel={kind === "xor" ? t("密钥材料（hex/base64）", "Key material (hex/base64)") : ""}
+    materialLabel={kind === "aes" ? t("密钥", "Key") : kind === "xor" ? t("密钥材料（hex/base64）", "Key material (hex/base64)") : ""}
     materialPlaceholder={kind === "xor" ? t("例如 00 或 deadbeef", "e.g. 00 or deadbeef") : ""}
+    encodingLabel={t("编码", "Encoding")}
+    encodingOptions={kind === "aes" ? [
+      { value: "auto", label: t("自动", "Auto") },
+      { value: "utf8", label: "UTF-8" },
+      { value: "hex", label: "Hex" },
+      { value: "base64", label: "Base64" },
+    ] : []}
+    bind:encoding={keyEncoding}
     bind:source
     bind:material
     bind:keyId

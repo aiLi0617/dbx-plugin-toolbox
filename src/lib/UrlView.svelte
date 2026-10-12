@@ -33,6 +33,11 @@
     const rows = [];
     if (q.protocol) rows.push(["protocol", q.protocol]);
     if (q.host) rows.push(["host", q.host]);
+    if (q.hostname) rows.push(["hostname", q.hostname]);
+    if (q.port) rows.push(["port", q.port]);
+    if (q.origin) rows.push(["origin", q.origin]);
+    if (q.username) rows.push(["username", q.username]);
+    if (q.password) rows.push(["password", "••••••"]);
     if (q.pathname) rows.push(["path", q.pathname]);
     if (q.href) rows.push(["href", q.href]);
     if (q.hashPath) rows.push(["hash", q.hashPath]);
@@ -62,7 +67,7 @@
 </script>
 
 <div class="page">
-  <div class="seg" role="tablist" aria-label={t("模式", "Mode")}>
+  <div class="dbx-tabs" role="tablist" aria-label={t("模式", "Mode")}>
     {#each MODES as item}
       <button
         class:active={mode === item.value}
@@ -171,31 +176,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--ui-gap, 12px);
-  }
-  .seg {
-    display: inline-flex;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    border-radius: var(--radius-md, 8px);
-    overflow: hidden;
-    width: fit-content;
-  }
-  .seg button {
-    height: 28px;
-    padding: 0 12px;
-    border: 0;
-    border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-  }
-  .seg button:last-child { border-right: 0; }
-  .seg button.active {
-    background: var(--dbx-selection-background);
-    border-color: var(--dbx-selection-border);
-    color: var(--dbx-selection-foreground);
-    font-weight: 600;
   }
   .block {
     display: flex;

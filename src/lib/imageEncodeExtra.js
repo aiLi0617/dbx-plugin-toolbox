@@ -336,30 +336,77 @@ function canvasToPngBytes(canvas) {
   });
 }
 
-/** ICO containing a single PNG image (supported by modern Windows / browsers). */
+export const ICO_STANDARD_SIZES = Object.freeze([16, 24, 32, 48, 64, 128, 256]);
+
+export function buildIcoFromPngFrames(frames) {
+  const valid = (frames || []).map((frame) => ({
+    width: Math.trunc(Number(frame?.width)),
+    height: Math.trunc(Number(frame?.height)),
+    bytes: frame?.bytes instanceof Uint8Array ? frame.bytes : new Uint8Array(frame?.bytes || []),
+  })).filter((frame) => (
+    frame.width >= 1 && frame.width <= 256
+    && frame.height >= 1 && frame.height <= 256
+    && frame.bytes.length > 0
+  ));
+  if (!valid.length || valid.length > 0xffff) throw new Error("ICO requires at least one valid image frame");
+
+  const directorySize = 6 + valid.length * 16;
+  const imageSize = valid.reduce((sum, frame) => sum + frame.bytes.length, 0);
+  const out = new Uint8Array(directorySize + imageSize);
+  writeUint16LE(out, 0, 0);
+  writeUint16LE(out, 2, 1);
+  writeUint16LE(out, 4, valid.length);
+  let imageOffset = directorySize;
+  valid.forEach((frame, index) => {
+    const entry = 6 + index * 16;
+    out[entry] = frame.width === 256 ? 0 : frame.width;
+    out[entry + 1] = frame.height === 256 ? 0 : frame.height;
+    out[entry + 2] = 0;
+    out[entry + 3] = 0;
+    writeUint16LE(out, entry + 4, 1);
+    writeUint16LE(out, entry + 6, 32);
+    writeUint32LE(out, entry + 8, frame.bytes.length);
+    writeUint32LE(out, entry + 12, imageOffset);
+    out.set(frame.bytes, imageOffset);
+    imageOffset += frame.bytes.length;
+  });
+  return out;
+}
+
+/** ICO with multiple PNG frames for crisp rendering from favicon to high DPI. */
 export async function encodeIcoFromCanvas(canvas) {
   if (canvas.width > 256 || canvas.height > 256) {
     throw new Error("ICO dimensions are limited to 256 × 256 pixels");
   }
-  const png = await canvasToPngBytes(canvas);
-  const width = canvas.width === 256 ? 0 : canvas.width;
-  const height = canvas.height === 256 ? 0 : canvas.height;
-  const out = new Uint8Array(6 + 16 + png.length);
-  // ICONDIR
-  writeUint16LE(out, 0, 0);
-  writeUint16LE(out, 2, 1); // icon
-  writeUint16LE(out, 4, 1); // count
-  // ICONDIRENTRY
-  out[6] = width;
-  out[7] = height;
-  out[8] = 0;
-  out[9] = 0;
-  writeUint16LE(out, 10, 1);
-  writeUint16LE(out, 12, 32);
-  writeUint32LE(out, 14, png.length);
-  writeUint32LE(out, 18, 22); // image offset
-  out.set(png, 22);
-  return out;
+  const isSquare = canvas.width === canvas.height;
+  if (!isSquare) {
+    return buildIcoFromPngFrames([{
+      width: canvas.width,
+      height: canvas.height,
+      bytes: await canvasToPngBytes(canvas),
+    }]);
+  }
+  const sizes = ICO_STANDARD_SIZES.filter((size) => size <= canvas.width);
+  if (!sizes.includes(canvas.width)) sizes.push(canvas.width);
+  sizes.sort((a, b) => a - b);
+
+  const frames = [];
+  for (const size of sizes) {
+    if (size === canvas.width && size === canvas.height) {
+      frames.push({ width: size, height: size, bytes: await canvasToPngBytes(canvas) });
+      continue;
+    }
+    const scaled = document.createElement("canvas");
+    scaled.width = size;
+    scaled.height = size;
+    const ctx = scaled.getContext("2d");
+    if (!ctx) throw new Error("Canvas is unavailable");
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(canvas, 0, 0, size, size);
+    frames.push({ width: size, height: size, bytes: await canvasToPngBytes(scaled) });
+  }
+  return buildIcoFromPngFrames(frames);
 }
 
 export function padIcoToSize(bytes, targetBytes) {
@@ -371,9 +418,12 @@ export function padIcoToSize(bytes, targetBytes) {
   if (target === source.length) return source;
   const out = new Uint8Array(target);
   out.set(source, 0);
-  // Grow the embedded image byte count so the directory stays consistent.
-  const imageOffset = out[18] | (out[19] << 8) | (out[20] << 16) | (out[21] << 24);
-  writeUint32LE(out, 14, target - imageOffset);
+  // Append padding to the final embedded PNG and keep its directory size valid.
+  const count = out[4] | (out[5] << 8);
+  if (!count) throw new Error("Invalid ICO directory");
+  const lastEntry = 6 + (count - 1) * 16;
+  const imageOffset = out[lastEntry + 12] | (out[lastEntry + 13] << 8) | (out[lastEntry + 14] << 16) | (out[lastEntry + 15] << 24);
+  writeUint32LE(out, lastEntry + 8, target - imageOffset);
   return out;
 }
 

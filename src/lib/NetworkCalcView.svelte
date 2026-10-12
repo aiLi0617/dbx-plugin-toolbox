@@ -1,6 +1,6 @@
 <script>
   import { pick } from "./i18n.js";
-  import { calculateIpv4, calculateIpv6, integerToIpv4, maskToPrefix, splitSubnets } from "./network.js";
+  import { calculateIpv4, calculateIpv6, integerToIpv4, maskToPrefix, previewSubnets, expandIpv4Range, generateIpv6Ula, generateMacAddress, lookupOui } from "./network.js";
 
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -10,6 +10,12 @@
   let integerInput = $state("");
   let addressFamily = $state("ipv4");
   let splitPrefix = $state(26);
+  let rangeInput = $state("");
+  let ula = $state("");
+  let mac = $state("");
+  let ouiInput = $state("");
+  const rangeResult = $derived.by(() => { try { return { value: rangeInput ? expandIpv4Range(rangeInput) : [], error: "" }; } catch (error) { return { value: [], error: String(error.message || error) }; } });
+  const ouiResult = $derived.by(() => { try { return { value: ouiInput ? lookupOui(ouiInput) : null, error: "" }; } catch (error) { return { value: null, error: String(error.message || error) }; } });
 
   function setAddressFamily(value) {
     addressFamily = value;
@@ -33,9 +39,9 @@
     catch (error) { return { value: "", error: String(error.message || error) }; }
   });
   const splitResult = $derived.by(() => {
-    if (!input.trim() || splitPrefix === "") return { value: [], error: "" };
-    try { return { value: splitSubnets(input, Number(splitPrefix), 64), error: "" }; }
-    catch (error) { return { value: [], error: String(error.message || error) }; }
+    if (!input.trim() || splitPrefix === "") return { value: null, error: "" };
+    try { return { value: previewSubnets(input, Number(splitPrefix), 64), error: "" }; }
+    catch (error) { return { value: null, error: String(error.message || error) }; }
   });
   const typeLabels = {
     private: ["私有地址", "Private"], public: ["公网地址", "Public"], loopback: ["环回地址", "Loopback"],
@@ -89,11 +95,11 @@
     <h3>{t("子网切分", "Subnet splitting")}</h3>
     <div class="compact-fields split-fields">
       <div class="field grow"><span>{t("目标前缀", "Target prefix")}</span><input class="dbx-input" type="number" min="0" max={addressFamily === "ipv6" ? 128 : 32} aria-label={t("目标前缀", "Target prefix")} bind:value={splitPrefix} /></div>
-      <div class="field result-field"><span>{t("子网数量", "Subnet count")}</span><output class:empty={!splitResult.value.length}>{splitResult.value.length ? splitResult.value.length : "—"}</output></div>
+      <div class="field result-field"><span>{t("子网数量", "Subnet count")}</span><output class:empty={!splitResult.value}>{splitResult.value ? number(splitResult.value.total) : "—"}</output></div>
     </div>
     {#if splitResult.error}<p class="error">{splitResult.error}</p>{/if}
-    {#if splitResult.value.length}<div class="subnet-list">{#each splitResult.value as subnet}<code>{subnet}</code>{/each}</div>{/if}
-    <p class="dbx-hint">{t("为避免浏览器卡顿，最多显示 64 个子网。", "At most 64 subnets are shown to keep the browser responsive.")}</p>
+    {#if splitResult.value?.subnets.length}<div class="subnet-list">{#each splitResult.value.subnets as subnet}<code>{subnet}</code>{/each}</div>{/if}
+    {#if splitResult.value?.truncated}<p class="notice warning">{t("为避免浏览器卡顿，最多显示 64 个子网。", "At most 64 subnets are shown to keep the browser responsive.")}</p>{/if}
   </section>
 
   <div class="secondary-grid">
@@ -114,6 +120,26 @@
       {#if integerResult.error}<p class="error">{integerResult.error}</p>{/if}
     </section>
   </div>
+  <div class="secondary-grid">
+    <section class="panel">
+      <h3>{t("IPv4 范围展开", "Expand IPv4 range")}</h3>
+      <label class="field"><span>{t("CIDR 或起止范围（最多 256 项）", "CIDR or start-end range (max 256)")}</span><input class="dbx-input mono" bind:value={rangeInput} placeholder="192.168.1.0/30" /></label>
+      {#if rangeResult.error}
+        <p class="error">{rangeResult.error}</p>
+      {:else if rangeResult.value.length}
+        <div class="subnet-list">{#each rangeResult.value as address}<code>{address}</code>{/each}</div>
+      {:else}
+        <div class="range-empty" aria-hidden="true"><span>—</span><small>{t("CIDR 或起止范围（最多 256 项）", "CIDR or start-end range (max 256)")}</small></div>
+      {/if}
+    </section>
+    <section class="panel utility-panel">
+      <h3>{t("本地网络标识", "Local network identities")}</h3>
+      <div class="buttons"><button class="dbx-btn" type="button" onclick={() => (ula = generateIpv6Ula())}>{t("生成 IPv6 ULA", "Generate IPv6 ULA")}</button><button class="dbx-btn" type="button" onclick={() => (mac = generateMacAddress())}>{t("生成 MAC", "Generate MAC")}</button></div>
+      {#if ula}<output>{ula}</output>{/if}{#if mac}<output>{mac}</output>{/if}
+      <label class="field"><span>{t("离线 OUI 查询", "Offline OUI lookup")}</span><input class="dbx-input mono" bind:value={ouiInput} placeholder="00:1B:63:…" /></label>
+      {#if ouiResult.error}<p class="error">{ouiResult.error}</p>{:else if ouiResult.value}<output>{ouiResult.value.prefix} · {ouiResult.value.vendor}</output>{/if}
+    </section>
+  </div>
 </div>
 
 <style>
@@ -129,6 +155,11 @@
   .result-grid span, dt { color: var(--color-muted-foreground); font-size: 12px; }
   .result-grid strong { font-size: 14px; overflow-wrap: anywhere; }
   .secondary-grid > section { flex: 1 1 360px; display: flex; flex-direction: column; gap: 12px; }
+  .utility-panel output { display: block; padding: 8px 10px; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-muted); overflow-wrap: anywhere; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+  .range-empty { flex: 1; min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1px dashed var(--color-border); border-radius: 6px; color: var(--color-muted-foreground); background: color-mix(in srgb, var(--color-muted) 35%, transparent); text-align: center; }
+  .range-empty span { font-size: 18px; line-height: 1; }
+  .range-empty small { font-size: 12px; }
   .compact-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(116px, 0.42fr); gap: 10px; align-items: end; }
   .result-field output { display: flex; align-items: center; min-height: 34px; box-sizing: border-box; border: 1px solid var(--color-border); border-radius: 6px; background: var(--color-muted); padding: 6px 10px; color: var(--color-foreground); font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
   .result-field output.empty { color: var(--color-muted-foreground); font-weight: 400; }

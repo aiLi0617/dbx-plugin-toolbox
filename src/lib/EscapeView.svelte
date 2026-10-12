@@ -11,6 +11,8 @@
     unescapeJson,
     unescapeJsUnicode,
     unescapeUnicode,
+    encodeNato,
+    decodeNato,
   } from "./tools/encode.js";
   import { localizeError, pick } from "./i18n.js";
 
@@ -29,6 +31,7 @@
     { id: "js", zh: "JS \\uXXXX", en: "JS \\uXXXX", encode: escapeJsUnicode, decode: unescapeJsUnicode },
     { id: "json", zh: "JSON 字符串", en: "JSON string", encode: escapeJson, decode: unescapeJson },
     { id: "css", zh: "CSS 标识符", en: "CSS identifier", encode: escapeCssIdent, decode: unescapeCssIdent },
+    { id: "nato", zh: "NATO 拼读", en: "NATO phonetic", encode: encodeNato, decode: decodeNato },
   ];
 
   let mode = $state("encode");
@@ -52,13 +55,12 @@
 </script>
 
 <div class="page">
-  <div class="seg" role="tablist" aria-label={t("方向", "Direction")}>
+  <div class="seg" role="group" aria-label={t("方向", "Direction")}>
     {#each MODES as item}
       <button
         class:active={mode === item.value}
-        aria-selected={mode === item.value}
+        aria-pressed={mode === item.value}
         onclick={() => (mode = item.value)}
-        role="tab"
         type="button"
       >{t(item.zh, item.en)}</button>
     {/each}

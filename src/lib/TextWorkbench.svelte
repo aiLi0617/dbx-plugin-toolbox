@@ -1,7 +1,10 @@
 <script>
   import IoSplit from "./IoSplit.svelte";
   import { pick } from "./i18n.js";
-  import { applyWhitespace, applyCaseStyle, CASE_STYLES, textStats, slugify, stripHtml } from "./tools/text.js";
+  import {
+    applyWhitespace, applyCaseStyle, CASE_STYLES, textStats, slugify, stripHtml,
+    maskSensitiveText, numeronym, pluralizeEnglish, normalizeEmails, extractEmails, extractUrls, asciiBanner,
+  } from "./tools/text.js";
   import { TEXT_ACTIONS } from "./textActions.js";
 
   let { locale = "zh-CN", initialAction = "trim", shortcut = false, shortcutId = "", demo = null, demoRequest = 0 } = $props();
@@ -11,7 +14,8 @@
     { id: "lines", zh: "行处理", en: "Lines", actions: ["sort", "unique", "reverse", "shuffle", "prefix", "suffix", "number", "unnumber", "column", "filter-length"] },
     { id: "replace", zh: "替换", en: "Replace", actions: ["replace"] },
     { id: "case", zh: "大小写", en: "Case & naming", actions: ["upper", "lower", "title", "camel", "pascal", "snake", "kebab"] },
-    { id: "convert", zh: "转换", en: "Convert", actions: ["full", "half", "slugify"] },
+    { id: "extract", zh: "提取与隐私", en: "Extract & privacy", actions: ["mask", "email-normalize", "extract-email", "extract-url"] },
+    { id: "convert", zh: "转换", en: "Convert", actions: ["full", "half", "slugify", "numeronym", "pluralize", "ascii-banner"] },
   ];
   const shortcutActions = {
     "text-clean": ["trim", "empty", "tabs", "spaces", "strip-html"],
@@ -53,7 +57,23 @@
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
     appliedDemoRequest = demoRequest;
-    input = demo.input;
+    const preset = demo.modes?.[mode] || demo;
+    input = preset.input;
+    const controls = preset.controls || {};
+    if ("affix" in controls) affix = controls.affix;
+    if ("find" in controls) find = controls.find;
+    if ("replace" in controls) replace = controls.replace;
+    if ("replaceRegex" in controls) replaceRegex = controls.replaceRegex;
+    if ("replaceFirstOnly" in controls) replaceFirstOnly = controls.replaceFirstOnly;
+    if ("replaceIgnoreCase" in controls) replaceIgnoreCase = controls.replaceIgnoreCase;
+    if ("startNumber" in controls) startNumber = controls.startNumber;
+    if ("numberWidth" in controls) numberWidth = controls.numberWidth;
+    if ("numberSeparator" in controls) numberSeparator = controls.numberSeparator;
+    if ("column" in controls) column = controls.column;
+    if ("delimiter" in controls) delimiter = controls.delimiter;
+    if ("minLength" in controls) minLength = controls.minLength;
+    if ("maxLength" in controls) maxLength = controls.maxLength;
+    if ("shuffleSeed" in controls) shuffleSeed = controls.shuffleSeed;
   });
 
   const transform = $derived.by(() => {
@@ -62,6 +82,13 @@
       if (mode === "stats") value = input;
       else if (mode === "slugify") value = slugify(input);
       else if (mode === "strip-html") value = stripHtml(input);
+      else if (mode === "mask") value = maskSensitiveText(input);
+      else if (mode === "numeronym") value = numeronym(input);
+      else if (mode === "pluralize") value = pluralizeEnglish(input);
+      else if (mode === "email-normalize") value = normalizeEmails(input);
+      else if (mode === "extract-email") value = extractEmails(input);
+      else if (mode === "extract-url") value = extractUrls(input);
+      else if (mode === "ascii-banner") value = asciiBanner(input);
       else if (CASE_STYLES.some((style) => style.id === mode)) value = applyCaseStyle(input, mode);
       else {
         value = applyWhitespace(input, mode, {
@@ -106,6 +133,20 @@
     groupId = group.id;
     mode = group.actions[0];
   }
+  function onGroupKeydown(event) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const currentIndex = groups.findIndex((group) => group.id === groupId);
+    let nextIndex;
+    if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = groups.length - 1;
+    else {
+      const offset = event.key === "ArrowRight" ? 1 : -1;
+      nextIndex = (currentIndex + offset + groups.length) % groups.length;
+    }
+    selectGroup(groups[nextIndex]);
+    requestAnimationFrame(() => document.getElementById(`text-group-${groups[nextIndex].id}`)?.focus());
+  }
   function continueProcessing() {
     history = [...history.slice(-19), input];
     input = output;
@@ -122,9 +163,18 @@
 <div class="page">
   <div class="group-bar" class:shortcut-bar={shortcut}>
     {#if !shortcut}
-      <div class="groups" role="group" aria-label={t("文本处理分类", "Text operation groups")}>
+      <div class="dbx-tabs groups" role="tablist" aria-label={t("文本处理分类", "Text operation groups")} tabindex="-1" onkeydown={onGroupKeydown}>
         {#each groups as group (group.id)}
-          <button class:active={groupId === group.id} aria-pressed={groupId === group.id} onclick={() => selectGroup(group)} type="button">{t(group.zh, group.en)}</button>
+          <button
+            id={`text-group-${group.id}`}
+            class:active={groupId === group.id}
+            role="tab"
+            aria-selected={groupId === group.id}
+            aria-controls="text-operation-panel"
+            tabindex={groupId === group.id ? 0 : -1}
+            onclick={() => selectGroup(group)}
+            type="button"
+          >{t(group.zh, group.en)}</button>
         {/each}
       </div>
     {:else}
@@ -135,60 +185,66 @@
       <button class="dbx-btn" disabled={!history.length} onclick={undo} type="button">{t("撤销处理", "Undo processing")}</button>
     </div>
   </div>
-  {#if shortcut ? actions.length > 1 : groupId !== "replace"}
-    <div class="actions" role="group" aria-label={t("处理方式", "Operation")}>
-      {#each actions as action (action.id)}
-        <button class="dbx-btn" class:selected={mode === action.id} aria-pressed={mode === action.id} onclick={() => (mode = action.id)} type="button">{t(action.zh, action.en)}</button>
-      {/each}
-      {#if mode === "shuffle"}
-        <button class="dbx-btn" onclick={reshuffle} type="button">{t("重新打乱", "Reshuffle")}</button>
-      {/if}
-    </div>
-  {/if}
-  {#if mode === "stats"}
-    <span class="hint">{t("选择下一步操作，继续处理当前文本。字数统计始终显示在底部。", "Choose an operation to continue. Text counts are always shown below.")}</span>
-  {/if}
-  {#if ["prefix", "suffix", "replace", "number", "column", "filter-length"].includes(mode)}
-  <div class="options">
-    {#if mode === "prefix" || mode === "suffix"}
-      <label class="field grow"><span>{t("前后缀", "Affix")}</span><input class="dbx-input" bind:value={affix} /></label>
-    {:else if mode === "replace"}
-      <label class="field grow"><span>{t("查找", "Find")}</span><input class="dbx-input" bind:value={find} /></label>
-      <label class="field grow"><span>{t("替换为", "Replace with")}</span><input class="dbx-input" bind:value={replace} /></label>
-      <div class="replace-flags">
-        <label class="check"><input type="checkbox" bind:checked={replaceRegex} /> {t("正则", "Regex")}</label>
-        <label class="check"><input type="checkbox" bind:checked={replaceIgnoreCase} /> {t("忽略大小写", "Ignore case")}</label>
-        <label class="check"><input type="checkbox" bind:checked={replaceFirstOnly} /> {t("仅首次", "First only")}</label>
+  <div
+    class="operation-panel"
+    id="text-operation-panel"
+    role={shortcut ? undefined : "tabpanel"}
+    aria-labelledby={shortcut ? undefined : `text-group-${groupId}`}
+  >
+    {#if shortcut ? actions.length > 1 : groupId !== "replace"}
+      <div class="actions" role="group" aria-label={t("处理方式", "Operation")}>
+        {#each actions as action (action.id)}
+          <button class="dbx-btn" class:selected={mode === action.id} aria-pressed={mode === action.id} onclick={() => (mode = action.id)} type="button">{t(action.zh, action.en)}</button>
+        {/each}
+        {#if mode === "shuffle"}
+          <button class="dbx-btn" onclick={reshuffle} type="button">{t("重新打乱", "Reshuffle")}</button>
+        {/if}
       </div>
-    {:else if mode === "number"}
-      <label class="field"><span>{t("起始序号", "Start")}</span><input class="dbx-input small" type="number" bind:value={startNumber} /></label>
-      <label class="field"><span>{t("补零位数", "Zero-pad width")}</span><input class="dbx-input small" type="number" min="0" max="12" bind:value={numberWidth} /></label>
-      <label class="field grow"><span>{t("分隔符", "Separator")}</span><input class="dbx-input" bind:value={numberSeparator} /></label>
-    {:else if mode === "column"}
-      <label class="field"><span>{t("列号", "Column")}</span><input class="dbx-input small" type="number" min="1" bind:value={column} /></label>
-      <label class="field grow"><span>{t("分隔符（留空表示空白）", "Delimiter (blank means whitespace)")}</span><input class="dbx-input" bind:value={delimiter} /></label>
-    {:else if mode === "filter-length"}
-      <label class="field"><span>{t("最短字符数", "Minimum length")}</span><input class="dbx-input small" type="number" min="0" bind:value={minLength} /></label>
-      <label class="field"><span>{t("最长字符数（留空不限）", "Maximum length (blank for no limit)")}</span><input class="dbx-input small" type="number" min="0" bind:value={maxLength} /></label>
     {/if}
-  </div>
-  {/if}
-  <IoSplit {locale} bind:input {output} {error} />
-  <div class="stats">
-    {#each [[t("输入", "Input"), inputStats], [t("结果", "Result"), outputStats]] as [label, counts]}
-      <span>{label} · {counts.chars} {t("字", "chars")} · {counts.words} {t("词", "words")} · {counts.lines} {t("行", "lines")} · {counts.bytes} {t("字节", "bytes")}</span>
-    {/each}
+    {#if mode === "stats"}
+      <span class="hint">{t("选择下一步操作，继续处理当前文本。字数统计始终显示在底部。", "Choose an operation to continue. Text counts are always shown below.")}</span>
+    {/if}
+    {#if ["prefix", "suffix", "replace", "number", "column", "filter-length"].includes(mode)}
+      <div class="options">
+        {#if mode === "prefix" || mode === "suffix"}
+          <label class="field grow"><span>{t("前后缀", "Affix")}</span><input class="dbx-input" bind:value={affix} /></label>
+        {:else if mode === "replace"}
+          <label class="field grow"><span>{t("查找", "Find")}</span><input class="dbx-input" bind:value={find} /></label>
+          <label class="field grow"><span>{t("替换为", "Replace with")}</span><input class="dbx-input" bind:value={replace} /></label>
+          <div class="replace-flags">
+            <label class="check"><input type="checkbox" bind:checked={replaceRegex} /> {t("正则", "Regex")}</label>
+            <label class="check"><input type="checkbox" bind:checked={replaceIgnoreCase} /> {t("忽略大小写", "Ignore case")}</label>
+            <label class="check"><input type="checkbox" bind:checked={replaceFirstOnly} /> {t("仅首次", "First only")}</label>
+          </div>
+        {:else if mode === "number"}
+          <label class="field"><span>{t("起始序号", "Start")}</span><input class="dbx-input small" type="number" bind:value={startNumber} /></label>
+          <label class="field"><span>{t("补零位数", "Zero-pad width")}</span><input class="dbx-input small" type="number" min="0" max="12" bind:value={numberWidth} /></label>
+          <label class="field grow"><span>{t("分隔符", "Separator")}</span><input class="dbx-input" bind:value={numberSeparator} /></label>
+        {:else if mode === "column"}
+          <label class="field"><span>{t("列号", "Column")}</span><input class="dbx-input small" type="number" min="1" bind:value={column} /></label>
+          <label class="field grow"><span>{t("分隔符（留空表示空白）", "Delimiter (blank means whitespace)")}</span><input class="dbx-input" bind:value={delimiter} /></label>
+        {:else if mode === "filter-length"}
+          <label class="field"><span>{t("最短字符数", "Minimum length")}</span><input class="dbx-input small" type="number" min="0" bind:value={minLength} /></label>
+          <label class="field"><span>{t("最长字符数（留空不限）", "Maximum length (blank for no limit)")}</span><input class="dbx-input small" type="number" min="0" bind:value={maxLength} /></label>
+        {/if}
+      </div>
+    {/if}
+    <IoSplit {locale} bind:input {output} {error} />
+    <div class="stats">
+      {#each [[t("输入", "Input"), inputStats], [t("结果", "Result"), outputStats]] as [label, counts]}
+        <span>{label} · {counts.chars} {t("字", "chars")} · {counts.words} {t("词", "words")} · {counts.lines} {t("行", "lines")} · {counts.bytes} {t("字节", "bytes")}</span>
+      {/each}
+    </div>
   </div>
 </div>
 
 <style>
   .page { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
-  .group-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; }
+  .group-bar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 12px; }
   .group-bar.shortcut-bar { border-bottom-style: dashed; }
-  .groups, .actions, .history-actions { display: flex; flex-wrap: wrap; gap: 6px; }
-  .groups button { border: 0; border-radius: 6px; background: transparent; color: var(--color-muted-foreground); font: inherit; font-size: 13px; padding: 7px 12px; cursor: pointer; }
-  .groups button:hover { background: var(--color-muted); color: var(--color-foreground); }
-  .groups button.active { background: var(--dbx-selection-background); border-color: var(--dbx-selection-border); color: var(--dbx-selection-foreground); }
+  .groups { flex: 1 1 520px; }
+  .actions, .history-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .operation-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
   .actions .selected { border-color: var(--dbx-selection-border); background: var(--dbx-selection-background); color: var(--dbx-selection-foreground); }
   .hint { font-size: 12px; color: var(--color-muted-foreground); }
   .options { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }

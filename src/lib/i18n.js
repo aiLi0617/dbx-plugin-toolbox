@@ -707,10 +707,15 @@ export const chrome = {
 };
 
 export const categories = {
+  // Legacy labels remain available to old saved filters and older integrations.
   format: L("Data & code", "数据与代码", "資料與程式碼", "Datos y código", "Dati e codice", "データとコード", "Dados e código"),
-  encode: L("Encode & escape", "编码转义", "編碼轉義", "Codificar y escapar", "Codifica ed escape", "エンコードとエスケープ", "Codificar e escapar"),
   convert: L("Convert & calculate", "转换计算", "轉換計算", "Convertir y calcular", "Converti e calcola", "変換と計算", "Converter e calcular"),
+  data: L("Data & structure", "数据与结构", "資料與結構", "Datos y estructura", "Dati e struttura", "データと構造", "Dados e estrutura"),
+  encode: L("Encode & escape", "编码转义", "編碼轉義", "Codificar y escapar", "Codifica ed escape", "エンコードとエスケープ", "Codificar e escapar"),
   text: L("Text tools", "文本工具", "文字工具", "Herramientas de texto", "Strumenti di testo", "テキストツール", "Ferramentas de texto"),
+  calculate: L("Time & calculate", "时间与计算", "時間與計算", "Tiempo y cálculo", "Tempo e calcolo", "時間と計算", "Tempo e cálculo"),
+  network: L("Network & system", "网络与系统", "網路與系統", "Red y sistema", "Rete e sistema", "ネットワークとシステム", "Rede e sistema"),
+  developer: L("Developer helpers", "开发辅助", "開發輔助", "Ayudas de desarrollo", "Strumenti di sviluppo", "開発支援", "Auxiliares de desenvolvimento"),
   security: L("Security & crypto", "安全加密", "安全加密", "Seguridad y cifrado", "Sicurezza e crittografia", "セキュリティと暗号", "Segurança e criptografia"),
   generate: L("Generators", "生成器", "產生器", "Generadores", "Generatori", "ジェネレーター", "Geradores"),
   image: L("Images", "图片", "圖片", "Imágenes", "Immagini", "画像", "Imagens"),

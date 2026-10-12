@@ -4,7 +4,10 @@ import { parse as svelte } from 'svelte/compiler';
 import { parse } from 'acorn';
 
 const messages = {};
-const langs = ['en', 'zh-CN', 'zh-TW', 'es', 'it', 'ja', 'pt-BR'];
+const langs = ['en', 'zh-CN', 'zh-TW', 'es', 'it', 'ja', 'pt-BR', 'ko', 'tr', 'az'];
+const args = process.argv.slice(2);
+const positional = args.filter(arg => !arg.startsWith('--'));
+const sourceDir = positional[0] || 'src';
 function value(node) {
   if (node?.type === 'Literal' && typeof node.value === 'string') return node.value;
   if (node?.type === 'TemplateLiteral') return node.quasis.map((q, i) => q.value.cooked + (i < node.expressions.length ? `{${i}}` : '')).join('');
@@ -44,8 +47,8 @@ function scan(dir) {
     else if (file.endsWith('.js') && !file.endsWith('uiMessages.js')) visit(parse(fs.readFileSync(file, 'utf8'), { ecmaVersion: 'latest', sourceType: 'module' }));
   }
 }
-scan(process.argv[2] || 'src');
-if (!process.argv[2]) {
+scan(sourceDir);
+if (!positional[0]) {
   const { tools } = await import('../src/lib/catalog.js');
   const { TEXT_ACTIONS } = await import('../src/lib/textActions.js');
   for (const tool of tools) for (const map of [tool.name, tool.summary]) {
@@ -53,5 +56,25 @@ if (!process.argv[2]) {
   }
   for (const action of TEXT_ACTIONS) add(action.en, action.zh);
 }
-fs.writeFileSync(process.argv[3] || 'scripts/ui-message-inventory.json', JSON.stringify(messages, null, 2) + '\n');
-console.log(`${Object.keys(messages).length} messages; ${Object.values(messages).filter(m => !m.ja).length} bilingual messages`);
+const inventoryPath = positional[1] || 'scripts/ui-message-inventory.json';
+const uiPath = 'src/lib/uiMessages.json';
+if (process.argv.includes('--check')) {
+  const registered = JSON.parse(fs.readFileSync(uiPath, 'utf8'));
+  const missing = Object.keys(messages).filter(key => !registered[key]);
+  if (missing.length) {
+    console.error(`Missing ${missing.length} offline UI messages:\n${missing.map(key => `- ${key}`).join('\n')}`);
+    process.exitCode = 1;
+  } else console.log(`${Object.keys(messages).length} source messages are registered`);
+} else {
+  const registered = fs.existsSync(uiPath) ? JSON.parse(fs.readFileSync(uiPath, 'utf8')) : {};
+  const synced = { ...registered };
+  for (const [key, extracted] of Object.entries(messages)) {
+    const current = registered[key] || {};
+    const entry = { ...extracted, ...current, en: key, 'zh-CN': extracted['zh-CN'] || current['zh-CN'] || key };
+    for (const locale of langs) entry[locale] ||= locale === 'zh-CN' ? entry['zh-CN'] : key;
+    synced[key] = entry;
+  }
+  fs.writeFileSync(inventoryPath, JSON.stringify(messages, null, 2) + '\n');
+  if (!positional[0]) fs.writeFileSync(uiPath, JSON.stringify(synced, null, 2) + '\n');
+  console.log(`${Object.keys(messages).length} messages; ${Object.keys(messages).filter(key => !registered[key]).length} newly registered with offline fallback`);
+}

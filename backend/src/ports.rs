@@ -59,7 +59,7 @@ mod windows {
     use crate::helpers::err;
     use serde_json::json;
     use std::collections::{BTreeMap, HashMap};
-    use std::mem::size_of;
+    use std::mem::{size_of, size_of_val};
     use std::net::{Ipv4Addr, Ipv6Addr};
     use windows_sys::Win32::Foundation::{
         CloseHandle, ERROR_INSUFFICIENT_BUFFER, FILETIME, HANDLE, INVALID_HANDLE_VALUE,
@@ -87,6 +87,10 @@ mod windows {
     }
 
     struct OwnedHandle(HANDLE);
+
+    type ProcessParents = HashMap<u32, u32>;
+    type ProcessNames = HashMap<u32, String>;
+
     impl Drop for OwnedHandle {
         fn drop(&mut self) {
             unsafe { CloseHandle(self.0) };
@@ -128,7 +132,7 @@ mod windows {
             return Err(err("PORT_QUERY_FAILED"));
         }
         for _ in 0..3 {
-            let mut buffer = vec![0u64; (bytes as usize + size_of::<u64>() - 1) / size_of::<u64>()];
+            let mut buffer = vec![0u64; (bytes as usize).div_ceil(size_of::<u64>())];
             let status = unsafe {
                 if tcp {
                     GetExtendedTcpTable(buffer.as_mut_ptr().cast(), &mut bytes, 0, family, class, 0)
@@ -149,7 +153,7 @@ mod windows {
     unsafe fn table_rows<T: Copy>(buffer: &[u64]) -> Result<Vec<T>, PluginError> {
         let base = buffer.as_ptr().cast::<u8>();
         let count = unsafe { *(base.cast::<u32>()) } as usize;
-        let available = buffer.len() * size_of::<u64>() - size_of::<u32>();
+        let available = size_of_val(buffer) - size_of::<u32>();
         if count > available / size_of::<T>() {
             return Err(err("PORT_QUERY_FAILED"));
         }
@@ -226,7 +230,7 @@ mod windows {
         Ok(owners.into_values().collect())
     }
 
-    fn process_snapshot() -> Result<(HashMap<u32, u32>, HashMap<u32, String>), PluginError> {
+    fn process_snapshot() -> Result<(ProcessParents, ProcessNames), PluginError> {
         let snapshot = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) };
         if snapshot == INVALID_HANDLE_VALUE {
             return Err(err("PORT_QUERY_FAILED"));
@@ -272,7 +276,7 @@ mod windows {
             rights |= PROCESS_TERMINATE | PROCESS_SYNCHRONIZE;
         }
         let handle = unsafe { OpenProcess(rights, 0, pid) };
-        (handle != std::ptr::null_mut()).then_some(OwnedHandle(handle))
+        (!handle.is_null()).then_some(OwnedHandle(handle))
     }
 
     fn protected_pids(parents: &HashMap<u32, u32>) -> Vec<u32> {

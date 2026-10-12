@@ -6,6 +6,8 @@ import { toolOptionsForQuery, EPHEMERAL_TOOL_IDS, resolveIntent } from "../src/l
 
 test("merged tool searches open the requested operation", () => {
   assert.deepEqual(toolOptionsForQuery("uuid", "ULID"), { kind: "ulid" });
+  assert.deepEqual(toolOptionsForQuery("uuid", "UUID v7"), { kind: "uuid-v7" });
+  assert.deepEqual(toolOptionsForQuery("uuid", "UUID v5"), { kind: "uuid-v5" });
   assert.deepEqual(toolOptionsForQuery("aes", "SM4 CBC 解密"), { algorithm: "sm4-128", mode: "cbc", op: "decrypt" });
   assert.deepEqual(toolOptionsForQuery("hmac-sha256", "HMAC-SHA512"), { algorithm: "hmac-sha512" });
   assert.deepEqual(toolOptionsForQuery("hmac-sha256", "sm3"), { algorithm: "hmac-sm3" });
@@ -28,6 +30,7 @@ test("resolveIntent maps action phrases to tools and options", () => {
   assert.equal(resolveIntent("url解码")[0]?.toolId, "url");
   assert.deepEqual(resolveIntent("url解码")[0]?.options, { mode: "decode" });
   assert.equal(resolveIntent("md5")[0]?.toolId, "hash");
+  assert.equal(resolveIntent("WCAG 对比度")[0]?.toolId, "color");
   assert.deepEqual(toolOptionsForQuery("hash", "md5 16"), { algorithm: "md5-16" });
   assert.deepEqual(toolOptionsForQuery("hash", "sha224"), { algorithm: "sha224" });
   assert.deepEqual(toolOptionsForQuery("hash", "sha3"), { algorithm: "sha3-256" });
@@ -61,8 +64,8 @@ test("search finds localized categories and multiple keywords", () => {
   assert.ok(searchTools("セキュリティと暗号", "ja").every((tool) => tool.category === "security"));
   assert.ok(searchTools("SM4 CBC", "zh-CN").some((tool) => tool.id === "aes"));
   assert.equal(searchTools("ULID", "zh-CN")[0].id, "uuid");
-  assert.ok(tools.some((tool) => tool.id === "data-convert" && tool.category === "format"));
-  assert.ok(EPHEMERAL_TOOL_IDS.has("jwt") && EPHEMERAL_TOOL_IDS.has("password"));
+  assert.ok(tools.some((tool) => tool.id === "data-convert" && tool.category === "data"));
+  assert.ok(EPHEMERAL_TOOL_IDS.has("jwt") && EPHEMERAL_TOOL_IDS.has("password") && EPHEMERAL_TOOL_IDS.has("random-bytes"));
   assert.ok(!EPHEMERAL_TOOL_IDS.has("json"));
 });
 
@@ -74,6 +77,8 @@ test("search ranks intent matches first", () => {
   assert.equal(searchTools("去重", "zh-CN")[0].id, "whitespace");
   assert.equal(searchTools("ランダムパスワード", "ja")[0].id, "password");
   assert.equal(searchTools("contraseña aleatoria", "es")[0].id, "password");
+  assert.equal(searchTools("随机字节", "zh-CN")[0].id, "random-bytes");
+  assert.equal(searchTools("random bytes", "en")[0].id, "random-bytes");
 });
 
 test("editor indentation preserves selections and supports outdent", () => {

@@ -63,7 +63,6 @@ fn canonical_id(id: String) -> String {
         "ssh-fingerprint" => "cert".to_string(),
         "sql" | "xml" | "yaml" | "html" | "css" => "code-format".to_string(),
         "ulid" | "nanoid" => "uuid".to_string(),
-        "random-bytes" => "password".to_string(),
         "crc32" => "hash".to_string(),
         "naming" | "case" | "stats" | "slugify" | "strip-html" | "lines" => {
             "whitespace".to_string()
@@ -354,6 +353,14 @@ mod tests {
                 "image-generate".to_string(),
                 "image-process".to_string(),
             ]
+        );
+    }
+
+    #[test]
+    fn keeps_password_and_random_bytes_as_distinct_tools() {
+        assert_eq!(
+            filter_known(vec!["password".into(), "random-bytes".into()]),
+            vec!["password".to_string(), "random-bytes".to_string()]
         );
     }
 

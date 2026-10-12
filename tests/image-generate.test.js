@@ -17,7 +17,7 @@ import {
   resolveOutputFormat,
   sanitizeFileBase,
 } from "../src/lib/imageGenerate.js";
-import { padBmpToSize, padGifToSize, padSvgToSize } from "../src/lib/imageEncodeExtra.js";
+import { buildIcoFromPngFrames, padBmpToSize, padGifToSize, padIcoToSize, padSvgToSize } from "../src/lib/imageEncodeExtra.js";
 import { MAX_IMAGE_PIXELS, MAX_IMAGE_SIDE } from "../src/lib/imageOps.js";
 import { buildZipStore } from "../src/lib/zipStore.js";
 
@@ -147,6 +147,24 @@ test("fits ICO dimensions within its 256 px directory limit", () => {
   );
   const small = clampGenerateSizeForFormat(64, 32, "image/x-icon");
   assert.deepEqual({ width: small.width, height: small.height }, { width: 64, height: 32 });
+});
+
+test("builds and pads a multi-resolution ICO directory", () => {
+  const ico = buildIcoFromPngFrames([
+    { width: 16, height: 16, bytes: Uint8Array.of(1, 2, 3) },
+    { width: 256, height: 256, bytes: Uint8Array.of(4, 5, 6, 7) },
+  ]);
+  assert.equal(ico[4] | (ico[5] << 8), 2);
+  assert.equal(ico[6], 16);
+  assert.equal(ico[22], 0);
+  assert.equal(ico[23], 0);
+  const secondOffset = ico[34] | (ico[35] << 8) | (ico[36] << 16) | (ico[37] << 24);
+  assert.equal(secondOffset, 41);
+
+  const padded = padIcoToSize(ico, ico.length + 20);
+  const secondLength = padded[30] | (padded[31] << 8) | (padded[32] << 16) | (padded[33] << 24);
+  assert.equal(padded.length, ico.length + 20);
+  assert.equal(secondLength, 24);
 });
 
 test("sanitizes file names and builds download names", () => {
