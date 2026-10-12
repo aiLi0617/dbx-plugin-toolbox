@@ -1093,7 +1093,7 @@ fn ssh_string<'a>(input: &mut &'a [u8]) -> Option<&'a [u8]> {
 fn resolve_key(
     vault: &Vault,
     params: &Value,
-    _algorithm: &str,
+    algorithm: &str,
 ) -> Result<Zeroizing<Vec<u8>>, PluginError> {
     if let Some(id) = opt_str(params, "keyId") {
         if !id.is_empty() {
@@ -1107,7 +1107,35 @@ fn resolve_key(
         return Err(bad("Provide keyId or keyMaterial"));
     }
     ensure_input_size(material, "Key material", MAX_KEY_INPUT_BYTES)?;
-    decode_key_bytes(material).map(Zeroizing::new)
+    let bytes = match opt_str(params, "keyEncoding").unwrap_or("auto") {
+        "auto" if key_length_matches_algorithm(algorithm, material.len()) => {
+            match decode_key_bytes(material) {
+                Ok(decoded) if key_length_matches_algorithm(algorithm, decoded.len()) => decoded,
+                _ => material.as_bytes().to_vec(),
+            }
+        }
+        "auto" => decode_key_bytes(material)?,
+        "utf8" => material.as_bytes().to_vec(),
+        "hex" => hex::decode(material.split_whitespace().collect::<String>())
+            .map_err(|_| bad("Invalid Hex key material"))?,
+        "base64" => B64
+            .decode(material.split_whitespace().collect::<String>())
+            .map_err(|_| bad("Invalid Base64 key material"))?,
+        _ => return Err(bad("Key encoding must be auto, utf8, hex, or base64")),
+    };
+    if bytes.is_empty() {
+        return Err(bad("Material is required"));
+    }
+    Ok(Zeroizing::new(bytes))
+}
+
+fn key_length_matches_algorithm(algorithm: &str, length: usize) -> bool {
+    match algorithm {
+        "aes-128" | "sm4" | "sm4-128" => length == 16,
+        "aes-256" => length == 32,
+        "aes" => length == 16 || length == 32,
+        _ => false,
+    }
 }
 
 fn resolve_text_key(vault: &Vault, params: &Value) -> Result<Zeroizing<String>, PluginError> {
@@ -1406,6 +1434,46 @@ mod crypto_tests {
             assert_eq!(plain["text"], "00ff8081");
             assert_eq!(plain["textEncoding"], "hex");
         }
+    }
+
+    #[test]
+    fn sm4_accepts_explicit_utf8_key_material() {
+        let mut params = request("sm4-128", "ecb");
+        params["payloadFormat"] = json!("packed");
+        params["keyMaterial"] = json!("1234567890123456");
+        params["keyEncoding"] = json!("utf8");
+        params["text"] = json!("hello");
+
+        let encrypted = symmetric(&Vault::default(), "encrypt", params.clone()).unwrap();
+        params["text"] = encrypted["text"].clone();
+        let decrypted = symmetric(&Vault::default(), "decrypt", params).unwrap();
+
+        assert_eq!(decrypted["text"], "hello");
+        assert_eq!(decrypted["textEncoding"], "utf8");
+    }
+
+    #[test]
+    fn sm4_auto_detects_sixteen_character_key_material_as_utf8() {
+        let mut params = request("sm4-128", "ecb");
+        params["payloadFormat"] = json!("packed");
+        params["keyMaterial"] = json!("1234567890123456");
+        params["keyEncoding"] = json!("auto");
+        params["text"] = json!("hello");
+
+        let encrypted = symmetric(&Vault::default(), "encrypt", params.clone()).unwrap();
+        params["text"] = encrypted["text"].clone();
+
+        assert_eq!(
+            symmetric(&Vault::default(), "decrypt", params).unwrap()["text"],
+            "hello"
+        );
+    }
+
+    #[test]
+    fn symmetric_rejects_unknown_key_encoding() {
+        let mut params = request("sm4-128", "ecb");
+        params["keyEncoding"] = json!("binary");
+        assert!(symmetric(&Vault::default(), "encrypt", params).is_err());
     }
 
     #[test]

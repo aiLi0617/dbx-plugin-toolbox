@@ -22498,5 +22498,41 @@
     "ko": "cURL to code 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "cURL to code aracını hazır varsayılanlarla doğrudan açın",
     "az": "cURL to code hazır parametrlərlə birbaşa açılsın"
+  },
+  "Invalid Hex key material": {
+    "en": "Invalid Hex key material",
+    "zh-CN": "Hex 密钥材料无效",
+    "zh-TW": "Hex 密鑰材料無效",
+    "es": "Material de clave Hex no válido",
+    "it": "Materiale della chiave Hex non valido",
+    "ja": "Hex キー素材が無効です",
+    "pt-BR": "Material de chave Hex inválido",
+    "ko": "Invalid Hex key material",
+    "tr": "Invalid Hex key material",
+    "az": "Invalid Hex key material"
+  },
+  "Invalid Base64 key material": {
+    "en": "Invalid Base64 key material",
+    "zh-CN": "Base64 密钥材料无效",
+    "zh-TW": "Base64 密鑰材料無效",
+    "es": "Material de clave Base64 no válido",
+    "it": "Materiale della chiave Base64 non valido",
+    "ja": "Base64 キー素材が無効です",
+    "pt-BR": "Material de chave Base64 inválido",
+    "ko": "Invalid Base64 key material",
+    "tr": "Invalid Base64 key material",
+    "az": "Invalid Base64 key material"
+  },
+  "Key encoding must be auto, utf8, hex, or base64": {
+    "en": "Key encoding must be auto, utf8, hex, or base64",
+    "zh-CN": "密钥编码须为自动、UTF-8、Hex 或 Base64",
+    "zh-TW": "密鑰編碼須為自動、UTF-8、Hex 或 Base64",
+    "es": "La codificación de la clave debe ser auto, utf8, hex o base64",
+    "it": "La codifica della chiave deve essere auto, utf8, hex o base64",
+    "ja": "キーのエンコーディングは auto、utf8、hex、base64 のいずれかである必要があります",
+    "pt-BR": "A codificação da chave deve ser auto, utf8, hex ou base64",
+    "ko": "Key encoding must be auto, utf8, hex, or base64",
+    "tr": "Key encoding must be auto, utf8, hex, or base64",
+    "az": "Key encoding must be auto, utf8, hex, or base64"
   }
 }

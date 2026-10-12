@@ -517,6 +517,7 @@ export function symmetricParams(input, opts = {}, ctx) {
     if (mode === "gcm") Object.assign(params, { aad: opts.aad || "", aadEncoding: opts.aadEncoding || "utf8", tag: opts.op === "decrypt" ? opts.tag || "" : "" });
   }
   applyKey(params, ctx);
+  if (params.keyMaterial && opts.keyEncoding) params.keyEncoding = opts.keyEncoding;
   return params;
 }
 

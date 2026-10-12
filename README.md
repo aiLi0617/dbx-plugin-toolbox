@@ -7,7 +7,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 当前版本 | `0.1.2` |
+| 当前版本 | `0.1.3` |
 | 运行要求 | DBX `>= 0.5.68`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |
@@ -26,7 +26,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 ## 核心特点
 
 - **本地优先**：工作台不声明网络权限；格式转换、图像处理和密码学运算均在本机执行。
-- **覆盖高频场景**：提供 7 类、约 48 个工具页，支持搜索、收藏、最近使用与分类筛选。
+- **覆盖高频场景**：提供 9 类、64 个工具入口，支持搜索、收藏、最近使用与分类筛选。
 - **精度与边界明确**：数据转换设有 5 MB 输入上限；可能造成结构或数字精度丢失的操作会给出明确提示或拒绝执行。
 - **密钥不离开 Sidecar**：密钥库通过 `keyId` 引用密钥，避免将明文密钥放入 UI 持久化存储或 Workbench context。
 - **适合桌面工作流**：支持本地文件导入导出、二维码/条码生成与识别、批量图片处理和电子表格编辑。
@@ -62,6 +62,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 电子表格 | 本地打开、编辑与导出 XLSX、CSV、TSV、JSON；支持批量粘贴、撤销重做、工作表管理、搜索和筛选 |
 | JSON Schema 校验 | Draft 2020-12、本地 `$ref`、常见格式校验与结构化错误路径，不加载远程 Schema |
 | .env 工具 | `.env` 与 JSON 互转，检查重复键、非法变量名、引号与多行值，不展开环境变量 |
+| 图表生成器 | 从本地数据生成柱状图、折线图、面积图或饼图，并导出 SVG / PNG |
 
 > XLSX 导入只保留单元格值；公式、样式、图片和合并单元格不会保留。
 
@@ -69,9 +70,9 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 
 - **编码与转义**：Base64 / Base32 / Base58 / Hex、URL、HTML、Unicode、JavaScript、JSON、CSS、SQL 字符串、Data URI、Punycode / IDN、Quoted-Printable。
 - **文本压缩**：UTF-8 文本与 Gzip Base64 双向转换；图片 Base64 支持编码、解码、预览与保存。
-- **时间与颜色**：Unix 时间戳与日期互转、时区与时间差计算；HEX / RGB / CMYK / HSV 转换、色环与屏幕取色。
-- **开发计算**：Cron 表达式可视化与下次触发预览、2–36 进制转换、IPv4 / IPv6 CIDR 计算及受限子网切分。
-- **开发查询**：SemVer 解析、比较、排序和范围检查；chmod 数字/符号权限互转；离线 HTTP 状态码查询。
+- **时间与颜色**：Unix 时间戳与日期互转、时区与时间差计算；HEX / RGB(A) / HSL(A) / HSV / CMYK 转换、色环、屏幕取色及 WCAG 对比度检查与修正。
+- **开发计算**：Cron 表达式可视化与下次触发预览、2–36 进制转换、电话号码解析、带宽与传输时间估算、IPv4 / IPv6 CIDR 计算及受限子网切分。
+- **开发查询**：SemVer 解析、比较、排序和范围检查；chmod 数字/符号权限互转；离线 HTTP 状态码、User-Agent、设备信息与键盘事件查询。
 
 - **端口进程（Windows / macOS / Linux）**：按 TCP / UDP 本地端口查询 PID、名称、地址和状态，确认后结束并刷新。Windows 强制结束；macOS / Linux 默认 SIGTERM，可勾选 SIGKILL。执行前重新核对启动时间和端口归属，保护系统 PID、DBX 与工具箱自身及祖先进程。Unix 查询依赖系统路径下的 lsof（Linux 需自行安装），仅显示当前权限可见的进程；Linux 安全终止使用 pidfd，需要内核 5.3+。macOS 使用微秒级启动时间复核身份，但系统按 PID 发送信号，仍存在极短的 PID 复用竞态。强制结束可能丢失未保存数据。
 
@@ -82,7 +83,13 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 - 空白和行处理、去重排序、命名风格转换、字数统计。
 - 正则表达式测试、文本 Diff、Markdown 预览、Unicode 码位检查。
 - UUID / ULID / NanoID、随机密码和随机字节生成。
-- 可重复的占位文本与推广文案生成。
+- 可重复的占位文本、假数据和推广文案生成。
+
+### 开发辅助
+
+- cURL / HTTP 请求转换为 JavaScript、Python、Java、Rust、Go 等语言代码。
+- Docker Run 与 Compose 双向转换，以及可搜索的 Git 命令速查。
+- Web Meta / Open Graph 生成与隔离的 HTML / CSS / JavaScript Playground。
 
 ### 图像与码制
 
@@ -90,6 +97,9 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | --- | --- |
 | 二维码与条码 | 生成 QR 与条码并导出 PNG / SVG；本地批量识别 QR、Data Matrix、PDF417；汉信码目前仅支持生成 |
 | 图片处理 | 裁剪、缩放、旋转、翻转和水印；输出 PNG、JPEG、WebP；最多可处理 20 张本地图片 |
+| 图片实用工具 | 压缩与格式转换、宫格切图、像素化、图片与 Base64 互转 |
+| 图片拼接与 GIF | 横向或纵向拼接多张图片；将本地图片序列生成为 GIF 动画 |
+| 图片 OCR | 由 Rust Sidecar 和随包模型执行中英文离线文字识别，图片内容不会发送到网络 |
 | 占位图 | 按像素尺寸和目标文件体积生成占位图 |
 
 ### 安全与加密
@@ -144,7 +154,7 @@ AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。�
 
 ## 隐私与安全
 
-- 插件不主动联网，且 `manifest.json` 中的 `permissions` 为空。
+- 插件不声明网络权限，也不会主动联网。`host.binary` 用于 UI 与本地 Rust Sidecar 交换二进制文件数据，`host.events` 用于宿主事件通信。
 - 敏感操作由本地 Rust Sidecar 执行；明文密钥不会写入 `localStorage`、Workbench context 或日志。
 - 加密相关页面离开后会清除输入，降低屏幕共享和会话残留风险。
 - 密钥库是本地保护机制，不替代组织级密钥管理、备份策略或安全审计。请妥善保管主密码，并勿将真实生产密钥用于不受信任的环境。
@@ -166,8 +176,8 @@ AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。�
 
 - **前端**：Svelte 5 + Vite，源码位于 `src/`；构建产物写入已忽略的 `ui/`。
 - **后端**：Rust Sidecar 位于 `backend/`，打包为 `bin/dbx-plugin-toolbox`。
-- **贡献点**：一个 `workbench` 入口，无运行时网络权限。
-- **Sidecar 接口**：包括 `toolbox/json`、`toolbox/hash`、`toolbox/crypto`、`toolbox/cert`、`toolbox/keys/*`、`toolbox/prefs/*` 与本地文件相关接口。
+- **贡献点**：一个 `workbench` 入口；声明 `host.binary` 与 `host.events`，不声明运行时网络权限。
+- **Sidecar 接口**：包括 `toolbox/json`、`toolbox/hash`、`toolbox/crypto`、`toolbox/cert`、`toolbox/ocr`、`toolbox/keys/*`、`toolbox/prefs/*` 与本地文件相关接口。
 
 ## 本地开发
 

@@ -75,6 +75,11 @@ test("advanced request forwards only applicable parameters and keeps vault keys 
   assert.deepEqual(captured.params, { action: "decrypt", algorithm: "aes-128", mode: "gcm", text: "1234", payloadFormat: "separate", cipherEncoding: "hex", plainEncoding: "base64", parameterEncoding: "base64", iv: "aXY=", tag: "dGFn", aad: "test", aadEncoding: "utf8", keyId: "vault-key" });
   const ecb = symmetricParams("hello", { ...opts, algorithm: "sm4-128", sm4Mode: "ecb" }, { keyId: "sm4-key" });
   for (const name of ["iv", "tag", "aad", "aadEncoding", "keyMaterial"]) assert.ok(!(name in ecb));
+  assert.ok(!("keyEncoding" in ecb));
+  assert.deepEqual(
+    symmetricParams("hello", { algorithm: "sm4-128", sm4Mode: "ecb", keyEncoding: "utf8" }, { keyMaterial: "1234567890123456" }),
+    { action: "encrypt", algorithm: "sm4-128", mode: "ecb", text: "hello", keyMaterial: "1234567890123456", keyEncoding: "utf8" },
+  );
   assert.deepEqual(symmetricParams("hello", {}, { keyId: "key" }), { action: "encrypt", algorithm: "aes-256", mode: "gcm", text: "hello", keyId: "key" });
   delete globalThis.window;
 });

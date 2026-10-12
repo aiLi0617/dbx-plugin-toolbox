@@ -962,6 +962,10 @@
     "en": "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.",
     "zh-CN": "PKCS#1 v1.5 仅用于兼容旧系统；新数据优先使用 OAEP-SHA256。"
   },
+  "Key": {
+    "en": "Key",
+    "zh-CN": "键"
+  },
   "Key material (hex/base64)": {
     "en": "Key material (hex/base64)",
     "zh-CN": "密钥材料（hex/base64）"
@@ -969,6 +973,19 @@
   "e.g. 00 or deadbeef": {
     "en": "e.g. 00 or deadbeef",
     "zh-CN": "例如 00 或 deadbeef"
+  },
+  "Encoding": {
+    "en": "Encoding",
+    "zh-CN": "编码",
+    "zh-TW": "編碼",
+    "es": "Codificación",
+    "it": "Codifica",
+    "ja": "エンコーディング",
+    "pt-BR": "Codificação"
+  },
+  "Auto": {
+    "en": "Auto",
+    "zh-CN": "自动"
   },
   "Provide a key to compute automatically.": {
     "en": "Provide a key to compute automatically.",
@@ -3502,15 +3519,6 @@
     "ja": "へ",
     "pt-BR": "Para"
   },
-  "Encoding": {
-    "en": "Encoding",
-    "zh-CN": "编码",
-    "zh-TW": "編碼",
-    "es": "Codificación",
-    "it": "Codifica",
-    "ja": "エンコーディング",
-    "pt-BR": "Codificação"
-  },
   "Kind": {
     "en": "Kind",
     "zh-CN": "类型",
@@ -3924,6 +3932,33 @@
     "it": "Dati Hex non validi",
     "ja": "無効な Hex データです",
     "pt-BR": "Dados Hex inválidos"
+  },
+  "Invalid Hex key material": {
+    "en": "Invalid Hex key material",
+    "zh-CN": "Hex 密钥材料无效",
+    "zh-TW": "Hex 密鑰材料無效",
+    "es": "Material de clave Hex no válido",
+    "it": "Materiale della chiave Hex non valido",
+    "ja": "Hex キー素材が無効です",
+    "pt-BR": "Material de chave Hex inválido"
+  },
+  "Invalid Base64 key material": {
+    "en": "Invalid Base64 key material",
+    "zh-CN": "Base64 密钥材料无效",
+    "zh-TW": "Base64 密鑰材料無效",
+    "es": "Material de clave Base64 no válido",
+    "it": "Materiale della chiave Base64 non valido",
+    "ja": "Base64 キー素材が無効です",
+    "pt-BR": "Material de chave Base64 inválido"
+  },
+  "Key encoding must be auto, utf8, hex, or base64": {
+    "en": "Key encoding must be auto, utf8, hex, or base64",
+    "zh-CN": "密钥编码须为自动、UTF-8、Hex 或 Base64",
+    "zh-TW": "密鑰編碼須為自動、UTF-8、Hex 或 Base64",
+    "es": "La codificación de la clave debe ser auto, utf8, hex o base64",
+    "it": "La codifica della chiave deve essere auto, utf8, hex o base64",
+    "ja": "キーのエンコーディングは auto、utf8、hex、base64 のいずれかである必要があります",
+    "pt-BR": "A codificação da chave deve ser auto, utf8, hex ou base64"
   },
   "Invalid Base64 data": {
     "en": "Invalid Base64 data",
@@ -5568,10 +5603,6 @@
     "en": "The converted result appears here.",
     "zh-CN": "转换结果会显示在这里。"
   },
-  "Key": {
-    "en": "Key",
-    "zh-CN": "键"
-  },
   "Verifying…": {
     "en": "Verifying…",
     "zh-CN": "验证中…"
@@ -6323,10 +6354,6 @@
   "Version": {
     "en": "Version",
     "zh-CN": "码版本"
-  },
-  "Auto": {
-    "en": "Auto",
-    "zh-CN": "自动"
   },
   "Quiet zone": {
     "en": "Quiet zone",
