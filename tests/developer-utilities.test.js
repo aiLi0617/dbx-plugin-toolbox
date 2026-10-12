@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { chmodFromOctal, chmodFromSymbolic, chmodFromUmask, chmodSymbolicExpression, parseDotEnv, searchHttpStatuses, stringifyDotEnv } from "../src/lib/developerUtilities.js";
+import { chmodFromOctal, chmodFromSymbolic, chmodFromUmask, chmodSymbolicExpression, compareDotEnv, dotenvExample, parseDotEnv, searchHttpStatuses, stringifyDotEnv, syncDotEnvTemplate } from "../src/lib/developerUtilities.js";
 import { validateJsonSchema } from "../src/lib/lazy/schema.js";
 import { analyzeSemver, inspectSemver } from "../src/lib/lazy/semver.js";
 
@@ -11,6 +11,12 @@ test("dotenv converts without interpolation and reports duplicate or invalid dec
   assert.equal(parsed.diagnostics.filter((item) => item.level === "error").length, 1);
   assert.match(stringifyDotEnv({ NAME: "DBX Toolbox", PORT: 5190 }), /NAME="DBX Toolbox"/);
   assert.equal(parseDotEnv('MULTI="first\nsecond"').value.MULTI, "first\nsecond");
+});
+
+test("dotenv management preserves structure without exposing values", () => {
+  assert.equal(dotenvExample("# app\nPORT=5190\nNAME='DBX Toolbox'"), "# app\nPORT=\nNAME=");
+  assert.deepEqual(compareDotEnv("A=one\nB=two", "B=changed\nC=three").rows.map((row) => [row.key, row.status]), [["A", "missing-right"], ["B", "different"], ["C", "missing-left"]]);
+  assert.equal(syncDotEnvTemplate("# app\nA=\nB=", "A=one\nC=three").output, "# app\nA=one\nB=\nC=three");
 });
 
 test("chmod converts ordinary and special permissions both ways", () => {
@@ -49,6 +55,18 @@ test("JSON Schema validates Draft 2020-12 data and returns structured paths", ()
   const invalid = validateJsonSchema(schema, { name: 1 });
   assert.equal(invalid.valid, false);
   assert.equal(invalid.errors[0].path, "/name");
+});
+
+test("JSON Schema rejects an invalid schema before validating document data", () => {
+  const invalidType = validateJsonSchema({ type: 123456 }, { type: "object" });
+  assert.equal(invalidType.valid, false);
+  assert.equal(invalidType.schemaValid, false);
+  assert.equal(invalidType.errors[0].source, "schema");
+  assert.equal(invalidType.errors[0].path, "#/type");
+
+  const invalidNestedSchema = validateJsonSchema({ properties: { name: { required: "name" } } }, { name: {} });
+  assert.equal(invalidNestedSchema.schemaValid, false);
+  assert.equal(invalidNestedSchema.errors[0].path, "#/properties/name/required");
 });
 
 test("SemVer compares, sorts, and checks ranges", () => {

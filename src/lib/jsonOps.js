@@ -11,6 +11,167 @@ export function childCount(value) {
   return 0;
 }
 
+function decodeWholeEscapedJson(source) {
+  if (!source.includes("\\")) return undefined;
+  try {
+    const safeControls = source.replace(/[\u0000-\u001f]/g, (char) => {
+      if (char === "\n") return "\\n";
+      if (char === "\r") return "\\r";
+      if (char === "\t") return "\\t";
+      return `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+    });
+    const decoded = JSON.parse(`"${safeControls}"`);
+    return decoded === source ? undefined : decoded;
+  } catch {
+    return undefined;
+  }
+}
+
+function repairEmbeddedJsonSource(source) {
+  let output = "";
+  let inString = false;
+  let escaped = false;
+  let stringRole = "value";
+  let lastToken = "";
+
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    if (!inString) {
+      output += char;
+      if (char === '"') {
+        inString = true;
+        escaped = false;
+        stringRole = lastToken === "{" || lastToken === "," ? "key" : "value";
+      } else if (!/\s/.test(char)) {
+        lastToken = char;
+      }
+      continue;
+    }
+
+    if (escaped) {
+      output += char;
+      escaped = false;
+      continue;
+    }
+    if (char === "\\") {
+      output += char;
+      escaped = true;
+      continue;
+    }
+    if (char === "\n" || char === "\r" || char === "\t" || char.charCodeAt(0) < 0x20) {
+      if (char === "\n") output += "\\n";
+      else if (char === "\r") output += "\\r";
+      else if (char === "\t") output += "\\t";
+      else output += `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+      continue;
+    }
+    if (char === '"') {
+      let next = index + 1;
+      while (next < source.length && /\s/.test(source[next])) next += 1;
+      if (stringRole === "value" && source[next] === ":") {
+        output += '\\"';
+        continue;
+      }
+      inString = false;
+      lastToken = '"';
+    }
+    output += char;
+  }
+  return output;
+}
+
+function parseEmbeddedCandidate(source) {
+  const candidates = [source];
+  if (source.length >= 2 && source.startsWith('"') && source.endsWith('"')) {
+    candidates.push(source.slice(1, -1));
+  }
+  for (const candidate of [...candidates]) {
+    const decoded = decodeWholeEscapedJson(candidate);
+    if (decoded !== undefined) candidates.push(decoded);
+  }
+  let lastError;
+  for (const candidate of [...new Set(candidates)]) {
+    try {
+      return parseLosslessJson(candidate);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  for (const candidate of [...new Set(candidates)]) {
+    const repaired = repairEmbeddedJsonSource(candidate);
+    if (repaired === candidate) continue;
+    try {
+      return parseLosslessJson(repaired);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
+}
+
+function resemblesEmbeddedContainer(source) {
+  const probe = String(source ?? "")
+    .trim()
+    .replace(/^"+/, "")
+    .replace(/^\\"+/, "")
+    .trimStart();
+  return probe.startsWith("{") || probe.startsWith("[");
+}
+
+/**
+ * Parse a JSON object/array stored inside a string.
+ *
+ * Primitive JSON strings such as "true" and "123" intentionally stay as
+ * ordinary leaves: expanding those values would be surprising and provides
+ * little value in the tree editor.
+ */
+export function parseEmbeddedJsonInfo(value, maxLayers = 8) {
+  if (typeof value !== "string") return undefined;
+  let current = value;
+  for (let layers = 1; layers <= maxLayers; layers += 1) {
+    const source = current.trim();
+    if (!source) return undefined;
+    try {
+      const parsed = parseEmbeddedCandidate(source);
+      if (isContainer(parsed)) return { value: parsed, layers };
+      if (typeof parsed !== "string") return undefined;
+      current = parsed;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+export function parseEmbeddedJson(value) {
+  return parseEmbeddedJsonInfo(value)?.value;
+}
+
+export function embeddedJsonParseError(value, maxLayers = 8) {
+  if (typeof value !== "string") return "";
+  let current = value;
+  for (let layers = 1; layers <= maxLayers; layers += 1) {
+    const source = current.trim();
+    if (!source) return "";
+    try {
+      const parsed = parseEmbeddedCandidate(source);
+      if (isContainer(parsed) || typeof parsed !== "string") return "";
+      current = parsed;
+    } catch (error) {
+      return resemblesEmbeddedContainer(source) ? String(error?.message || error) : "";
+    }
+  }
+  return "";
+}
+
+export function serializeEmbeddedJson(value, layers = 1) {
+  let serialized = serializeJson(value, false);
+  for (let layer = 1; layer < Math.max(1, layers); layer += 1) {
+    serialized = serializeJson(serialized, false);
+  }
+  return serialized;
+}
+
 export function encodePointer(seg) {
   return String(seg).replace(/~/g, "~0").replace(/\//g, "~1");
 }
@@ -24,19 +185,22 @@ export function splitPointer(path) {
     .map((part) => part.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
 
-export function walkContainers(value, path, visit, depth = 0) {
-  if (!isContainer(value)) return;
-  visit(path, value, depth);
-  const entries = Array.isArray(value) ? value.map((item, i) => [String(i), item]) : Object.entries(value);
+export function walkContainers(value, path, visit, depth = 0, embeddedDepth = 0) {
+  const embeddedInfo = embeddedDepth < 8 ? parseEmbeddedJsonInfo(value, 8 - embeddedDepth) : undefined;
+  const embedded = embeddedInfo?.value;
+  const node = embedded ?? value;
+  if (!isContainer(node)) return;
+  visit(path, node, depth, embedded !== undefined);
+  const entries = Array.isArray(node) ? node.map((item, i) => [String(i), item]) : Object.entries(node);
   for (const [key, child] of entries) {
-    walkContainers(child, `${path}/${encodePointer(key)}`, visit, depth + 1);
+    walkContainers(child, `${path}/${encodePointer(key)}`, visit, depth + 1, embeddedDepth + (embeddedInfo?.layers ?? 0));
   }
 }
 
 export function defaultCollapsed(value) {
   const next = {};
-  walkContainers(value, "", (path, _node, depth) => {
-    if (path && depth >= 2) next[path] = true;
+  walkContainers(value, "", (path, _node, depth, embedded) => {
+    if (path && (embedded || depth >= 2)) next[path] = true;
   });
   return next;
 }
@@ -141,6 +305,11 @@ export function parseLeaf(text) {
     if (err?.code === "UNSAFE_NUMBER") return parseLosslessJson(raw);
     return text;
   }
+}
+
+/** Auto escape preserves edited string fields as strings; non-string fields still retain JSON type inference. */
+export function parseTreeEdit(text, preserveString = false, originalValue = undefined) {
+  return preserveString && typeof originalValue === "string" ? String(text) : parseLeaf(text);
 }
 
 function isIdentChar(ch) {

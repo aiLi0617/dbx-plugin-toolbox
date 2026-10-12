@@ -51,6 +51,15 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
   throw normalizeError(lastErr, method);
 }
 
+export async function sendBinary(channel, data) {
+  await ready();
+  if (!window.dbxPlugin?.sendBinary) {
+    throw Object.assign(new Error("DBX binary bridge is not available"), { code: "BINARY_BRIDGE_UNAVAILABLE" });
+  }
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+  await window.dbxPlugin.sendBinary(channel, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+}
+
 /** Read a locale from an onInit payload / dbx-plugin-env event before falling back to the bridge snapshot. */
 export function locale(environment) {
   const seen = new Set();

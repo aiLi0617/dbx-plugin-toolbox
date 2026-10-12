@@ -336,14 +336,14 @@ function nearestWeekday(year, month, requested, last) {
   return day;
 }
 
-function quartzNearestRuns(body, dayToken, yearToken, tz) {
+function quartzNearestRuns(body, dayToken, yearToken, tz, count) {
   const match = dayToken.match(/^(?:(\d{1,2})W|LW)$/i);
   if (!match) return null;
   const now = new Date();
   const start = calendarParts(now, tz);
   const years = yearsFromToken(yearToken);
   const results = [];
-  for (let offset = 0; offset < 240 && results.length < 5; offset++) {
+  for (let offset = 0; offset < 240 && results.length < count; offset++) {
     const zeroBased = start.month - 1 + offset;
     const year = start.year + Math.floor(zeroBased / 12);
     const month = ((zeroBased % 12) + 12) % 12 + 1;
@@ -360,14 +360,14 @@ function quartzNearestRuns(body, dayToken, yearToken, tz) {
     tokens[4] = String(month);
     tokens[5] = "*";
     const interval = CronExpressionParser.parse(tokens.join(" "), { ...options, currentDate: offset === 0 ? now : beforeMonth });
-    for (let i = 0; i < 5 - results.length; i++) {
+    for (let i = 0; i < count - results.length; i++) {
       const iso = interval.next().toISOString();
       const parts = calendarParts(new Date(iso), tz);
       if (parts.year !== year || parts.month !== month || parts.day !== day) break;
       results.push(iso);
     }
   }
-  return results.sort().slice(0, 5);
+  return results.sort().slice(0, count);
 }
 
 function convertWeekState(state, fromQuartz, toQuartz) {
@@ -404,9 +404,10 @@ export function inferCronFlavor(expr, current = "linux") {
   return "node";
 }
 
-export function explainCron(expr, { tz, flavorId } = {}) {
+export function explainCron(expr, { tz, flavorId, count = 5 } = {}) {
   const expression = String(expr ?? "").trim();
   if (!expression) throw new Error("empty");
+  const runCount = Math.min(100, Math.max(1, Math.trunc(Number(count)) || 5));
   const flavor = flavorById(flavorId || inferCronFlavor(expression));
   const atoms = expression.split(/\s+/).filter(Boolean);
   let yearToken = null;
@@ -415,7 +416,7 @@ export function explainCron(expr, { tz, flavorId } = {}) {
   if (flavor.quartz && body.length >= 6) {
     body[5] = convertWeekToken(body[5], true, false);
   }
-  const specialRuns = flavor.quartz ? quartzNearestRuns(body, atoms[3], yearToken, tz) : null;
+  const specialRuns = flavor.quartz ? quartzNearestRuns(body, atoms[3], yearToken, tz, runCount) : null;
   if (specialRuns) return { expression, fields: atoms, next: specialRuns };
   const options = { currentDate: new Date() };
   if (tz) options.tz = tz;
@@ -423,7 +424,7 @@ export function explainCron(expr, { tz, flavorId } = {}) {
   const years = yearsFromToken(yearToken);
   const next = [];
   let guard = 0;
-  while (next.length < 5 && guard < 500) {
+  while (next.length < runCount && guard < Math.max(500, runCount * 100)) {
     guard += 1;
     const iso = interval.next().toISOString();
     if (!years || years.has(yearOfIso(iso, tz))) next.push(iso);

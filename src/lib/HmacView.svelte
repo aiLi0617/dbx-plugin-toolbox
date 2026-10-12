@@ -1,57 +1,52 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import KeySourceBar from "./KeySourceBar.svelte";
-  import Select from "./Select.svelte";
   import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
   import { HMAC_ALGORITHMS, runHmac } from "./tools/encode.js";
 
-  let { locale = "zh-CN", initialOptions = {} } = $props();
+  let { locale = "zh-CN" } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
-  let algorithm = $state("hmac-sha256");
   let input = $state("");
   let source = $state("once");
   let material = $state("");
   let keyId = $state("");
-  let digest = $state("");
+  let digests = $state({});
   let error = $state("");
-  $effect(() => {
-    if (HMAC_ALGORITHMS.some((item) => item.value === initialOptions.algorithm)) {
-      algorithm = initialOptions.algorithm;
-    }
-  });
 
-  const picker = $derived(algorithm === "hmac-sm3" ? "hmac-sm3" : "hmac");
+  // HMAC keys are byte strings and can be reused with any supported digest.
+  // The stored algorithm is descriptive metadata, not a compatibility boundary.
+  const picker = "hmac";
   const ctx = $derived(keyCtx(source, keyId, material));
 
   $effect(() => {
     const text = input;
-    const alg = algorithm;
     const next = ctx;
-    digest = "";
+    digests = {};
     const limitError = inputLimitError(text, INPUT_LIMITS.hmac, t("输入", "Input"));
     if (limitError) {
       error = limitError;
       return;
     }
     if (!next) {
-      digest = "";
       error = "";
       return;
     }
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
-        const value = await runHmac(text, alg, next);
+        const values = await Promise.all(
+          HMAC_ALGORITHMS.map(async (item) => [item.value, await runHmac(text, item.value, next)]),
+        );
         if (cancelled) return;
-        digest = value;
+        digests = Object.fromEntries(values);
         error = "";
       } catch (err) {
         if (cancelled) return;
-        digest = "";
+        digests = {};
         error = localizeError(locale, err);
       }
     }, 160);
@@ -63,15 +58,6 @@
 </script>
 
 <div class="page">
-  <div class="options">
-    <label class="field">
-      <span>{t("算法", "Algorithm")}</span>
-      <Select
-        bind:value={algorithm}
-        options={HMAC_ALGORITHMS.map((item) => ({ value: item.value, label: t(item.zh, item.en) }))}
-      />
-    </label>
-  </div>
   <KeySourceBar {locale} {picker} bind:source bind:material bind:keyId />
   <label class="block">
     <span class="label">{t("输入", "Input")}</span>
@@ -82,10 +68,22 @@
   {:else if !ctx}
     <p class="dbx-hint">{t("提供密钥后会计算摘要。", "Provide a key to compute the digest.")}</p>
   {/if}
-  <div class="row">
-    <span class="name">{t("摘要", "Digest")}</span>
-    <input class="dbx-input mono" class:invalid={Boolean(error)} readonly aria-label={t("摘要", "Digest")} value={digest} />
-    <CopyButton {locale} text={digest} labelZh="复制摘要" labelEn="Copy digest" />
+  <div class="results" aria-label={`HMAC ${t("摘要", "Digest")}`}>
+    {#each HMAC_ALGORITHMS as item}
+      {@const label = t(item.zh, item.en)}
+      {@const digest = digests[item.value] || ""}
+      <div class="result-row">
+        <span class="name">{label}</span>
+        <input
+          class="dbx-input mono"
+          class:invalid={Boolean(error)}
+          readonly
+          aria-label={t(`${label} 摘要`, `${label} digest`)}
+          value={digest}
+        />
+        <CopyButton {locale} text={digest} labelZh={`复制 ${label} 摘要`} labelEn={`Copy ${label} digest`} />
+      </div>
+    {/each}
   </div>
 </div>
 
@@ -94,12 +92,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 720px;
-  }
-  .options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ui-gap, 12px);
+    width: 100%;
   }
   .name {
     font-size: 12px;
@@ -110,10 +103,6 @@
     font-weight: 500;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .field :global(.dbx-custom-select) {
-    width: auto;
-    min-width: 160px;
-  }
   .block {
     display: flex;
     flex-direction: column;
@@ -123,9 +112,14 @@
     min-height: 96px;
     max-height: 220px;
   }
-  .row {
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .result-row {
     display: grid;
-    grid-template-columns: 4rem minmax(0, 1fr) 30px;
+    grid-template-columns: 8rem minmax(0, 1fr) 30px;
     gap: 8px;
     align-items: center;
   }
@@ -138,5 +132,13 @@
   }
   .dbx-hint {
     margin: 0;
+  }
+  @media (max-width: 520px) {
+    .result-row {
+      grid-template-columns: minmax(0, 1fr) 30px;
+    }
+    .result-row .name {
+      grid-column: 1 / -1;
+    }
   }
 </style>

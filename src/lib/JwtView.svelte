@@ -166,7 +166,7 @@
 
 <div class="page">
   <div class="mode-bar">
-    <div class="seg" role="tablist" aria-label={t("模式", "Mode")}>
+    <div class="dbx-tabs" role="tablist" aria-label={t("模式", "Mode")}>
       {#each MODES as item (item.value)}
         <button
           class:active={mode === item.value}
@@ -325,37 +325,6 @@
   .mode-bar :global(.dbx-custom-select) {
     width: auto;
     min-width: 140px;
-  }
-  .seg {
-    display: inline-flex;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    border-radius: var(--radius-md, 8px);
-    overflow: hidden;
-    width: fit-content;
-    max-width: 100%;
-  }
-  .seg button {
-    height: 30px;
-    padding: 0 14px;
-    border: 0;
-    border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .seg button:last-child { border-right: 0; }
-  .seg button:hover:not(.active) {
-    background: var(--color-muted, color-mix(in srgb, CanvasText 6%, transparent));
-  }
-  .seg button.active {
-    background: var(--dbx-selection-background);
-    border-color: var(--dbx-selection-border);
-    color: var(--dbx-selection-foreground);
-    font-weight: 600;
   }
   .name {
     font-size: 12px;

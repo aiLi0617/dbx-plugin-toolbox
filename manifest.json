@@ -13,10 +13,14 @@
     "dbx": ">=0.5.68",
     "host_api": "1"
   },
-  "permissions": [],
+  "permissions": [
+    "host.binary",
+    "host.events"
+  ],
   "entrypoints": {
     "backend": {
-      "executable": "bin/dbx-plugin-toolbox"
+      "executable": "bin/dbx-plugin-toolbox",
+      "transport": "stdio-framed"
     },
     "ui": {
       "root": "ui",

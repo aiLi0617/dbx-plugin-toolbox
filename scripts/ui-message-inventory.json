@@ -36,6 +36,63 @@
     "en": "0x / 0b prefix",
     "zh-CN": "0x / 0b 前缀"
   },
+  "Uppercase output": {
+    "en": "Uppercase output",
+    "zh-CN": "大写输出"
+  },
+  "Batch conversion": {
+    "en": "Batch conversion",
+    "zh-CN": "批量转换"
+  },
+  "Integer width": {
+    "en": "Integer width",
+    "zh-CN": "整数位宽"
+  },
+  "Integer interpretation": {
+    "en": "Integer interpretation",
+    "zh-CN": "整数解释"
+  },
+  "Source base": {
+    "en": "Source base",
+    "zh-CN": "源进制"
+  },
+  "Target base": {
+    "en": "Target base",
+    "zh-CN": "目标进制"
+  },
+  "Input (one number per line)": {
+    "en": "Input (one number per line)",
+    "zh-CN": "输入（每行一个数字）"
+  },
+  "255\n16\n42": {
+    "en": "255\n16\n42",
+    "zh-CN": "255\n16\n42"
+  },
+  "Converted values": {
+    "en": "Converted values",
+    "zh-CN": "转换结果"
+  },
+  "Copied": {
+    "en": "Copied",
+    "zh-CN": "已复制",
+    "zh-TW": "已複製",
+    "es": "Copiado",
+    "it": "Copiato",
+    "ja": "コピーしました",
+    "pt-BR": "Copiado"
+  },
+  "Copy all": {
+    "en": "Copy all",
+    "zh-CN": "复制全部"
+  },
+  "Line {0} is invalid for this base or outside the selected width.": {
+    "en": "Line {0} is invalid for this base or outside the selected width.",
+    "zh-CN": "第 {0} 行不是当前进制的有效数字或超出位宽范围。"
+  },
+  "Bases must be between 2 and 36.": {
+    "en": "Bases must be between 2 and 36.",
+    "zh-CN": "进制必须介于 2 和 36 之间。"
+  },
   "Base {0}": {
     "en": "Base {0}",
     "zh-CN": "进制 {0}"
@@ -64,6 +121,18 @@
     "en": "Not a valid number for this base.",
     "zh-CN": "不是有效的数字，请检查当前进制。"
   },
+  "Arbitrary precision": {
+    "en": "Arbitrary precision",
+    "zh-CN": "任意精度"
+  },
+  "Signed (two's complement)": {
+    "en": "Signed (two's complement)",
+    "zh-CN": "有符号（补码）"
+  },
+  "Unsigned": {
+    "en": "Unsigned",
+    "zh-CN": "无符号"
+  },
   "Copy failed. Select the text and copy manually.": {
     "en": "Copy failed. Select the text and copy manually.",
     "zh-CN": "复制失败，请选择文本手动复制。"
@@ -76,6 +145,18 @@
     "en": "Copy {0}",
     "zh-CN": "复制 {0}"
   },
+  "Find and terminate processes using a TCP or UDP port": {
+    "en": "Find and terminate processes using a TCP or UDP port",
+    "zh-CN": "查询并结束占用 TCP 或 UDP 端口的进程",
+    "zh-TW": "查詢並終止占用 TCP 或 UDP 連接埠的程序",
+    "es": "Buscar y finalizar procesos que usan un puerto TCP o UDP",
+    "it": "Trova e termina i processi che usano una porta TCP o UDP",
+    "ja": "TCP・UDP ポートを使用するプロセスを検索して終了",
+    "pt-BR": "Localize e encerre processos que usam uma porta TCP ou UDP",
+    "ko": "TCP 또는 UDP 포트를 사용하는 프로세스 검색 및 종료",
+    "tr": "TCP veya UDP bağlantı noktasını kullanan işlemleri bulun ve sonlandırın",
+    "az": "TCP və ya UDP portundan istifadə edən prosesləri tapın və dayandırın"
+  },
   "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL": {
     "en": "Format, minify, validate, tree-edit, JSONPath, and export to TypeScript / SQL",
     "zh-CN": "格式化、压缩、校验、树形编辑、JSONPath，以及导出 TypeScript / SQL 等",
@@ -83,7 +164,10 @@
     "es": "Formatea, minimiza, valida y edita JSON en árbol; JSONPath y exportación a TypeScript / SQL",
     "it": "Formatta, minimizza, convalida e modifica JSON ad albero; JSONPath ed esportazione in TypeScript / SQL",
     "ja": "JSON の整形、圧縮、検証、ツリー編集、JSONPath、TypeScript / SQL への出力",
-    "pt-BR": "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL"
+    "pt-BR": "Formate, minimize, valide e edite JSON em árvore; JSONPath e exportação para TypeScript / SQL",
+    "ko": "JSON 서식 지정, 압축, 검증, 트리 편집, JSONPath 및 TypeScript / SQL 내보내기",
+    "tr": "JSON biçimlendirme, sıkıştırma, doğrulama, ağaç düzenleme, JSONPath ve TypeScript / SQL dışa aktarma",
+    "az": "JSON formatlama, sıxlaşdırma, yoxlama, ağac redaktəsi, JSONPath və TypeScript / SQL ixracı"
   },
   "Convert among JSON, YAML, CSV, TSV, NDJSON, XML, and TOML": {
     "en": "Convert among JSON, YAML, CSV, TSV, NDJSON, XML, and TOML",
@@ -92,7 +176,10 @@
     "es": "Convierte entre JSON, YAML, CSV, TSV, NDJSON, XML y TOML",
     "it": "Converte tra JSON, YAML, CSV, TSV, NDJSON, XML e TOML",
     "ja": "JSON、YAML、CSV、TSV、NDJSON、XML、TOML を相互変換",
-    "pt-BR": "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML"
+    "pt-BR": "Converta entre JSON, YAML, CSV, TSV, NDJSON, XML e TOML",
+    "ko": "JSON, YAML, CSV, TSV, NDJSON, XML 및 TOML 상호 변환",
+    "tr": "JSON, YAML, CSV, TSV, NDJSON, XML ve TOML arasında dönüştürme",
+    "az": "JSON, YAML, CSV, TSV, NDJSON, XML və TOML arasında çevirmə"
   },
   "Format SQL, XML, YAML, HTML, CSS, JavaScript, and TypeScript": {
     "en": "Format SQL, XML, YAML, HTML, CSS, JavaScript, and TypeScript",
@@ -101,7 +188,10 @@
     "es": "Formatea SQL, XML, YAML, HTML, CSS, JavaScript y TypeScript",
     "it": "Formatta SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript",
     "ja": "SQL、XML、YAML、HTML、CSS、JavaScript、TypeScript を整形",
-    "pt-BR": "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript"
+    "pt-BR": "Formate SQL, XML, YAML, HTML, CSS, JavaScript e TypeScript",
+    "ko": "SQL, XML, YAML, HTML, CSS, JavaScript 및 TypeScript 서식 지정",
+    "tr": "SQL, XML, YAML, HTML, CSS, JavaScript ve TypeScript biçimlendirme",
+    "az": "SQL, XML, YAML, HTML, CSS, JavaScript və TypeScript formatlama"
   },
   "Open, edit, and export XLSX, CSV, TSV, and JSON locally": {
     "en": "Open, edit, and export XLSX, CSV, TSV, and JSON locally",
@@ -110,7 +200,10 @@
     "es": "Abre, edita y exporta XLSX, CSV, TSV y JSON localmente",
     "it": "Apre, modifica ed esporta XLSX, CSV, TSV e JSON in locale",
     "ja": "XLSX、CSV、TSV、JSON をローカルで開き、編集して出力",
-    "pt-BR": "Abra, edite e exporte XLSX, CSV, TSV e JSON localmente"
+    "pt-BR": "Abra, edite e exporte XLSX, CSV, TSV e JSON localmente",
+    "ko": "XLSX, CSV, TSV 및 JSON을 로컬에서 열고 편집하고 내보내기",
+    "tr": "XLSX, CSV, TSV ve JSON dosyalarını yerel olarak açma, düzenleme ve dışa aktarma",
+    "az": "XLSX, CSV, TSV və JSON fayllarını yerli açmaq, redaktə və ixrac etmək"
   },
   "Encode or decode Base64, Base32, Base58, or Hex": {
     "en": "Encode or decode Base64, Base32, Base58, or Hex",
@@ -119,7 +212,10 @@
     "es": "Codifica o decodifica Base64, Base32, Base58 o Hex",
     "it": "Codifica o decodifica Base64, Base32, Base58 o Hex",
     "ja": "Base64、Base32、Base58、Hex をエンコードまたはデコード",
-    "pt-BR": "Codifique ou decodifique Base64, Base32, Base58 ou Hex"
+    "pt-BR": "Codifique ou decodifique Base64, Base32, Base58 ou Hex",
+    "ko": "Base64, Base32, Base58 또는 Hex 인코딩 및 디코딩",
+    "tr": "Base64, Base32, Base58 veya Hex kodlama ve çözme",
+    "az": "Base64, Base32, Base58 və ya Hex kodlaşdırma və açma"
   },
   "Percent-encode/decode URLs, or list query params": {
     "en": "Percent-encode/decode URLs, or list query params",
@@ -128,7 +224,10 @@
     "es": "Codifica o decodifica porcentajes en URL y analiza parámetros de consulta",
     "it": "Codifica o decodifica percentuali negli URL e analizza i parametri di query",
     "ja": "URL のパーセントエンコード／デコードとクエリパラメーターの解析",
-    "pt-BR": "Codifique ou decodifique percentuais em URLs e analise parâmetros de consulta"
+    "pt-BR": "Codifique ou decodifique percentuais em URLs e analise parâmetros de consulta",
+    "ko": "URL 퍼센트 인코딩/디코딩 및 쿼리 매개변수 보기",
+    "tr": "URL yüzde kodlama/çözme ve sorgu parametrelerini listeleme",
+    "az": "URL faiz kodlaşdırma/açma və sorğu parametrlərini göstərmə"
   },
   "Escape HTML entities, Unicode, JS, JSON, or CSS identifiers": {
     "en": "Escape HTML entities, Unicode, JS, JSON, or CSS identifiers",
@@ -137,7 +236,10 @@
     "es": "Escapa entidades HTML, Unicode, JS, JSON o identificadores CSS",
     "it": "Esegue l'escape di entità HTML, Unicode, JS, JSON o identificatori CSS",
     "ja": "HTML エンティティ、Unicode、JS、JSON、CSS 識別子をエスケープ",
-    "pt-BR": "Faça escape de entidades HTML, Unicode, JS, JSON ou identificadores CSS"
+    "pt-BR": "Faça escape de entidades HTML, Unicode, JS, JSON ou identificadores CSS",
+    "ko": "HTML 엔티티, Unicode, JS, JSON 또는 CSS 식별자 이스케이프",
+    "tr": "HTML varlıkları, Unicode, JS, JSON veya CSS tanımlayıcılarını kaçırma",
+    "az": "HTML varlıqları, Unicode, JS, JSON və ya CSS identifikatorlarını qaçışlama"
   },
   "Escape each line as a SQL string literal, with optional commas": {
     "en": "Escape each line as a SQL string literal, with optional commas",
@@ -146,7 +248,10 @@
     "es": "Convierte cada línea en un literal SQL, con comas finales opcionales",
     "it": "Converte ogni riga in un letterale SQL, con virgole finali opzionali",
     "ja": "各行を SQL 文字列リテラルへ変換し、末尾カンマにも対応",
-    "pt-BR": "Converta cada linha em um literal SQL, com vírgulas finais opcionais"
+    "pt-BR": "Converta cada linha em um literal SQL, com vírgulas finais opcionais",
+    "ko": "각 줄을 SQL 문자열 리터럴로 이스케이프하고 선택적으로 쉼표 추가",
+    "tr": "Her satırı SQL dizesine dönüştürme, isteğe bağlı virgül ekleme",
+    "az": "Hər sətri SQL sətir literalına çevirmə, istəyə görə vergül əlavə etmə"
   },
   "Build or parse Data URIs from text or files": {
     "en": "Build or parse Data URIs from text or files",
@@ -155,7 +260,10 @@
     "es": "Crea o analiza URI de datos a partir de texto o archivos",
     "it": "Crea o analizza URI dati da testo o file",
     "ja": "テキストやファイルから Data URI を生成・解析",
-    "pt-BR": "Crie ou analise URIs de dados a partir de texto ou arquivos"
+    "pt-BR": "Crie ou analise URIs de dados a partir de texto ou arquivos",
+    "ko": "텍스트 또는 파일로 Data URI 생성 및 해석",
+    "tr": "Metin veya dosyalardan Data URI oluşturma ve ayrıştırma",
+    "az": "Mətn və ya fayldan Data URI yaratma və təhlil etmə"
   },
   "Convert between IDN and Punycode domain names": {
     "en": "Convert between IDN and Punycode domain names",
@@ -164,7 +272,10 @@
     "es": "Convierte entre nombres de dominio IDN y Punycode",
     "it": "Converte tra nomi di dominio IDN e Punycode",
     "ja": "IDN と Punycode ドメイン名を相互変換",
-    "pt-BR": "Converta entre nomes de domínio IDN e Punycode"
+    "pt-BR": "Converta entre nomes de domínio IDN e Punycode",
+    "ko": "IDN과 Punycode 도메인 이름 상호 변환",
+    "tr": "IDN ve Punycode alan adları arasında dönüştürme",
+    "az": "IDN və Punycode domen adları arasında çevirmə"
   },
   "Quoted-Printable encode or decode for email": {
     "en": "Quoted-Printable encode or decode for email",
@@ -173,7 +284,10 @@
     "es": "Codifica o decodifica Quoted-Printable para correo electrónico",
     "it": "Codifica o decodifica Quoted-Printable per le email",
     "ja": "メール用 Quoted-Printable のエンコード／デコード",
-    "pt-BR": "Codifique ou decodifique Quoted-Printable para e-mail"
+    "pt-BR": "Codifique ou decodifique Quoted-Printable para e-mail",
+    "ko": "이메일용 Quoted-Printable 인코딩 및 디코딩",
+    "tr": "E-posta için Quoted-Printable kodlama ve çözme",
+    "az": "E-poçt üçün Quoted-Printable kodlaşdırma və açma"
   },
   "Convert Unix timestamps and dates; timezones, arithmetic, and diffs": {
     "en": "Convert Unix timestamps and dates; timezones, arithmetic, and diffs",
@@ -182,16 +296,22 @@
     "es": "Convierte marcas Unix y fechas; admite zonas horarias, aritmética y diferencias",
     "it": "Converte timestamp Unix e date; supporta fusi orari, calcoli e differenze",
     "ja": "Unix タイムスタンプと日時を変換し、タイムゾーン・加減算・差分に対応",
-    "pt-BR": "Converta timestamps Unix e datas; inclui fusos horários, cálculos e diferenças"
+    "pt-BR": "Converta timestamps Unix e datas; inclui fusos horários, cálculos e diferenças",
+    "ko": "Unix 타임스탬프와 날짜 변환, 시간대 및 시간 계산",
+    "tr": "Unix zaman damgası ve tarih dönüştürme, saat dilimleri ve zaman hesapları",
+    "az": "Unix zaman nişanı və tarix çevirmə, saat qurşaqları və vaxt hesablamaları"
   },
-  "Convert HEX, RGB, CMYK, HSV; color wheel and screen picker": {
-    "en": "Convert HEX, RGB, CMYK, HSV; color wheel and screen picker",
-    "zh-CN": "HEX / RGB / CMYK / HSV 互转，含色环与屏幕取色",
-    "zh-TW": "HEX / RGB / CMYK / HSV 互轉，含色環與螢幕取色",
-    "es": "Convierte HEX, RGB, CMYK y HSV; incluye rueda de color y selector de pantalla",
-    "it": "Converte HEX, RGB, CMYK e HSV; include ruota colori e selettore schermo",
-    "ja": "HEX、RGB、CMYK、HSV の相互変換、カラーホイール、画面色取得",
-    "pt-BR": "Converta HEX, RGB, CMYK e HSV; inclui roda de cores e seletor de tela"
+  "Convert HEX, RGB(A), HSL(A), HSV and CMYK; pick colors and fix WCAG contrast": {
+    "en": "Convert HEX, RGB(A), HSL(A), HSV and CMYK; pick colors and fix WCAG contrast",
+    "zh-CN": "HEX、RGB(A)、HSL(A)、HSV 与 CMYK 互转、取色，并检查和修正 WCAG 对比度",
+    "zh-TW": "HEX、RGB(A)、HSL(A)、HSV 與 CMYK 互轉、取色，並檢查和修正 WCAG 對比度",
+    "es": "Convierte HEX, RGB(A), HSL(A), HSV y CMYK; selecciona colores y corrige el contraste WCAG",
+    "it": "Converte HEX, RGB(A), HSL(A), HSV e CMYK; seleziona colori e corregge il contrasto WCAG",
+    "ja": "HEX、RGB(A)、HSL(A)、HSV、CMYK の変換、色の取得、WCAG コントラストの確認・修正",
+    "pt-BR": "Converta HEX, RGB(A), HSL(A), HSV e CMYK; selecione cores e corrija o contraste WCAG",
+    "ko": "HEX, RGB(A), HSL(A), HSV, CMYK 변환 및 색상 선택, WCAG 대비 검사와 수정",
+    "tr": "HEX, RGB(A), HSL(A), HSV ve CMYK dönüştürün; renk seçin, WCAG kontrastını denetleyip düzeltin",
+    "az": "HEX, RGB(A), HSL(A), HSV və CMYK çevirin; rəng seçin, WCAG kontrastını yoxlayıb düzəldin"
   },
   "Build a cron expression and preview the next runs": {
     "en": "Build a cron expression and preview the next runs",
@@ -200,7 +320,10 @@
     "es": "Crea una expresión Cron y previsualiza las próximas ejecuciones",
     "it": "Crea un'espressione Cron e visualizza le prossime esecuzioni",
     "ja": "Cron 式を作成し、次回の実行日時をプレビュー",
-    "pt-BR": "Crie uma expressão Cron e visualize as próximas execuções"
+    "pt-BR": "Crie uma expressão Cron e visualize as próximas execuções",
+    "ko": "Cron 표현식 작성 및 다음 실행 미리보기",
+    "tr": "Cron ifadesi oluşturma ve sonraki çalışmaları önizleme",
+    "az": "Cron ifadəsi yaratma və növbəti icralara önizləmə"
   },
   "Convert bases 2–36, with optional grouping and prefixes": {
     "en": "Convert bases 2–36, with optional grouping and prefixes",
@@ -209,7 +332,10 @@
     "es": "Convierte bases de 2 a 36, con agrupación y prefijos opcionales",
     "it": "Converte basi da 2 a 36, con raggruppamento e prefissi opzionali",
     "ja": "2～36 進数を相互変換し、グループ化と接頭辞に対応",
-    "pt-BR": "Converta bases de 2 a 36, com agrupamento e prefixos opcionais"
+    "pt-BR": "Converta bases de 2 a 36, com agrupamento e prefixos opcionais",
+    "ko": "2~36진수 변환, 그룹화 및 접두사 옵션",
+    "tr": "2–36 tabanları arasında dönüştürme, gruplama ve önek seçenekleri",
+    "az": "2–36 əsasları arasında çevirmə, qruplaşdırma və prefiks seçimləri"
   },
   "Calculate IPv4/IPv6 networks, masks, ranges, and split subnets": {
     "en": "Calculate IPv4/IPv6 networks, masks, ranges, and split subnets",
@@ -218,7 +344,10 @@
     "es": "Calcula redes IPv4/IPv6, máscaras, rangos y división de subredes",
     "it": "Calcola reti IPv4/IPv6, maschere, intervalli e suddivisione in sottoreti",
     "ja": "IPv4/IPv6 のネットワーク、マスク、範囲、サブネット分割を計算",
-    "pt-BR": "Calcule redes IPv4/IPv6, máscaras, intervalos e divisão de sub-redes"
+    "pt-BR": "Calcule redes IPv4/IPv6, máscaras, intervalos e divisão de sub-redes",
+    "ko": "IPv4/IPv6 네트워크, 마스크, 범위 계산 및 서브넷 분할",
+    "tr": "IPv4/IPv6 ağ, maske, aralık hesaplama ve alt ağ bölme",
+    "az": "IPv4/IPv6 şəbəkə, maska, aralıq hesablama və alt şəbəkə bölmə"
   },
   "Clean, dedupe, sort, number, extract columns, restyle names, and count text": {
     "en": "Clean, dedupe, sort, number, extract columns, restyle names, and count text",
@@ -227,7 +356,22 @@
     "es": "Limpia, deduplica, ordena, numera, extrae columnas, cambia nombres y cuenta texto",
     "it": "Pulisce, deduplica, ordina, numera, estrae colonne, rinomina e conta il testo",
     "ja": "テキストの整理、重複削除、並べ替え、連番、列抽出、命名変換、文字数集計",
-    "pt-BR": "Limpe, remova duplicados, ordene, numere, extraia colunas, renomeie e conte textos"
+    "pt-BR": "Limpe, remova duplicados, ordene, numere, extraia colunas, renomeie e conte textos",
+    "ko": "텍스트 정리, 중복 제거, 정렬, 번호 매기기, 열 추출, 이름 변환 및 개수 계산",
+    "tr": "Metin temizleme, tekilleştirme, sıralama, numaralama, sütun çıkarma, ad dönüştürme ve sayma",
+    "az": "Mətn təmizləmə, təkrarsızlaşdırma, sıralama, nömrələmə, sütun çıxarma, ad çevirmə və sayma"
+  },
+  "Compress UTF-8 text to Gzip Base64 or decompress it back to text": {
+    "en": "Compress UTF-8 text to Gzip Base64 or decompress it back to text",
+    "zh-CN": "将 UTF-8 文本压缩为 Gzip Base64，或解压还原为文本",
+    "zh-TW": "將 UTF-8 文字壓縮為 Gzip Base64，或解壓還原為文字",
+    "es": "Comprime texto UTF-8 a Gzip Base64 o descomprímelo de nuevo a texto",
+    "it": "Comprimi testo UTF-8 in Gzip Base64 o decomprimilo nuovamente in testo",
+    "ja": "UTF-8 テキストを Gzip Base64 に圧縮、またはテキストへ解凍",
+    "pt-BR": "Comprima texto UTF-8 em Gzip Base64 ou descompacte-o de volta para texto",
+    "ko": "UTF-8 텍스트를 Gzip Base64로 압축하거나 다시 텍스트로 압축 해제",
+    "tr": "UTF-8 metnini Gzip Base64'e sıkıştırın veya yeniden metne açın",
+    "az": "UTF-8 mətnini Gzip Base64 formatına sıxışdırın və ya yenidən mətnə açın"
   },
   "Test regexes, inspect matches, and preview replacements": {
     "en": "Test regexes, inspect matches, and preview replacements",
@@ -236,7 +380,10 @@
     "es": "Prueba expresiones regulares, inspecciona coincidencias y previsualiza reemplazos",
     "it": "Prova espressioni regolari, analizza le corrispondenze e mostra le sostituzioni",
     "ja": "正規表現をテストし、マッチ結果と置換をプレビュー",
-    "pt-BR": "Teste expressões regulares, inspecione correspondências e visualize substituições"
+    "pt-BR": "Teste expressões regulares, inspecione correspondências e visualize substituições",
+    "ko": "정규식 테스트, 일치 항목 검사 및 바꾸기 미리보기",
+    "tr": "Düzenli ifadeleri test etme, eşleşmeleri inceleme ve değiştirmeyi önizleme",
+    "az": "Müntəzəm ifadələri sınama, uyğunluqları yoxlama və əvəzləməyə önizləmə"
   },
   "Compare two texts by line, word, or character": {
     "en": "Compare two texts by line, word, or character",
@@ -245,7 +392,10 @@
     "es": "Compara dos textos por línea, palabra o carácter",
     "it": "Confronta due testi per riga, parola o carattere",
     "ja": "2 つのテキストを行・単語・文字単位で比較",
-    "pt-BR": "Compare dois textos por linha, palavra ou caractere"
+    "pt-BR": "Compare dois textos por linha, palavra ou caractere",
+    "ko": "두 텍스트를 줄, 단어 또는 문자 단위로 비교",
+    "tr": "İki metni satır, sözcük veya karakter düzeyinde karşılaştırma",
+    "az": "İki mətni sətir, söz və ya simvol səviyyəsində müqayisə"
   },
   "Live Markdown preview as you type": {
     "en": "Live Markdown preview as you type",
@@ -254,7 +404,10 @@
     "es": "Previsualiza Markdown en tiempo real mientras escribes",
     "it": "Mostra l'anteprima Markdown in tempo reale durante la digitazione",
     "ja": "入力しながら Markdown をリアルタイムプレビュー",
-    "pt-BR": "Visualize Markdown em tempo real enquanto digita"
+    "pt-BR": "Visualize Markdown em tempo real enquanto digita",
+    "ko": "입력하는 동안 Markdown 실시간 미리보기",
+    "tr": "Yazarken canlı Markdown önizlemesi",
+    "az": "Yazarkən canlı Markdown önizləməsi"
   },
   "Inspect Unicode code points per character": {
     "en": "Inspect Unicode code points per character",
@@ -263,7 +416,10 @@
     "es": "Inspecciona los puntos de código Unicode de cada carácter",
     "it": "Analizza i punti di codice Unicode di ogni carattere",
     "ja": "文字ごとの Unicode コードポイントを確認",
-    "pt-BR": "Inspecione os pontos de código Unicode de cada caractere"
+    "pt-BR": "Inspecione os pontos de código Unicode de cada caractere",
+    "ko": "문자별 Unicode 코드 포인트 검사",
+    "tr": "Karakter başına Unicode kod noktalarını inceleme",
+    "az": "Hər simvolun Unicode kod nöqtəsini yoxlama"
   },
   "Hash text or files with MD5, SHA, SM3, or CRC32": {
     "en": "Hash text or files with MD5, SHA, SM3, or CRC32",
@@ -272,7 +428,10 @@
     "es": "Calcula MD5, SHA, SM3 o CRC32 de texto o archivos",
     "it": "Calcola MD5, SHA, SM3 o CRC32 di testo o file",
     "ja": "テキストやファイルの MD5、SHA、SM3、CRC32 を計算",
-    "pt-BR": "Calcule MD5, SHA, SM3 ou CRC32 de textos ou arquivos"
+    "pt-BR": "Calcule MD5, SHA, SM3 ou CRC32 de textos ou arquivos",
+    "ko": "MD5, SHA, SM3 또는 CRC32로 텍스트 및 파일 해시 계산",
+    "tr": "MD5, SHA, SM3 veya CRC32 ile metin ve dosya özeti hesaplama",
+    "az": "MD5, SHA, SM3 və ya CRC32 ilə mətn və fayl heşini hesablama"
   },
   "Decode, sign, or verify JWTs with HS / RS / PS": {
     "en": "Decode, sign, or verify JWTs with HS / RS / PS",
@@ -281,7 +440,10 @@
     "es": "Decodifica, firma o verifica JWT con HS / RS / PS",
     "it": "Decodifica, firma o verifica JWT con HS / RS / PS",
     "ja": "HS / RS / PS を使って JWT をデコード、署名、検証",
-    "pt-BR": "Decodifique, assine ou verifique JWTs com HS / RS / PS"
+    "pt-BR": "Decodifique, assine ou verifique JWTs com HS / RS / PS",
+    "ko": "HS / RS / PS로 JWT 디코딩, 서명 및 검증",
+    "tr": "HS / RS / PS ile JWT çözme, imzalama veya doğrulama",
+    "az": "HS / RS / PS ilə JWT açma, imzalama və yoxlama"
   },
   "AES or SM4 encrypt/decrypt (GCM, CBC, ECB)": {
     "en": "AES or SM4 encrypt/decrypt (GCM, CBC, ECB)",
@@ -290,7 +452,10 @@
     "es": "Cifra o descifra con AES / SM4 (GCM, CBC, ECB)",
     "it": "Cifra o decifra con AES / SM4 (GCM, CBC, ECB)",
     "ja": "AES / SM4 の暗号化・復号（GCM、CBC、ECB）",
-    "pt-BR": "Criptografe ou descriptografe com AES / SM4 (GCM, CBC, ECB)"
+    "pt-BR": "Criptografe ou descriptografe com AES / SM4 (GCM, CBC, ECB)",
+    "ko": "AES 또는 SM4 암호화/복호화(GCM, CBC, ECB)",
+    "tr": "AES veya SM4 şifreleme/çözme (GCM, CBC, ECB)",
+    "az": "AES və ya SM4 şifrələmə/açma (GCM, CBC, ECB)"
   },
   "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3": {
     "en": "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3",
@@ -299,7 +464,10 @@
     "es": "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3",
     "it": "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3",
     "ja": "SHA-1、SHA-256、SHA-384、SHA-512、SM3 による HMAC",
-    "pt-BR": "HMAC com SHA-1, SHA-256, SHA-384, SHA-512 ou SM3"
+    "pt-BR": "HMAC com SHA-1, SHA-256, SHA-384, SHA-512 ou SM3",
+    "ko": "SHA-1, SHA-256, SHA-384, SHA-512 또는 SM3 HMAC",
+    "tr": "SHA-1, SHA-256, SHA-384, SHA-512 veya SM3 ile HMAC",
+    "az": "SHA-1, SHA-256, SHA-384, SHA-512 və ya SM3 ilə HMAC"
   },
   "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt": {
     "en": "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
@@ -308,7 +476,10 @@
     "es": "Cifra y descifra con RSA OAEP / PKCS#1 o SM2",
     "it": "Cifra e decifra con RSA OAEP / PKCS#1 o SM2",
     "ja": "RSA OAEP / PKCS#1 または SM2 の暗号化・復号",
-    "pt-BR": "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2"
+    "pt-BR": "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2",
+    "ko": "RSA OAEP/PKCS#1 또는 SM2 암호화 및 복호화",
+    "tr": "RSA OAEP/PKCS#1 veya SM2 şifreleme ve çözme",
+    "az": "RSA OAEP/PKCS#1 və ya SM2 şifrələmə və açma"
   },
   "Generate the current TOTP code from a secret": {
     "en": "Generate the current TOTP code from a secret",
@@ -317,7 +488,10 @@
     "es": "Genera el código TOTP actual a partir de un secreto",
     "it": "Genera il codice TOTP corrente da un segreto",
     "ja": "秘密鍵から現在の TOTP コードを生成",
-    "pt-BR": "Gere o código TOTP atual a partir de um segredo"
+    "pt-BR": "Gere o código TOTP atual a partir de um segredo",
+    "ko": "비밀 키로 현재 TOTP 코드 생성",
+    "tr": "Gizli anahtardan güncel TOTP kodu üretme",
+    "az": "Gizli açardan cari TOTP kodu yaratma"
   },
   "Inspect cert validity, SANs, fingerprints, or SSH public keys": {
     "en": "Inspect cert validity, SANs, fingerprints, or SSH public keys",
@@ -326,7 +500,10 @@
     "es": "Inspecciona validez, SAN, huellas y claves públicas SSH",
     "it": "Analizza validità, SAN, impronte e chiavi pubbliche SSH",
     "ja": "証明書の有効期限、SAN、フィンガープリント、SSH 公開鍵を確認",
-    "pt-BR": "Inspecione validade, SANs, impressões digitais e chaves públicas SSH"
+    "pt-BR": "Inspecione validade, SANs, impressões digitais e chaves públicas SSH",
+    "ko": "인증서 유효 기간, SAN, 지문 및 SSH 공개 키 검사",
+    "tr": "Sertifika geçerliliği, SAN, parmak izi veya SSH açık anahtarlarını inceleme",
+    "az": "Sertifikat etibarlılığı, SAN, barmaq izi və ya SSH açıq açarlarını yoxlama"
   },
   "Validate JWK/JWKS and convert RSA JWK ↔ PEM": {
     "en": "Validate JWK/JWKS and convert RSA JWK ↔ PEM",
@@ -335,25 +512,28 @@
     "es": "Valida JWK / JWKS y convierte RSA JWK ↔ PEM",
     "it": "Convalida JWK / JWKS e converte RSA JWK ↔ PEM",
     "ja": "JWK / JWKS を検証し、RSA JWK と PEM を相互変換",
-    "pt-BR": "Valide JWK / JWKS e converta RSA JWK ↔ PEM"
+    "pt-BR": "Valide JWK / JWKS e converta RSA JWK ↔ PEM",
+    "ko": "JWK/JWKS 검증 및 RSA JWK ↔ PEM 변환",
+    "tr": "JWK/JWKS doğrulama ve RSA JWK ↔ PEM dönüştürme",
+    "az": "JWK/JWKS yoxlama və RSA JWK ↔ PEM çevirmə"
   },
   "Generate an AES, SM4, or HMAC key; optional vault save": {
     "en": "Generate an AES, SM4, or HMAC key; optional vault save",
     "zh-CN": "生成 AES / SM4 / HMAC 密钥，可写入密钥库",
     "zh-TW": "產生 AES / SM4 / HMAC 金鑰，可寫入金鑰庫",
-    "es": "Genera claves AES, SM4 o HMAC y permite guardarlas en el almacén",
-    "it": "Genera chiavi AES, SM4 o HMAC e consente di salvarle nell'archivio",
-    "ja": "AES、SM4、HMAC 鍵を生成し、必要に応じて保管庫へ保存",
-    "pt-BR": "Gere chaves AES, SM4 ou HMAC e salve-as opcionalmente no cofre"
+    "es": "Generate an AES, SM4, or HMAC key; optional vault save",
+    "it": "Generate an AES, SM4, or HMAC key; optional vault save",
+    "ja": "Generate an AES, SM4, or HMAC key; optional vault save",
+    "pt-BR": "Generate an AES, SM4, or HMAC key; optional vault save"
   },
   "Generate RSA or SM2 key pairs; bits and PEM format options": {
     "en": "Generate RSA or SM2 key pairs; bits and PEM format options",
     "zh-CN": "生成 RSA / SM2 公私钥对，可配置位数与 PEM 格式",
     "zh-TW": "產生 RSA / SM2 公私鑰對，可設定位數與 PEM 格式",
-    "es": "Genera pares RSA o SM2 con opciones de bits y formato PEM",
-    "it": "Genera coppie RSA o SM2 con opzioni per bit e formato PEM",
-    "ja": "RSA / SM2 鍵ペアを生成し、ビット数と PEM 形式を指定",
-    "pt-BR": "Gere pares RSA ou SM2 com opções de bits e formato PEM"
+    "es": "Generate RSA or SM2 key pairs; bits and PEM format options",
+    "it": "Generate RSA or SM2 key pairs; bits and PEM format options",
+    "ja": "Generate RSA or SM2 key pairs; bits and PEM format options",
+    "pt-BR": "Generate RSA or SM2 key pairs; bits and PEM format options"
   },
   "XOR bytes for debugging only": {
     "en": "XOR bytes for debugging only",
@@ -362,7 +542,10 @@
     "es": "Aplica XOR a bytes solo para depuración",
     "it": "Applica XOR ai byte solo per il debug",
     "ja": "デバッグ用にバイト単位の XOR 演算を実行",
-    "pt-BR": "Aplique XOR a bytes somente para depuração"
+    "pt-BR": "Aplique XOR a bytes somente para depuração",
+    "ko": "디버깅 전용 바이트 XOR",
+    "tr": "Yalnızca hata ayıklama için bayt XOR işlemi",
+    "az": "Yalnız sazlama üçün bayt XOR əməliyyatı"
   },
   "Generate UUID, ULID, or NanoID values": {
     "en": "Generate UUID, ULID, or NanoID values",
@@ -371,16 +554,34 @@
     "es": "Genera valores UUID, ULID o NanoID",
     "it": "Genera valori UUID, ULID o NanoID",
     "ja": "UUID、ULID、NanoID を生成",
-    "pt-BR": "Gere valores UUID, ULID ou NanoID"
+    "pt-BR": "Gere valores UUID, ULID ou NanoID",
+    "ko": "UUID, ULID 또는 NanoID 생성",
+    "tr": "UUID, ULID veya NanoID üretme",
+    "az": "UUID, ULID və ya NanoID yaratma"
   },
-  "Generate a random password or hex bytes": {
-    "en": "Generate a random password or hex bytes",
-    "zh-CN": "生成随机密码或随机十六进制字节",
-    "zh-TW": "產生隨機密碼或隨機十六進位位元組",
-    "es": "Genera una contraseña aleatoria o bytes hexadecimales",
-    "it": "Genera una password casuale o byte esadecimali",
-    "ja": "ランダムパスワードまたは 16 進数バイト列を生成",
-    "pt-BR": "Gere uma senha aleatória ou bytes hexadecimais"
+  "Generate secure random passwords with configurable character sets": {
+    "en": "Generate secure random passwords with configurable character sets",
+    "zh-CN": "使用可配置字符集生成安全随机密码",
+    "zh-TW": "使用可設定字元集產生安全隨機密碼",
+    "es": "Genera contraseñas aleatorias seguras con conjuntos de caracteres configurables",
+    "it": "Genera password casuali sicure con set di caratteri configurabili",
+    "ja": "文字種を指定して安全なランダムパスワードを生成",
+    "pt-BR": "Gere senhas aleatórias seguras com conjuntos de caracteres configuráveis",
+    "ko": "구성 가능한 문자 집합으로 안전한 무작위 비밀번호 생성",
+    "tr": "Yapılandırılabilir karakter kümeleriyle güvenli rastgele parolalar oluşturun",
+    "az": "Konfiqurasiya edilən simvol dəstləri ilə təhlükəsiz təsadüfi parollar yaradın"
+  },
+  "Generate cryptographically secure random bytes as Hex, Base64, or Base64URL": {
+    "en": "Generate cryptographically secure random bytes as Hex, Base64, or Base64URL",
+    "zh-CN": "生成安全随机字节，支持 Hex、Base64 和 Base64URL",
+    "zh-TW": "產生安全隨機位元組，支援 Hex、Base64 和 Base64URL",
+    "es": "Genera bytes aleatorios seguros en Hex, Base64 o Base64URL",
+    "it": "Genera byte casuali sicuri in Hex, Base64 o Base64URL",
+    "ja": "暗号学的に安全なランダムバイト列を Hex、Base64、Base64URL で生成",
+    "pt-BR": "Gere bytes aleatórios seguros em Hex, Base64 ou Base64URL",
+    "ko": "암호학적으로 안전한 무작위 바이트를 Hex, Base64 또는 Base64URL 형식으로 생성",
+    "tr": "Kriptografik olarak güvenli rastgele baytları Hex, Base64 veya Base64URL biçiminde oluşturun",
+    "az": "Kriptoqrafik təhlükəsiz təsadüfi baytları Hex, Base64 və ya Base64URL formatında yaradın"
   },
   "Generate or decode QR, Han Xin, PDF417, and Data Matrix": {
     "en": "Generate or decode QR, Han Xin, PDF417, and Data Matrix",
@@ -389,7 +590,10 @@
     "es": "Genera o lee QR, Han Xin, PDF417 y Data Matrix",
     "it": "Genera o legge QR, Han Xin, PDF417 e Data Matrix",
     "ja": "QR、漢信、PDF417、Data Matrix を生成・読み取り",
-    "pt-BR": "Gere ou leia QR, Han Xin, PDF417 e Data Matrix"
+    "pt-BR": "Gere ou leia QR, Han Xin, PDF417 e Data Matrix",
+    "ko": "QR, Han Xin, PDF417 및 Data Matrix 생성 또는 디코딩",
+    "tr": "QR, Han Xin, PDF417 ve Data Matrix üretme veya çözme",
+    "az": "QR, Han Xin, PDF417 və Data Matrix yaratma və ya açma"
   },
   "Repeat default or custom copy a chosen number of times": {
     "en": "Repeat default or custom copy a chosen number of times",
@@ -398,7 +602,10 @@
     "es": "Repite texto predeterminado o personalizado el número de veces elegido",
     "it": "Ripete testo predefinito o personalizzato per il numero di volte scelto",
     "ja": "既定または任意のテキストを指定回数だけ繰り返し",
-    "pt-BR": "Repita um texto padrão ou personalizado pelo número de vezes escolhido"
+    "pt-BR": "Repita um texto padrão ou personalizado pelo número de vezes escolhido",
+    "ko": "기본 또는 사용자 지정 텍스트를 지정 횟수만큼 반복",
+    "tr": "Varsayılan veya özel metni seçilen sayıda yineleme",
+    "az": "Standart və ya fərdi mətni seçilmiş sayda təkrarlama"
   },
   "Crop, resize, rotate, flip, watermark, convert, and compress": {
     "en": "Crop, resize, rotate, flip, watermark, convert, and compress",
@@ -407,7 +614,10 @@
     "es": "Recorta, redimensiona, gira, voltea, añade marcas de agua, convierte y comprime",
     "it": "Ritaglia, ridimensiona, ruota, capovolge, aggiunge filigrane, converte e comprime",
     "ja": "切り抜き、サイズ変更、回転、反転、透かし、形式変換、圧縮",
-    "pt-BR": "Recorte, redimensione, gire, vire, aplique marca d'água, converta e comprima"
+    "pt-BR": "Recorte, redimensione, gire, vire, aplique marca d'água, converta e comprima",
+    "ko": "자르기, 크기 조정, 회전, 뒤집기, 워터마크, 변환 및 압축",
+    "tr": "Kırpma, boyutlandırma, döndürme, çevirme, filigran, dönüştürme ve sıkıştırma",
+    "az": "Kəsmə, ölçüləndirmə, döndərmə, çevirmə, su nişanı, format çevirmə və sıxma"
   },
   "Generate placeholders at exact pixel size and file size": {
     "en": "Generate placeholders at exact pixel size and file size",
@@ -416,7 +626,49 @@
     "es": "Genera imágenes de marcador con dimensiones y tamaño de archivo exactos",
     "it": "Genera immagini segnaposto con dimensioni e peso esatti",
     "ja": "指定したピクセル寸法とファイルサイズのプレースホルダー画像を生成",
-    "pt-BR": "Gere imagens de espaço reservado com dimensões e tamanho de arquivo exatos"
+    "pt-BR": "Gere imagens de espaço reservado com dimensões e tamanho de arquivo exatos",
+    "ko": "정확한 픽셀 크기 및 파일 크기의 자리표시자 이미지 생성",
+    "tr": "Tam piksel ve dosya boyutunda yer tutucu görsel üretme",
+    "az": "Dəqiq piksel və fayl ölçüsündə yer tutucu şəkil yaratma"
+  },
+  "Compare two files and flag equal MD5 hashes with different bytes": {
+    "en": "Compare two files and flag equal MD5 hashes with different bytes",
+    "zh-CN": "比较两个文件，识别 MD5 相同但内容不同的碰撞",
+    "zh-TW": "比較兩個檔案，識別 MD5 相同但內容不同的碰撞",
+    "es": "Compare two files and flag equal MD5 hashes with different bytes",
+    "it": "Compare two files and flag equal MD5 hashes with different bytes",
+    "ja": "Compare two files and flag equal MD5 hashes with different bytes",
+    "pt-BR": "Compare two files and flag equal MD5 hashes with different bytes"
+  },
+  "Identify a file from its signature instead of its extension": {
+    "en": "Identify a file from its signature instead of its extension",
+    "zh-CN": "根据文件头魔数识别真实格式、MIME 与扩展名",
+    "zh-TW": "根據檔案頭魔數識別真實格式、MIME 與副檔名",
+    "es": "Identifica un archivo por su firma en lugar de su extensión",
+    "it": "Identifica un file dalla firma anziché dall'estensione",
+    "ja": "拡張子ではなくファイルシグネチャから形式を判定",
+    "pt-BR": "Identifique um arquivo pela assinatura, não pela extensão",
+    "ko": "확장자가 아닌 파일 시그니처로 형식을 식별합니다",
+    "tr": "Dosyayı uzantısı yerine imzasından tanımlayın",
+    "az": "Faylı uzantısına deyil, imzasına əsasən müəyyənləşdirin"
+  },
+  "Pixelate, split, compress, or convert images to and from Base64": {
+    "en": "Pixelate, split, compress, or convert images to and from Base64",
+    "zh-CN": "图片像素化、切图、压缩及 Base64 双向转换",
+    "zh-TW": "圖片像素化、切圖、壓縮及 Base64 雙向轉換",
+    "es": "Pixelar, dividir, comprimir o convertir imágenes desde y hacia Base64",
+    "it": "Pixelizza, dividi, comprimi o converti immagini da e verso Base64",
+    "ja": "画像のピクセル化、分割、圧縮、Base64 双方向変換",
+    "pt-BR": "Pixelize, divida, comprima ou converta imagens de e para Base64"
+  },
+  "Open {0} directly with ready-to-use defaults": {
+    "en": "Open {0} directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开{0}",
+    "zh-TW": "使用預設參數直接開啟{0}",
+    "es": "Abre directamente {0} con valores preparados",
+    "it": "Apri direttamente {0} con valori pronti",
+    "ja": "{0}を既定値ですぐに開く",
+    "pt-BR": "Abra {0} diretamente com valores prontos"
   },
   "PEM or OpenSSH public key": {
     "en": "PEM or OpenSSH public key",
@@ -492,7 +744,7 @@
   },
   "Type": {
     "en": "Type",
-    "zh-CN": "码制"
+    "zh-CN": "类型"
   },
   "Comment": {
     "en": "Comment",
@@ -506,14 +758,6 @@
     "en": "MD5",
     "zh-CN": "MD5"
   },
-  "MD5 - 16 chars": {
-    "en": "MD5 - 16 chars",
-    "zh-CN": "MD5 - 16 位"
-  },
-  "MD5 - 32 chars": {
-    "en": "MD5 - 32 chars",
-    "zh-CN": "MD5 - 32 位"
-  },
   "Tag": {
     "en": "Tag",
     "zh-CN": "标签"
@@ -526,6 +770,58 @@
     "it": "Input certificato",
     "ja": "証明書入力",
     "pt-BR": "Entrada de certificado"
+  },
+  "Permission mode": {
+    "en": "Permission mode",
+    "zh-CN": "权限模式"
+  },
+  "Octal": {
+    "en": "Octal",
+    "zh-CN": "八进制"
+  },
+  "sticky": {
+    "en": "sticky",
+    "zh-CN": "粘滞位"
+  },
+  "Symbolic permissions": {
+    "en": "Symbolic permissions",
+    "zh-CN": "字符权限"
+  },
+  "Symbolic mode": {
+    "en": "Symbolic mode",
+    "zh-CN": "符号模式"
+  },
+  "Common presets": {
+    "en": "Common presets",
+    "zh-CN": "常用预设"
+  },
+  "New files start from 0666 and directories from 0777, then masked bits are removed.": {
+    "en": "New files start from 0666 and directories from 0777, then masked bits are removed.",
+    "zh-CN": "新建文件按 0666、新建目录按 0777 扣除掩码位。"
+  },
+  "Mask": {
+    "en": "Mask",
+    "zh-CN": "掩码"
+  },
+  "Regular file": {
+    "en": "Regular file",
+    "zh-CN": "普通文件"
+  },
+  "Directory": {
+    "en": "Directory",
+    "zh-CN": "目录"
+  },
+  "Enter 3–4 octal digits (0–7)": {
+    "en": "Enter 3–4 octal digits (0–7)",
+    "zh-CN": "请输入 3–4 位八进制数（0–7）"
+  },
+  "Symbolic permissions must contain 9 characters, such as rwxr-xr-x": {
+    "en": "Symbolic permissions must contain 9 characters, such as rwxr-xr-x",
+    "zh-CN": "字符权限必须是 9 位，例如 rwxr-xr-x"
+  },
+  "Enter up to 3 octal umask digits, optionally prefixed with 0": {
+    "en": "Enter up to 3 octal umask digits, optionally prefixed with 0",
+    "zh-CN": "请输入最多 3 位八进制 umask（可带前导 0）"
   },
   "Operation": {
     "en": "Operation",
@@ -595,7 +891,7 @@
   },
   "Padding": {
     "en": "Padding",
-    "zh-CN": "填充"
+    "zh-CN": "边距"
   },
   "Decryption output": {
     "en": "Decryption output",
@@ -744,7 +1040,7 @@
   },
   "Language": {
     "en": "Language",
-    "zh-CN": "目标语言",
+    "zh-CN": "语言",
     "zh-TW": "語言",
     "es": "Idioma",
     "it": "Lingua",
@@ -812,9 +1108,13 @@
     "en": "HEX color value",
     "zh-CN": "十六进制颜色值"
   },
-  "e.g. FF5733": {
-    "en": "e.g. FF5733",
-    "zh-CN": "例: FF5733"
+  "Opacity": {
+    "en": "Opacity",
+    "zh-CN": "透明度"
+  },
+  "Supports HEX, 8-digit HEX, and RGBA": {
+    "en": "Supports HEX, 8-digit HEX, and RGBA",
+    "zh-CN": "支持 HEX、8 位 HEX 与 RGBA"
   },
   "Range: 0-255": {
     "en": "Range: 0-255",
@@ -827,6 +1127,186 @@
   "H: 0-360°, S/V: 0-100%": {
     "en": "H: 0-360°, S/V: 0-100%",
     "zh-CN": "H: 0-360°, S/V: 0-100%"
+  },
+  "WCAG contrast": {
+    "en": "WCAG contrast",
+    "zh-CN": "WCAG 对比度"
+  },
+  "Copy format": {
+    "en": "Copy format",
+    "zh-CN": "复制格式"
+  },
+  "Color copy format": {
+    "en": "Color copy format",
+    "zh-CN": "颜色复制格式"
+  },
+  "Swap foreground and background": {
+    "en": "Swap foreground and background",
+    "zh-CN": "交换前景色与背景色"
+  },
+  "Swap": {
+    "en": "Swap",
+    "zh-CN": "交换左右"
+  },
+  "Foreground": {
+    "en": "Foreground",
+    "zh-CN": "前景色"
+  },
+  "Background": {
+    "en": "Background",
+    "zh-CN": "背景色"
+  },
+  "Choose background color": {
+    "en": "Choose background color",
+    "zh-CN": "选择背景色"
+  },
+  "Background color value": {
+    "en": "Background color value",
+    "zh-CN": "背景色值"
+  },
+  "Canvas color for compositing the transparent background": {
+    "en": "Canvas color for compositing the transparent background",
+    "zh-CN": "画布底色（用于合成透明背景）"
+  },
+  "Canvas color": {
+    "en": "Canvas color",
+    "zh-CN": "画布底色"
+  },
+  "Font size": {
+    "en": "Font size",
+    "zh-CN": "字号"
+  },
+  "Unit": {
+    "en": "Unit",
+    "zh-CN": "单位"
+  },
+  "Weight": {
+    "en": "Weight",
+    "zh-CN": "字重"
+  },
+  "Classification": {
+    "en": "Classification",
+    "zh-CN": "自动分类"
+  },
+  "Large text": {
+    "en": "Large text",
+    "zh-CN": "大文本"
+  },
+  "Normal text": {
+    "en": "Normal text",
+    "zh-CN": "普通文本"
+  },
+  "Sample text Aa": {
+    "en": "Sample text Aa",
+    "zh-CN": "示例文本 Aa"
+  },
+  "Transparent colors are composited over the selected canvas": {
+    "en": "Transparent colors are composited over the selected canvas",
+    "zh-CN": "透明颜色按当前画布底色合成后计算"
+  },
+  "Contrast ratio": {
+    "en": "Contrast ratio",
+    "zh-CN": "对比度"
+  },
+  "Current text AA": {
+    "en": "Current text AA",
+    "zh-CN": "当前文字 AA"
+  },
+  "Pass": {
+    "en": "Pass",
+    "zh-CN": "通过"
+  },
+  "Fail": {
+    "en": "Fail",
+    "zh-CN": "未通过"
+  },
+  "Current text AAA": {
+    "en": "Current text AAA",
+    "zh-CN": "当前文字 AAA"
+  },
+  "Normal text AA": {
+    "en": "Normal text AA",
+    "zh-CN": "普通文本 AA"
+  },
+  "Normal text AAA": {
+    "en": "Normal text AAA",
+    "zh-CN": "普通文本 AAA"
+  },
+  "Large text AA": {
+    "en": "Large text AA",
+    "zh-CN": "大文本 AA"
+  },
+  "Large text AAA": {
+    "en": "Large text AAA",
+    "zh-CN": "大文本 AAA"
+  },
+  "UI / graphics AA": {
+    "en": "UI / graphics AA",
+    "zh-CN": "UI / 图形 AA"
+  },
+  "Quick suggestions": {
+    "en": "Quick suggestions",
+    "zh-CN": "快速建议"
+  },
+  "Color to adjust": {
+    "en": "Color to adjust",
+    "zh-CN": "修正对象"
+  },
+  "Adjust foreground": {
+    "en": "Adjust foreground",
+    "zh-CN": "修正前景色"
+  },
+  "Adjust background": {
+    "en": "Adjust background",
+    "zh-CN": "修正背景色"
+  },
+  "Use black foreground": {
+    "en": "Use black foreground",
+    "zh-CN": "推荐黑色前景"
+  },
+  "Use white foreground": {
+    "en": "Use white foreground",
+    "zh-CN": "推荐白色前景"
+  },
+  "Use black background": {
+    "en": "Use black background",
+    "zh-CN": "推荐黑色背景"
+  },
+  "Use white background": {
+    "en": "Use white background",
+    "zh-CN": "推荐白色背景"
+  },
+  "Fix current text to AA": {
+    "en": "Fix current text to AA",
+    "zh-CN": "修正到当前文字 AA"
+  },
+  "Current text already passes AA": {
+    "en": "Current text already passes AA",
+    "zh-CN": "当前文字已满足 AA"
+  },
+  "Not reachable while preserving opacity": {
+    "en": "Not reachable while preserving opacity",
+    "zh-CN": "保持透明度时无法达到"
+  },
+  "Fix current text to AAA": {
+    "en": "Fix current text to AAA",
+    "zh-CN": "修正到当前文字 AAA"
+  },
+  "Current text already passes AAA": {
+    "en": "Current text already passes AAA",
+    "zh-CN": "当前文字已满足 AAA"
+  },
+  "Recent color pairs": {
+    "en": "Recent color pairs",
+    "zh-CN": "最近颜色组合"
+  },
+  "Restore this color pair": {
+    "en": "Restore this color pair",
+    "zh-CN": "恢复此颜色组合"
+  },
+  "Enter valid HEX, 8-digit HEX, or RGBA colors; the canvas must be opaque": {
+    "en": "Enter valid HEX, 8-digit HEX, or RGBA colors; the canvas must be opaque",
+    "zh-CN": "请输入有效的 HEX、8 位 HEX 或 RGBA 颜色；画布底色必须不透明"
   },
   "Color wheel": {
     "en": "Color wheel",
@@ -1180,7 +1660,7 @@
   },
   "{0}s": {
     "en": "{0}s",
-    "zh-CN": "{0}执行一次"
+    "zh-CN": "{0} 秒"
   },
   "Nearest weekday": {
     "en": "Nearest weekday",
@@ -1250,7 +1730,10 @@
     "es": "Expresión Cron",
     "it": "Espressione Cron",
     "ja": "Cron 式",
-    "pt-BR": "Expressão Cron"
+    "pt-BR": "Expressão Cron",
+    "ko": "Cron 표현식",
+    "tr": "Cron ifadesi",
+    "az": "Cron ifadəsi"
   },
   "Parse": {
     "en": "Parse",
@@ -1258,7 +1741,7 @@
   },
   "Timezone": {
     "en": "Timezone",
-    "zh-CN": "计算时区"
+    "zh-CN": "时区"
   },
   "Presets": {
     "en": "Presets",
@@ -1276,9 +1759,13 @@
     "en": "More",
     "zh-CN": "更多"
   },
-  "Next 5 runs": {
-    "en": "Next 5 runs",
-    "zh-CN": "接下来 5 次"
+  "Next {0} runs": {
+    "en": "Next {0} runs",
+    "zh-CN": "接下来 {0} 次"
+  },
+  "Number of runs": {
+    "en": "Number of runs",
+    "zh-CN": "展示数量"
   },
   "In run order": {
     "en": "In run order",
@@ -1291,6 +1778,10 @@
   "Not a valid cron expression": {
     "en": "Not a valid cron expression",
     "zh-CN": "不是有效的 Cron 表达式"
+  },
+  "Conversion direction": {
+    "en": "Conversion direction",
+    "zh-CN": "转换方向"
   },
   "Swap and use result": {
     "en": "Swap and use result",
@@ -1420,6 +1911,123 @@
     "en": "Save failed",
     "zh-CN": "保存失败"
   },
+  "Informational": {
+    "en": "Informational",
+    "zh-CN": "信息响应"
+  },
+  "The request was received and processing continues.": {
+    "en": "The request was received and processing continues.",
+    "zh-CN": "请求已收到，处理仍在继续"
+  },
+  "Success": {
+    "en": "Success",
+    "zh-CN": "成功"
+  },
+  "The request was successfully received, understood, and accepted.": {
+    "en": "The request was successfully received, understood, and accepted.",
+    "zh-CN": "请求已成功接收、理解并处理"
+  },
+  "Redirection": {
+    "en": "Redirection",
+    "zh-CN": "重定向"
+  },
+  "Further action is needed to complete the request.": {
+    "en": "Further action is needed to complete the request.",
+    "zh-CN": "需要进一步操作才能完成请求"
+  },
+  "Client error": {
+    "en": "Client error",
+    "zh-CN": "客户端错误"
+  },
+  "The request is invalid, unauthorized, or cannot be fulfilled.": {
+    "en": "The request is invalid, unauthorized, or cannot be fulfilled.",
+    "zh-CN": "请求有误、无权访问或无法完成"
+  },
+  "Server error": {
+    "en": "Server error",
+    "zh-CN": "服务端错误"
+  },
+  "The server failed to fulfill an apparently valid request.": {
+    "en": "The server failed to fulfill an apparently valid request.",
+    "zh-CN": "服务器未能完成一个看似有效的请求"
+  },
+  ".env tools": {
+    "en": ".env tools",
+    "zh-CN": ".env 功能"
+  },
+  ".env.example template": {
+    "en": ".env.example template",
+    "zh-CN": ".env.example 模板"
+  },
+  "Comparison environment (values are hidden)": {
+    "en": "Comparison environment (values are hidden)",
+    "zh-CN": "对比环境（值不会显示）"
+  },
+  "Current .env values": {
+    "en": "Current .env values",
+    "zh-CN": "当前 .env 值"
+  },
+  "Variable": {
+    "en": "Variable",
+    "zh-CN": "变量"
+  },
+  "Status": {
+    "en": "Status",
+    "zh-CN": "状态"
+  },
+  "Left": {
+    "en": "Left",
+    "zh-CN": "左侧"
+  },
+  "Right": {
+    "en": "Right",
+    "zh-CN": "右侧"
+  },
+  "Working…": {
+    "en": "Working…",
+    "zh-CN": "处理中…"
+  },
+  "Run": {
+    "en": "Run",
+    "zh-CN": "运行",
+    "zh-TW": "執行",
+    "es": "Ejecutar",
+    "it": "Esegui",
+    "ja": "実行",
+    "pt-BR": "Executar"
+  },
+  "Input exceeds this tool's safe limit": {
+    "en": "Input exceeds this tool's safe limit",
+    "zh-CN": "输入内容超过此工具的安全上限"
+  },
+  "✓ Document is valid": {
+    "en": "✓ Document is valid",
+    "zh-CN": "✓ 数据符合 Schema"
+  },
+  "Configuration errors found": {
+    "en": "Configuration errors found",
+    "zh-CN": "发现配置错误"
+  },
+  "✓ {0} valid variables": {
+    "en": "✓ {0} valid variables",
+    "zh-CN": "✓ {0} 个变量有效"
+  },
+  "Same": {
+    "en": "Same",
+    "zh-CN": "相同"
+  },
+  "Different": {
+    "en": "Different",
+    "zh-CN": "不同"
+  },
+  "Missing on left": {
+    "en": "Missing on left",
+    "zh-CN": "左侧缺失"
+  },
+  "Missing on right": {
+    "en": "Missing on right",
+    "zh-CN": "右侧缺失"
+  },
   "Granularity": {
     "en": "Granularity",
     "zh-CN": "粒度"
@@ -1448,18 +2056,6 @@
   "Ignore case": {
     "en": "Ignore case",
     "zh-CN": "忽略大小写"
-  },
-  "Swap": {
-    "en": "Swap",
-    "zh-CN": "交换左右"
-  },
-  "Left": {
-    "en": "Left",
-    "zh-CN": "左侧"
-  },
-  "Right": {
-    "en": "Right",
-    "zh-CN": "右侧"
   },
   "Diff": {
     "en": "Diff",
@@ -1530,9 +2126,230 @@
     "en": "CSS identifier",
     "zh-CN": "CSS 标识符"
   },
+  "NATO phonetic": {
+    "en": "NATO phonetic",
+    "zh-CN": "NATO 拼读"
+  },
+  "Identifying…": {
+    "en": "Identifying…",
+    "zh-CN": "正在识别…"
+  },
+  "Choose or drop a file": {
+    "en": "Choose or drop a file",
+    "zh-CN": "选择或拖入文件"
+  },
+  "Identifies content, not the filename; up to 100 MB": {
+    "en": "Identifies content, not the filename; up to 100 MB",
+    "zh-CN": "根据文件内容识别，不依赖文件名；最大 100 MB"
+  },
+  "Confidence": {
+    "en": "Confidence",
+    "zh-CN": "置信度"
+  },
+  "Detected MIME": {
+    "en": "Detected MIME",
+    "zh-CN": "检测 MIME"
+  },
+  "Suggested extension": {
+    "en": "Suggested extension",
+    "zh-CN": "建议扩展名"
+  },
+  "Browser reported": {
+    "en": "Browser reported",
+    "zh-CN": "浏览器报告"
+  },
+  "Not provided": {
+    "en": "Not provided",
+    "zh-CN": "未提供"
+  },
+  "Evidence": {
+    "en": "Evidence",
+    "zh-CN": "识别依据"
+  },
+  "The .{0} filename extension does not match the detected content.": {
+    "en": "The .{0} filename extension does not match the detected content.",
+    "zh-CN": "文件名扩展名 .{0} 与检测结果不一致。"
+  },
+  "Extension matches the content": {
+    "en": "Extension matches the content",
+    "zh-CN": "扩展名与内容匹配"
+  },
+  "Files are limited to 100 MB.": {
+    "en": "Files are limited to 100 MB.",
+    "zh-CN": "文件不能超过 100 MB。"
+  },
+  "Replace frames": {
+    "en": "Replace frames",
+    "zh-CN": "更换帧"
+  },
+  "Choose image sequence": {
+    "en": "Choose image sequence",
+    "zh-CN": "选择图片序列"
+  },
+  "Save GIF": {
+    "en": "Save GIF",
+    "zh-CN": "保存 GIF"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "zh-CN": "取消"
+  },
+  "Generate GIF": {
+    "en": "Generate GIF",
+    "zh-CN": "生成 GIF"
+  },
+  "Choose 2–60 images; file order becomes frame order": {
+    "en": "Choose 2–60 images; file order becomes frame order",
+    "zh-CN": "选择 2–60 张图片；文件顺序即帧顺序"
+  },
+  "Width": {
+    "en": "Width",
+    "zh-CN": "全半角"
+  },
+  "Height": {
+    "en": "Height",
+    "zh-CN": "高度"
+  },
+  "Fit mode": {
+    "en": "Fit mode",
+    "zh-CN": "适配方式"
+  },
+  "Default frame delay": {
+    "en": "Default frame delay",
+    "zh-CN": "默认帧时长"
+  },
+  "Colors": {
+    "en": "Colors",
+    "zh-CN": "颜色数量"
+  },
+  "Repeat (0 = forever)": {
+    "en": "Repeat (0 = forever)",
+    "zh-CN": "循环次数（0 为无限）"
+  },
+  "Frame delay": {
+    "en": "Frame delay",
+    "zh-CN": "此帧时长"
+  },
+  "Move earlier": {
+    "en": "Move earlier",
+    "zh-CN": "前移"
+  },
+  "Move later": {
+    "en": "Move later",
+    "zh-CN": "后移"
+  },
+  "Remove frame": {
+    "en": "Remove frame",
+    "zh-CN": "删除帧"
+  },
+  "GIF result": {
+    "en": "GIF result",
+    "zh-CN": "GIF 结果"
+  },
+  "Configure options, then generate": {
+    "en": "Configure options, then generate",
+    "zh-CN": "填写参数后点击生成"
+  },
+  "Could not decode one of the images": {
+    "en": "Could not decode one of the images",
+    "zh-CN": "无法解码其中一张图片"
+  },
+  "A GIF requires at least two frames": {
+    "en": "A GIF requires at least two frames",
+    "zh-CN": "GIF 至少需要两帧"
+  },
+  "Cancelled": {
+    "en": "Cancelled",
+    "zh-CN": "已取消"
+  },
+  "Preparing frames…": {
+    "en": "Preparing frames…",
+    "zh-CN": "准备帧…"
+  },
+  "Total frame pixels exceed 80 million": {
+    "en": "Total frame pixels exceed 80 million",
+    "zh-CN": "帧像素总量超过 8000 万"
+  },
+  "Preparing frame {0}/{1}": {
+    "en": "Preparing frame {0}/{1}",
+    "zh-CN": "准备第 {0}/{1} 帧"
+  },
+  "Encoding GIF…": {
+    "en": "Encoding GIF…",
+    "zh-CN": "编码 GIF…"
+  },
+  "frames": {
+    "en": "frames",
+    "zh-CN": "帧"
+  },
+  "Gzip operation": {
+    "en": "Gzip operation",
+    "zh-CN": "Gzip 操作"
+  },
+  "Compress": {
+    "en": "Compress",
+    "zh-CN": "压缩",
+    "zh-TW": "壓縮",
+    "es": "Comprimir",
+    "it": "Comprimi",
+    "ja": "圧縮",
+    "pt-BR": "Comprimir"
+  },
+  "Decompress": {
+    "en": "Decompress",
+    "zh-CN": "解压"
+  },
+  "UTF-8 text → Gzip Base64": {
+    "en": "UTF-8 text → Gzip Base64",
+    "zh-CN": "UTF-8 文本 → Gzip Base64"
+  },
+  "Gzip Base64 → UTF-8 text": {
+    "en": "Gzip Base64 → UTF-8 text",
+    "zh-CN": "Gzip Base64 → UTF-8 文本"
+  },
+  "Source text": {
+    "en": "Source text",
+    "zh-CN": "原始文本"
+  },
+  "Gzip Base64": {
+    "en": "Gzip Base64",
+    "zh-CN": "Gzip Base64"
+  },
+  "Enter text to compress": {
+    "en": "Enter text to compress",
+    "zh-CN": "输入要压缩的文本"
+  },
+  "Paste Gzip Base64 or a Data URL": {
+    "en": "Paste Gzip Base64 or a Data URL",
+    "zh-CN": "粘贴 Gzip Base64 或 Data URL"
+  },
+  "Compressed result": {
+    "en": "Compressed result",
+    "zh-CN": "压缩结果"
+  },
+  "Decompressed text": {
+    "en": "Decompressed text",
+    "zh-CN": "解压文本"
+  },
+  "Input type": {
+    "en": "Input type",
+    "zh-CN": "输入方式"
+  },
+  "Text checksum": {
+    "en": "Text checksum",
+    "zh-CN": "文本校验"
+  },
+  "File checksum": {
+    "en": "File checksum",
+    "zh-CN": "文件校验"
+  },
   "Current file": {
     "en": "Current file",
     "zh-CN": "当前文件"
+  },
+  "Choose a file to checksum": {
+    "en": "Choose a file to checksum",
+    "zh-CN": "选择要校验的文件"
   },
   "Text input": {
     "en": "Text input",
@@ -1542,9 +2359,13 @@
     "en": "Reading file…",
     "zh-CN": "正在读取文件…"
   },
-  "Use text": {
-    "en": "Use text",
-    "zh-CN": "改用文本"
+  "Replace file": {
+    "en": "Replace file",
+    "zh-CN": "更换文件"
+  },
+  "Choose a file to calculate all checksums automatically": {
+    "en": "Choose a file to calculate all checksums automatically",
+    "zh-CN": "选择一个文件后自动计算全部哈希值"
   },
   "Expected checksum (optional)": {
     "en": "Expected checksum (optional)",
@@ -1553,10 +2374,6 @@
   "No match": {
     "en": "No match",
     "zh-CN": "不匹配"
-  },
-  "{0} digest": {
-    "en": "{0} digest",
-    "zh-CN": "{0} 摘要"
   },
   "Files are limited to 16 MB. Choose a smaller file.": {
     "en": "Files are limited to 16 MB. Choose a smaller file.",
@@ -1582,6 +2399,79 @@
   "Digest": {
     "en": "Digest",
     "zh-CN": "摘要"
+  },
+  "{0} digest": {
+    "en": "{0} digest",
+    "zh-CN": "{0} 摘要"
+  },
+  "HTTP status reference": {
+    "en": "HTTP status reference",
+    "zh-CN": "HTTP 状态码速查"
+  },
+  "Search instantly by code, name, meaning, or class. All lookups stay on this device.": {
+    "en": "Search instantly by code, name, meaning, or class. All lookups stay on this device.",
+    "zh-CN": "按状态码、英文名称、中文含义或分类即时查找。所有数据均在本地查询。"
+  },
+  "Offline · IANA snapshot": {
+    "en": "Offline · IANA snapshot",
+    "zh-CN": "离线 · IANA 快照"
+  },
+  "Search status codes": {
+    "en": "Search status codes",
+    "zh-CN": "搜索状态码"
+  },
+  "Try 404, Not Found, Too Many Requests, or 5xx": {
+    "en": "Try 404, Not Found, Too Many Requests, or 5xx",
+    "zh-CN": "例如：404、未找到、Too Many Requests、5xx"
+  },
+  "Clear search": {
+    "en": "Clear search",
+    "zh-CN": "清空搜索",
+    "zh-TW": "清空搜尋",
+    "es": "Borrar búsqueda",
+    "it": "Cancella ricerca",
+    "ja": "検索をクリア",
+    "pt-BR": "Limpar pesquisa"
+  },
+  "Status code classes": {
+    "en": "Status code classes",
+    "zh-CN": "状态码分类"
+  },
+  "{0} status code{1} found": {
+    "en": "{0} status code{1} found",
+    "zh-CN": "找到 {0} 个状态码"
+  },
+  "{0} registered status codes": {
+    "en": "{0} registered status codes",
+    "zh-CN": "共 {0} 个已登记状态码"
+  },
+  "Temporary": {
+    "en": "Temporary",
+    "zh-CN": "临时登记"
+  },
+  "Obsolete": {
+    "en": "Obsolete",
+    "zh-CN": "已废弃"
+  },
+  "Unused": {
+    "en": "Unused",
+    "zh-CN": "未使用"
+  },
+  "No matching status codes": {
+    "en": "No matching status codes",
+    "zh-CN": "没有匹配的状态码"
+  },
+  "Try a numeric code, an English name, a meaning, or a class from 1xx to 5xx.": {
+    "en": "Try a numeric code, an English name, a meaning, or a class from 1xx to 5xx.",
+    "zh-CN": "可以尝试状态码、英文名称、中文含义，或 1xx–5xx 分类。"
+  },
+  "Clear filters": {
+    "en": "Clear filters",
+    "zh-CN": "清空筛选"
+  },
+  "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.": {
+    "en": "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.",
+    "zh-CN": "名称与登记状态依据 IANA HTTP Status Code Registry 离线快照（2025-09-15）；104 为截至 2026-11-13 的临时登记。"
   },
   "Tag '{0}' is an invalid name.": {
     "en": "Tag '{0}' is an invalid name.",
@@ -1952,6 +2842,33 @@
     "ja": "再試行",
     "pt-BR": "Tentar novamente"
   },
+  "Load demo": {
+    "en": "Load demo",
+    "zh-CN": "来个 Demo",
+    "zh-TW": "載入 Demo",
+    "es": "Cargar demo",
+    "it": "Carica demo",
+    "ja": "デモを読み込む",
+    "pt-BR": "Carregar demo"
+  },
+  "Focused tool": {
+    "en": "Focused tool",
+    "zh-CN": "专用模式",
+    "zh-TW": "專用模式",
+    "es": "Herramienta enfocada",
+    "it": "Strumento dedicato",
+    "ja": "専用モード",
+    "pt-BR": "Ferramenta focada"
+  },
+  "Open full workbench": {
+    "en": "Open full workbench",
+    "zh-CN": "打开完整工作台",
+    "zh-TW": "開啟完整工作台",
+    "es": "Abrir banco completo",
+    "it": "Apri banco completo",
+    "ja": "完全版を開く",
+    "pt-BR": "Abrir bancada completa"
+  },
   "Loading tool…": {
     "en": "Loading tool…",
     "zh-CN": "正在加载工具…",
@@ -2023,15 +2940,6 @@
     "it": "Cerca nomi, funzioni o parole chiave…",
     "ja": "名前、機能、キーワードを検索…",
     "pt-BR": "Buscar nomes, recursos ou palavras-chave…"
-  },
-  "Clear search": {
-    "en": "Clear search",
-    "zh-CN": "清空搜索",
-    "zh-TW": "清空搜尋",
-    "es": "Borrar búsqueda",
-    "it": "Cancella ricerca",
-    "ja": "検索をクリア",
-    "pt-BR": "Limpar pesquisa"
   },
   "Tool search results": {
     "en": "Tool search results",
@@ -2375,15 +3283,6 @@
     "ja": "まだ固定したツールがありません。カタログから固定できます。",
     "pt-BR": "Ainda não há ferramentas fixadas. Fixe-as no catálogo completo."
   },
-  "Run": {
-    "en": "Run",
-    "zh-CN": "运行",
-    "zh-TW": "執行",
-    "es": "Ejecutar",
-    "it": "Esegui",
-    "ja": "実行",
-    "pt-BR": "Executar"
-  },
   "Copy output": {
     "en": "Copy output",
     "zh-CN": "复制输出",
@@ -2401,15 +3300,6 @@
     "it": "Output",
     "ja": "出力",
     "pt-BR": "Saída"
-  },
-  "Copied": {
-    "en": "Copied",
-    "zh-CN": "已复制",
-    "zh-TW": "已複製",
-    "es": "Copiado",
-    "it": "Copiato",
-    "ja": "コピーしました",
-    "pt-BR": "Copiado"
   },
   "Ready": {
     "en": "Ready",
@@ -2492,15 +3382,6 @@
     "ja": "データとコード",
     "pt-BR": "Dados e código"
   },
-  "Encode & escape": {
-    "en": "Encode & escape",
-    "zh-CN": "编码转义",
-    "zh-TW": "編碼轉義",
-    "es": "Codificar y escapar",
-    "it": "Codifica ed escape",
-    "ja": "エンコードとエスケープ",
-    "pt-BR": "Codificar e escapar"
-  },
   "Convert & calculate": {
     "en": "Convert & calculate",
     "zh-CN": "转换计算",
@@ -2510,6 +3391,24 @@
     "ja": "変換と計算",
     "pt-BR": "Converter e calcular"
   },
+  "Data & structure": {
+    "en": "Data & structure",
+    "zh-CN": "数据与结构",
+    "zh-TW": "資料與結構",
+    "es": "Datos y estructura",
+    "it": "Dati e struttura",
+    "ja": "データと構造",
+    "pt-BR": "Dados e estrutura"
+  },
+  "Encode & escape": {
+    "en": "Encode & escape",
+    "zh-CN": "编码转义",
+    "zh-TW": "編碼轉義",
+    "es": "Codificar y escapar",
+    "it": "Codifica ed escape",
+    "ja": "エンコードとエスケープ",
+    "pt-BR": "Codificar e escapar"
+  },
   "Text tools": {
     "en": "Text tools",
     "zh-CN": "文本处理",
@@ -2517,7 +3416,37 @@
     "es": "Herramientas de texto",
     "it": "Strumenti di testo",
     "ja": "テキスト処理",
-    "pt-BR": "Ferramentas de texto"
+    "pt-BR": "Ferramentas de texto",
+    "ko": "텍스트 도구",
+    "tr": "Metin araçları",
+    "az": "Mətn alətləri"
+  },
+  "Time & calculate": {
+    "en": "Time & calculate",
+    "zh-CN": "时间与计算",
+    "zh-TW": "時間與計算",
+    "es": "Tiempo y cálculo",
+    "it": "Tempo e calcolo",
+    "ja": "時間と計算",
+    "pt-BR": "Tempo e cálculo"
+  },
+  "Network & system": {
+    "en": "Network & system",
+    "zh-CN": "网络与系统",
+    "zh-TW": "網路與系統",
+    "es": "Red y sistema",
+    "it": "Rete e sistema",
+    "ja": "ネットワークとシステム",
+    "pt-BR": "Rede e sistema"
+  },
+  "Developer helpers": {
+    "en": "Developer helpers",
+    "zh-CN": "开发辅助",
+    "zh-TW": "開發輔助",
+    "es": "Ayudas de desarrollo",
+    "it": "Strumenti di sviluppo",
+    "ja": "開発支援",
+    "pt-BR": "Auxiliares de desenvolvimento"
   },
   "Security & crypto": {
     "en": "Security & crypto",
@@ -2683,7 +3612,7 @@
   },
   "Symbols": {
     "en": "Symbols",
-    "zh-CN": "符号",
+    "zh-CN": "特殊符号",
     "zh-TW": "符號",
     "es": "Símbolos",
     "it": "Simboli",
@@ -3590,29 +4519,73 @@
     "ja": "CSV 行のフィールド数はヘッダーと同じである必要があります",
     "pt-BR": "As linhas CSV devem ter o mesmo número de campos que o cabeçalho"
   },
+  "Choose at least {0} images": {
+    "en": "Choose at least {0} images",
+    "zh-CN": "请至少选择 {0} 张图片"
+  },
+  "Choose no more than {0} images": {
+    "en": "Choose no more than {0} images",
+    "zh-CN": "最多选择 {0} 张图片"
+  },
+  "The selection contains an unsupported image type": {
+    "en": "The selection contains an unsupported image type",
+    "zh-CN": "所选文件中包含无法识别的图片类型"
+  },
+  "Each image must not exceed {0} MB": {
+    "en": "Each image must not exceed {0} MB",
+    "zh-CN": "单张图片不能超过 {0} MB"
+  },
+  "Selected images must not exceed {0} MB in total": {
+    "en": "Selected images must not exceed {0} MB in total",
+    "zh-CN": "所选图片总计不能超过 {0} MB"
+  },
+  "Could not read the image dimensions": {
+    "en": "Could not read the image dimensions",
+    "zh-CN": "无法读取图片尺寸"
+  },
+  "Recognition region must contain valid numbers": {
+    "en": "Recognition region must contain valid numbers",
+    "zh-CN": "识别区域必须是有效数字"
+  },
+  "Recognition region must stay inside the image": {
+    "en": "Recognition region must stay inside the image",
+    "zh-CN": "识别区域必须完整位于图片范围内"
+  },
+  "Could not load the native OCR models; rebuild or reinstall the plugin": {
+    "en": "Could not load the native OCR models; rebuild or reinstall the plugin",
+    "zh-CN": "无法加载原生 OCR 模型，请重新构建或安装插件"
+  },
+  "This DBX version does not support the binary channel required by native OCR; update DBX": {
+    "en": "This DBX version does not support the binary channel required by native OCR; update DBX",
+    "zh-CN": "当前 DBX 版本不支持原生 OCR 所需的二进制通道，请升级 DBX"
+  },
+  "Output dimensions must be positive integers": {
+    "en": "Output dimensions must be positive integers",
+    "zh-CN": "输出尺寸必须是正整数"
+  },
+  "Output canvas exceeds the safe size limit": {
+    "en": "Output canvas exceeds the safe size limit",
+    "zh-CN": "输出画布超过安全尺寸限制"
+  },
   "Size & output": {
     "en": "Size & output",
     "zh-CN": "尺寸与输出"
-  },
-  "Width": {
-    "en": "Width",
-    "zh-CN": "全半角"
-  },
-  "Height": {
-    "en": "Height",
-    "zh-CN": "高度"
   },
   "Target size": {
     "en": "Target size",
     "zh-CN": "目标大小"
   },
+  "Icon size presets": {
+    "en": "Icon size presets",
+    "zh-CN": "图标尺寸预设"
+  },
+  "Square ICO files automatically include multiple resolutions from 16px up to the selected size; 256×256 is recommended.": {
+    "en": "Square ICO files automatically include multiple resolutions from 16px up to the selected size; 256×256 is recommended.",
+    "zh-CN": "方形 ICO 会自动内嵌从 16px 到当前尺寸的多分辨率图层；推荐 256×256。"
+  },
   "Appearance": {
     "en": "Appearance",
     "zh-CN": "外观"
-  },
-  "Background": {
-    "en": "Background",
-    "zh-CN": "背景色"
   },
   "Text color": {
     "en": "Text color",
@@ -3678,10 +4651,6 @@
     "en": "Generated image preview",
     "zh-CN": "生成的图片预览"
   },
-  "Configure options, then generate": {
-    "en": "Configure options, then generate",
-    "zh-CN": "填写参数后点击生成"
-  },
   "Saved: ": {
     "en": "Saved: ",
     "zh-CN": "已保存："
@@ -3734,6 +4703,158 @@
     "en": "Save image",
     "zh-CN": "保存图片"
   },
+  "Replace image": {
+    "en": "Replace image",
+    "zh-CN": "更换图片"
+  },
+  "Choose image": {
+    "en": "Choose image",
+    "zh-CN": "选择图片"
+  },
+  "Recognition quality": {
+    "en": "Recognition quality",
+    "zh-CN": "识别质量"
+  },
+  "Smart (recommended)": {
+    "en": "Smart (recommended)",
+    "zh-CN": "智能（推荐）"
+  },
+  "Full accuracy": {
+    "en": "Full accuracy",
+    "zh-CN": "全量高精度"
+  },
+  "Fast": {
+    "en": "Fast",
+    "zh-CN": "快速"
+  },
+  "Recommended for low-contrast or slightly blurred documents only": {
+    "en": "Recommended for low-contrast or slightly blurred documents only",
+    "zh-CN": "仅建议用于低对比度、轻微模糊的文档；清晰图片通常无需开启"
+  },
+  "Low-contrast enhancement": {
+    "en": "Low-contrast enhancement",
+    "zh-CN": "低对比度增强"
+  },
+  "Only fixes ambiguous characters when validation succeeds; never invents fields": {
+    "en": "Only fixes ambiguous characters when validation succeeds; never invents fields",
+    "zh-CN": "只纠正通过校验规则的易混淆字符，不会补充未识别字段"
+  },
+  "Validated character correction": {
+    "en": "Validated character correction",
+    "zh-CN": "校验型字符纠错"
+  },
+  "Only arranges detected text by position; it does not change characters": {
+    "en": "Only arranges detected text by position; it does not change characters",
+    "zh-CN": "只按检测位置合并同行文本，不改变识别字符"
+  },
+  "Arrange by visual position": {
+    "en": "Arrange by visual position",
+    "zh-CN": "按视觉位置排版"
+  },
+  "Recognize region only": {
+    "en": "Recognize region only",
+    "zh-CN": "仅识别区域"
+  },
+  "Show boxes": {
+    "en": "Show boxes",
+    "zh-CN": "显示识别框"
+  },
+  "Save text": {
+    "en": "Save text",
+    "zh-CN": "保存文本"
+  },
+  "Recognizing…": {
+    "en": "Recognizing…",
+    "zh-CN": "识别中…"
+  },
+  "Recognize": {
+    "en": "Recognize",
+    "zh-CN": "开始识别"
+  },
+  "Selected {0} × {1}px": {
+    "en": "Selected {0} × {1}px",
+    "zh-CN": "已框选 {0} × {1}px"
+  },
+  "Drag on the image to select a recognition region": {
+    "en": "Drag on the image to select a recognition region",
+    "zh-CN": "在图片上拖拽框选识别区域"
+  },
+  "Reselect": {
+    "en": "Reselect",
+    "zh-CN": "重新框选"
+  },
+  "Choose a Chinese or English image; recognition stays offline": {
+    "en": "Choose a Chinese or English image; recognition stays offline",
+    "zh-CN": "选择中英文图片，识别过程完全离线"
+  },
+  "Recognized text": {
+    "en": "Recognized text",
+    "zh-CN": "识别文本"
+  },
+  "Model confidence reference (not accuracy)": {
+    "en": "Model confidence reference (not accuracy)",
+    "zh-CN": "模型置信参考（非准确率）"
+  },
+  " lines": {
+    "en": " lines",
+    "zh-CN": " 行"
+  },
+  "lowest character": {
+    "en": "lowest character",
+    "zh-CN": "最低字符"
+  },
+  "Recognition result will appear here": {
+    "en": "Recognition result will appear here",
+    "zh-CN": "识别结果将显示在这里"
+  },
+  "Transferring image…": {
+    "en": "Transferring image…",
+    "zh-CN": "传输图片…"
+  },
+  "Decoding image…": {
+    "en": "Decoding image…",
+    "zh-CN": "解码图片…"
+  },
+  "Optimizing image size…": {
+    "en": "Optimizing image size…",
+    "zh-CN": "优化图片尺寸…"
+  },
+  "Waiting for the previous OCR task…": {
+    "en": "Waiting for the previous OCR task…",
+    "zh-CN": "等待上一次 OCR 完成…"
+  },
+  "Loading OCR models…": {
+    "en": "Loading OCR models…",
+    "zh-CN": "加载 OCR 模型…"
+  },
+  "Detecting text regions…": {
+    "en": "Detecting text regions…",
+    "zh-CN": "检测文字区域…"
+  },
+  "Recognizing text…": {
+    "en": "Recognizing text…",
+    "zh-CN": "快速识别文字…"
+  },
+  "Refining uncertain lines…": {
+    "en": "Refining uncertain lines…",
+    "zh-CN": "高精度复核低置信行…"
+  },
+  "Recognition complete": {
+    "en": "Recognition complete",
+    "zh-CN": "识别完成"
+  },
+  "Drag on the image to select a recognition region first": {
+    "en": "Drag on the image to select a recognition region first",
+    "zh-CN": "请先在图片上拖拽框选识别区域"
+  },
+  "Preparing native OCR…": {
+    "en": "Preparing native OCR…",
+    "zh-CN": "准备原生 OCR…"
+  },
+  "Save recognized text": {
+    "en": "Save recognized text",
+    "zh-CN": "保存识别文本"
+  },
   "Choose an image file": {
     "en": "Choose an image file",
     "zh-CN": "选择图片文件"
@@ -3741,10 +4862,6 @@
   "Add images": {
     "en": "Add images",
     "zh-CN": "添加图片"
-  },
-  "Replace image": {
-    "en": "Replace image",
-    "zh-CN": "更换图片"
   },
   "Clear all": {
     "en": "Clear all",
@@ -3801,10 +4918,6 @@
   "Drop an image here, or click to choose one": {
     "en": "Drop an image here, or click to choose one",
     "zh-CN": "拖放图片到这里，或点击选择图片"
-  },
-  "Choose image": {
-    "en": "Choose image",
-    "zh-CN": "选择图片"
   },
   "PNG, JPEG, WebP, GIF, AVIF, BMP; up to 30 MB; multi-select builds a queue": {
     "en": "PNG, JPEG, WebP, GIF, AVIF, BMP; up to 30 MB; multi-select builds a queue",
@@ -3897,10 +5010,6 @@
     "en": "Size",
     "zh-CN": "尺寸"
   },
-  "Opacity": {
-    "en": "Opacity",
-    "zh-CN": "透明度"
-  },
   "Position": {
     "en": "Position",
     "zh-CN": "位置"
@@ -3912,6 +5021,26 @@
   "Tile watermark": {
     "en": "Tile watermark",
     "zh-CN": "平铺水印"
+  },
+  "Border, corners & color": {
+    "en": "Border, corners & color",
+    "zh-CN": "边框、圆角与取色"
+  },
+  "Border width": {
+    "en": "Border width",
+    "zh-CN": "边框宽度"
+  },
+  "Corner radius": {
+    "en": "Corner radius",
+    "zh-CN": "圆角半径"
+  },
+  "Border color": {
+    "en": "Border color",
+    "zh-CN": "边框颜色"
+  },
+  "Pick screen color": {
+    "en": "Pick screen color",
+    "zh-CN": "屏幕取色"
   },
   "Quality": {
     "en": "Quality",
@@ -4005,9 +5134,189 @@
     "en": "Saved to {0}",
     "zh-CN": "已保存到 {0}"
   },
+  "The current runtime does not support screen color picking.": {
+    "en": "The current runtime does not support screen color picking.",
+    "zh-CN": "当前运行环境不支持屏幕取色。"
+  },
   "Image is not ready.": {
     "en": "Image is not ready.",
     "zh-CN": "图片尚未就绪。"
+  },
+  "Replace images": {
+    "en": "Replace images",
+    "zh-CN": "更换图片"
+  },
+  "Choose images": {
+    "en": "Choose images",
+    "zh-CN": "选择多张图片"
+  },
+  "Export": {
+    "en": "Export",
+    "zh-CN": "导出"
+  },
+  "Choose 2–30 images to start stitching": {
+    "en": "Choose 2–30 images to start stitching",
+    "zh-CN": "选择 2–30 张图片开始拼接"
+  },
+  "Layout": {
+    "en": "Layout",
+    "zh-CN": "布局"
+  },
+  "Alignment": {
+    "en": "Alignment",
+    "zh-CN": "对齐"
+  },
+  "Columns": {
+    "en": "Columns",
+    "zh-CN": "列数"
+  },
+  "Gap": {
+    "en": "Gap",
+    "zh-CN": "间距"
+  },
+  "Drag or use Up/Down to reorder": {
+    "en": "Drag or use Up/Down to reorder",
+    "zh-CN": "拖动或使用上下方向键排序"
+  },
+  "Stitched result": {
+    "en": "Stitched result",
+    "zh-CN": "拼接结果"
+  },
+  "No result": {
+    "en": "No result",
+    "zh-CN": "暂无结果"
+  },
+  "Could not read one of the images": {
+    "en": "Could not read one of the images",
+    "zh-CN": "无法读取其中一张图片"
+  },
+  "Save stitched image": {
+    "en": "Save stitched image",
+    "zh-CN": "保存拼接图片"
+  },
+  "Image Base64 or Data URL": {
+    "en": "Image Base64 or Data URL",
+    "zh-CN": "图片 Base64 或 Data URL"
+  },
+  "Paste raw Base64 or data:image/...;base64,...": {
+    "en": "Paste raw Base64 or data:image/...;base64,...",
+    "zh-CN": "粘贴纯 Base64，或 data:image/...;base64,..."
+  },
+  "Decoding…": {
+    "en": "Decoding…",
+    "zh-CN": "解码中…"
+  },
+  "Convert and preview": {
+    "en": "Convert and preview",
+    "zh-CN": "转换并预览"
+  },
+  "Supports PNG, JPEG, GIF, WebP, BMP, ICO, and AVIF up to 10 MB; the actual file type is verified.": {
+    "en": "Supports PNG, JPEG, GIF, WebP, BMP, ICO, and AVIF up to 10 MB; the actual file type is verified.",
+    "zh-CN": "支持 PNG、JPEG、GIF、WebP、BMP、ICO、AVIF，最大 10 MB；会校验真实文件类型。"
+  },
+  "Image preview": {
+    "en": "Image preview",
+    "zh-CN": "图片预览"
+  },
+  "Base64 decoded image": {
+    "en": "Base64 decoded image",
+    "zh-CN": "Base64 解码图片"
+  },
+  "The decoded image will appear here": {
+    "en": "The decoded image will appear here",
+    "zh-CN": "转换后将在此处显示"
+  },
+  "Choose or drop an image": {
+    "en": "Choose or drop an image",
+    "zh-CN": "选择或拖入图片"
+  },
+  "All processing stays local": {
+    "en": "All processing stays local",
+    "zh-CN": "全部处理都在本地完成"
+  },
+  "Pixel block size": {
+    "en": "Pixel block size",
+    "zh-CN": "像素块大小"
+  },
+  "Rows": {
+    "en": "Rows",
+    "zh-CN": "行数"
+  },
+  "Creates {0} PNG files in a ZIP": {
+    "en": "Creates {0} PNG files in a ZIP",
+    "zh-CN": "将生成 {0} 张 PNG 并打包为 ZIP"
+  },
+  "Build slices": {
+    "en": "Build slices",
+    "zh-CN": "生成切图"
+  },
+  "{0}% smaller": {
+    "en": "{0}% smaller",
+    "zh-CN": "减小 {0}%"
+  },
+  "{0}% larger": {
+    "en": "{0}% larger",
+    "zh-CN": "增大 {0}%"
+  },
+  "Copy encoding": {
+    "en": "Copy encoding",
+    "zh-CN": "复制编码"
+  },
+  "Raw Base64": {
+    "en": "Raw Base64",
+    "zh-CN": "纯 Base64"
+  },
+  "About {0}": {
+    "en": "About {0}",
+    "zh-CN": "约 {0}"
+  },
+  "Over 2 MB. Browser address bars may truncate it and show a white area; paste it into code or a tool that supports large text.": {
+    "en": "Over 2 MB. Browser address bars may truncate it and show a white area; paste it into code or a tool that supports large text.",
+    "zh-CN": "超过 2 MB，浏览器地址栏可能截断并显示白块。请粘贴到支持大文本的代码或工具中。"
+  },
+  "Save ZIP": {
+    "en": "Save ZIP",
+    "zh-CN": "保存 ZIP"
+  },
+  "Save result": {
+    "en": "Save result",
+    "zh-CN": "保存结果"
+  },
+  "Grid preview": {
+    "en": "Grid preview",
+    "zh-CN": "切分预览"
+  },
+  "Original image with slicing grid": {
+    "en": "Original image with slicing grid",
+    "zh-CN": "带切分网格的原图"
+  },
+  "Pixelate": {
+    "en": "Pixelate",
+    "zh-CN": "像素化"
+  },
+  "Grid slicer": {
+    "en": "Grid slicer",
+    "zh-CN": "多格切图"
+  },
+  "Base64 to image": {
+    "en": "Base64 to image",
+    "zh-CN": "Base64 转图片"
+  },
+  "Could not decode the image.": {
+    "en": "Could not decode the image.",
+    "zh-CN": "无法解码图片。"
+  },
+  "The image changed; try again.": {
+    "en": "The image changed; try again.",
+    "zh-CN": "图片已更换，请重试。"
+  },
+  "Files are limited to {0} MB.": {
+    "en": "Files are limited to {0} MB.",
+    "zh-CN": "文件不能超过 {0} MB。"
+  },
+  "Choose an image file.": {
+    "en": "Choose an image file.",
+    "zh-CN": "请选择图片文件。"
   },
   "{0} is limited to {1} characters": {
     "en": "{0} is limited to {1} characters",
@@ -4115,6 +5424,18 @@
     "en": "CSV",
     "zh-CN": "CSV"
   },
+  "The original value is a JSON string; nested edits are written back to the string": {
+    "en": "The original value is a JSON string; nested edits are written back to the string",
+    "zh-CN": "原始值是 JSON 字符串，内部修改会自动写回字符串"
+  },
+  "Nested parse failed": {
+    "en": "Nested parse failed",
+    "zh-CN": "嵌套解析失败"
+  },
+  "String value": {
+    "en": "String value",
+    "zh-CN": "字符串值"
+  },
   "Delete": {
     "en": "Delete",
     "zh-CN": "删除"
@@ -4167,21 +5488,49 @@
     "en": "JSONPath",
     "zh-CN": "JSONPath"
   },
+  "Tree display settings": {
+    "en": "Tree display settings",
+    "zh-CN": "树形显示设置"
+  },
+  "Parse nested JSON": {
+    "en": "Parse nested JSON",
+    "zh-CN": "解析嵌套 JSON"
+  },
   "Expand all nodes": {
     "en": "Expand all nodes",
     "zh-CN": "展开全部节点"
-  },
-  "Expand all": {
-    "en": "Expand all",
-    "zh-CN": "全展开"
   },
   "Collapse all nodes": {
     "en": "Collapse all nodes",
     "zh-CN": "折叠全部节点"
   },
-  "Collapse all": {
-    "en": "Collapse all",
-    "zh-CN": "全折叠"
+  "Diagnostics": {
+    "en": "Diagnostics",
+    "zh-CN": "诊断结果"
+  },
+  "Valid": {
+    "en": "Valid",
+    "zh-CN": "校验通过"
+  },
+  "Invalid schema": {
+    "en": "Invalid schema",
+    "zh-CN": "Schema 无效"
+  },
+  "Invalid document": {
+    "en": "Invalid document",
+    "zh-CN": "数据不符合 Schema"
+  },
+  "The schema is valid and the document matches it": {
+    "en": "The schema is valid and the document matches it",
+    "zh-CN": "Schema 有效，数据校验通过"
+  },
+  "Document": {
+    "en": "Document",
+    "zh-CN": "数据"
+  },
+  "Enter JSON and a schema to validate automatically": {
+    "en": "Enter JSON and a schema to validate automatically",
+    "zh-CN": "输入 JSON 和 Schema 后自动校验"
   },
   "JSON input": {
     "en": "JSON input",
@@ -4313,6 +5662,18 @@
   "Provide an HMAC key to verify automatically.": {
     "en": "Provide an HMAC key to verify automatically.",
     "zh-CN": "提供 HMAC 密钥后会自动验签。"
+  },
+  "Key type": {
+    "en": "Key type",
+    "zh-CN": "密钥类型"
+  },
+  "Symmetric key": {
+    "en": "Symmetric key",
+    "zh-CN": "对称密钥"
+  },
+  "Key pair": {
+    "en": "Key pair",
+    "zh-CN": "密钥对"
   },
   "{0}-bit": {
     "en": "{0}-bit",
@@ -4526,7 +5887,10 @@
     "es": "Markdown",
     "it": "Markdown",
     "ja": "Markdown",
-    "pt-BR": "Markdown"
+    "pt-BR": "Markdown",
+    "ko": "Markdown",
+    "tr": "Markdown",
+    "az": "Markdown"
   },
   "Type on the left; the preview updates as you type": {
     "en": "Type on the left; the preview updates as you type",
@@ -4535,6 +5899,54 @@
   "Markdown input": {
     "en": "Markdown input",
     "zh-CN": "Markdown 输入"
+  },
+  "MD5 collision check": {
+    "en": "MD5 collision check",
+    "zh-CN": "MD5 碰撞检查"
+  },
+  "A collision requires equal digests but different bytes; identical files are not reported as a collision.": {
+    "en": "A collision requires equal digests but different bytes; identical files are not reported as a collision.",
+    "zh-CN": "只有“摘要相同、字节不同”才判定为碰撞；相同文件不会误报。"
+  },
+  "Choose file {0}": {
+    "en": "Choose file {0}",
+    "zh-CN": "选择文件 {0}"
+  },
+  "Click to choose, up to 16 MB": {
+    "en": "Click to choose, up to 16 MB",
+    "zh-CN": "点击选择，最大 16 MB"
+  },
+  "Computing MD5…": {
+    "en": "Computing MD5…",
+    "zh-CN": "正在计算 MD5…"
+  },
+  "MD5 collision detected": {
+    "en": "MD5 collision detected",
+    "zh-CN": "检测到 MD5 碰撞"
+  },
+  "The files differ but have exactly the same MD5 digest. Do not use MD5 for security checks.": {
+    "en": "The files differ but have exactly the same MD5 digest. Do not use MD5 for security checks.",
+    "zh-CN": "两个文件内容不同，但 MD5 摘要完全相同。不要使用 MD5 做安全校验。"
+  },
+  "Files are identical": {
+    "en": "Files are identical",
+    "zh-CN": "文件完全相同"
+  },
+  "Both the digest and every byte match; this is not a collision.": {
+    "en": "Both the digest and every byte match; this is not a collision.",
+    "zh-CN": "摘要和逐字节内容均相同，不属于碰撞。"
+  },
+  "No collision found": {
+    "en": "No collision found",
+    "zh-CN": "未发现碰撞"
+  },
+  "The two MD5 digests are different.": {
+    "en": "The two MD5 digests are different.",
+    "zh-CN": "两个文件的 MD5 摘要不同。"
+  },
+  "Each file is limited to 16 MB.": {
+    "en": "Each file is limited to 16 MB.",
+    "zh-CN": "单个文件不能超过 16 MB。"
   },
   "Address family": {
     "en": "Address family",
@@ -4656,6 +6068,30 @@
     "en": "IPv4 address",
     "zh-CN": "IPv4 地址"
   },
+  "Expand IPv4 range": {
+    "en": "Expand IPv4 range",
+    "zh-CN": "IPv4 范围展开"
+  },
+  "CIDR or start-end range (max 256)": {
+    "en": "CIDR or start-end range (max 256)",
+    "zh-CN": "CIDR 或起止范围（最多 256 项）"
+  },
+  "Local network identities": {
+    "en": "Local network identities",
+    "zh-CN": "本地网络标识"
+  },
+  "Generate IPv6 ULA": {
+    "en": "Generate IPv6 ULA",
+    "zh-CN": "生成 IPv6 ULA"
+  },
+  "Generate MAC": {
+    "en": "Generate MAC",
+    "zh-CN": "生成 MAC"
+  },
+  "Offline OUI lookup": {
+    "en": "Offline OUI lookup",
+    "zh-CN": "离线 OUI 查询"
+  },
   "Increase": {
     "en": "Increase",
     "zh-CN": "增加"
@@ -4664,25 +6100,161 @@
     "en": "Decrease",
     "zh-CN": "减少"
   },
-  "Password": {
-    "en": "Password",
-    "zh-CN": "密码"
+  "Count": {
+    "en": "Count",
+    "zh-CN": "数量"
   },
-  "Random bytes": {
-    "en": "Random bytes",
-    "zh-CN": "随机字节"
+  "Regenerate": {
+    "en": "Regenerate",
+    "zh-CN": "重新生成"
   },
-  "Include symbols": {
-    "en": "Include symbols",
-    "zh-CN": "含符号"
+  "Password character options": {
+    "en": "Password character options",
+    "zh-CN": "密码字符选项"
   },
-  "No symbols": {
-    "en": "No symbols",
-    "zh-CN": "不含符号"
+  "Lowercase": {
+    "en": "Lowercase",
+    "zh-CN": "小写字母"
+  },
+  "Uppercase": {
+    "en": "Uppercase",
+    "zh-CN": "大写"
+  },
+  "Numbers": {
+    "en": "Numbers",
+    "zh-CN": "数字"
+  },
+  "Exclude ambiguous characters": {
+    "en": "Exclude ambiguous characters",
+    "zh-CN": "排除易混淆字符"
+  },
+  "Select at least one character type": {
+    "en": "Select at least one character type",
+    "zh-CN": "请至少选择一种字符类型"
+  },
+  "Length must cover every selected character type": {
+    "en": "Length must cover every selected character type",
+    "zh-CN": "密码长度不能小于所选字符类型数"
+  },
+  "Estimated entropy": {
+    "en": "Estimated entropy",
+    "zh-CN": "估算熵值"
+  },
+  "Settings changed; regenerate to apply": {
+    "en": "Settings changed; regenerate to apply",
+    "zh-CN": "配置已更改，请重新生成"
+  },
+  "Random bytes use a cryptographically secure generator; Hex output has two characters per byte.": {
+    "en": "Random bytes use a cryptographically secure generator; Hex output has two characters per byte.",
+    "zh-CN": "随机字节由安全随机数生成；Hex 输出长度是字节数的两倍。"
   },
   "Generated value": {
     "en": "Generated value",
     "zh-CN": "生成结果"
+  },
+  "Weak": {
+    "en": "Weak",
+    "zh-CN": "较弱"
+  },
+  "Fair": {
+    "en": "Fair",
+    "zh-CN": "一般"
+  },
+  "Strong": {
+    "en": "Strong",
+    "zh-CN": "较强"
+  },
+  "Very strong": {
+    "en": "Very strong",
+    "zh-CN": "很强"
+  },
+  "Find local TCP / UDP port owners on Windows, macOS, and Linux.": {
+    "en": "Find local TCP / UDP port owners on Windows, macOS, and Linux.",
+    "zh-CN": "查询本机 TCP / UDP 端口占用，支持 Windows、macOS 和 Linux。"
+  },
+  "Port number": {
+    "en": "Port number",
+    "zh-CN": "端口号"
+  },
+  "Protocol": {
+    "en": "Protocol",
+    "zh-CN": "协议"
+  },
+  "Find port": {
+    "en": "Find port",
+    "zh-CN": "查询端口"
+  },
+  "Recommend free port": {
+    "en": "Recommend free port",
+    "zh-CN": "推荐空闲端口"
+  },
+  "Verified free port": {
+    "en": "Verified free port",
+    "zh-CN": "已实际检测的空闲端口"
+  },
+  "Process terminated": {
+    "en": "Process terminated",
+    "zh-CN": "已结束进程"
+  },
+  "Termination signal sent. The process may still be exiting; search again and force termination if needed.": {
+    "en": "Termination signal sent. The process may still be exiting; search again and force termination if needed.",
+    "zh-CN": "已发送终止信号，进程可能仍在退出中；请重新查询，必要时选择强制结束。"
+  },
+  "Only processes visible to the current user are shown; an empty list does not guarantee the port is free.": {
+    "en": "Only processes visible to the current user are shown; an empty list does not guarantee the port is free.",
+    "zh-CN": "仅显示当前用户有权查看的进程；空列表不代表端口一定空闲。"
+  },
+  "Processes": {
+    "en": "Processes",
+    "zh-CN": "进程数"
+  },
+  "No visible process is using this port.": {
+    "en": "No visible process is using this port.",
+    "zh-CN": "未发现可见的端口占用进程。"
+  },
+  "Process name": {
+    "en": "Process name",
+    "zh-CN": "进程名称"
+  },
+  "Local address": {
+    "en": "Local address",
+    "zh-CN": "本地地址"
+  },
+  "State": {
+    "en": "State",
+    "zh-CN": "状态"
+  },
+  "Actions": {
+    "en": "Actions",
+    "zh-CN": "操作"
+  },
+  "Terminate process": {
+    "en": "Terminate process",
+    "zh-CN": "结束进程"
+  },
+  "Protected or inaccessible": {
+    "en": "Protected or inaccessible",
+    "zh-CN": "受保护或无法访问"
+  },
+  "Confirm termination": {
+    "en": "Confirm termination",
+    "zh-CN": "确认结束"
+  },
+  "Force termination (SIGKILL)": {
+    "en": "Force termination (SIGKILL)",
+    "zh-CN": "强制结束（SIGKILL）"
+  },
+  "This forcibly terminates the entire process and closes all its ports. Unsaved data may be lost.": {
+    "en": "This forcibly terminates the entire process and closes all its ports. Unsaved data may be lost.",
+    "zh-CN": "将强制结束整个进程，该进程的所有端口都会关闭，未保存的数据可能丢失。"
+  },
+  "Request a graceful process exit (SIGTERM), closing all its ports when it exits.": {
+    "en": "Request a graceful process exit (SIGTERM), closing all its ports when it exits.",
+    "zh-CN": "将请求整个进程正常退出（SIGTERM），退出后会关闭其所有端口。"
+  },
+  "No confirmed free port was found in the next 100 ports.": {
+    "en": "No confirmed free port was found in the next 100 ports.",
+    "zh-CN": "后续 100 个端口中未找到可确认的空闲端口。"
   },
   "Domain": {
     "en": "Domain",
@@ -4788,10 +6360,6 @@
     "en": "Square",
     "zh-CN": "方形"
   },
-  "Foreground": {
-    "en": "Foreground",
-    "zh-CN": "前景色"
-  },
   "Decode image": {
     "en": "Decode image",
     "zh-CN": "图片识码"
@@ -4895,10 +6463,6 @@
   "Save PNG": {
     "en": "Save PNG",
     "zh-CN": "保存 PNG"
-  },
-  "Choose an image file.": {
-    "en": "Choose an image file.",
-    "zh-CN": "请选择图片文件。"
   },
   "Keep the logo under 1.5 MB.": {
     "en": "Keep the logo under 1.5 MB.",
@@ -5030,15 +6594,6 @@
     "ja": "反転",
     "pt-BR": "Virar"
   },
-  "Compress": {
-    "en": "Compress",
-    "zh-CN": "压缩",
-    "zh-TW": "壓縮",
-    "es": "Comprimir",
-    "it": "Comprimi",
-    "ja": "圧縮",
-    "pt-BR": "Comprimir"
-  },
   "Dedupe": {
     "en": "Dedupe",
     "zh-CN": "去重",
@@ -5048,9 +6603,109 @@
     "ja": "重複削除",
     "pt-BR": "Remover duplicados"
   },
-  "Working…": {
-    "en": "Working…",
-    "zh-CN": "处理中…"
+  "Versions": {
+    "en": "Versions",
+    "zh-CN": "版本列表"
+  },
+  "Clear versions and range": {
+    "en": "Clear versions and range",
+    "zh-CN": "清空版本和范围"
+  },
+  "One version per line, or separate with spaces or commas": {
+    "en": "One version per line, or separate with spaces or commas",
+    "zh-CN": "每行一个版本，也可用空格或逗号分隔"
+  },
+  "Range (optional)": {
+    "en": "Range (optional)",
+    "zh-CN": "版本范围（可选）"
+  },
+  "Range presets": {
+    "en": "Range presets",
+    "zh-CN": "范围快捷选项"
+  },
+  "Include prereleases in range matching": {
+    "en": "Include prereleases in range matching",
+    "zh-CN": "范围匹配包含预发布版本"
+  },
+  "Invalid version range; check the expression.": {
+    "en": "Invalid version range; check the expression.",
+    "zh-CN": "版本范围无效，请检查表达式。"
+  },
+  "Valid versions": {
+    "en": "Valid versions",
+    "zh-CN": "有效版本"
+  },
+  "{0} invalid": {
+    "en": "{0} invalid",
+    "zh-CN": "{0} 个无效"
+  },
+  "Minimum": {
+    "en": "Minimum",
+    "zh-CN": "最低版本"
+  },
+  "Multiple versions have equal precedence": {
+    "en": "Multiple versions have equal precedence",
+    "zh-CN": "多个版本优先级相同"
+  },
+  "Maximum": {
+    "en": "Maximum",
+    "zh-CN": "最高版本"
+  },
+  "Highest matching": {
+    "en": "Highest matching",
+    "zh-CN": "最高匹配版本"
+  },
+  "Enter a valid range": {
+    "en": "Enter a valid range",
+    "zh-CN": "请填写有效范围"
+  },
+  "Analysis": {
+    "en": "Analysis",
+    "zh-CN": "分析结果"
+  },
+  "Updating…": {
+    "en": "Updating…",
+    "zh-CN": "更新中…"
+  },
+  "Build metadata does not affect precedence": {
+    "en": "Build metadata does not affect precedence",
+    "zh-CN": "构建元数据不影响版本优先级"
+  },
+  "Matches only": {
+    "en": "Matches only",
+    "zh-CN": "仅显示匹配项"
+  },
+  "Descending": {
+    "en": "Descending",
+    "zh-CN": "降序"
+  },
+  "Ascending": {
+    "en": "Ascending",
+    "zh-CN": "升序"
+  },
+  "Analysis appears automatically when you enter versions": {
+    "en": "Analysis appears automatically when you enter versions",
+    "zh-CN": "输入版本后将自动显示分析结果"
+  },
+  "No versions satisfy the current range": {
+    "en": "No versions satisfy the current range",
+    "zh-CN": "没有满足当前范围的版本"
+  },
+  "Normalized": {
+    "en": "Normalized",
+    "zh-CN": "规范化"
+  },
+  "Tags": {
+    "en": "Tags",
+    "zh-CN": "标记"
+  },
+  "Invalid": {
+    "en": "Invalid",
+    "zh-CN": "无效"
+  },
+  "View sorted versions": {
+    "en": "View sorted versions",
+    "zh-CN": "查看排序结果"
   },
   "Open spreadsheet": {
     "en": "Open spreadsheet",
@@ -5104,10 +6759,6 @@
     "en": "Redo",
     "zh-CN": "恢复"
   },
-  "Export": {
-    "en": "Export",
-    "zh-CN": "导出"
-  },
   "Export CSV": {
     "en": "Export CSV",
     "zh-CN": "导出 CSV"
@@ -5150,7 +6801,7 @@
   },
   "rows": {
     "en": "rows",
-    "zh-CN": "行"
+    "zh-CN": "条数据"
   },
   "columns": {
     "en": "columns",
@@ -5187,10 +6838,6 @@
   "OK": {
     "en": "OK",
     "zh-CN": "确定"
-  },
-  "Cancel": {
-    "en": "Cancel",
-    "zh-CN": "取消"
   },
   "Delete worksheet": {
     "en": "Delete worksheet",
@@ -5231,6 +6878,10 @@
   "Text operation groups": {
     "en": "Text operation groups",
     "zh-CN": "文本处理分类"
+  },
+  "Only operations relevant to this task are shown": {
+    "en": "Only operations relevant to this task are shown",
+    "zh-CN": "只显示与当前任务相关的操作"
   },
   "Use result as input": {
     "en": "Use result as input",
@@ -5307,6 +6958,10 @@
   "Case & naming": {
     "en": "Case & naming",
     "zh-CN": "大小写"
+  },
+  "Extract & privacy": {
+    "en": "Extract & privacy",
+    "zh-CN": "提取与隐私"
   },
   "Convert": {
     "en": "Convert",
@@ -5408,10 +7063,6 @@
     "en": "Hex",
     "zh-CN": "Hex"
   },
-  "Octal": {
-    "en": "Octal",
-    "zh-CN": "八进制"
-  },
   "JSON → YAML": {
     "en": "JSON → YAML",
     "zh-CN": "JSON → YAML"
@@ -5464,6 +7115,10 @@
     "en": "Base58",
     "zh-CN": "Base58"
   },
+  "Binary bytes": {
+    "en": "Binary bytes",
+    "zh-CN": "二进制字节"
+  },
   "HMAC-SHA1": {
     "en": "HMAC-SHA1",
     "zh-CN": "HMAC-SHA1"
@@ -5503,6 +7158,14 @@
   "JavaScript": {
     "en": "JavaScript",
     "zh-CN": "JavaScript"
+  },
+  "MD5 - 16 chars": {
+    "en": "MD5 - 16 chars",
+    "zh-CN": "MD5 - 16 位"
+  },
+  "MD5 - 32 chars": {
+    "en": "MD5 - 32 chars",
+    "zh-CN": "MD5 - 32 位"
   },
   "PKCS#8 PEM": {
     "en": "PKCS#8 PEM",
@@ -5596,6 +7259,14 @@
     "en": "Secret (Base32)",
     "zh-CN": "密钥（Base32）"
   },
+  "Hide secret": {
+    "en": "Hide secret",
+    "zh-CN": "隐藏密钥"
+  },
+  "Show secret": {
+    "en": "Show secret",
+    "zh-CN": "显示原文"
+  },
   "Digits": {
     "en": "Digits",
     "zh-CN": "位数"
@@ -5604,9 +7275,33 @@
     "en": "Period",
     "zh-CN": "周期"
   },
+  "Using URI settings: {0} digits · {1}s · {2}": {
+    "en": "Using URI settings: {0} digits · {1}s · {2}",
+    "zh-CN": "使用 URI 配置：{0} 位 · {1}s · {2}"
+  },
+  "Previous": {
+    "en": "Previous",
+    "zh-CN": "上一周期"
+  },
+  "Current": {
+    "en": "Current",
+    "zh-CN": "当前口令"
+  },
+  "Next": {
+    "en": "Next",
+    "zh-CN": "下一周期"
+  },
+  "In {0}s": {
+    "en": "In {0}s",
+    "zh-CN": "{0} 秒后生效"
+  },
   "Refreshes in {0}s": {
     "en": "Refreshes in {0}s",
     "zh-CN": "{0} 秒后刷新"
+  },
+  "Codes are generated locally. Whether the previous code is accepted depends on the verification window allowed by the target system.": {
+    "en": "Codes are generated locally. Whether the previous code is accepted depends on the verification window allowed by the target system.",
+    "zh-CN": "口令在本地生成；上一周期口令能否通过验证，取决于目标系统允许的验证时间窗口。"
   },
   "Paste an authenticator secret to see the current code.": {
     "en": "Paste an authenticator secret to see the current code.",
@@ -5632,21 +7327,53 @@
     "en": "Each character’s code point will appear here.",
     "zh-CN": "输入后会列出每个字符的码位。"
   },
-  "Count": {
-    "en": "Count",
-    "zh-CN": "数量"
+  "Namespace": {
+    "en": "Namespace",
+    "zh-CN": "命名空间"
+  },
+  "Namespace UUID": {
+    "en": "Namespace UUID",
+    "zh-CN": "命名空间 UUID"
   },
   "Hyphens": {
     "en": "Hyphens",
     "zh-CN": "带连字符"
   },
-  "Uppercase": {
-    "en": "Uppercase",
-    "zh-CN": "大写"
-  },
   "Braces": {
     "en": "Braces",
     "zh-CN": "花括号"
+  },
+  "Monotonic": {
+    "en": "Monotonic",
+    "zh-CN": "单调递增"
+  },
+  "Inspect an existing ID": {
+    "en": "Inspect an existing ID",
+    "zh-CN": "解析外部 ID"
+  },
+  "Paste a UUID or ULID": {
+    "en": "Paste a UUID or ULID",
+    "zh-CN": "粘贴 UUID 或 ULID"
+  },
+  "Timestamp": {
+    "en": "Timestamp",
+    "zh-CN": "时间戳",
+    "zh-TW": "時間戳",
+    "es": "Marca de tiempo",
+    "it": "Timestamp",
+    "ja": "タイムスタンプ",
+    "pt-BR": "Timestamp",
+    "ko": "타임스탬프",
+    "tr": "Zaman damgası",
+    "az": "Vaxt möhürü"
+  },
+  "Paste an existing UUID or ULID to inspect its type and timestamp.": {
+    "en": "Paste an existing UUID or ULID to inspect its type and timestamp.",
+    "zh-CN": "粘贴已有的 UUID 或 ULID 以查看其类型和时间信息。"
+  },
+  "Namespace must be a valid UUID": {
+    "en": "Namespace must be a valid UUID",
+    "zh-CN": "命名空间必须是有效的 UUID"
   },
   "Create key vault": {
     "en": "Create key vault",
@@ -5723,6 +7450,518 @@
   "Params": {
     "en": "Params",
     "zh-CN": "参数表"
+  },
+  "Use current": {
+    "en": "Use current",
+    "zh-CN": "使用当前值"
+  },
+  "Paste a User-Agent string…": {
+    "en": "Paste a User-Agent string…",
+    "zh-CN": "粘贴 User-Agent 字符串…"
+  },
+  "Parsing runs locally and sends no data.": {
+    "en": "Parsing runs locally and sends no data.",
+    "zh-CN": "解析在本地完成，不会发送任何数据。"
+  },
+  "Parsed result": {
+    "en": "Parsed result",
+    "zh-CN": "解析结果"
+  },
+  "Browser": {
+    "en": "Browser",
+    "zh-CN": "浏览器"
+  },
+  "Engine": {
+    "en": "Engine",
+    "zh-CN": "渲染引擎"
+  },
+  "Operating system": {
+    "en": "Operating system",
+    "zh-CN": "操作系统"
+  },
+  "Device type": {
+    "en": "Device type",
+    "zh-CN": "设备类型"
+  },
+  "Vendor / model": {
+    "en": "Vendor / model",
+    "zh-CN": "厂商 / 型号"
+  },
+  "Unknown": {
+    "en": "Unknown",
+    "zh-CN": "不可识别"
+  },
+  "Architecture": {
+    "en": "Architecture",
+    "zh-CN": "架构"
+  },
+  "Enter a User-Agent to see parsed details.": {
+    "en": "Enter a User-Agent to see parsed details.",
+    "zh-CN": "输入 User-Agent 后显示解析结果。"
+  },
+  "Refresh": {
+    "en": "Refresh",
+    "zh-CN": "刷新"
+  },
+  "Keyboard event capture area": {
+    "en": "Keyboard event capture area",
+    "zh-CN": "键盘事件捕获区域"
+  },
+  "Press any key": {
+    "en": "Press any key",
+    "zh-CN": "按下任意键"
+  },
+  "Keep this page focused to inspect keydown and keyup events in real time.": {
+    "en": "Keep this page focused to inspect keydown and keyup events in real time.",
+    "zh-CN": "保持此页面聚焦，可实时检查 keydown 与 keyup 事件。"
+  },
+  "Empty": {
+    "en": "Empty",
+    "zh-CN": "空值"
+  },
+  "Event properties": {
+    "en": "Event properties",
+    "zh-CN": "事件属性"
+  },
+  "Keyboard location": {
+    "en": "Keyboard location",
+    "zh-CN": "键盘区域"
+  },
+  "Modifiers": {
+    "en": "Modifiers",
+    "zh-CN": "修饰键"
+  },
+  "Lock state": {
+    "en": "Lock state",
+    "zh-CN": "锁定状态"
+  },
+  "Repeating": {
+    "en": "Repeating",
+    "zh-CN": "是否重复"
+  },
+  "Composing": {
+    "en": "Composing",
+    "zh-CN": "输入法合成中"
+  },
+  "Trusted event": {
+    "en": "Trusted event",
+    "zh-CN": "可信事件"
+  },
+  "Event target": {
+    "en": "Event target",
+    "zh-CN": "事件目标"
+  },
+  "Bubbles": {
+    "en": "Bubbles",
+    "zh-CN": "是否冒泡"
+  },
+  "Cancelable": {
+    "en": "Cancelable",
+    "zh-CN": "可否取消"
+  },
+  "Crosses Shadow DOM": {
+    "en": "Crosses Shadow DOM",
+    "zh-CN": "穿透 Shadow DOM"
+  },
+  "Legacy key codes": {
+    "en": "Legacy key codes",
+    "zh-CN": "兼容键码"
+  },
+  "Recent events": {
+    "en": "Recent events",
+    "zh-CN": "最近事件"
+  },
+  "Waiting for a keyboard event": {
+    "en": "Waiting for a keyboard event",
+    "zh-CN": "等待键盘事件"
+  },
+  "Supports regular keys, function keys, numpad, modifiers, and composition state.": {
+    "en": "Supports regular keys, function keys, numpad, modifiers, and composition state.",
+    "zh-CN": "支持普通键、功能键、数字键盘、修饰键和输入法合成状态。"
+  },
+  "Allow JavaScript in preview": {
+    "en": "Allow JavaScript in preview",
+    "zh-CN": "允许预览运行 JavaScript"
+  },
+  "Preview uses an isolated iframe; CSP blocks network, forms, and external resources": {
+    "en": "Preview uses an isolated iframe; CSP blocks network, forms, and external resources",
+    "zh-CN": "预览使用隔离 iframe，并通过 CSP 禁止网络、表单与外部资源"
+  },
+  "HTML preview": {
+    "en": "HTML preview",
+    "zh-CN": "HTML 预览"
+  },
+  "Console output appears here": {
+    "en": "Console output appears here",
+    "zh-CN": "控制台输出会显示在这里"
+  },
+  "Description": {
+    "en": "Description",
+    "zh-CN": "描述"
+  },
+  "Page URL": {
+    "en": "Page URL",
+    "zh-CN": "页面 URL"
+  },
+  "Sharing image": {
+    "en": "Sharing image",
+    "zh-CN": "分享图片"
+  },
+  "Site name": {
+    "en": "Site name",
+    "zh-CN": "站点名称"
+  },
+  "Donut": {
+    "en": "Donut",
+    "zh-CN": "环形"
+  },
+  "Labels": {
+    "en": "Labels",
+    "zh-CN": "外部标签"
+  },
+  "Legend": {
+    "en": "Legend",
+    "zh-CN": "图例"
+  },
+  "Label": {
+    "en": "Label",
+    "zh-CN": "标签"
+  },
+  "Smooth": {
+    "en": "Smooth",
+    "zh-CN": "平滑"
+  },
+  "Points": {
+    "en": "Points",
+    "zh-CN": "节点"
+  },
+  "Values": {
+    "en": "Values",
+    "zh-CN": "数值"
+  },
+  "Chart color": {
+    "en": "Chart color",
+    "zh-CN": "图表颜色"
+  },
+  "Grid": {
+    "en": "Grid",
+    "zh-CN": "网格"
+  },
+  "Data input": {
+    "en": "Data input",
+    "zh-CN": "数据输入"
+  },
+  "CSV or JSON data": {
+    "en": "CSV or JSON data",
+    "zh-CN": "CSV 或 JSON 数据"
+  },
+  "CSV / TSV / JSON; the first row may be a header": {
+    "en": "CSV / TSV / JSON; the first row may be a header",
+    "zh-CN": "支持 CSV / TSV / JSON，第一行可作为表头"
+  },
+  "Chart preview": {
+    "en": "Chart preview",
+    "zh-CN": "图表预览"
+  },
+  "Live": {
+    "en": "Live",
+    "zh-CN": "实时更新"
+  },
+  "Updates as data or settings change": {
+    "en": "Updates as data or settings change",
+    "zh-CN": "输入或设置变化后实时更新"
+  },
+  "NUMBER NORMALIZER": {
+    "en": "NUMBER NORMALIZER",
+    "zh-CN": "号码规范化"
+  },
+  "Normalize phone numbers into consistent, copy-ready formats": {
+    "en": "Normalize phone numbers into consistent, copy-ready formats",
+    "zh-CN": "把电话号码转换为统一、可复制的格式"
+  },
+  "Parsing stays on this device. The default region is only used when a country calling code is missing.": {
+    "en": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
+    "zh-CN": "所有解析均在本地完成。默认地区仅用于没有国际区号的号码。"
+  },
+  "Enter number": {
+    "en": "Enter number",
+    "zh-CN": "输入号码"
+  },
+  "Default region": {
+    "en": "Default region",
+    "zh-CN": "默认地区"
+  },
+  "Phone number": {
+    "en": "Phone number",
+    "zh-CN": "电话号码解析",
+    "zh-TW": "電話號碼解析",
+    "es": "Phone number",
+    "it": "Phone number",
+    "ja": "Phone number",
+    "pt-BR": "Phone number",
+    "ko": "전화번호",
+    "tr": "Telefon numarası",
+    "az": "Telefon nömrəsi"
+  },
+  "Parse number": {
+    "en": "Parse number",
+    "zh-CN": "解析号码"
+  },
+  "Use example": {
+    "en": "Use example",
+    "zh-CN": "使用示例"
+  },
+  "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.": {
+    "en": "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.",
+    "zh-CN": "支持空格、短横线、括号，以及以 + 或 00 开头的国际号码。"
+  },
+  "Valid format": {
+    "en": "Valid format",
+    "zh-CN": "格式有效"
+  },
+  "International": {
+    "en": "International",
+    "zh-CN": "国际格式"
+  },
+  "National number": {
+    "en": "National number",
+    "zh-CN": "本地号码"
+  },
+  "Country / region": {
+    "en": "Country / region",
+    "zh-CN": "国家 / 地区"
+  },
+  "Calling code": {
+    "en": "Calling code",
+    "zh-CN": "国际区号"
+  },
+  "Enter a phone number to begin": {
+    "en": "Enter a phone number to begin",
+    "zh-CN": "输入电话号码开始解析"
+  },
+  "The normalized formats will appear here": {
+    "en": "The normalized formats will appear here",
+    "zh-CN": "结果会自动显示在这里"
+  },
+  "TRANSFER PLANNING": {
+    "en": "TRANSFER PLANNING",
+    "zh-CN": "带宽规划"
+  },
+  "Estimate real-world transfer time": {
+    "en": "Estimate real-world transfer time",
+    "zh-CN": "估算真实传输耗时"
+  },
+  "Distinguish bits from bytes and include protocol overhead and file count.": {
+    "en": "Distinguish bits from bytes and include protocol overhead and file count.",
+    "zh-CN": "区分 bit 与 Byte，并将协议损耗和文件数量计入结果。"
+  },
+  "Data volume": {
+    "en": "Data volume",
+    "zh-CN": "数据量"
+  },
+  "File size": {
+    "en": "File size",
+    "zh-CN": "文件大小"
+  },
+  "File count": {
+    "en": "File count",
+    "zh-CN": "文件数量"
+  },
+  "Link speed": {
+    "en": "Link speed",
+    "zh-CN": "链路速度"
+  },
+  "Transfer speed": {
+    "en": "Transfer speed",
+    "zh-CN": "传输速度"
+  },
+  "Common bandwidths": {
+    "en": "Common bandwidths",
+    "zh-CN": "常用带宽"
+  },
+  "Protocol overhead": {
+    "en": "Protocol overhead",
+    "zh-CN": "协议损耗"
+  },
+  "Accounts for TCP/IP, encryption, and wireless retransmission overhead.": {
+    "en": "Accounts for TCP/IP, encryption, and wireless retransmission overhead.",
+    "zh-CN": "可用于计入 TCP/IP、加密、无线重传等开销。"
+  },
+  "Estimated time": {
+    "en": "Estimated time",
+    "zh-CN": "预计耗时"
+  },
+  "Calculated from effective throughput": {
+    "en": "Calculated from effective throughput",
+    "zh-CN": "以有效吞吐量计算"
+  },
+  "Total data": {
+    "en": "Total data",
+    "zh-CN": "总数据量"
+  },
+  "Effective speed": {
+    "en": "Effective speed",
+    "zh-CN": "有效速度"
+  },
+  "Link efficiency": {
+    "en": "Link efficiency",
+    "zh-CN": "链路利用率"
+  },
+  "Overhead penalty": {
+    "en": "Overhead penalty",
+    "zh-CN": "损耗增加耗时"
+  },
+  "Ideal time, no overhead": {
+    "en": "Ideal time, no overhead",
+    "zh-CN": "理论零损耗耗时"
+  },
+  "Enter a valid data volume and link speed": {
+    "en": "Enter a valid data volume and link speed",
+    "zh-CN": "请输入有效的数据量与链路速度"
+  },
+  "Target language": {
+    "en": "Target language",
+    "zh-CN": "目标语言"
+  },
+  "Service name": {
+    "en": "Service name",
+    "zh-CN": "服务名称"
+  },
+  "Auto (prefers --name)": {
+    "en": "Auto (prefers --name)",
+    "zh-CN": "自动（优先使用 --name）"
+  },
+  "First service when empty": {
+    "en": "First service when empty",
+    "zh-CN": "留空则选择首个服务"
+  },
+  "Converts automatically when the input, direction, or service name changes": {
+    "en": "Converts automatically when the input, direction, or service name changes",
+    "zh-CN": "输入、方向或服务名称变化后自动转换"
+  },
+  "Seed": {
+    "en": "Seed",
+    "zh-CN": "随机种子"
+  },
+  "Fields (comma-separated)": {
+    "en": "Fields (comma-separated)",
+    "zh-CN": "字段（逗号分隔）"
+  },
+  "Types: name, email, phone, company, date, datetime, uuid, boolean, integer, number, amount, url, ipv4, sentence": {
+    "en": "Types: name, email, phone, company, date, datetime, uuid, boolean, integer, number, amount, url, ipv4, sentence",
+    "zh-CN": "可用类型：name、email、phone、company、date、datetime、uuid、boolean、integer、number、amount、url、ipv4、sentence"
+  },
+  "docker run → Compose": {
+    "en": "docker run → Compose",
+    "zh-CN": "docker run → Compose"
+  },
+  "Compose → docker run": {
+    "en": "Compose → docker run",
+    "zh-CN": "Compose → docker run"
+  },
+  "INTL": {
+    "en": "INTL",
+    "zh-CN": "国际"
+  },
+  "Key up": {
+    "en": "Key up",
+    "zh-CN": "抬起"
+  },
+  "Key down": {
+    "en": "Key down",
+    "zh-CN": "按下"
+  },
+  "None": {
+    "en": "None",
+    "zh-CN": "无"
+  },
+  "on": {
+    "en": "on",
+    "zh-CN": "开启"
+  },
+  "(since page load)": {
+    "en": "(since page load)",
+    "zh-CN": "（页面加载后）"
+  },
+  "(deprecated)": {
+    "en": "(deprecated)",
+    "zh-CN": "（已废弃）"
+  },
+  "Unavailable": {
+    "en": "Unavailable",
+    "zh-CN": "不可用"
+  },
+  "Platform": {
+    "en": "Platform",
+    "zh-CN": "平台"
+  },
+  "Languages": {
+    "en": "Languages",
+    "zh-CN": "所有语言"
+  },
+  "Online": {
+    "en": "Online",
+    "zh-CN": "在线"
+  },
+  "Hardware": {
+    "en": "Hardware",
+    "zh-CN": "硬件"
+  },
+  "CPU threads": {
+    "en": "CPU threads",
+    "zh-CN": "CPU 线程"
+  },
+  "Memory (GB)": {
+    "en": "Memory (GB)",
+    "zh-CN": "内存 (GB)"
+  },
+  "Touch points": {
+    "en": "Touch points",
+    "zh-CN": "触控点数"
+  },
+  "Display": {
+    "en": "Display",
+    "zh-CN": "显示"
+  },
+  "Screen": {
+    "en": "Screen",
+    "zh-CN": "屏幕"
+  },
+  "Available": {
+    "en": "Available",
+    "zh-CN": "可用"
+  },
+  "Color depth": {
+    "en": "Color depth",
+    "zh-CN": "色深"
+  },
+  "Pixel ratio": {
+    "en": "Pixel ratio",
+    "zh-CN": "像素比"
+  },
+  "Viewport": {
+    "en": "Viewport",
+    "zh-CN": "视口"
+  },
+  "Region": {
+    "en": "Region",
+    "zh-CN": "区域"
+  },
+  "Local time": {
+    "en": "Local time",
+    "zh-CN": "本地时间"
+  },
+  "API capabilities": {
+    "en": "API capabilities",
+    "zh-CN": "API 能力"
+  },
+  "Clipboard API": {
+    "en": "Clipboard API",
+    "zh-CN": "剪贴板 API"
+  },
+  "Save chart": {
+    "en": "Save chart",
+    "zh-CN": "保存图表"
   },
   "Set a master password (8+ characters) to store keys for the cipher tools.": {
     "en": "Set a master password (8+ characters) to store keys for the cipher tools.",
@@ -5804,10 +8043,6 @@
     "en": "Clear the filter to reorder",
     "zh-CN": "筛选时不能排序"
   },
-  "Drag or use Up/Down to reorder": {
-    "en": "Drag or use Up/Down to reorder",
-    "zh-CN": "拖动或使用上下方向键排序"
-  },
   "Key name": {
     "en": "Key name",
     "zh-CN": "密钥名称"
@@ -5839,7 +8074,10 @@
     "es": "Cifrado asimétrico",
     "it": "Cifratura asimmetrica",
     "ja": "非対称暗号",
-    "pt-BR": "Criptografia assimétrica"
+    "pt-BR": "Criptografia assimétrica",
+    "ko": "비대칭 암호",
+    "tr": "Asimetrik şifre",
+    "az": "Asimmetrik şifrə"
   },
   "How": {
     "en": "How",
@@ -5873,10 +8111,6 @@
     "en": "Confirm new",
     "zh-CN": "再输入一次"
   },
-  "Updating…": {
-    "en": "Updating…",
-    "zh-CN": "更新中…"
-  },
   "Update": {
     "en": "Update",
     "zh-CN": "更新"
@@ -5900,10 +8134,6 @@
   "Verify master password again": {
     "en": "Verify master password again",
     "zh-CN": "再次验证主密码"
-  },
-  "Show secret": {
-    "en": "Show secret",
-    "zh-CN": "显示原文"
   },
   "Delete key": {
     "en": "Delete key",
@@ -6016,7 +8246,10 @@
     "es": "Banco de trabajo JSON",
     "it": "Area di lavoro JSON",
     "ja": "JSON ワークベンチ",
-    "pt-BR": "Bancada JSON"
+    "pt-BR": "Bancada JSON",
+    "ko": "JSON 워크벤치",
+    "tr": "JSON tezgahı",
+    "az": "JSON iş masası"
   },
   "Data format convert": {
     "en": "Data format convert",
@@ -6025,7 +8258,10 @@
     "es": "Conversión de formatos",
     "it": "Conversione formati",
     "ja": "データ形式変換",
-    "pt-BR": "Conversão de formatos"
+    "pt-BR": "Conversão de formatos",
+    "ko": "데이터 형식 변환",
+    "tr": "Veri formatı dönüştürme",
+    "az": "Məlumat formatına çevirmək"
   },
   "Code formatter": {
     "en": "Code formatter",
@@ -6034,7 +8270,10 @@
     "es": "Formateador de código",
     "it": "Formattatore di codice",
     "ja": "コードフォーマッター",
-    "pt-BR": "Formatador de código"
+    "pt-BR": "Formatador de código",
+    "ko": "코드 포맷터",
+    "tr": "Kod biçimlendirici",
+    "az": "Kod formatlayıcısı"
   },
   "Spreadsheet": {
     "en": "Spreadsheet",
@@ -6043,7 +8282,34 @@
     "es": "Hoja de cálculo",
     "it": "Foglio di calcolo",
     "ja": "スプレッドシート",
-    "pt-BR": "Planilha"
+    "pt-BR": "Planilha",
+    "ko": "스프레드시트",
+    "tr": "E-tablo",
+    "az": "Elektron cədvəl"
+  },
+  "Chart generator": {
+    "en": "Chart generator",
+    "zh-CN": "图表生成器",
+    "zh-TW": "圖表產生器",
+    "es": "Chart generator",
+    "it": "Chart generator",
+    "ja": "Chart generator",
+    "pt-BR": "Chart generator",
+    "ko": "차트 생성기",
+    "tr": "Grafik oluşturucu",
+    "az": "Diaqram generatoru"
+  },
+  "Open Chart generator directly with ready-to-use defaults": {
+    "en": "Open Chart generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图表生成器",
+    "zh-TW": "使用預設參數直接開啟圖表產生器",
+    "es": "Abre directamente Chart generator con valores preparados",
+    "it": "Apri direttamente Chart generator con valori pronti",
+    "ja": "Chart generatorを既定値ですぐに開く",
+    "pt-BR": "Abra Chart generator diretamente com valores prontos",
+    "ko": "차트 생성기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Grafik oluşturucu aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Diaqram generatoru hazır parametrlərlə birbaşa açılsın"
   },
   "Base / Hex": {
     "en": "Base / Hex",
@@ -6052,7 +8318,10 @@
     "es": "Base / Hex",
     "it": "Base / Hex",
     "ja": "Base / Hex",
-    "pt-BR": "Base / Hex"
+    "pt-BR": "Base / Hex",
+    "ko": "Base / Hex",
+    "tr": "Base / Hex",
+    "az": "Base / Hex"
   },
   "URL encode": {
     "en": "URL encode",
@@ -6061,7 +8330,10 @@
     "es": "Codificación URL",
     "it": "Codifica URL",
     "ja": "URL エンコード",
-    "pt-BR": "Codificação de URL"
+    "pt-BR": "Codificação de URL",
+    "ko": "URL 인코딩",
+    "tr": "URL kodlaması",
+    "az": "URL kodlaması"
   },
   "Character escape": {
     "en": "Character escape",
@@ -6070,7 +8342,10 @@
     "es": "Escape de caracteres",
     "it": "Escape caratteri",
     "ja": "文字エスケープ",
-    "pt-BR": "Escape de caracteres"
+    "pt-BR": "Escape de caracteres",
+    "ko": "캐릭터 이스케이프",
+    "tr": "Karakter kaçışı",
+    "az": "Xarakter qaçışı"
   },
   "SQL escape": {
     "en": "SQL escape",
@@ -6079,7 +8354,10 @@
     "es": "Escape SQL",
     "it": "Escape SQL",
     "ja": "SQL エスケープ",
-    "pt-BR": "Escape SQL"
+    "pt-BR": "Escape SQL",
+    "ko": "SQL 이스케이프",
+    "tr": "SQL kaçışı",
+    "az": "SQL qaçışı"
   },
   "Data URI": {
     "en": "Data URI",
@@ -6088,7 +8366,10 @@
     "es": "URI de datos",
     "it": "URI dati",
     "ja": "データ URI",
-    "pt-BR": "URI de dados"
+    "pt-BR": "URI de dados",
+    "ko": "Data URI",
+    "tr": "Data URI",
+    "az": "Data URI"
   },
   "Punycode / IDN": {
     "en": "Punycode / IDN",
@@ -6097,7 +8378,10 @@
     "es": "Punycode / IDN",
     "it": "Punycode / IDN",
     "ja": "Punycode / IDN",
-    "pt-BR": "Punycode / IDN"
+    "pt-BR": "Punycode / IDN",
+    "ko": "Punycode / IDN",
+    "tr": "Punycode / IDN",
+    "az": "Punycode / IDN"
   },
   "Quoted-Printable": {
     "en": "Quoted-Printable",
@@ -6106,25 +8390,22 @@
     "es": "Quoted-Printable",
     "it": "Quoted-Printable",
     "ja": "Quoted-Printable",
-    "pt-BR": "Quoted-Printable"
+    "pt-BR": "Quoted-Printable",
+    "ko": "Quoted-Printable",
+    "tr": "Quoted-Printable",
+    "az": "Quoted-Printable"
   },
-  "Timestamp": {
-    "en": "Timestamp",
-    "zh-CN": "时间戳",
-    "zh-TW": "時間戳",
-    "es": "Marca de tiempo",
-    "it": "Timestamp",
-    "ja": "タイムスタンプ",
-    "pt-BR": "Timestamp"
-  },
-  "Color convert": {
-    "en": "Color convert",
-    "zh-CN": "颜色转换",
-    "zh-TW": "顏色轉換",
-    "es": "Conversión de color",
-    "it": "Conversione colori",
-    "ja": "色変換",
-    "pt-BR": "Conversão de cores"
+  "Color & contrast": {
+    "en": "Color & contrast",
+    "zh-CN": "颜色与对比度",
+    "zh-TW": "顏色與對比度",
+    "es": "Color y contraste",
+    "it": "Colore e contrasto",
+    "ja": "色とコントラスト",
+    "pt-BR": "Cor e contraste",
+    "ko": "색상 및 대비",
+    "tr": "Renk ve kontrast",
+    "az": "Rəng və kontrast"
   },
   "Number base": {
     "en": "Number base",
@@ -6133,7 +8414,46 @@
     "es": "Conversión de bases",
     "it": "Conversione di base",
     "ja": "進数変換",
-    "pt-BR": "Conversão de bases"
+    "pt-BR": "Conversão de bases",
+    "ko": "숫자 베이스",
+    "tr": "Sayı tabanı",
+    "az": "Nömrə bazası"
+  },
+  "Open Phone number directly with ready-to-use defaults": {
+    "en": "Open Phone number directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开电话号码解析",
+    "zh-TW": "使用預設參數直接開啟電話號碼解析",
+    "es": "Abre directamente Phone number con valores preparados",
+    "it": "Apri direttamente Phone number con valori pronti",
+    "ja": "Phone numberを既定値ですぐに開く",
+    "pt-BR": "Abra Phone number diretamente com valores prontos",
+    "ko": "전화번호 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Telefon numarası aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Telefon nömrəsi hazır parametrlərlə birbaşa açılsın"
+  },
+  "Bandwidth calculator": {
+    "en": "Bandwidth calculator",
+    "zh-CN": "带宽与传输",
+    "zh-TW": "頻寬與傳輸",
+    "es": "Bandwidth calculator",
+    "it": "Bandwidth calculator",
+    "ja": "Bandwidth calculator",
+    "pt-BR": "Bandwidth calculator",
+    "ko": "대역폭 계산기",
+    "tr": "Bant genişliği hesaplayıcı",
+    "az": "Bant genişliyi kalkulyatoru"
+  },
+  "Open Bandwidth calculator directly with ready-to-use defaults": {
+    "en": "Open Bandwidth calculator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开带宽与传输",
+    "zh-TW": "使用預設參數直接開啟頻寬與傳輸",
+    "es": "Abre directamente Bandwidth calculator con valores preparados",
+    "it": "Apri direttamente Bandwidth calculator con valori pronti",
+    "ja": "Bandwidth calculatorを既定値ですぐに開く",
+    "pt-BR": "Abra Bandwidth calculator diretamente com valores prontos",
+    "ko": "대역폭 계산기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Bant genişliği hesaplayıcı aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Bant genişliyi kalkulyatoru hazır parametrlərlə birbaşa açılsın"
   },
   "Network / CIDR": {
     "en": "Network / CIDR",
@@ -6142,7 +8462,106 @@
     "es": "Red / CIDR",
     "it": "Rete / CIDR",
     "ja": "ネットワーク / CIDR",
-    "pt-BR": "Rede / CIDR"
+    "pt-BR": "Rede / CIDR",
+    "ko": "네트워크/CIDR",
+    "tr": "Ağ / CIDR",
+    "az": "Şəbəkə / CIDR"
+  },
+  "Port processes": {
+    "en": "Port processes",
+    "zh-CN": "端口进程",
+    "zh-TW": "連接埠程序",
+    "es": "Procesos por puerto",
+    "it": "Processi per porta",
+    "ja": "ポート別プロセス",
+    "pt-BR": "Processos por porta",
+    "ko": "포트 프로세스",
+    "tr": "Bağlantı noktası işlemleri",
+    "az": "Port prosesləri"
+  },
+  "User-Agent parser": {
+    "en": "User-Agent parser",
+    "zh-CN": "User-Agent 解析器",
+    "zh-TW": "User-Agent 解析器",
+    "es": "User-Agent parser",
+    "it": "User-Agent parser",
+    "ja": "User-Agent parser",
+    "pt-BR": "User-Agent parser",
+    "ko": "User-Agent parser",
+    "tr": "User-Agent parser",
+    "az": "User-Agent parser"
+  },
+  "Open User-Agent parser directly with ready-to-use defaults": {
+    "en": "Open User-Agent parser directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开User-Agent 解析器",
+    "zh-TW": "使用預設參數直接開啟User-Agent 解析器",
+    "es": "Abre directamente User-Agent parser con valores preparados",
+    "it": "Apri direttamente User-Agent parser con valori pronti",
+    "ja": "User-Agent parserを既定値ですぐに開く",
+    "pt-BR": "Abra User-Agent parser diretamente com valores prontos",
+    "ko": "User-Agent parser 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "User-Agent parser aracını hazır varsayılanlarla doğrudan açın",
+    "az": "User-Agent parser hazır parametrlərlə birbaşa açılsın"
+  },
+  "Device information": {
+    "en": "Device information",
+    "zh-CN": "设备信息",
+    "zh-TW": "裝置資訊",
+    "es": "Device information",
+    "it": "Device information",
+    "ja": "Device information",
+    "pt-BR": "Device information",
+    "ko": "Device information",
+    "tr": "Device information",
+    "az": "Device information"
+  },
+  "Open Device information directly with ready-to-use defaults": {
+    "en": "Open Device information directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开设备信息",
+    "zh-TW": "使用預設參數直接開啟裝置資訊",
+    "es": "Abre directamente Device information con valores preparados",
+    "it": "Apri direttamente Device information con valori pronti",
+    "ja": "Device informationを既定値ですぐに開く",
+    "pt-BR": "Abra Device information diretamente com valores prontos",
+    "ko": "Device information 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Device information aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Device information hazır parametrlərlə birbaşa açılsın"
+  },
+  "Keyboard event inspector": {
+    "en": "Keyboard event inspector",
+    "zh-CN": "键盘事件检查器",
+    "zh-TW": "鍵盤事件檢查器",
+    "es": "Keyboard event inspector",
+    "it": "Keyboard event inspector",
+    "ja": "Keyboard event inspector",
+    "pt-BR": "Keyboard event inspector",
+    "ko": "Keyboard event inspector",
+    "tr": "Keyboard event inspector",
+    "az": "Keyboard event inspector"
+  },
+  "Open Keyboard event inspector directly with ready-to-use defaults": {
+    "en": "Open Keyboard event inspector directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开键盘事件检查器",
+    "zh-TW": "使用預設參數直接開啟鍵盤事件檢查器",
+    "es": "Abre directamente Keyboard event inspector con valores preparados",
+    "it": "Apri direttamente Keyboard event inspector con valori pronti",
+    "ja": "Keyboard event inspectorを既定値ですぐに開く",
+    "pt-BR": "Abra Keyboard event inspector diretamente com valores prontos",
+    "ko": "Keyboard event inspector 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Keyboard event inspector aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Keyboard event inspector hazır parametrlərlə birbaşa açılsın"
+  },
+  "Text Gzip": {
+    "en": "Text Gzip",
+    "zh-CN": "文本 Gzip",
+    "zh-TW": "文字 Gzip",
+    "es": "Gzip de texto",
+    "it": "Gzip testo",
+    "ja": "テキスト Gzip",
+    "pt-BR": "Gzip de texto",
+    "ko": "텍스트 Gzip",
+    "tr": "Metin Gzip",
+    "az": "Mətn Gzip"
   },
   "Regex tester": {
     "en": "Regex tester",
@@ -6151,7 +8570,10 @@
     "es": "Prueba de expresiones regulares",
     "it": "Test espressioni regolari",
     "ja": "正規表現テスター",
-    "pt-BR": "Teste de expressões regulares"
+    "pt-BR": "Teste de expressões regulares",
+    "ko": "정규식 테스터",
+    "tr": "Regex test cihazı",
+    "az": "Regex tester"
   },
   "Text diff": {
     "en": "Text diff",
@@ -6160,7 +8582,10 @@
     "es": "Comparación de texto",
     "it": "Confronto testi",
     "ja": "テキスト比較",
-    "pt-BR": "Comparação de texto"
+    "pt-BR": "Comparação de texto",
+    "ko": "텍스트 차이",
+    "tr": "Metin farkı",
+    "az": "Mətn fərqi"
   },
   "Unicode inspector": {
     "en": "Unicode inspector",
@@ -6169,7 +8594,130 @@
     "es": "Inspector Unicode",
     "it": "Analisi Unicode",
     "ja": "Unicode インスペクター",
-    "pt-BR": "Inspetor Unicode"
+    "pt-BR": "Inspetor Unicode",
+    "ko": "유니코드 검사기",
+    "tr": "Unicode denetçisi",
+    "az": "Unicode müfəttişi"
+  },
+  "cURL to code": {
+    "en": "cURL to code",
+    "zh-CN": "cURL 转代码",
+    "zh-TW": "cURL 轉程式碼",
+    "es": "cURL a código",
+    "it": "cURL in codice",
+    "ja": "cURL からコード",
+    "pt-BR": "cURL para código",
+    "ko": "cURL to code",
+    "tr": "cURL to code",
+    "az": "cURL to code"
+  },
+  "Open cURL to code directly with ready-to-use defaults": {
+    "en": "Open cURL to code directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开cURL 转代码",
+    "zh-TW": "使用預設參數直接開啟cURL 轉程式碼",
+    "es": "Abre directamente cURL a código con valores preparados",
+    "it": "Apri direttamente cURL in codice con valori pronti",
+    "ja": "cURL からコードを既定値ですぐに開く",
+    "pt-BR": "Abra cURL para código diretamente com valores prontos",
+    "ko": "cURL to code 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "cURL to code aracını hazır varsayılanlarla doğrudan açın",
+    "az": "cURL to code hazır parametrlərlə birbaşa açılsın"
+  },
+  "Docker Run ↔ Compose": {
+    "en": "Docker Run ↔ Compose",
+    "zh-CN": "Docker Run 与 Compose 互转",
+    "zh-TW": "Docker Run 與 Compose 互轉",
+    "es": "Docker Run ↔ Compose",
+    "it": "Docker Run ↔ Compose",
+    "ja": "Docker Run ↔ Compose",
+    "pt-BR": "Docker Run ↔ Compose",
+    "ko": "Docker Run ↔ Compose",
+    "tr": "Docker Run ↔ Compose",
+    "az": "Docker Run ↔ Compose"
+  },
+  "Open Docker Run ↔ Compose directly with ready-to-use defaults": {
+    "en": "Open Docker Run ↔ Compose directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开Docker Run 与 Compose 互转",
+    "zh-TW": "使用預設參數直接開啟Docker Run 與 Compose 互轉",
+    "es": "Abre directamente Docker Run ↔ Compose con valores preparados",
+    "it": "Apri direttamente Docker Run ↔ Compose con valori pronti",
+    "ja": "Docker Run ↔ Composeを既定値ですぐに開く",
+    "pt-BR": "Abra Docker Run ↔ Compose diretamente com valores prontos",
+    "ko": "Docker Run ↔ Compose 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Docker Run ↔ Compose aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Docker Run ↔ Compose hazır parametrlərlə birbaşa açılsın"
+  },
+  "Git reference": {
+    "en": "Git reference",
+    "zh-CN": "Git 速查",
+    "zh-TW": "Git 速查",
+    "es": "Git reference",
+    "it": "Git reference",
+    "ja": "Git reference",
+    "pt-BR": "Git reference",
+    "ko": "Git 참조",
+    "tr": "Git başvurusu",
+    "az": "Git arayışı"
+  },
+  "Open Git reference directly with ready-to-use defaults": {
+    "en": "Open Git reference directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开Git 速查",
+    "zh-TW": "使用預設參數直接開啟Git 速查",
+    "es": "Abre directamente Git reference con valores preparados",
+    "it": "Apri direttamente Git reference con valori pronti",
+    "ja": "Git referenceを既定値ですぐに開く",
+    "pt-BR": "Abra Git reference diretamente com valores prontos",
+    "ko": "Git 참조 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Git başvurusu aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Git arayışı hazır parametrlərlə birbaşa açılsın"
+  },
+  "Web Meta generator": {
+    "en": "Web Meta generator",
+    "zh-CN": "Web Meta 生成器",
+    "zh-TW": "Web Meta 產生器",
+    "es": "Web Meta generator",
+    "it": "Web Meta generator",
+    "ja": "Web Meta generator",
+    "pt-BR": "Web Meta generator",
+    "ko": "Web Meta 생성기",
+    "tr": "Web Meta oluşturucu",
+    "az": "Web Meta generatoru"
+  },
+  "Open Web Meta generator directly with ready-to-use defaults": {
+    "en": "Open Web Meta generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开Web Meta 生成器",
+    "zh-TW": "使用預設參數直接開啟Web Meta 產生器",
+    "es": "Abre directamente Web Meta generator con valores preparados",
+    "it": "Apri direttamente Web Meta generator con valori pronti",
+    "ja": "Web Meta generatorを既定値ですぐに開く",
+    "pt-BR": "Abra Web Meta generator diretamente com valores prontos",
+    "ko": "Web Meta 생성기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Web Meta oluşturucu aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Web Meta generatoru hazır parametrlərlə birbaşa açılsın"
+  },
+  "HTML playground": {
+    "en": "HTML playground",
+    "zh-CN": "HTML Playground",
+    "zh-TW": "HTML Playground",
+    "es": "HTML playground",
+    "it": "HTML playground",
+    "ja": "HTML playground",
+    "pt-BR": "HTML playground",
+    "ko": "HTML 플레이그라운드",
+    "tr": "HTML oyun alanı",
+    "az": "HTML sınaq sahəsi"
+  },
+  "Open HTML playground directly with ready-to-use defaults": {
+    "en": "Open HTML playground directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HTML Playground",
+    "zh-TW": "使用預設參數直接開啟HTML Playground",
+    "es": "Abre directamente HTML playground con valores preparados",
+    "it": "Apri direttamente HTML playground con valori pronti",
+    "ja": "HTML playgroundを既定値ですぐに開く",
+    "pt-BR": "Abra HTML playground diretamente com valores prontos",
+    "ko": "HTML 플레이그라운드 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HTML oyun alanı aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HTML sınaq sahəsi hazır parametrlərlə birbaşa açılsın"
   },
   "Hash & checksum": {
     "en": "Hash & checksum",
@@ -6178,7 +8726,22 @@
     "es": "Hash y suma de verificación",
     "it": "Hash e checksum",
     "ja": "ハッシュとチェックサム",
-    "pt-BR": "Hash e checksum"
+    "pt-BR": "Hash e checksum",
+    "ko": "해시 및 체크섬",
+    "tr": "Karma ve sağlama toplamı",
+    "az": "Hash & checksum"
+  },
+  "File type identifier": {
+    "en": "File type identifier",
+    "zh-CN": "文件格式识别",
+    "zh-TW": "檔案格式識別",
+    "es": "Identificar formato",
+    "it": "Riconosci formato",
+    "ja": "ファイル形式判定",
+    "pt-BR": "Identificar formato",
+    "ko": "파일 형식 식별",
+    "tr": "Dosya biçimi tanıma",
+    "az": "Fayl formatının müəyyənləşdirilməsi"
   },
   "JWT": {
     "en": "JWT",
@@ -6187,7 +8750,10 @@
     "es": "JWT",
     "it": "JWT",
     "ja": "JWT",
-    "pt-BR": "JWT"
+    "pt-BR": "JWT",
+    "ko": "JWT",
+    "tr": "JWT",
+    "az": "JWT"
   },
   "Symmetric cipher": {
     "en": "Symmetric cipher",
@@ -6196,7 +8762,10 @@
     "es": "Cifrado simétrico",
     "it": "Cifratura simmetrica",
     "ja": "対称暗号",
-    "pt-BR": "Criptografia simétrica"
+    "pt-BR": "Criptografia simétrica",
+    "ko": "대칭 암호",
+    "tr": "Simetrik şifre",
+    "az": "Simmetrik şifrə"
   },
   "HMAC": {
     "en": "HMAC",
@@ -6205,7 +8774,10 @@
     "es": "HMAC",
     "it": "HMAC",
     "ja": "HMAC",
-    "pt-BR": "HMAC"
+    "pt-BR": "HMAC",
+    "ko": "HMAC",
+    "tr": "HMAC",
+    "az": "HMAC"
   },
   "TOTP": {
     "en": "TOTP",
@@ -6214,7 +8786,10 @@
     "es": "TOTP",
     "it": "TOTP",
     "ja": "TOTP",
-    "pt-BR": "TOTP"
+    "pt-BR": "TOTP",
+    "ko": "TOTP",
+    "tr": "TOTP",
+    "az": "TOTP"
   },
   "Certificate & SSH": {
     "en": "Certificate & SSH",
@@ -6223,7 +8798,10 @@
     "es": "Certificados y SSH",
     "it": "Certificati e SSH",
     "ja": "証明書と SSH",
-    "pt-BR": "Certificados e SSH"
+    "pt-BR": "Certificados e SSH",
+    "ko": "인증서 및 SSH",
+    "tr": "Sertifika ve SSH",
+    "az": "Sertifikat və SSH"
   },
   "JWK / JWKS": {
     "en": "JWK / JWKS",
@@ -6232,25 +8810,34 @@
     "es": "JWK / JWKS",
     "it": "JWK / JWKS",
     "ja": "JWK / JWKS",
-    "pt-BR": "JWK / JWKS"
+    "pt-BR": "JWK / JWKS",
+    "ko": "JWK / JWKS",
+    "tr": "JWK / JWKS",
+    "az": "JWK / JWKS"
   },
-  "Symmetric key": {
-    "en": "Symmetric key",
-    "zh-CN": "对称密钥",
-    "zh-TW": "對稱金鑰",
-    "es": "Clave simétrica",
-    "it": "Chiave simmetrica",
-    "ja": "対称鍵",
-    "pt-BR": "Chave simétrica"
+  "Key generator": {
+    "en": "Key generator",
+    "zh-CN": "密钥生成",
+    "zh-TW": "金鑰產生",
+    "es": "Key generator",
+    "it": "Key generator",
+    "ja": "Key generator",
+    "pt-BR": "Key generator",
+    "ko": "키 생성기",
+    "tr": "Anahtar oluşturucu",
+    "az": "Açar generatoru"
   },
-  "Key pair": {
-    "en": "Key pair",
-    "zh-CN": "密钥对",
-    "zh-TW": "金鑰對",
-    "es": "Par de claves",
-    "it": "Coppia di chiavi",
-    "ja": "鍵ペア",
-    "pt-BR": "Par de chaves"
+  "Open Key generator directly with ready-to-use defaults": {
+    "en": "Open Key generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开密钥生成",
+    "zh-TW": "使用預設參數直接開啟金鑰產生",
+    "es": "Abre directamente Key generator con valores preparados",
+    "it": "Apri direttamente Key generator con valori pronti",
+    "ja": "Key generatorを既定値ですぐに開く",
+    "pt-BR": "Abra Key generator diretamente com valores prontos",
+    "ko": "키 생성기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Anahtar oluşturucu aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Açar generatoru hazır parametrlərlə birbaşa açılsın"
   },
   "XOR (debug)": {
     "en": "XOR (debug)",
@@ -6259,7 +8846,10 @@
     "es": "XOR (depuración)",
     "it": "XOR (debug)",
     "ja": "XOR（デバッグ）",
-    "pt-BR": "XOR (depuração)"
+    "pt-BR": "XOR (depuração)",
+    "ko": "XOR(디버그)",
+    "tr": "XOR (hata ayıklama)",
+    "az": "XOR (sazlama)"
   },
   "Unique ID": {
     "en": "Unique ID",
@@ -6268,7 +8858,10 @@
     "es": "ID único",
     "it": "ID univoco",
     "ja": "一意の ID",
-    "pt-BR": "ID único"
+    "pt-BR": "ID único",
+    "ko": "고유 ID",
+    "tr": "Benzersiz kimlik",
+    "az": "Unikal ID"
   },
   "Random password": {
     "en": "Random password",
@@ -6277,7 +8870,22 @@
     "es": "Contraseña aleatoria",
     "it": "Password casuale",
     "ja": "ランダムパスワード",
-    "pt-BR": "Senha aleatória"
+    "pt-BR": "Senha aleatória",
+    "ko": "무작위 비밀번호",
+    "tr": "Rastgele şifre",
+    "az": "Təsadüfi parol"
+  },
+  "Random bytes": {
+    "en": "Random bytes",
+    "zh-CN": "随机字节",
+    "zh-TW": "隨機位元組",
+    "es": "Bytes aleatorios",
+    "it": "Byte casuali",
+    "ja": "ランダムバイト",
+    "pt-BR": "Bytes aleatórios",
+    "ko": "무작위 바이트",
+    "tr": "Rastgele baytlar",
+    "az": "Təsadüfi baytlar"
   },
   "QR & barcodes": {
     "en": "QR & barcodes",
@@ -6286,7 +8894,10 @@
     "es": "QR y códigos de barras",
     "it": "QR e codici a barre",
     "ja": "QR・バーコード",
-    "pt-BR": "QR e códigos de barras"
+    "pt-BR": "QR e códigos de barras",
+    "ko": "QR 및 바코드",
+    "tr": "QR ve barkodlar",
+    "az": "QR və barkodlar"
   },
   "Repeated text": {
     "en": "Repeated text",
@@ -6295,16 +8906,46 @@
     "es": "Texto repetido",
     "it": "Testo ripetuto",
     "ja": "繰り返しテキスト",
-    "pt-BR": "Texto repetido"
+    "pt-BR": "Texto repetido",
+    "ko": "반복되는 텍스트",
+    "tr": "Tekrarlanan metin",
+    "az": "Təkrarlanan mətn"
+  },
+  "Fake data generator": {
+    "en": "Fake data generator",
+    "zh-CN": "假数据生成",
+    "zh-TW": "假資料產生",
+    "es": "Fake data generator",
+    "it": "Fake data generator",
+    "ja": "Fake data generator",
+    "pt-BR": "Fake data generator",
+    "ko": "가상 데이터 생성기",
+    "tr": "Sahte veri oluşturucu",
+    "az": "Saxta məlumat generatoru"
+  },
+  "Open Fake data generator directly with ready-to-use defaults": {
+    "en": "Open Fake data generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开假数据生成",
+    "zh-TW": "使用預設參數直接開啟假資料產生",
+    "es": "Abre directamente Fake data generator con valores preparados",
+    "it": "Apri direttamente Fake data generator con valori pronti",
+    "ja": "Fake data generatorを既定値ですぐに開く",
+    "pt-BR": "Abra Fake data generator diretamente com valores prontos",
+    "ko": "가상 데이터 생성기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Sahte veri oluşturucu aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Saxta məlumat generatoru hazır parametrlərlə birbaşa açılsın"
   },
   "Image editor": {
     "en": "Image editor",
-    "zh-CN": "图片处理",
-    "zh-TW": "圖片處理",
+    "zh-CN": "图片编辑",
+    "zh-TW": "圖片編輯",
     "es": "Editor de imágenes",
     "it": "Editor immagini",
     "ja": "画像編集",
-    "pt-BR": "Editor de imagens"
+    "pt-BR": "Editor de imagens",
+    "ko": "이미지 편집기",
+    "tr": "Resim düzenleyici",
+    "az": "Şəkil redaktoru"
   },
   "Placeholder image": {
     "en": "Placeholder image",
@@ -6313,7 +8954,274 @@
     "es": "Imagen de marcador",
     "it": "Immagine segnaposto",
     "ja": "プレースホルダー画像",
-    "pt-BR": "Imagem de espaço reservado"
+    "pt-BR": "Imagem de espaço reservado",
+    "ko": "자리 표시자 이미지",
+    "tr": "Yer tutucu resim",
+    "az": "Yer tutucu şəkli"
+  },
+  "Image compress & convert": {
+    "en": "Image compress & convert",
+    "zh-CN": "图片压缩与格式转换",
+    "zh-TW": "圖片壓縮與格式轉換",
+    "es": "Image compress & convert",
+    "it": "Image compress & convert",
+    "ja": "Image compress & convert",
+    "pt-BR": "Image compress & convert",
+    "ko": "이미지 압축 및 변환",
+    "tr": "Görüntü sıkıştırma ve dönüştürme",
+    "az": "Şəkil sıxışdırma və çevirmə"
+  },
+  "Open Image compress & convert directly with ready-to-use defaults": {
+    "en": "Open Image compress & convert directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片压缩与格式转换",
+    "zh-TW": "使用預設參數直接開啟圖片壓縮與格式轉換",
+    "es": "Abre directamente Image compress & convert con valores preparados",
+    "it": "Apri direttamente Image compress & convert con valori pronti",
+    "ja": "Image compress & convertを既定値ですぐに開く",
+    "pt-BR": "Abra Image compress & convert diretamente com valores prontos",
+    "ko": "이미지 압축 및 변환 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntü sıkıştırma ve dönüştürme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkil sıxışdırma və çevirmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image grid slicer": {
+    "en": "Image grid slicer",
+    "zh-CN": "图片切图",
+    "zh-TW": "圖片切圖",
+    "es": "Image grid slicer",
+    "it": "Image grid slicer",
+    "ja": "Image grid slicer",
+    "pt-BR": "Image grid slicer",
+    "ko": "이미지 격자 분할",
+    "tr": "Görüntü ızgara dilimleyici",
+    "az": "Şəkil toru bölücüsü"
+  },
+  "Open Image grid slicer directly with ready-to-use defaults": {
+    "en": "Open Image grid slicer directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片切图",
+    "zh-TW": "使用預設參數直接開啟圖片切圖",
+    "es": "Abre directamente Image grid slicer con valores preparados",
+    "it": "Apri direttamente Image grid slicer con valori pronti",
+    "ja": "Image grid slicerを既定値ですぐに開く",
+    "pt-BR": "Abra Image grid slicer diretamente com valores prontos",
+    "ko": "이미지 격자 분할 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntü ızgara dilimleyici aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkil toru bölücüsü hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image pixelate": {
+    "en": "Image pixelate",
+    "zh-CN": "图片像素化",
+    "zh-TW": "圖片像素化",
+    "es": "Image pixelate",
+    "it": "Image pixelate",
+    "ja": "Image pixelate",
+    "pt-BR": "Image pixelate",
+    "ko": "이미지 픽셀화",
+    "tr": "Görüntüyü pikselleştir",
+    "az": "Şəkli pikselləşdir"
+  },
+  "Open Image pixelate directly with ready-to-use defaults": {
+    "en": "Open Image pixelate directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片像素化",
+    "zh-TW": "使用預設參數直接開啟圖片像素化",
+    "es": "Abre directamente Image pixelate con valores preparados",
+    "it": "Apri direttamente Image pixelate con valori pronti",
+    "ja": "Image pixelateを既定値ですぐに開く",
+    "pt-BR": "Abra Image pixelate diretamente com valores prontos",
+    "ko": "이미지 픽셀화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntüyü pikselleştir aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkli pikselləşdir hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image & Base64": {
+    "en": "Image & Base64",
+    "zh-CN": "图片与 Base64",
+    "zh-TW": "圖片與 Base64",
+    "es": "Image & Base64",
+    "it": "Image & Base64",
+    "ja": "Image & Base64",
+    "pt-BR": "Image & Base64",
+    "ko": "이미지 및 Base64",
+    "tr": "Görüntü ve Base64",
+    "az": "Şəkil və Base64"
+  },
+  "Open Image & Base64 directly with ready-to-use defaults": {
+    "en": "Open Image & Base64 directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片与 Base64",
+    "zh-TW": "使用預設參數直接開啟圖片與 Base64",
+    "es": "Abre directamente Image & Base64 con valores preparados",
+    "it": "Apri direttamente Image & Base64 con valori pronti",
+    "ja": "Image & Base64を既定値ですぐに開く",
+    "pt-BR": "Abra Image & Base64 diretamente com valores prontos",
+    "ko": "이미지 및 Base64 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntü ve Base64 aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkil və Base64 hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image stitcher": {
+    "en": "Image stitcher",
+    "zh-CN": "图片拼接",
+    "zh-TW": "圖片拼接",
+    "es": "Image stitcher",
+    "it": "Image stitcher",
+    "ja": "Image stitcher",
+    "pt-BR": "Image stitcher",
+    "ko": "이미지 이어붙이기",
+    "tr": "Görüntü birleştirici",
+    "az": "Şəkil birləşdirici"
+  },
+  "Open Image stitcher directly with ready-to-use defaults": {
+    "en": "Open Image stitcher directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片拼接",
+    "zh-TW": "使用預設參數直接開啟圖片拼接",
+    "es": "Abre directamente Image stitcher con valores preparados",
+    "it": "Apri direttamente Image stitcher con valori pronti",
+    "ja": "Image stitcherを既定値ですぐに開く",
+    "pt-BR": "Abra Image stitcher diretamente com valores prontos",
+    "ko": "이미지 이어붙이기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntü birleştirici aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkil birləşdirici hazır parametrlərlə birbaşa açılsın"
+  },
+  "GIF workbench": {
+    "en": "GIF workbench",
+    "zh-CN": "GIF 动画生成",
+    "zh-TW": "GIF 動畫產生",
+    "es": "GIF workbench",
+    "it": "GIF workbench",
+    "ja": "GIF workbench",
+    "pt-BR": "GIF workbench",
+    "ko": "GIF 워크벤치",
+    "tr": "GIF çalışma alanı",
+    "az": "GIF iş sahəsi"
+  },
+  "Open GIF workbench directly with ready-to-use defaults": {
+    "en": "Open GIF workbench directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开GIF 动画生成",
+    "zh-TW": "使用預設參數直接開啟GIF 動畫產生",
+    "es": "Abre directamente GIF workbench con valores preparados",
+    "it": "Apri direttamente GIF workbench con valori pronti",
+    "ja": "GIF workbenchを既定値ですぐに開く",
+    "pt-BR": "Abra GIF workbench diretamente com valores prontos",
+    "ko": "GIF 워크벤치 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "GIF çalışma alanı aracını hazır varsayılanlarla doğrudan açın",
+    "az": "GIF iş sahəsi hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image OCR": {
+    "en": "Image OCR",
+    "zh-CN": "图片 OCR",
+    "zh-TW": "圖片 OCR",
+    "es": "Image OCR",
+    "it": "Image OCR",
+    "ja": "Image OCR",
+    "pt-BR": "Image OCR",
+    "ko": "이미지 OCR",
+    "tr": "Görüntü OCR",
+    "az": "Şəkil OCR"
+  },
+  "Open Image OCR directly with ready-to-use defaults": {
+    "en": "Open Image OCR directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片 OCR",
+    "zh-TW": "使用預設參數直接開啟圖片 OCR",
+    "es": "Abre directamente Image OCR con valores preparados",
+    "it": "Apri direttamente Image OCR con valori pronti",
+    "ja": "Image OCRを既定値ですぐに開く",
+    "pt-BR": "Abra Image OCR diretamente com valores prontos",
+    "ko": "이미지 OCR 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntü OCR aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkil OCR hazır parametrlərlə birbaşa açılsın"
+  },
+  ".env manager": {
+    "en": ".env manager",
+    "zh-CN": ".env 管理",
+    "zh-TW": ".env 管理",
+    "es": ".env manager",
+    "it": ".env manager",
+    "ja": ".env manager",
+    "pt-BR": ".env manager",
+    "ko": ".env 관리자",
+    "tr": ".env yöneticisi",
+    "az": ".env meneceri"
+  },
+  "Open .env manager directly with ready-to-use defaults": {
+    "en": "Open .env manager directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开.env 管理",
+    "zh-TW": "使用預設參數直接開啟.env 管理",
+    "es": "Abre directamente .env manager con valores preparados",
+    "it": "Apri direttamente .env manager con valori pronti",
+    "ja": ".env managerを既定値ですぐに開く",
+    "pt-BR": "Abra .env manager diretamente com valores prontos",
+    "ko": ".env 관리자 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": ".env yöneticisi aracını hazır varsayılanlarla doğrudan açın",
+    "az": ".env meneceri hazır parametrlərlə birbaşa açılsın"
+  },
+  "Semantic version": {
+    "en": "Semantic version",
+    "zh-CN": "语义版本",
+    "zh-TW": "語意版本",
+    "es": "Semantic version",
+    "it": "Semantic version",
+    "ja": "Semantic version",
+    "pt-BR": "Semantic version",
+    "ko": "Semantic version",
+    "tr": "Semantic version",
+    "az": "Semantic version"
+  },
+  "Open Semantic version directly with ready-to-use defaults": {
+    "en": "Open Semantic version directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开语义版本",
+    "zh-TW": "使用預設參數直接開啟語意版本",
+    "es": "Abre directamente Semantic version con valores preparados",
+    "it": "Apri direttamente Semantic version con valori pronti",
+    "ja": "Semantic versionを既定値ですぐに開く",
+    "pt-BR": "Abra Semantic version diretamente com valores prontos",
+    "ko": "Semantic version 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Semantic version aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Semantic version hazır parametrlərlə birbaşa açılsın"
+  },
+  "chmod calculator": {
+    "en": "chmod calculator",
+    "zh-CN": "chmod 权限计算",
+    "zh-TW": "chmod 權限計算",
+    "es": "chmod calculator",
+    "it": "chmod calculator",
+    "ja": "chmod calculator",
+    "pt-BR": "chmod calculator",
+    "ko": "chmod calculator",
+    "tr": "chmod calculator",
+    "az": "chmod calculator"
+  },
+  "Open chmod calculator directly with ready-to-use defaults": {
+    "en": "Open chmod calculator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开chmod 权限计算",
+    "zh-TW": "使用預設參數直接開啟chmod 權限計算",
+    "es": "Abre directamente chmod calculator con valores preparados",
+    "it": "Apri direttamente chmod calculator con valori pronti",
+    "ja": "chmod calculatorを既定値ですぐに開く",
+    "pt-BR": "Abra chmod calculator diretamente com valores prontos",
+    "ko": "chmod calculator 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "chmod calculator aracını hazır varsayılanlarla doğrudan açın",
+    "az": "chmod calculator hazır parametrlərlə birbaşa açılsın"
+  },
+  "HTTP status codes": {
+    "en": "HTTP status codes",
+    "zh-CN": "HTTP 状态码速查",
+    "zh-TW": "HTTP 狀態碼速查",
+    "es": "HTTP status codes",
+    "it": "HTTP status codes",
+    "ja": "HTTP status codes",
+    "pt-BR": "HTTP status codes",
+    "ko": "HTTP status codes",
+    "tr": "HTTP status codes",
+    "az": "HTTP status codes"
+  },
+  "Open HTTP status codes directly with ready-to-use defaults": {
+    "en": "Open HTTP status codes directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HTTP 状态码速查",
+    "zh-TW": "使用預設參數直接開啟HTTP 狀態碼速查",
+    "es": "Abre directamente HTTP status codes con valores preparados",
+    "it": "Apri direttamente HTTP status codes con valori pronti",
+    "ja": "HTTP status codesを既定値ですぐに開く",
+    "pt-BR": "Abra HTTP status codes diretamente com valores prontos",
+    "ko": "HTTP status codes 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HTTP status codes aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HTTP status codes hazır parametrlərlə birbaşa açılsın"
   },
   "Trim": {
     "en": "Trim",
@@ -6386,6 +9294,34 @@
   "Strip HTML": {
     "en": "Strip HTML",
     "zh-CN": "去 HTML 标签"
+  },
+  "Mask sensitive data": {
+    "en": "Mask sensitive data",
+    "zh-CN": "敏感信息脱敏"
+  },
+  "Numeronym": {
+    "en": "Numeronym",
+    "zh-CN": "数字缩写"
+  },
+  "English plural": {
+    "en": "English plural",
+    "zh-CN": "英文复数"
+  },
+  "Normalize emails": {
+    "en": "Normalize emails",
+    "zh-CN": "邮箱规范化"
+  },
+  "Extract emails": {
+    "en": "Extract emails",
+    "zh-CN": "提取邮箱"
+  },
+  "Extract URLs": {
+    "en": "Extract URLs",
+    "zh-CN": "提取 URL"
+  },
+  "ASCII banner": {
+    "en": "ASCII banner",
+    "zh-CN": "ASCII 横幅"
   },
   "Count only": {
     "en": "Count only",

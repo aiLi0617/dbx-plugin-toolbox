@@ -39,6 +39,7 @@
   let catalogCategory = $state("all");
   let launcherOpen = $state(false);
   let sidebarCollapsed = $state(false);
+  let mobileSidebarOpen = $state(false);
   let savingPrefs = $state(false);
   let prefsError = $state("");
   let vaultUnlocked = $state(false);
@@ -73,7 +74,7 @@
     let offInit;
     try { recentIds = sanitizeToolIds(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"), 10); } catch { recentIds = []; }
     // DBX's sandboxed iframe may deny access to browser storage.
-    try { sidebarCollapsed = localStorage.getItem(SIDEBAR_KEY) === "true"; } catch { sidebarCollapsed = false; }
+    try { const saved = localStorage.getItem(SIDEBAR_KEY); sidebarCollapsed = saved == null ? window.innerWidth < 960 : saved === "true"; } catch { sidebarCollapsed = window.innerWidth < 960; }
     const onEnv = (environment) => {
       locale = hostLocale(environment);
       document.documentElement.lang = locale;
@@ -126,7 +127,7 @@
     sidebarCollapsed = next;
     try { localStorage.setItem(SIDEBAR_KEY, String(next)); } catch { /* ignore */ }
   }
-  function closeOverlays() { window.dispatchEvent(new Event("toolbox-close-overlays")); }
+  function closeOverlays() { mobileSidebarOpen = false; window.dispatchEvent(new Event("toolbox-close-overlays")); }
   function openLauncher() { closeOverlays(); launcherOpen = true; }
   function openHome() { closeOverlays(); page = "home"; launcherOpen = false; }
   function openCatalog(category = "all") { closeOverlays(); catalogCategory = category; page = "catalog"; launcherOpen = false; }
@@ -269,30 +270,17 @@
   {@const ActiveView = loadedViews[item.view]}
   {@const initialOptions = toolOptions[item.id] || {}}
   {@const demo = demoByToolId.get(item.id)}
-  {@const shortcut = item.kind === "shortcut"}
-  {@const parentTool = shortcut ? tools.find((candidate) => candidate.id === item.parentId) : null}
+  {@const shortcut = false}
   {#if ActiveView}
-    {#key `${item.id}:${demoRevisions[item.id] || 0}`}
-    {#if shortcut && parentTool}
-      <div class="shortcut-context">
-        <div>
-          <span class="shortcut-kicker">{pick(locale, chrome.focusedTool)}</span>
-          <strong>{pick(locale, item.name)}</strong>
-        </div>
-        <button class="dbx-btn dbx-btn--ghost" type="button" onclick={() => openTool(parentTool)}>
-          {pick(locale, chrome.openFullWorkbench)}
-        </button>
-      </div>
-    {/if}
     {#if item.view === "live-io"}<ActiveView {locale} toolId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
     {:else if item.view === "aes" || item.view === "rsa" || item.view === "xor"}<ActiveView {locale} kind={item.view} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "keypair" || item.view === "symmetric-key"}<ActiveView {locale} onVaultChange={refreshKeys} />
+    {:else if item.view === "keypair" || item.view === "symmetric-key" || item.view === "key-generator"}<ActiveView {locale} onVaultChange={refreshKeys} />
     {:else if item.view === "whitespace"}<ActiveView {locale} initialAction={initialOptions.action || "trim"} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "image-utility"}<ActiveView {locale} {demo} />
+    {:else if item.view === "image-utility"}<ActiveView {locale} toolId={item.id} {demo} />
     {:else if item.view === "image-process"}<ActiveView {locale} {shortcut} focusedOperation={initialOptions.op || ""} />
     {:else if item.view === "developer-utility"}<ActiveView {locale} toolId={item.id} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
+    {:else if item.view === "utility-suite"}<ActiveView {locale} toolId={item.id} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
     {:else}<ActiveView {locale} {initialOptions} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />{/if}
-    {/key}
   {:else if viewLoadErrors[item.view]}
     <div class="view-load-state" role="alert">
       <span>{pick(locale, chrome.toolLoadFailed)}: {viewLoadErrors[item.view]}</span>
@@ -303,12 +291,14 @@
   {/if}
 {/snippet}
 
-<div class="app" class:sidebar-collapsed={sidebarCollapsed}>
-  <ToolboxSidebar {locale} collapsed={sidebarCollapsed} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {vaultUnlocked}
+<div class="app" class:sidebar-collapsed={sidebarCollapsed} class:mobile-sidebar-open={mobileSidebarOpen}>
+  {#if mobileSidebarOpen}<button class="sidebar-scrim" type="button" aria-label={pick(locale, chrome.collapseSidebar)} onclick={() => mobileSidebarOpen = false}></button>{/if}
+  <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {vaultUnlocked}
     onHome={openHome} onCatalog={() => openCatalog("all")} onSearch={openLauncher} onTool={openTool} onVault={openVault}
     onToggleCollapse={() => setCollapsed(!sidebarCollapsed)} onMoveFavorite={moveFavorite} />
   <section class="main">
     <div class="toolbar">
+      <button class="dbx-btn dbx-btn--ghost icon-btn mobile-menu" type="button" aria-label={pick(locale, chrome.expandSidebar)} onclick={() => mobileSidebarOpen = !mobileSidebarOpen}>☰</button>
       <h2>{title}</h2>
       <div class="toolbar-end">
         {#if page === "tool" && tool}
@@ -346,9 +336,4 @@
   .tool-session.fill { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; overflow: hidden; }
   .tool-session[hidden] { display: none; }
   .view-load-state { display: flex; align-items: center; gap: 10px; color: var(--color-muted-foreground); }
-  .shortcut-context { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 9px; background: color-mix(in srgb, var(--color-card) 86%, var(--color-primary) 14%); }
-  .shortcut-context > div { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
-  .shortcut-context strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
-  .shortcut-kicker { color: var(--color-muted-foreground); font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
-  @media (max-width: 560px) { .shortcut-context { align-items: stretch; flex-direction: column; }.shortcut-context button { align-self: flex-start; } }
 </style>

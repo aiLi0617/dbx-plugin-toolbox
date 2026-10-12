@@ -25,6 +25,13 @@ export const TEXT_ACTIONS = [
   ["half", "转半角", "Halfwidth", []],
   ["slugify", "Slugify", "Slugify", ["slug"]],
   ["strip-html", "去 HTML 标签", "Strip HTML", ["去标签"]],
+  ["mask", "敏感信息脱敏", "Mask sensitive data", ["字符串脱敏", "masking"]],
+  ["numeronym", "数字缩写", "Numeronym", ["i18n", "k8s", "a11y"]],
+  ["pluralize", "英文复数", "English plural", ["单复数"]],
+  ["email-normalize", "邮箱规范化", "Normalize emails", []],
+  ["extract-email", "提取邮箱", "Extract emails", []],
+  ["extract-url", "提取 URL", "Extract URLs", []],
+  ["ascii-banner", "ASCII 横幅", "ASCII banner", ["figlet", "字符画"]],
   ["stats", "仅统计", "Count only", ["字数", "字数统计", "word count"]],
 ].map(([id, zh, en, aliases]) => ({ id, zh, en, aliases }));
 

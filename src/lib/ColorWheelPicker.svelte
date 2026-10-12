@@ -10,6 +10,8 @@
   let valueEl = $state(null);
   let dragging = $state("");
 
+  const VALUE_THUMB_RADIUS = 7;
+
   const pureHex = $derived(rgbToHexFromHsv(h, s, 100));
   const currentHex = $derived(rgbToHexFromHsv(h, s, v));
   const handleLeft = $derived(50 + Math.sin((h * Math.PI) / 180) * (s / 2));
@@ -45,8 +47,9 @@
 
   function vFromEvent(event) {
     const rect = valueEl.getBoundingClientRect();
-    if (!rect.height) return v;
-    const tY = (event.clientY - rect.top) / rect.height;
+    const travel = rect.height - VALUE_THUMB_RADIUS * 2;
+    if (travel <= 0) return v;
+    const tY = (event.clientY - rect.top - VALUE_THUMB_RADIUS) / travel;
     return Math.max(0, Math.min(100, (1 - tY) * 100));
   }
 
@@ -255,7 +258,7 @@
       0 0 0 1px color-mix(in srgb, CanvasText 40%, transparent),
       0 1px 3px color-mix(in srgb, CanvasText 25%, transparent);
     pointer-events: none;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
   .value-caption,
   .value-num {

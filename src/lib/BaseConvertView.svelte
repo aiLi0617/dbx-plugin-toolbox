@@ -2,13 +2,18 @@
   import { untrack } from "svelte";
   import { copyText } from "./clipboard.js";
   import { chrome, pick } from "./i18n.js";
+  import Select from "./Select.svelte";
   import {
     clampRadix,
+    convertBaseLines,
     CUSTOM_BASE_ID,
     describeInteger,
+    FIXED_INTEGER_WIDTHS,
     formatBaseInteger,
+    normalizeFixedWidthInteger,
     NUMBER_BASES,
     parseBaseInteger,
+    reinterpretFixedWidthInteger,
   } from "./tools/convert.js";
 
   let { locale = "zh-CN" } = $props();
@@ -17,6 +22,15 @@
   let customRadix = $state(36);
   let grouped = $state(true);
   let prefixes = $state(false);
+  let uppercase = $state(false);
+  let bitWidth = $state("auto");
+  let signed = $state(true);
+  let batchMode = $state(false);
+  let batchFrom = $state("10");
+  let batchTo = $state("16");
+  let batchInput = $state("");
+  let batchOutput = $state("");
+  let batchErrorLine = $state(0);
   let number = $state(null);
   let invalidId = $state("");
   let copiedId = $state("");
@@ -24,7 +38,21 @@
   let copyError = $state("");
 
   const t = (zh, en) => pick(locale, zh, en);
-  const formatOpts = $derived({ group: grouped, prefix: prefixes });
+  const formatOpts = $derived({
+    group: grouped,
+    prefix: prefixes,
+    uppercase,
+    bits: bitWidth,
+    signed,
+  });
+  const widthOptions = $derived([
+    { value: "auto", label: t("任意精度", "Arbitrary precision") },
+    ...FIXED_INTEGER_WIDTHS.map((width) => ({ value: String(width), label: `${width} bit` })),
+  ]);
+  const signOptions = $derived([
+    { value: "signed", label: t("有符号（补码）", "Signed (two's complement)") },
+    { value: "unsigned", label: t("无符号", "Unsigned") },
+  ]);
 
   function emptyValues() {
     return Object.fromEntries([...NUMBER_BASES.map((base) => [base.id, ""]), [CUSTOM_BASE_ID, ""]]);
@@ -41,13 +69,18 @@
       return;
     }
     info = describeInteger(number);
+    if (bitWidth !== "auto") {
+      info = { ...info, bits: Number(bitWidth), bytes: Number(bitWidth) / 8 };
+    }
     for (const base of NUMBER_BASES) {
       if (base.id === exceptId) continue;
       values[base.id] = formatBaseInteger(number, base.radix, formatOpts);
     }
     if (exceptId !== CUSTOM_BASE_ID) {
       const radix = clampRadix(customRadix);
-      values[CUSTOM_BASE_ID] = radix ? formatBaseInteger(number, radix, { group: grouped, prefix: false }) : "";
+      values[CUSTOM_BASE_ID] = radix
+        ? formatBaseInteger(number, radix, { ...formatOpts, prefix: false })
+        : "";
     }
   }
 
@@ -74,9 +107,9 @@
       return;
     }
     try {
-      number = parseBaseInteger(text, radix);
+      number = normalizeFixedWidthInteger(parseBaseInteger(text, radix), bitWidth, signed);
       invalidId = "";
-      paint(fromId);
+      paint(bitWidth === "auto" ? fromId : null);
     } catch {
       invalidId = fromId;
       number = null;
@@ -88,15 +121,42 @@
   $effect(() => {
     grouped;
     prefixes;
+    uppercase;
+    bitWidth;
+    signed;
     customRadix;
     untrack(() => {
-      if (number == null || invalidId) return;
-      paint(null);
+      if (number != null && !invalidId) {
+        number = reinterpretFixedWidthInteger(number, bitWidth, signed);
+        paint(null);
+      }
     });
   });
 
-  async function copy(id) {
-    const text = values[id];
+  $effect(() => {
+    const source = batchInput;
+    const from = batchFrom;
+    const to = batchTo;
+    grouped;
+    prefixes;
+    uppercase;
+    bitWidth;
+    signed;
+    batchErrorLine = 0;
+    batchOutput = "";
+    if (!source.trim()) return;
+    const fromRadix = clampRadix(from);
+    const toRadix = clampRadix(to);
+    if (!fromRadix || !toRadix) return;
+    try {
+      batchOutput = convertBaseLines(source, fromRadix, toRadix, formatOpts);
+    } catch (error) {
+      batchErrorLine = error?.line || 0;
+    }
+  });
+
+  async function copy(id, explicitText = null) {
+    const text = explicitText ?? values[id];
     if (!text || invalidId) return;
     try {
       await copyText(text);
@@ -116,6 +176,9 @@
     number = null;
     info = null;
     values = emptyValues();
+    batchInput = "";
+    batchOutput = "";
+    batchErrorLine = 0;
   }
 
   function copyLabel(name, done) {
@@ -172,8 +235,70 @@
       <input type="checkbox" bind:checked={prefixes} />
       <span>{t("0x / 0b 前缀", "0x / 0b prefix")}</span>
     </label>
+    <label class="base-opt">
+      <input type="checkbox" bind:checked={uppercase} />
+      <span>{t("大写输出", "Uppercase output")}</span>
+    </label>
+    <label class="base-opt">
+      <input type="checkbox" bind:checked={batchMode} />
+      <span>{t("批量转换", "Batch conversion")}</span>
+    </label>
   </div>
 
+  <div class="integer-options">
+    <label class="integer-field">
+      <span>{t("整数位宽", "Integer width")}</span>
+      <Select bind:value={bitWidth} options={widthOptions} />
+    </label>
+    <label class="integer-field" class:disabled={bitWidth === "auto"}>
+      <span>{t("整数解释", "Integer interpretation")}</span>
+      <Select
+        value={signed ? "signed" : "unsigned"}
+        options={signOptions}
+        disabled={bitWidth === "auto"}
+        onchange={(value) => (signed = value === "signed")}
+      />
+    </label>
+  </div>
+
+  {#if batchMode}
+    <div class="batch-options">
+      <label>
+        <span>{t("源进制", "Source base")}</span>
+        <input class="dbx-input radix-input" type="number" min="2" max="36" bind:value={batchFrom} />
+      </label>
+      <span class="batch-arrow" aria-hidden="true">→</span>
+      <label>
+        <span>{t("目标进制", "Target base")}</span>
+        <input class="dbx-input radix-input" type="number" min="2" max="36" bind:value={batchTo} />
+      </label>
+    </div>
+    <div class="batch-grid">
+      <label>
+        <span>{t("输入（每行一个数字）", "Input (one number per line)")}</span>
+        <textarea class="dbx-textarea batch-area" spellcheck="false" bind:value={batchInput} placeholder={t("255\n16\n42", "255\n16\n42")}></textarea>
+      </label>
+      <label>
+        <span class="batch-result-head">
+          {t("转换结果", "Converted values")}
+          <button
+            class="dbx-btn dbx-btn--ghost batch-copy"
+            type="button"
+            disabled={!batchOutput || batchErrorLine > 0}
+            onclick={() => copy("batch", batchOutput)}
+          >{copiedId === "batch" ? t("已复制", "Copied") : t("复制全部", "Copy all")}</button>
+        </span>
+        <textarea class="dbx-textarea batch-area" readonly value={batchOutput}></textarea>
+      </label>
+    </div>
+    {#if batchErrorLine}
+      <p class="dbx-hint base-error" role="alert">
+        {t(`第 ${batchErrorLine} 行不是当前进制的有效数字或超出位宽范围。`, `Line ${batchErrorLine} is invalid for this base or outside the selected width.`)}
+      </p>
+    {:else if !clampRadix(batchFrom) || !clampRadix(batchTo)}
+      <p class="dbx-hint base-error" role="alert">{t("进制必须介于 2 和 36 之间。", "Bases must be between 2 and 36.")}</p>
+    {/if}
+  {:else}
   <div class="base-rows">
     {#each NUMBER_BASES as base (base.id)}
       {@const done = copiedId === base.id}
@@ -306,6 +431,7 @@
       {t("不是有效的数字，请检查当前进制。", "Not a valid number for this base.")}
     </p>
   {/if}
+  {/if}
 </div>
 
 <style>
@@ -384,6 +510,64 @@
   }
   .base-opt input {
     margin: 0;
+  }
+  .integer-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .integer-field,
+  .batch-options label,
+  .batch-grid label {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    font-size: 11px;
+  }
+  .integer-field.disabled {
+    opacity: 0.58;
+  }
+  .integer-field :global(.dbx-custom-select) {
+    width: 100%;
+    min-width: 0;
+  }
+  .batch-options {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+    align-items: end;
+  }
+  .batch-arrow {
+    padding-bottom: 8px;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+  }
+  .radix-input {
+    min-width: 0;
+  }
+  .batch-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .batch-area {
+    min-height: 190px;
+    resize: vertical;
+    font-family: var(--font-mono);
+    line-height: 1.55;
+  }
+  .batch-result-head {
+    display: flex;
+    min-height: 28px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .batch-copy {
+    min-height: 26px;
+    padding: 3px 8px;
+    font-size: 11px;
   }
   .base-rows {
     display: flex;
@@ -507,6 +691,10 @@
     }
     .base-row {
       grid-template-columns: minmax(0, 1fr) 30px;
+    }
+    .integer-options,
+    .batch-grid {
+      grid-template-columns: 1fr;
     }
     .base-label {
       grid-column: 1 / -1;

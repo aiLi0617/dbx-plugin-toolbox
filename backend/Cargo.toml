@@ -15,12 +15,14 @@ base64 = "0.22"
 cbc = "0.1"
 cipher = { version = "0.4", features = ["alloc", "block-padding"] }
 crc32fast = "1"
-dbx-plugin-sdk = "0.1.0"
+dbx-plugin-sdk = { path = "../shared/sdk/rust/dbx-plugin-sdk" }
 dirs = "5"
 ecb = "0.1"
 hex = "0.4"
 hmac = "0.12"
+image = { version = "0.25", default-features = false, features = ["bmp", "jpeg", "png", "webp"] }
 md-5 = "0.10"
+ocrs-cjk = { path = "vendor/ocrs-cjk", default-features = false, features = ["rten"] }
 pem = "3"
 rand = "0.8"
 raw-window-handle = "0.6"
@@ -33,15 +35,12 @@ sha3 = "0.10"
 sm3 = "0.4"
 sm4 = "0.5"
 smcrypto = "0.3.1"
+rten = { version = "0.24.0", default-features = false, features = ["rten_format"] }
+rten-imageproc = "0.24.0"
 uuid = { version = "1", features = ["v4"] }
 rfd = "0.15"
 x509-parser = "0.16"
 zeroize = { version = "1", features = ["derive"] }
-
-# `dbx-plugin-sdk` is not published to crates.io. Vendor the SDK that matches
-# the DBX plugin CLI so ordinary Cargo and CI builds resolve it locally.
-[patch.crates-io]
-dbx-plugin-sdk = { path = "../shared/sdk/rust/dbx-plugin-sdk" }
 
 [target.'cfg(any(target_os = "linux", target_os = "macos"))'.dependencies]
 libc = "0.2"
@@ -53,3 +52,8 @@ windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Network
 strip = true
 lto = true
 codegen-units = 1
+
+# `dbx-plugin dev` uses Cargo's debug target. OCR inference dependencies need
+# optimization even there; otherwise RTen is orders of magnitude slower.
+[profile.dev.package."*"]
+opt-level = 2

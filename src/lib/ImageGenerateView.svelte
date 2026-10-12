@@ -24,6 +24,7 @@
 
   let formatOptions = $state(OUTPUT_FORMATS.filter((item) => !item.optional).map((item) => ({ value: item.mime, label: item.label })));
   const unitOptions = SIZE_UNITS.map((value) => ({ value, label: value }));
+  const iconSizes = [16, 32, 48, 64, 128, 256];
 
   $effect(() => {
     listAvailableFormats().then((formats) => {
@@ -231,6 +232,12 @@
     fileBase = sanitizeFileBase(fileBase, `placeholder-${width}x${height}`);
   }
 
+  function applyIconSize(size) {
+    width = size;
+    height = size;
+    clearResult();
+  }
+
   const targetHint = $derived.by(() => {
     try {
       return humanFileSize(parseTargetBytes(sizeValue, sizeUnit));
@@ -268,6 +275,22 @@
             <Select bind:value={format} options={formatOptions} />
           </label>
         </div>
+        {#if formatMeta.mime === "image/x-icon"}
+          <div class="icon-presets" aria-label={t("图标尺寸预设", "Icon size presets")}>
+            {#each iconSizes as size}
+              <button
+                class="preset"
+                class:active={width === size && height === size}
+                type="button"
+                onclick={() => applyIconSize(size)}
+              >{size}</button>
+            {/each}
+          </div>
+          <p class="note">{t(
+            "方形 ICO 会自动内嵌从 16px 到当前尺寸的多分辨率图层；推荐 256×256。",
+            "Square ICO files automatically include multiple resolutions from 16px up to the selected size; 256×256 is recommended.",
+          )}</p>
+        {/if}
       </section>
 
       <section class="block">
@@ -455,6 +478,21 @@
   .field :global(.dbx-custom-select) { width: auto; min-width: 96px; }
   .target-row { display: flex; gap: 6px; align-items: center; }
   .target-row :global(.dbx-custom-select) { min-width: 72px; }
+  .icon-presets { display: flex; flex-wrap: wrap; gap: 5px; }
+  .preset {
+    min-width: 36px;
+    height: 26px;
+    padding: 0 7px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-background);
+    color: var(--color-muted-foreground);
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .preset:hover { border-color: var(--color-primary); color: var(--color-foreground); }
+  .preset.active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background)); color: var(--color-primary); }
   .color-input {
     width: 3.25rem;
     min-height: 30px;

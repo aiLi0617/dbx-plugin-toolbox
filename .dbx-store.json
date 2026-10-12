@@ -8,7 +8,10 @@
     "encoding",
     "cryptography"
   ],
-  "permissions": [],
+  "permissions": [
+    "host.binary",
+    "host.events"
+  ],
   "source": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "homepage": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "license": "Apache-2.0",

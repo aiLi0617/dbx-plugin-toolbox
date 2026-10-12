@@ -708,7 +708,7 @@
       {/if}
     {/if}
 
-    <div class="seg" role="tablist">
+    <div class="dbx-tabs" role="tablist" aria-label={t("密钥库", "Vault")}>
       <button class:active={panel === "create"} aria-selected={panel === "create"} onclick={() => (panel = "create")} role="tab" type="button">{t("添加密钥", "Add key")}</button>
       <button class:active={panel === "password"} aria-selected={panel === "password"} onclick={() => (panel = "password")} role="tab" type="button">{t("主密码", "Master password")}</button>
     </div>
@@ -1094,29 +1094,6 @@
     font-size: 12px;
   }
   .rename-input { min-width: 180px; }
-  .seg {
-    display: inline-flex;
-    flex-wrap: wrap;
-    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    border-radius: var(--radius-md, 8px);
-    overflow: hidden;
-    width: fit-content;
-  }
-  .seg button {
-    height: 28px;
-    padding: 0 12px;
-    border: 0;
-    border-right: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    background: transparent;
-    color: inherit;
-  }
-  .seg button:last-child { border-right: 0; }
-  .seg button.active {
-    background: var(--dbx-selection-background);
-    border-color: var(--dbx-selection-border);
-    color: var(--dbx-selection-foreground);
-    font-weight: 600;
-  }
   .pem {
     width: 100%;
     min-height: 96px;

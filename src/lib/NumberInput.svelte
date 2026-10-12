@@ -11,6 +11,7 @@
     ariaLabel = "",
     onchange,
     oninput,
+    onenter,
   } = $props();
 
   let draft = $state(null);
@@ -90,6 +91,7 @@
         bump(-1);
       } else if (event.key === "Enter") {
         commit(event.currentTarget.value, false);
+        onenter?.(Number(value));
       }
     }}
   />

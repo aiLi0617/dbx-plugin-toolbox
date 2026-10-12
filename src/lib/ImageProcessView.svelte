@@ -69,6 +69,9 @@
   let watermarkColor = $state("#ffffff");
   let watermarkPosition = $state("bottom-right");
   let watermarkTiled = $state(false);
+  let borderWidth = $state(0);
+  let borderColor = $state("#111827");
+  let cornerRadius = $state(0);
   let resultUrl = $state("");
   let resultBlob = $state(null);
   let resultWidth = $state(0);
@@ -155,6 +158,7 @@
     void format; void quality; void background;
     void watermark; void watermarkSize; void watermarkOpacity;
     void watermarkColor; void watermarkPosition; void watermarkTiled;
+    void borderWidth; void borderColor; void cornerRadius;
     schedulePreview();
     return () => {
       if (previewTimer) {
@@ -218,6 +222,9 @@
       watermarkColor: watermarkColor || "#ffffff",
       watermarkPosition: watermarkPosition || "bottom-right",
       watermarkTiled: Boolean(watermarkTiled),
+      borderWidth: Math.max(0, Math.min(256, Number(borderWidth) || 0)),
+      borderColor: borderColor || "#111827",
+      cornerRadius: Math.max(0, Math.min(2000, Number(cornerRadius) || 0)),
     };
   }
   function snapshotEdit() {
@@ -311,6 +318,9 @@
       watermarkColor: shared?.watermarkColor ?? "#ffffff",
       watermarkPosition: shared?.watermarkPosition ?? "bottom-right",
       watermarkTiled: shared?.watermarkTiled ?? false,
+      borderWidth: shared?.borderWidth ?? 0,
+      borderColor: shared?.borderColor ?? "#111827",
+      cornerRadius: shared?.cornerRadius ?? 0,
     };
   }
   function persistActive() {
@@ -348,6 +358,9 @@
     watermarkColor = item.watermarkColor;
     watermarkPosition = item.watermarkPosition;
     watermarkTiled = item.watermarkTiled;
+    borderWidth = item.borderWidth;
+    borderColor = item.borderColor;
+    cornerRadius = item.cornerRadius;
     activeId = item.id;
     savedPath = "";
     if (clearResult) {
@@ -820,6 +833,9 @@
     watermarkColor = "#ffffff";
     watermarkPosition = "bottom-right";
     watermarkTiled = false;
+    borderWidth = 0;
+    borderColor = "#111827";
+    cornerRadius = 0;
     persistActive();
     applyImage();
   }
@@ -827,6 +843,11 @@
     targetWidth = event.currentTarget.value;
     if (lockRatio) targetHeight = fitDimension(targetWidth, cropWidth, cropHeight);
     persistActive();
+  }
+  async function pickColor() {
+    if (!("EyeDropper" in window)) { error = t("当前运行环境不支持屏幕取色。", "The current runtime does not support screen color picking."); return; }
+    try { const result = await new window.EyeDropper().open(); borderColor = result.sRGBHex; persistActive(); }
+    catch { /* User cancelled the picker. */ }
   }
   function changeHeight(event) {
     targetHeight = event.currentTarget.value;
@@ -881,6 +902,13 @@
       context.fillStyle = item.background || "#ffffff";
       context.fillRect(0, 0, canvas.width, canvas.height);
     }
+    const radius = Math.max(0, Math.min(Math.min(canvas.width, canvas.height) / 2, Number(item.cornerRadius) || 0));
+    if (radius) {
+      context.save();
+      context.beginPath();
+      context.roundRect(0, 0, canvas.width, canvas.height, radius);
+      context.clip();
+    }
     const cropCanvas = document.createElement("canvas");
     cropCanvas.width = target.width;
     cropCanvas.height = target.height;
@@ -902,6 +930,17 @@
     context.imageSmoothingQuality = "high";
     context.drawImage(cropCanvas, -target.width / 2, -target.height / 2, target.width, target.height);
     context.restore();
+    if (radius) context.restore();
+    const stroke = Math.max(0, Math.min(256, Number(item.borderWidth) || 0));
+    if (stroke) {
+      context.save();
+      context.strokeStyle = item.borderColor || "#111827";
+      context.lineWidth = stroke;
+      context.beginPath();
+      context.roundRect(stroke / 2, stroke / 2, canvas.width - stroke, canvas.height - stroke, Math.max(0, radius - stroke / 2));
+      context.stroke();
+      context.restore();
+    }
     const mark = String(item.watermark || "").trim();
     if (mark) {
       const fontSize = Math.max(8, Math.min(256, Number(item.watermarkSize) || 32));
@@ -1058,6 +1097,7 @@
         {#if !shortcut || focusedOperation === "resize"}<section><div class="section-title"><strong>{t("缩放", "Resize")}</strong><button class="link" type="button" onclick={matchCropSize}>{t("匹配裁剪尺寸", "Match crop")}</button></div><div class="pair"><label>{t("宽度", "Width")}<input class="dbx-input" type="number" min="1" max="12000" value={targetWidth} oninput={changeWidth} /></label><label>{t("高度", "Height")}<input class="dbx-input" type="number" min="1" max="12000" value={targetHeight} oninput={changeHeight} /></label></div><label class="check"><input type="checkbox" bind:checked={lockRatio} onchange={persistActive} /> {t("锁定宽高比", "Lock aspect ratio")}</label></section>{/if}
         {#if !shortcut || focusedOperation === "rotate"}<section><strong>{t("旋转与翻转", "Rotate and flip")}</strong><span class="subtle">{t("会作用于导出结果", "Applies to the exported result")}</span><div class="button-row"><button class="dbx-btn" type="button" onclick={() => rotate(-90)}>↶ 90°</button><button class="dbx-btn" type="button" onclick={() => rotate(90)}>↷ 90°</button><button class="dbx-btn" class:active={flipHorizontal} aria-pressed={flipHorizontal} type="button" onclick={() => { flipHorizontal = !flipHorizontal; persistActive(); }}>{t("水平翻转", "Flip H")}</button><button class="dbx-btn" class:active={flipVertical} aria-pressed={flipVertical} type="button" onclick={() => { flipVertical = !flipVertical; persistActive(); }}>{t("垂直翻转", "Flip V")}</button></div><span class="subtle">{t("当前旋转", "Rotation")}: {rotation}°</span></section>{/if}
         {#if !shortcut || focusedOperation === "watermark"}<section><strong>{t("水印", "Watermark")}</strong><label>{t("文字", "Text")}<input class="dbx-input" bind:value={watermark} onchange={persistActive} placeholder={t("留空则不添加", "Leave blank for none")} /></label><div class="pair"><label>{t("字号", "Size")}<input class="dbx-input" type="number" min="8" max="256" bind:value={watermarkSize} onchange={persistActive} /></label><label>{t("透明度", "Opacity")} · {watermarkOpacity}%<input class="range" type="range" min="0" max="100" bind:value={watermarkOpacity} onchange={persistActive} /></label></div><div class="pair"><label>{t("位置", "Position")}<Select bind:value={watermarkPosition} options={positions} onchange={persistActive} /></label><label>{t("颜色", "Color")}<input class="color-input" type="color" bind:value={watermarkColor} onchange={persistActive} /></label></div><label class="check"><input type="checkbox" bind:checked={watermarkTiled} onchange={persistActive} /> {t("平铺水印", "Tile watermark")}</label></section>{/if}
+        {#if !shortcut}<section><strong>{t("边框、圆角与取色", "Border, corners & color")}</strong><div class="pair"><label>{t("边框宽度", "Border width")}<input class="dbx-input" type="number" min="0" max="256" bind:value={borderWidth} onchange={persistActive} /></label><label>{t("圆角半径", "Corner radius")}<input class="dbx-input" type="number" min="0" max="2000" bind:value={cornerRadius} onchange={persistActive} /></label></div><div class="pair"><label>{t("边框颜色", "Border color")}<input class="color-input" type="color" bind:value={borderColor} onchange={persistActive} /></label><button class="dbx-btn" type="button" onclick={pickColor}>{t("屏幕取色", "Pick screen color")}</button></div></section>{/if}
         <section><div class="section-title"><strong>{t("输出", "Output")}</strong><button class="link" type="button" onclick={resetOptions}>{t("重置参数", "Reset")}</button></div><label>{t("格式", "Format")}<Select bind:value={format} options={formats} onchange={persistActive} /></label>{#if qualityEnabled}<label>{t("质量", "Quality")} · {quality}%<input class="range" type="range" min="10" max="100" bind:value={quality} onchange={persistActive} /></label>{/if}{#if opaqueOutput}<label>{t("透明区域背景", "Transparency background")}<input class="color-input" type="color" bind:value={background} onchange={persistActive} /></label>{/if}</section>
       </aside>
       <main class="previews">

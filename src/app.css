@@ -47,6 +47,12 @@
   --dbx-selection-background: var(--color-primary);
   --dbx-selection-foreground: var(--color-primary-foreground);
   --dbx-selection-border: var(--color-primary);
+  --dbx-control-background: var(--color-background, Canvas);
+  --dbx-control-foreground: var(--color-foreground, CanvasText);
+  --dbx-control-border: var(--color-input, var(--color-border));
+  --dbx-hover-background: var(--color-accent, var(--color-muted));
+  --dbx-hover-foreground: var(--color-accent-foreground, var(--color-foreground));
+  --dbx-active-background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
   --dbx-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-ring, var(--color-primary)) 50%, transparent);
   --ui-gap: 12px;
   --ui-field-gap: 6px;
@@ -138,8 +144,115 @@ html, body, #app {
 
 button, input, select, textarea { font: inherit; color: inherit; }
 textarea { resize: vertical; }
-button { cursor: pointer; }
+/* Neutralize browser chrome before component styles are applied. Keeping this
+   reset at zero specificity lets DBX's injected component kit win. */
+:where(button) {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+:where(button:not(:disabled):hover) {
+  background: var(--dbx-hover-background);
+  color: var(--dbx-hover-foreground);
+}
+:where(button:not(:disabled):active) {
+  background: var(--dbx-active-background);
+}
+:where(button:focus-visible),
+:where(a[href]:focus-visible),
+:where([role="button"]:focus-visible),
+:where([role="option"]:focus-visible) {
+  outline: none;
+  box-shadow: var(--dbx-focus-ring);
+}
 button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+:where(input[type="range"]) {
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+:where(input[type="range"]::-webkit-slider-runnable-track) {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-muted, var(--color-secondary));
+}
+:where(input[type="range"]::-webkit-slider-thumb) {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid var(--color-background, Canvas);
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-border);
+}
+:where(input[type="range"]::-moz-range-track) {
+  height: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-muted, var(--color-secondary));
+}
+:where(input[type="range"]::-moz-range-thumb) {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-background, Canvas);
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-border);
+}
+:where(input[type="range"]:hover::-webkit-slider-runnable-track),
+:where(input[type="range"]:focus-visible::-webkit-slider-runnable-track) {
+  background: var(--dbx-hover-background);
+}
+:where(input[type="range"]:hover::-moz-range-track),
+:where(input[type="range"]:focus-visible::-moz-range-track) {
+  background: var(--dbx-hover-background);
+}
+:where(input[type="range"]:focus-visible) {
+  outline: none;
+  box-shadow: var(--dbx-focus-ring);
+}
+:where(input[type="color"]) {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 32px;
+  min-height: 28px;
+  padding: 3px;
+  border: 1px solid var(--dbx-control-border);
+  border-radius: var(--radius-md);
+  background: var(--dbx-control-background);
+  cursor: pointer;
+}
+:where(input[type="color"]:hover) { border-color: var(--color-ring, var(--color-primary)); }
+:where(input[type="color"]:focus-visible) {
+  outline: none;
+  border-color: var(--color-ring, var(--color-primary));
+  box-shadow: var(--dbx-focus-ring);
+}
+:where(input[type="color"]::-webkit-color-swatch-wrapper) { padding: 0; }
+:where(input[type="color"]::-webkit-color-swatch) {
+  border: 0;
+  border-radius: calc(var(--radius-sm) - 1px);
+}
+:where(input[type="color"]::-moz-color-swatch) {
+  border: 0;
+  border-radius: calc(var(--radius-sm) - 1px);
+}
+
+:where(option),
+:where(optgroup) {
+  background: var(--color-popover, var(--color-background, Canvas));
+  color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
+}
 
 /* Keep native file inputs usable through their labels without exposing the
    browser's "Choose file / No file chosen" text in the tool layout. */
@@ -151,6 +264,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   height: 100%;
   opacity: 0;
   cursor: pointer;
+}
+:where(.file-button:hover) {
+  border-color: var(--color-ring, var(--color-primary));
+  background: var(--dbx-hover-background);
+  color: var(--dbx-hover-foreground);
+}
+:where(.file-button:has(input[type="file"]:focus-visible)) {
+  border-color: var(--color-ring, var(--color-primary));
+  box-shadow: var(--dbx-focus-ring);
 }
 
 code, kbd, samp, pre, .mono {
@@ -188,13 +310,19 @@ code, kbd, samp, pre, .mono {
   font-family: inherit;
   cursor: pointer;
 }
-:where(.dbx-btn:hover) { background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent))); }
+:where(.dbx-btn:hover) {
+  background: var(--dbx-hover-background);
+  color: var(--dbx-hover-foreground);
+}
 :where(.dbx-btn--primary) {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-primary-foreground);
 }
-:where(.dbx-btn--primary:hover) { opacity: 0.9; }
+:where(.dbx-btn--primary:hover) {
+  background: color-mix(in srgb, var(--color-primary) 88%, var(--color-background));
+  color: var(--color-primary-foreground);
+}
 :where(.dbx-btn--selected),
 :where(.dbx-btn[aria-pressed="true"]) {
   background: var(--dbx-selection-background);
@@ -202,14 +330,71 @@ code, kbd, samp, pre, .mono {
   color: var(--dbx-selection-foreground);
 }
 :where(.dbx-btn--selected:hover),
-:where(.dbx-btn[aria-pressed="true"]:hover) { opacity: 0.9; }
+:where(.dbx-btn[aria-pressed="true"]:hover) {
+  background: color-mix(in srgb, var(--dbx-selection-background) 88%, var(--color-background));
+  color: var(--dbx-selection-foreground);
+}
 :where(.dbx-btn--danger) {
   background: var(--color-destructive);
   border-color: var(--color-destructive);
   color: var(--color-destructive-foreground);
 }
+:where(.dbx-btn--danger:hover) {
+  background: color-mix(in srgb, var(--color-destructive) 88%, var(--color-background));
+  color: var(--color-destructive-foreground);
+}
 :where(.dbx-btn--ghost) { border-color: transparent; background: transparent; }
+:where(.dbx-btn--ghost:hover) {
+  background: var(--dbx-hover-background);
+  color: var(--dbx-hover-foreground);
+}
 :where(.dbx-btn:disabled) { opacity: 0.5; cursor: not-allowed; }
+.dbx-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+  scrollbar-width: none;
+}
+.dbx-tabs::-webkit-scrollbar { display: none; }
+.dbx-tabs > button {
+  position: relative;
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.dbx-tabs > button:hover {
+  color: var(--color-foreground, CanvasText);
+  background: color-mix(in srgb, var(--color-muted, CanvasText) 55%, transparent);
+}
+.dbx-tabs > button.active,
+.dbx-tabs > button[aria-selected="true"] {
+  color: var(--color-foreground, CanvasText);
+}
+.dbx-tabs > button.active::after,
+.dbx-tabs > button[aria-selected="true"]::after {
+  position: absolute;
+  right: 10px;
+  bottom: -1px;
+  left: 10px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--color-primary, var(--dbx-selection-border));
+  content: "";
+}
+.dbx-tabs--compact > button {
+  height: 28px;
+  padding: 0 9px;
+  font-size: 12px;
+}
 :where(.dbx-label) {
   display: inline-flex;
   font-size: 12px;
@@ -226,6 +411,11 @@ code, kbd, samp, pre, .mono {
   color: var(--color-foreground, CanvasText);
   font-size: 13px;
   font-family: inherit;
+}
+:where(.dbx-input:hover:not(:disabled)),
+:where(select.dbx-select:hover:not(:disabled)),
+:where(.dbx-textarea:hover:not(:disabled)) {
+  border-color: var(--color-ring, var(--color-primary));
 }
 :where(.dbx-textarea) {
   height: auto;
@@ -334,7 +524,7 @@ select.dbx-select.dbx-select:focus:not(:focus-visible):not(.invalid):not([aria-i
 
 .app {
   display: grid;
-  grid-template-columns: 232px minmax(0, 1fr);
+  grid-template-columns: 216px minmax(0, 1fr);
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
@@ -908,9 +1098,22 @@ h3 {
 .toolbar .icon-btn.active {
   background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 12%, transparent)));
 }
+.mobile-menu { display: none; }
+.sidebar-scrim { display: none; }
 
-@media (max-width: 860px) {
-  .app { grid-template-columns: minmax(190px, 34vw) minmax(0, 1fr); }
-  .app.sidebar-collapsed { grid-template-columns: 52px minmax(0, 1fr); }
+@media (max-width: 959px) {
+  .app { grid-template-columns: 52px minmax(0, 1fr); }
+  .app > .sidebar { width: 52px; }
   .io { grid-template-columns: 1fr; }
+}
+@media (max-width: 719px) {
+  .app,.app.sidebar-collapsed { grid-template-columns: minmax(0,1fr); }
+  .app > .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 81; width: 216px; transform: translateX(-100%); transition: transform 160ms ease; box-shadow: 12px 0 30px rgba(0,0,0,.22); }
+  .app.mobile-sidebar-open > .sidebar { transform: translateX(0); }
+  .app.mobile-sidebar-open > .sidebar :where(.brand-row strong,.primary span,.sidebar-bottom span) { display: initial; }
+  .app.mobile-sidebar-open > .sidebar :where(.primary button,.sidebar-bottom button) { width: 100%; padding: 0 9px; }
+  .sidebar-scrim { position: fixed; inset: 0; z-index: 80; display: block; border: 0; background: rgba(0,0,0,.35); }
+  .mobile-menu { display: inline-flex; }
+  .toolbar { padding-inline: 10px; }
+  .pane { padding: 10px; }
 }

@@ -3,7 +3,7 @@ import test from "node:test";
 import { convertData, jsonToNdjson, ndjsonToJson, jsonToTsv, tsvToJson } from "../src/lib/dataConvert.js";
 import { formatCode } from "../src/lib/tools/format.js";
 import { jsonToCsv, csvToJson, runJsonPath } from "../src/lib/tools/convert.js";
-import { collapseAllPaths, formatJson, minifyJson, sortValue, restoreKeyOrder, serializeJson, parseLeaf, setPath } from "../src/lib/jsonOps.js";
+import { collapseAllPaths, defaultCollapsed, embeddedJsonParseError, formatJson, minifyJson, parseEmbeddedJson, parseEmbeddedJsonInfo, serializeEmbeddedJson, sortValue, restoreKeyOrder, serializeJson, parseLeaf, parseTreeEdit, setPath } from "../src/lib/jsonOps.js";
 import { convertJsonToLang } from "../src/lib/jsonToLang.js";
 import { parseLosslessJson, toSafeJsonValue, parseSafeJson } from "../src/lib/jsonPrecision.js";
 
@@ -26,6 +26,64 @@ test("collapse all includes the top-level JSON container", () => {
   assert.deepEqual(collapseAllPaths([{}]), { "": true, "/0": true });
 });
 
+test("tree parsing discovers recursively embedded JSON strings", () => {
+  const value = parseLosslessJson('{"body":"{\\"method\\":\\"POST\\",\\"payload\\":\\"{\\\\\\"id\\\\\\":9007199254740993}\\"}","plain":"123","broken":"{nope}"}');
+  const body = parseEmbeddedJson(value.body);
+  assert.equal(body.method, "POST");
+  const payload = parseEmbeddedJson(body.payload);
+  assert.equal(serializeJson(payload, false), '{"id":9007199254740993}');
+  assert.equal(parseEmbeddedJson(value.plain), undefined);
+  assert.equal(parseEmbeddedJson(value.broken), undefined);
+  assert.deepEqual(defaultCollapsed(value), { "/body": true, "/body/payload": true });
+  assert.deepEqual(collapseAllPaths(value), { "": true, "/body": true, "/body/payload": true });
+});
+
+test("embedded JSON parsing preserves repeated string wrapping", () => {
+  const twiceWrapped = JSON.stringify(JSON.stringify({ child: { value: 1 } }));
+  const info = parseEmbeddedJsonInfo(twiceWrapped);
+  assert.equal(String(info?.value.child.value), "1");
+  assert.equal(info?.layers, 2);
+  assert.equal(serializeEmbeddedJson(info.value, info.layers), twiceWrapped);
+});
+
+test("embedded JSON parsing accepts a whole over-escaped object without outer quotes", () => {
+  const overEscaped = String.raw`{\"method\":\"POST\",\"payload\":\"{\\\"id\\\":1}\"}`;
+  const parsed = parseEmbeddedJson(overEscaped);
+  assert.equal(parsed?.method, "POST");
+  assert.equal(String(parseEmbeddedJson(parsed?.payload)?.id), "1");
+});
+
+test("embedded JSON parsing accepts residual outer quotes around an already decoded object", () => {
+  const objectText = '{"method":"POST","payload":"{\\"id\\":1}"}';
+  const residualQuotes = `"${objectText}"`;
+  const parsed = parseEmbeddedJson(residualQuotes);
+  assert.equal(parsed?.method, "POST");
+  assert.equal(String(parseEmbeddedJson(parsed?.payload)?.id), "1");
+});
+
+test("embedded JSON parsing repairs raw controls and a missing nested key quote escape", () => {
+  const malformed = String.raw`{"body":"{\"dnno
+ormalitems":\"006\"}","ok":true}`;
+  const parsed = parseEmbeddedJson(malformed);
+  assert.equal(parsed?.ok, true);
+  const body = parseEmbeddedJson(parsed?.body);
+  assert.equal(body?.["dnno\normalitems"], "006");
+});
+
+test("embedded JSON parsing reports likely container syntax failures only", () => {
+  assert.match(embeddedJsonParseError('{"valid":'), /JSON|position|end/i);
+  assert.equal(embeddedJsonParseError("ordinary text"), "");
+  assert.equal(embeddedJsonParseError('{"valid":true}'), "");
+});
+
+test("tree nested parsing preserves string edits without changing typed leaves", () => {
+  assert.equal(parseTreeEdit("true", false), true);
+  assert.equal(parseTreeEdit("true", true, "original string"), "true");
+  assert.equal(parseTreeEdit("false", true, true), false);
+  assert.equal(parseTreeEdit('{"value":1}', false).value.toString(), "1");
+  assert.equal(parseTreeEdit('{"value":1}', true, "original string"), '{"value":1}');
+});
+
 test("lossless handling cannot confuse user marker properties or lose prototype-like keys", () => {
   for (const input of [
     '{"isLosslessNumber":true,"value":"1"}',
@@ -45,6 +103,19 @@ test("unsafe numbers cannot silently reach number-only queries", () => {
   }
   assert.throws(() => toSafeJsonValue(parseLeaf("9007199254740993")), /precision/);
   assert.deepEqual(parseSafeJson('{"number":12.5,"id":"9007199254740993"}'), { number: 12.5, id: "9007199254740993" });
+});
+
+test("JSONPath stays CSP-safe while supporting common selectors", () => {
+  const input = '{"store":{"books":[{"title":"A"},{"title":"B"}],"owner":{"title":"C"}}}';
+  assert.deepEqual(JSON.parse(runJsonPath(input, "$.store.books[*].title")), ["A", "B"]);
+  assert.deepEqual(JSON.parse(runJsonPath(input, "$..title")), ["A", "B", "C"]);
+  assert.deepEqual(JSON.parse(runJsonPath(input, "$..*")), [
+    { books: [{ title: "A" }, { title: "B" }], owner: { title: "C" } },
+    [{ title: "A" }, { title: "B" }],
+    { title: "A" }, "A", { title: "B" }, "B", { title: "C" }, "C",
+  ]);
+  assert.deepEqual(JSON.parse(runJsonPath(input, "$['store']['books'][1]")), [{ title: "B" }]);
+  assert.throws(() => runJsonPath(input, "$.store.books[?(@.title)]"), /disabled by CSP/i);
 });
 
 test("tree edits preserve lossless integer leaves", () => {

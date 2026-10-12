@@ -65,16 +65,31 @@ test("merged text tools preserve favorites and search targets", async () => {
   assert.equal(textTools.applyWhitespace(unique, "prefix", { affix: "- " }), "- b\n- a");
 });
 
+test("completed text utilities mask, normalize, extract, abbreviate and render locally", () => {
+  assert.equal(textTools.numeronym("internationalization accessibility"), "i18n a11y");
+  assert.equal(textTools.normalizeEmails(" User@EXAMPLE.COM "), "User@example.com");
+  assert.match(textTools.maskSensitiveText("13800138000 user@example.com"), /138\*{4}8000 us\*{3}@example\.com/);
+  assert.equal(textTools.extractEmails("a@x.test and a@x.test"), "a@x.test");
+  assert.equal(textTools.extractUrls("see https://example.test/a."), "https://example.test/a");
+  assert.match(textTools.asciiBanner("DBX"), /\| D \|/);
+});
+
+test("binary bytes and NATO phonetics round trip", () => {
+  const bytes = encode.decodeBytes("binary", "01000001 01000010");
+  assert.equal(encode.encodeBytes("text", bytes), "AB");
+  assert.equal(encode.decodeNato(encode.encodeNato("DBX")), "DBX");
+});
+
 test("catalog cards can only be reordered inside their category", () => {
   const original = catalog.tools.map((tool) => tool.id);
-  const formatIds = catalog.tools.filter((tool) => tool.category === "format").map((tool) => tool.id);
+  const formatIds = catalog.tools.filter((tool) => tool.category === "data").map((tool) => tool.id);
   assert.ok(formatIds.length > 1);
 
   const moved = catalog.moveToolWithinCategory(original, formatIds[0], formatIds[1], true);
-  const movedFormatIds = moved.filter((id) => catalog.tools.find((tool) => tool.id === id)?.category === "format");
+  const movedFormatIds = moved.filter((id) => catalog.tools.find((tool) => tool.id === id)?.category === "data");
   assert.deepEqual(movedFormatIds.slice(0, 2), [formatIds[1], formatIds[0]]);
 
-  const otherCategoryId = catalog.tools.find((tool) => tool.category !== "format").id;
+  const otherCategoryId = catalog.tools.find((tool) => tool.category !== "data").id;
   assert.deepEqual(catalog.moveToolWithinCategory(original, formatIds[0], otherCategoryId, true), original);
 });
 
@@ -85,7 +100,7 @@ test("navigation sanitizes legacy ids and preserves favorite order", () => {
   );
   assert.deepEqual(
     navigation.sanitizeToolIds(["image-pixelate", "image-grid", "image-compress", "image-base64"]),
-    ["image-utility"],
+    ["image-pixelate", "image-grid", "image-compress", "image-base64"],
   );
   assert.deepEqual(
     navigation.sanitizeToolIds(["image-crop", "format-sql", "base32-codec", "text-clean", "convert-json-yaml"]),
@@ -151,6 +166,34 @@ test("ULID has a valid timestamp prefix and alphabet", () => {
   assert.ok(Number(timestamp) >= before && Number(timestamp) <= after);
 });
 
+test("monotonic ULIDs stay ordered within the same millisecond", () => {
+  const now = 1700000000000;
+  const first = codec.encodeMonotonicUlid(now);
+  const second = codec.encodeMonotonicUlid(now);
+  assert.ok(first < second);
+  assert.equal(codec.inspectUniqueId(first).timestamp, now);
+});
+
+test("UUID v7 embeds its Unix millisecond timestamp", () => {
+  const now = 1700000000123;
+  const id = codec.uuidV7(now);
+  assert.match(id, /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.deepEqual(codec.inspectUniqueId(id), {
+    type: "UUID",
+    version: 7,
+    variant: "RFC 4122",
+    normalized: id,
+    timestamp: now,
+  });
+});
+
+test("UUID v5 matches the RFC DNS namespace vector", async () => {
+  const id = await codec.uuidV5("python.org", "dns");
+  assert.equal(id, "886313e1-3b8a-5372-9b90-0c9aee199e5d");
+  assert.equal(codec.inspectUniqueId(id).version, 5);
+  await assert.rejects(codec.uuidV5("name", "not-a-uuid"), /invalid uuid/i);
+});
+
 test("password generation includes every selected class", () => {
   const password = codec.randomPassword(32, { lower: true, upper: true, digits: true, symbols: true });
   assert.match(password, /[a-z]/);
@@ -159,11 +202,55 @@ test("password generation includes every selected class", () => {
   assert.match(password, /[^A-Za-z0-9]/);
 });
 
+test("password generation supports character controls and ambiguous-character exclusion", () => {
+  const password = codec.randomPassword(256, {
+    lower: true,
+    upper: true,
+    digits: true,
+    symbols: false,
+    excludeAmbiguous: true,
+  });
+  assert.equal(password.length, 256);
+  assert.doesNotMatch(password, /[0O1lI]/);
+  assert.match(password, /^[A-HJ-NP-Za-km-z2-9]+$/);
+});
+
+test("secret generator clamps counts, estimates entropy, and formats random bytes", () => {
+  assert.equal(generate.clampSecretCount(0), 1);
+  assert.equal(generate.clampSecretCount(500), 100);
+  assert.equal(generate.clampSecretCount(2.6), 3);
+
+  const options = { lower: true, upper: true, digits: true, symbols: true, excludeAmbiguous: false };
+  assert.equal(generate.passwordAlphabetSize(options), 85);
+  assert.ok(generate.passwordEntropyBits(16, options) > 100);
+
+  assert.match(generate.generateSecret("bytes", 8, { format: "hex" }), /^[0-9a-f]{16}$/);
+  assert.match(generate.generateSecret("bytes", 8, { format: "base64" }), /^[A-Za-z0-9+/]{11}=$/);
+  assert.match(generate.generateSecret("bytes", 8, { format: "base64url" }), /^[A-Za-z0-9_-]{11}$/);
+});
+
 test("TOTP matches the RFC SHA-1 test vector and accepts otpauth URIs", async () => {
   const secret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
   assert.equal(await codec.totp(secret, 8, 30, "SHA-1", 59_000), "94287082");
   const parsed = codec.parseTotpConfig(`otpauth://totp/Test?secret=${secret}&digits=8&period=30&algorithm=SHA1`);
   assert.deepEqual(parsed, { secret, digits: 8, step: 30, algorithm: "SHA-1" });
+});
+
+test("TOTP window preview calculates adjacent counters with one effective configuration", async () => {
+  const secret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
+  const result = await codec.totpWindows(secret, 6, 30, "SHA-1", 30_000);
+  assert.deepEqual(
+    result.windows.map(({ offset, code, startsAt, expiresAt }) => ({ offset, code, startsAt, expiresAt })),
+    [
+      { offset: -1, code: "755224", startsAt: 0, expiresAt: 30_000 },
+      { offset: 0, code: "287082", startsAt: 30_000, expiresAt: 60_000 },
+      { offset: 1, code: "359152", startsAt: 60_000, expiresAt: 90_000 },
+    ],
+  );
+  assert.deepEqual(
+    { digits: result.digits, step: result.step, algorithm: result.algorithm },
+    { digits: 6, step: 30, algorithm: "SHA-1" },
+  );
 });
 
 test("timestamp parsing obeys the selected unit", () => {
@@ -217,6 +304,13 @@ test("Quartz nearest-weekday and last-weekday expressions produce valid runs", (
   }
 });
 
+test("cron preview count can be increased", () => {
+  const regular = cron.explainCron("*/5 * * * *", { flavorId: "linux", tz: "UTC", count: 20 });
+  assert.equal(regular.next.length, 20);
+  const nearest = cron.explainCron("0 0 12 15W * ? *", { flavorId: "quartz", tz: "UTC", count: 10 });
+  assert.equal(nearest.next.length, 10);
+});
+
 test("text helpers support Unicode slugs, graphemes, and zero-width regex matches", () => {
   assert.equal(textTools.slugify("中文 标题"), "中文-标题");
   assert.equal(textTools.textStats("👨‍👩‍👧‍👦").chars, 1);
@@ -262,6 +356,14 @@ test("IPv4 calculator validates masks and derives subnet boundaries", async () =
   assert.throws(() => network.calculateIpv4("10.0.0.1/"), /prefix/i);
   assert.throws(() => network.parseCidr("10.0.0.1/33"), /between 0 and 32/i);
   assert.equal(network.integerToIpv4("3232235786"), "192.168.1.10");
+});
+
+test("network completion expands ranges and generates local identities", async () => {
+  const network = await import("../src/lib/network.js");
+  assert.deepEqual(network.expandIpv4Range("192.0.2.0/30"), ["192.0.2.0", "192.0.2.1", "192.0.2.2", "192.0.2.3"]);
+  assert.match(network.generateIpv6Ula(), /^fd[0-9a-f]{2}:/);
+  assert.match(network.generateMacAddress(), /^[0-9A-F]{2}(?::[0-9A-F]{2}){5}$/);
+  assert.equal(network.lookupOui("00:0c:29:00:00:00").vendor, "VMware");
 });
 
 test("Data URI supports base64 and percent-encoded round trips", () => {

@@ -1,5 +1,5 @@
 import { invoke } from "../host.js";
-import { crc32, crc32Bytes, encodeUlid, nanoId, randomPassword, shaDigest, toBase64 } from "../codec.js";
+import { AMBIGUOUS_PASSWORD_CHARS, PASSWORD_CHARSETS, crc32, crc32Bytes, encodeMonotonicUlid, encodeUlid, nanoId, randomPassword, shaDigest, toBase64, uuidV7 } from "../codec.js";
 
 export const HASH_ALGORITHMS = [
   { id: "md5-16", label: "MD5 - 16", labelZh: "MD5 - 16 位", labelEn: "MD5 - 16 chars" },
@@ -94,19 +94,51 @@ export function clampUniqueIdCount(value) {
   return Math.min(100, Math.max(1, Math.round(n)));
 }
 
-export function generateUniqueId(kind, size = 21) {
-  if (kind === "ulid") return encodeUlid();
+export function clampSecretCount(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 1;
+  return Math.min(100, Math.max(1, Math.round(n)));
+}
+
+export function generateUniqueId(kind, size = 21, options = {}) {
+  if (kind === "ulid") return options.monotonic ? encodeMonotonicUlid() : encodeUlid();
   if (kind === "nanoid") return nanoId(Number(size) || 21);
+  if (kind === "uuid-v7") return uuidV7();
   return crypto.randomUUID();
 }
 
-export function generateSecret(kind, length, symbols) {
+export function passwordAlphabetSize(options = {}) {
+  const excluded = options.excludeAmbiguous ? new Set(AMBIGUOUS_PASSWORD_CHARS) : null;
+  return Object.entries(PASSWORD_CHARSETS).reduce((size, [key, characters]) => {
+    if (key === "symbols" ? !options.symbols : options[key] === false) return size;
+    if (!excluded) return size + characters.length;
+    return size + [...characters].filter((char) => !excluded.has(char)).length;
+  }, 0);
+}
+
+export function passwordEntropyBits(length, options = {}) {
+  const alphabetSize = passwordAlphabetSize(options);
+  return alphabetSize > 0 ? Math.max(0, Number(length) || 0) * Math.log2(alphabetSize) : 0;
+}
+
+function encodeRandomBytes(bytes, format) {
+  if (format === "base64" || format === "base64url") {
+    const base64 = btoa(String.fromCharCode(...bytes));
+    return format === "base64url" ? base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "") : base64;
+  }
+  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export function generateSecret(kind, length, options = {}) {
   if (kind === "bytes") {
     const n = Math.min(1024, Math.max(1, Number(length) || 32));
     const bytes = crypto.getRandomValues(new Uint8Array(n));
-    return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+    return encodeRandomBytes(bytes, typeof options === "object" ? options.format : "hex");
   }
-  return randomPassword(Number(length) || 16, { symbols: symbols === "yes" });
+  const settings = typeof options === "object"
+    ? options
+    : { lower: true, upper: true, digits: true, symbols: options === "yes" };
+  return randomPassword(Number(length) || 16, settings);
 }
 
 export const RSA_BIT_OPTIONS = ["2048", "3072", "4096"];

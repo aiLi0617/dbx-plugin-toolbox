@@ -25,11 +25,13 @@ export const BASE_FIELDS = [
   { id: "base32", zh: "Base32", en: "Base32" },
   { id: "base58", zh: "Base58", en: "Base58" },
   { id: "hex", zh: "Hex", en: "Hex" },
+  { id: "binary", zh: "二进制字节", en: "Binary bytes" },
 ];
 
 export function encodeBytes(id, bytes) {
   if (id === "text") return bytesToText(bytes);
   if (id === "hex") return bytesToHex(bytes);
+  if (id === "binary") return [...bytes].map((byte) => byte.toString(2).padStart(8, "0")).join(" ");
   if (id === "base32") return encodeBase32(bytes);
   if (id === "base58") return encodeBase58(bytes);
   return toBase64(bytes, id === "base64url");
@@ -40,6 +42,11 @@ export function decodeBytes(id, text) {
   if (id === "text") return textToBytes(raw);
   if (!raw.trim()) return new Uint8Array();
   if (id === "hex") return hexToBytes(raw.replace(/0x/gi, "").replace(/\s+/g, ""));
+  if (id === "binary") {
+    const compact = raw.replace(/\s+/g, "");
+    if (!/^[01]*$/.test(compact) || compact.length % 8) throw new Error("Binary input must contain complete 8-bit bytes");
+    return new Uint8Array(compact.match(/.{8}/g)?.map((part) => parseInt(part, 2)) || []);
+  }
   if (id === "base32") return decodeBase32(raw);
   if (id === "base58") return decodeBase58(raw);
   return fromBase64(raw, id === "base64url");
@@ -144,6 +151,24 @@ export function unescapeCssIdent(text) {
   });
 }
 
+const NATO_WORDS = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu"];
+const NATO_BY_WORD = new Map(NATO_WORDS.map((word, index) => [word.toLowerCase(), String.fromCharCode(65 + index)]));
+
+export function encodeNato(text) {
+  return [...String(text ?? "")].map((char) => {
+    if (/[A-Za-z]/.test(char)) return NATO_WORDS[char.toUpperCase().charCodeAt(0) - 65];
+    if (char === " ") return "/";
+    return char;
+  }).join(" ");
+}
+
+export function decodeNato(text) {
+  return String(text ?? "").trim().split(/\s+/).map((word) => {
+    if (word === "/") return " ";
+    return NATO_BY_WORD.get(word.toLowerCase()) || word;
+  }).join("");
+}
+
 export function encodeUrl(text) {
   return encodeURIComponent(text);
 }
@@ -239,6 +264,11 @@ export function parseQuery(text) {
       href: absolute ? `${url.origin}${url.pathname}` : url.pathname,
       protocol: absolute ? url.protocol : "",
       host: absolute ? url.host : "",
+      hostname: absolute ? url.hostname : "",
+      port: absolute ? url.port : "",
+      origin: absolute ? url.origin : "",
+      username: absolute ? url.username : "",
+      password: absolute ? url.password : "",
       pathname: url.pathname,
       search: url.search,
       hash: url.hash,

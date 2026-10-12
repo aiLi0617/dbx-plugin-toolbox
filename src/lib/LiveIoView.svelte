@@ -15,7 +15,7 @@
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
     appliedDemoRequest = demoRequest;
-    input = demo.input;
+    input = demo.modes?.[optionValues.mode]?.input || demo.input;
   });
 
   $effect(() => {
@@ -65,13 +65,12 @@
                 <span>{t(opt.zh, opt.en)}</span>
               </label>
             {:else if useAsSegment(opt)}
-              <div class="seg" role="tablist" aria-label={t(opt.zh, opt.en)}>
+              <div class="seg" role="group" aria-label={t(opt.zh, opt.en)}>
                 {#each opt.values as value (value.value)}
                   <button
                     class:active={optionValues[opt.key] === value.value}
-                    aria-selected={optionValues[opt.key] === value.value}
+                    aria-pressed={optionValues[opt.key] === value.value}
                     onclick={() => (optionValues = { ...optionValues, [opt.key]: value.value })}
-                    role="tab"
                     type="button"
                   >{t(value.zh, value.en)}</button>
                 {/each}

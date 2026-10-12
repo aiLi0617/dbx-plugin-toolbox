@@ -20,7 +20,7 @@ const LOCALIZED_NAMES = {
   punycode: ["Punycode / IDN", "Punycode / IDN", "Punycode / IDN", "Punycode / IDN"],
   "quoted-printable": ["Quoted-Printable", "Quoted-Printable", "Quoted-Printable", "Quoted-Printable"],
   timestamp: ["Marca de tiempo", "Timestamp", "タイムスタンプ", "Timestamp"],
-  color: ["Conversión de color", "Conversione colori", "色変換", "Conversão de cores"],
+  color: ["Color y contraste", "Colore e contrasto", "色とコントラスト", "Cor e contraste"],
   cron: ["Expresión Cron", "Espressione Cron", "Cron 式", "Expressão Cron"],
   "base-convert": ["Conversión de bases", "Conversione di base", "進数変換", "Conversão de bases"],
   "network-calc": ["Red / CIDR", "Rete / CIDR", "ネットワーク / CIDR", "Rede / CIDR"],
@@ -43,6 +43,8 @@ const LOCALIZED_NAMES = {
   xor: ["XOR (depuración)", "XOR (debug)", "XOR（デバッグ）", "XOR (depuração)"],
   uuid: ["ID único", "ID univoco", "一意の ID", "ID único"],
   password: ["Contraseña aleatoria", "Password casuale", "ランダムパスワード", "Senha aleatória"],
+  "random-bytes": ["Bytes aleatorios", "Byte casuali", "ランダムバイト", "Bytes aleatórios"],
+  "http-request": ["cURL a código", "cURL in codice", "cURL からコード", "cURL para código"],
   qrcode: ["QR y códigos de barras", "QR e codici a barre", "QR・バーコード", "QR e códigos de barras"],
   lorem: ["Texto repetido", "Testo ripetuto", "繰り返しテキスト", "Texto repetido"],
   "image-process": ["Editor de imágenes", "Editor immagini", "画像編集", "Editor de imagens"],
@@ -54,23 +56,26 @@ const LOCALIZED_NAMES = {
 
 const rows = [
   // —— 数据与代码 ——
-  ["json", "format", "JSON 工作台", "JSON 工作台", "JSON workbench", "json-workbench", [
+  ["json", "data", "JSON 工作台", "JSON 工作台", "JSON workbench", "json-workbench", [
     "json-convert", "json-yaml", "json-csv", "json-xml", "json-toml", "json-sql", "json-ts", "jsonpath",
     "yaml", "csv", "xml", "toml", "sql", "typescript", "python", "go", "java",
     "format", "minify", "validate", "tree", "unicode", "escape", "sort", "extract",
     "格式化", "压缩", "校验", "树形", "路径提取", "JSONPath", "转 TypeScript", "转 SQL",
   ]],
-  ["data-convert", "format", "数据格式转换", "資料格式轉換", "Data format convert", "data-convert", [
+  ["data-convert", "data", "数据格式转换", "資料格式轉換", "Data format convert", "data-convert", [
     "json-convert", "yaml", "csv", "tsv", "ndjson", "xml", "toml", "json",
     "yaml-json", "csv-json", "xml-json", "toml-json",
     "数据转换", "格式互转", "双向转换", "convert format",
   ]],
-  ["code-format", "format", "代码格式化", "程式碼格式化", "Code formatter", "code-format", [
+  ["code-format", "data", "代码格式化", "程式碼格式化", "Code formatter", "code-format", [
     "sql", "xml", "yaml", "html", "css", "javascript", "typescript", "js", "ts", "jsx", "tsx",
     "beautify", "prettier", "格式化代码", "美化", "validate",
   ]],
-  ["spreadsheet", "format", "电子表格", "電子表格", "Spreadsheet", "spreadsheet", [
+  ["spreadsheet", "data", "电子表格", "電子表格", "Spreadsheet", "spreadsheet", [
     "xlsx", "excel", "csv", "tsv", "表格", "表格编辑", "excel转json", "json转excel", "工作表", "sheet",
+  ]],
+  ["chart", "data", "图表生成器", "圖表產生器", "Chart generator", "utility-suite", [
+    "bar chart", "line chart", "area chart", "pie chart", "柱状图", "折线图", "面积图", "饼图", "svg", "png",
   ]],
 
   // —— 编码转义 ——
@@ -99,28 +104,43 @@ const rows = [
   ]],
 
   // —— 转换计算 ——
-  ["timestamp", "convert", "时间戳", "時間戳", "Timestamp", "time-convert", [
+  ["timestamp", "calculate", "时间戳", "時間戳", "Timestamp", "time-convert", [
     "duration", "unix", "timestamp", "time", "beijing", "epoch",
     "时间戳转换", "北京时间", "时间差", "时长", "utc",
   ]],
-  ["color", "convert", "颜色转换", "顏色轉換", "Color convert", "color-convert", [
-    "hex", "rgb", "hsl", "hsv", "cmyk", "colour", "eyedropper", "picker",
-    "取色", "色环", "颜色",
+  ["color", "calculate", "颜色与对比度", "顏色與對比度", "Color & contrast", "color-convert", [
+    "hex", "rgb", "rgba", "hsl", "hsla", "hsv", "cmyk", "colour", "eyedropper", "picker",
+    "wcag", "contrast", "accessibility", "alpha", "取色", "色环", "颜色", "对比度", "無障礙", "无障碍",
   ]],
-  ["cron", "convert", "Cron 表达式", "Cron 運算式", "Cron expression", "cron", [
+  ["cron", "calculate", "Cron 表达式", "Cron 運算式", "Cron expression", "cron", [
     "crontab", "cron表达式", "定时任务", "计划任务", "schedule", "quartz", "spring cron",
   ]],
-  ["base-convert", "convert", "进制转换", "進制轉換", "Number base", "base-convert", [
+  ["base-convert", "calculate", "进制转换", "進制轉換", "Number base", "base-convert", [
     "binary", "octal", "decimal", "hex", "radix", "二进", "八进", "十进", "十六进", "进制",
   ]],
-  ["network-calc", "convert", "网络 / CIDR", "網路 / CIDR", "Network / CIDR", "network-calc", [
+  ["phone", "calculate", "电话号码解析", "電話號碼解析", "Phone number", "utility-suite", [
+    "phone", "e164", "手机号", "国际号码", "号码格式化", "telephone",
+  ]],
+  ["bandwidth", "calculate", "带宽与传输", "頻寬與傳輸", "Bandwidth calculator", "utility-suite", [
+    "bandwidth", "transfer time", "file size", "网速", "文件大小", "传输时间", "mbps",
+  ]],
+  ["network-calc", "network", "网络 / CIDR", "網路 / CIDR", "Network / CIDR", "network-calc", [
     "ip", "ipv4", "ipv6", "cidr", "子网", "子网切分", "子网掩码", "广播地址",
     "网络地址", "ip转整数", "网段", "subnet",
   ]],
 
   // —— 文本工具 ——
-  ["windows-port", "convert", "端口进程", "連接埠程序", "Port processes", "windows-port", [
+  ["windows-port", "network", "端口进程", "連接埠程序", "Port processes", "windows-port", [
     "win", "windows", "mac", "macos", "linux", "lsof", "sigterm", "sigkill", "port", "kill", "taskkill", "端口", "端口占用", "杀进程", "结束进程", "释放端口", "pid", "tcp", "udp",
+  ]],
+  ["user-agent", "network", "User-Agent 解析器", "User-Agent 解析器", "User-Agent parser", "utility-suite", [
+    "user agent", "ua", "ua parser", "浏览器解析", "ua解析", "browser", "operating system", "device model",
+  ]],
+  ["device-info", "network", "设备信息", "裝置資訊", "Device information", "utility-suite", [
+    "device info", "client diagnostics", "客户端诊断", "viewport", "screen", "dpr", "hardware",
+  ]],
+  ["keyboard-event", "network", "键盘事件检查器", "鍵盤事件檢查器", "Keyboard event inspector", "utility-suite", [
+    "keyboard event", "keydown", "keyup", "key code", "按键事件", "按键信息", "键码", "修饰键", "keycode", "which",
   ]],
 
   ["whitespace", "text", "文本处理", "文字處理", "Text tools", "whitespace", [
@@ -146,15 +166,29 @@ const rows = [
     "码位", "code point", "codepoints", "字符检查", "emoji", "unicode",
   ]],
 
+  // —— 开发辅助 ——
+  ["http-request", "developer", "cURL 转代码", "cURL 轉程式碼", "cURL to code", "utility-suite", [
+    "curl", "basic auth", "bearer", "request headers", "curl转代码", "请求头", "python requests", "fetch", "httpclient", "okhttp", "reqwest", "net/http",
+  ]],
+  ["docker-convert", "developer", "Docker Run 与 Compose 互转", "Docker Run 與 Compose 互轉", "Docker Run ↔ Compose", "utility-suite", [
+    "docker run", "docker compose", "compose yaml", "容器命令", "docker转换", "docker run 转 compose", "compose 转 docker run",
+  ]],
+  ["git-reference", "developer", "Git 速查", "Git 速查", "Git reference", "utility-suite", [
+    "git cheat sheet", "rebase", "stash", "reflog", "reset", "restore", "branch", "merge", "cherry-pick", "bisect", "worktree", "tag", "fetch", "pull", "push", "git命令", "版本控制",
+  ]],
+  ["web-meta", "developer", "Web Meta 生成器", "Web Meta 產生器", "Web Meta generator", "utility-suite", [
+    "seo", "open graph", "twitter card", "meta tags", "og tags", "网页元信息",
+  ]],
+  ["html-playground", "developer", "HTML Playground", "HTML Playground", "HTML playground", "utility-suite", [
+    "html editor", "css editor", "javascript preview", "网页预览", "前端沙箱", "html可视化",
+  ]],
+
   // —— 安全加密 ——
   ["hash", "security", "哈希校验", "雜湊校驗", "Hash & checksum", "hash", [
     "hash", "md5", "md5 16", "md5 32", "sha", "sha1", "sha224", "sha256", "sha3", "sha384", "sha512", "sm3", "crc32",
     "checksum", "摘要", "哈希", "校验和",
   ]],
-  ["md5-collision", "security", "MD5 碰撞检查", "MD5 碰撞檢查", "MD5 collision check", "md5-collision", [
-    "md5碰撞", "md5 collision", "双文件md5", "相同摘要", "hash collision", "文件碰撞",
-  ]],
-  ["file-type", "security", "文件格式识别", "檔案格式識別", "File type identifier", "file-type", [
+  ["file-type", "network", "文件格式识别", "檔案格式識別", "File type identifier", "file-type", [
     "文件类型", "文件识别", "魔数", "magic bytes", "file signature", "mime", "扩展名识别",
   ]],
   ["jwt", "security", "JWT", "JWT", "JWT", "jwt", [
@@ -178,11 +212,8 @@ const rows = [
   ["jwk", "security", "JWK / JWKS", "JWK / JWKS", "JWK / JWKS", "jwk", [
     "jwk", "jwks", "json web key", "JSON Web Key", "jwk转pem", "pem转jwk",
   ]],
-  ["symmetric-key", "security", "对称密钥", "對稱金鑰", "Symmetric key", "symmetric-key", [
-    "aes-key", "hmac-key", "生成密钥", "密钥生成", "随机密钥",
-  ]],
-  ["key-pair", "security", "密钥对", "金鑰對", "Key pair", "keypair", [
-    "keypair", "rsa", "sm2", "生成密钥对", "公私钥", "公钥", "私钥",
+  ["key-generator", "security", "密钥生成", "金鑰產生", "Key generator", "key-generator", [
+    "aes-key", "hmac-key", "symmetric-key", "key-pair", "keypair", "rsa", "sm2", "生成密钥", "生成密钥对", "公私钥",
   ]],
   ["xor", "security", "XOR（调试）", "XOR（除錯）", "XOR (debug)", "xor", [
     "异或", "xor加密", "debug xor",
@@ -190,11 +221,14 @@ const rows = [
 
   // —— 生成器 ——
   ["uuid", "generate", "唯一 ID", "唯一 ID", "Unique ID", "unique-id", [
-    "ulid", "nanoid", "uuid", "guid", "唯一标识", "生成id", "生成uuid",
+    "ulid", "nanoid", "uuid", "uuid v5", "uuid v7", "guid", "唯一标识", "生成id", "生成uuid",
   ]],
   ["password", "generate", "随机密码", "隨機密碼", "Random password", "password", [
-    "random-bytes", "密码生成", "随机字节", "强密码", "password generator",
-  ]],
+    "密码生成", "强密码", "password generator", "secure password",
+  ], { defaultOptions: { kind: "password" } }],
+  ["random-bytes", "generate", "随机字节", "隨機位元組", "Random bytes", "password", [
+    "安全随机数", "随机十六进制", "random hex", "secure random bytes", "cryptographic random",
+  ], { defaultOptions: { kind: "bytes" } }],
   ["qrcode", "generate", "二维码 / 条码", "二維碼 / 條碼", "QR & barcodes", "qrcode", [
     "qr", "barcode", "汉信", "pdf417", "data matrix", "svg",
     "批量识别", "扫码", "生成二维码", "识别二维码",
@@ -202,38 +236,41 @@ const rows = [
   ["lorem", "generate", "重复文本", "重複文字", "Repeated text", "lorem", [
     "ipsum", "placeholder", "dbx", "推广文案", "自定义内容", "占位文本", "lorem ipsum",
   ]],
+  ["fake-data", "generate", "假数据生成", "假資料產生", "Fake data generator", "utility-suite", [
+    "mock data", "faker", "csv generator", "测试数据", "虚构数据", "ndjson",
+  ]],
 
   // —— 图片 ——
-  ["image-process", "image", "图片处理", "圖片處理", "Image editor", "image-process", [
+  ["image-process", "image", "图片编辑", "圖片編輯", "Image editor", "image-process", [
     "图片压缩", "裁剪", "缩放", "旋转", "翻转", "水印", "格式转换",
     "jpeg", "png", "webp", "jpg", "图片编辑", "compress image",
   ]],
   ["image-generate", "image", "占位图", "佔位圖", "Placeholder image", "image-generate", [
     "占位图", "指定大小", "文件大小", "placeholder", "dummy image", "generate image", "假图",
   ]],
-  ["image-utility", "image", "图片工具", "圖片工具", "Image utilities", "image-utility", [
-    "像素化", "马赛克", "pixelate", "pixel art", "mosaic",
-    "九宫格", "宫格切图", "grid slicer", "split image", "切片", "图片分割",
-    "压缩图片", "compress image", "减小图片", "图片瘦身", "jpeg quality", "webp quality",
-    "图片base64", "image base64", "data uri", "data url", "图片编码",
-    "base64转图片", "base64 to image", "图片解码",
-  ]],
+  ["image-compress", "image", "图片压缩与格式转换", "圖片壓縮與格式轉換", "Image compress & convert", "image-utility", ["图片压缩", "格式转换", "jpeg", "png", "webp", "ico"]],
+  ["image-grid", "image", "图片切图", "圖片切圖", "Image grid slicer", "image-utility", ["九宫格", "宫格切图", "grid slicer", "split image", "切片"]],
+  ["image-pixelate", "image", "图片像素化", "圖片像素化", "Image pixelate", "image-utility", ["像素化", "马赛克", "pixelate", "pixel art", "mosaic"]],
+  ["image-base64", "image", "图片与 Base64", "圖片與 Base64", "Image & Base64", "image-utility", ["图片base64", "image base64", "data uri", "base64转图片"]],
+  ["image-stitch", "image", "图片拼接", "圖片拼接", "Image stitcher", "image-stitch", ["拼图", "合并图片", "横向拼接", "纵向拼接", "image merge"]],
+  ["gif-tools", "image", "GIF 动画生成", "GIF 動畫產生", "GIF workbench", "gif-tools", ["gif", "图片转gif", "image sequence", "frames", "animation"]],
+  ["image-ocr", "image", "图片 OCR", "圖片 OCR", "Image OCR", "image-ocr", ["ocr", "文字识别", "图片转文字", "tesseract", "中英文识别"]],
 ];
 
 const utilityRows = [
-  ["json-schema", "format", "JSON Schema 校验", "JSON Schema 校驗", "JSON Schema validator", "developer-utility", ["draft 2020-12", "schema validate"]],
-  ["dotenv", "format", ".env 工具", ".env 工具", ".env converter", "developer-utility", ["environment variables", "dotenv", "env json"]],
-  ["semver", "convert", "语义版本", "語意版本", "Semantic version", "developer-utility", ["version compare", "version range", "版本比较"]],
-  ["chmod", "convert", "chmod 权限计算", "chmod 權限計算", "chmod calculator", "developer-utility", ["unix permissions", "octal", "rwx"]],
-  ["http-status", "format", "HTTP 状态码速查", "HTTP 狀態碼速查", "HTTP status codes", "http-status", ["404", "401", "500", "5xx", "http code", "status code", "状态码", "狀態碼", "teapot"]],
+  ["dotenv", "data", ".env 管理", ".env 管理", ".env manager", "developer-utility", ["environment variables", "dotenv", "env json", "env example", "环境对比"]],
+  ["semver", "calculate", "语义版本", "語意版本", "Semantic version", "developer-utility", ["version compare", "version range", "版本比较"]],
+  ["chmod", "calculate", "chmod 权限计算", "chmod 權限計算", "chmod calculator", "developer-utility", ["unix permissions", "octal", "rwx"]],
+  ["http-status", "network", "HTTP 状态码速查", "HTTP 狀態碼速查", "HTTP status codes", "http-status", ["404", "401", "500", "5xx", "http code", "status code", "状态码", "狀態碼", "teapot"]],
 ];
 
 const DEMO_VIEWS = new Set(["json-workbench", "whitespace", "gzip", "base64", "code-format", "data-convert", "live-io", "developer-utility"]);
+const DEMO_IDS = new Set(["docker-convert"]);
 const NO_DEMO_IDS = new Set(["uuid", "color", "cron", "timestamp", "chmod", "http-status"]);
 
 export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
   const [es = en, it = en, ja = en, ptBR = en] = LOCALIZED_NAMES[id] || [];
-  const supportsDemo = DEMO_VIEWS.has(view) && !NO_DEMO_IDS.has(id);
+  const supportsDemo = (DEMO_VIEWS.has(view) || DEMO_IDS.has(id)) && !NO_DEMO_IDS.has(id);
   return {
     id,
     category,

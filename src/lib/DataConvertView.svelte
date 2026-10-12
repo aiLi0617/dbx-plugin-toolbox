@@ -16,7 +16,7 @@
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
     appliedDemoRequest = demoRequest;
-    input = demo.input;
+    input = demo.inputs?.[from] || demo.input;
   });
   $effect(() => {
     if (DATA_FORMATS.some((format) => format.value === initialOptions.from)) from = initialOptions.from;

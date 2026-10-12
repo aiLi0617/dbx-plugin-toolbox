@@ -1,7 +1,6 @@
 import yaml from "js-yaml";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
-import { JSONPath } from "jsonpath-plus";
 import { sqlEscape } from "../simpleTransforms.js";
 import { isLosslessNumber, parseSafeJson, stringifyLosslessJson } from "../jsonPrecision.js";
 
@@ -14,7 +13,96 @@ export function parseJson(text) {
 
 export function runJsonPath(input, path) {
   const data = parseJson(input);
-  return JSON.stringify(JSONPath({ path: path || "$", json: data, eval: false }), null, 2);
+  return JSON.stringify(queryJsonPath(data, path || "$"), null, 2);
+}
+
+function queryJsonPath(root, path) {
+  const source = String(path ?? "").trim() || "$";
+  if (!source.startsWith("$")) throw new Error("JSONPath must start with $");
+  const tokens = parseJsonPathTokens(source.slice(1));
+  let values = [root];
+  for (const token of tokens) {
+    if (token.type === "recursive") {
+      values = values.flatMap((value) => recursiveJsonValues(value, token.key));
+      continue;
+    }
+    const next = [];
+    for (const value of values) {
+      if (token.type === "wildcard") {
+        if (value && typeof value === "object") next.push(...Object.values(value));
+      } else if (value != null && typeof value === "object" && Object.hasOwn(value, token.key)) {
+        next.push(value[token.key]);
+      }
+    }
+    values = next;
+  }
+  return values;
+}
+
+function parseJsonPathTokens(source) {
+  const tokens = [];
+  let cursor = 0;
+  const invalid = () => { throw new Error("Unsupported JSONPath. Use properties, indexes, wildcards, or recursive selectors; script filters are disabled by CSP."); };
+  while (cursor < source.length) {
+    if (source.startsWith("..", cursor)) {
+      cursor += 2;
+      if (source[cursor] === "*") { tokens.push({ type: "recursive", key: "*" }); cursor += 1; continue; }
+      const match = source.slice(cursor).match(/^[A-Za-z_$][\w$-]*/);
+      if (!match) invalid();
+      tokens.push({ type: "recursive", key: match[0] }); cursor += match[0].length; continue;
+    }
+    if (source[cursor] === ".") {
+      cursor += 1;
+      if (source[cursor] === "*") { tokens.push({ type: "wildcard" }); cursor += 1; continue; }
+      const match = source.slice(cursor).match(/^[A-Za-z_$][\w$-]*/);
+      if (!match) invalid();
+      tokens.push({ type: "property", key: match[0] }); cursor += match[0].length; continue;
+    }
+    if (source[cursor] === "[") {
+      const end = findJsonPathBracketEnd(source, cursor + 1);
+      const body = source.slice(cursor + 1, end).trim();
+      if (body === "*") tokens.push({ type: "wildcard" });
+      else if (/^\d+$/.test(body)) tokens.push({ type: "property", key: Number(body) });
+      else if ((body.startsWith("'") && body.endsWith("'")) || (body.startsWith('"') && body.endsWith('"'))) {
+        tokens.push({ type: "property", key: decodeJsonPathString(body) });
+      } else invalid();
+      cursor = end + 1; continue;
+    }
+    invalid();
+  }
+  return tokens;
+}
+
+function findJsonPathBracketEnd(source, start) {
+  let quote = "";
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+    if (quote) {
+      if (char === "\\") index += 1;
+      else if (char === quote) quote = "";
+    } else if (char === "'" || char === '"') quote = char;
+    else if (char === "]") return index;
+  }
+  throw new Error("Unclosed JSONPath bracket");
+}
+
+function decodeJsonPathString(value) {
+  if (value[0] === '"') return JSON.parse(value);
+  return value.slice(1, -1).replace(/\\(['\\])/g, "$1");
+}
+
+function recursiveJsonValues(root, key) {
+  const matches = [];
+  const stack = root && typeof root === "object" ? Object.entries(root).reverse() : [];
+  while (stack.length) {
+    const [childKey, child] = stack.pop();
+    if (key === "*" || childKey === key) matches.push(child);
+    if (child && typeof child === "object") {
+      const entries = Object.entries(child);
+      for (let index = entries.length - 1; index >= 0; index -= 1) stack.push(entries[index]);
+    }
+  }
+  return matches;
 }
 
 export function csvToJson(text) {
@@ -139,6 +227,8 @@ export const NUMBER_BASES = [
 
 export const CUSTOM_BASE_ID = "custom";
 
+export const FIXED_INTEGER_WIDTHS = [8, 16, 32, 64];
+
 export function clampRadix(value) {
   const radix = Number(value);
   if (!Number.isInteger(radix) || radix < 2 || radix > 36) return null;
@@ -177,6 +267,48 @@ export function parseBaseInteger(text, from) {
   return neg ? -n : n;
 }
 
+function fixedWidth(bits) {
+  if (bits == null || bits === "" || bits === "auto") return null;
+  const width = Number(bits);
+  if (!FIXED_INTEGER_WIDTHS.includes(width)) throw new Error("invalid bit width");
+  return width;
+}
+
+export function normalizeFixedWidthInteger(value, bits, signed = true) {
+  const width = fixedWidth(bits);
+  if (!width) return value;
+  const modulus = 1n << BigInt(width);
+  if (!signed) {
+    if (value < 0n || value >= modulus) throw new Error("out of range");
+    return value;
+  }
+  const minimum = -(1n << BigInt(width - 1));
+  if (value < minimum || value >= modulus) throw new Error("out of range");
+  const signedMaximum = (1n << BigInt(width - 1)) - 1n;
+  return value > signedMaximum ? value - modulus : value;
+}
+
+export function reinterpretFixedWidthInteger(value, bits, signed = true) {
+  const width = fixedWidth(bits);
+  if (!width) return value;
+  const modulus = 1n << BigInt(width);
+  const raw = ((value % modulus) + modulus) % modulus;
+  if (!signed) return raw;
+  const signedMaximum = (1n << BigInt(width - 1)) - 1n;
+  return raw > signedMaximum ? raw - modulus : raw;
+}
+
+function unsignedFixedWidthValue(value, bits) {
+  const width = fixedWidth(bits);
+  if (!width || value >= 0n) return value;
+  return (1n << BigInt(width)) + value;
+}
+
+function fixedWidthDigits(bits, radix) {
+  if (!bits || radix === 10) return 0;
+  return Math.ceil(bits / Math.log2(radix));
+}
+
 function groupFromRight(text, size) {
   if (size < 1 || text.length <= size) return text;
   const parts = [];
@@ -189,18 +321,26 @@ function groupFromRight(text, size) {
 export function formatBaseInteger(value, to, opts = {}) {
   const radix = clampRadix(to);
   if (!radix) throw new Error("invalid");
-  const sign = value < 0n ? "-" : "";
-  const mag = value < 0n ? -value : value;
+  const bits = fixedWidth(opts.bits);
+  const signed = opts.signed !== false;
+  const normalized = normalizeFixedWidthInteger(value, bits, signed);
+  const displayValue = bits && radix !== 10
+    ? unsignedFixedWidthValue(normalized, bits)
+    : signed ? normalized : unsignedFixedWidthValue(normalized, bits);
+  const sign = displayValue < 0n ? "-" : "";
+  const mag = displayValue < 0n ? -displayValue : displayValue;
   let body = mag.toString(radix);
+  body = body.padStart(fixedWidthDigits(bits, radix), "0");
+  if (opts.uppercase) body = body.toUpperCase();
   if (opts.group) {
     const size = radix === 2 ? 4 : radix === 16 ? 2 : radix === 10 || radix === 8 ? 3 : 4;
     body = groupFromRight(body, size);
   }
   let prefix = "";
   if (opts.prefix) {
-    if (radix === 16) prefix = "0x";
-    else if (radix === 2) prefix = "0b";
-    else if (radix === 8) prefix = "0o";
+    if (radix === 16) prefix = opts.uppercase ? "0X" : "0x";
+    else if (radix === 2) prefix = opts.uppercase ? "0B" : "0b";
+    else if (radix === 8) prefix = opts.uppercase ? "0O" : "0o";
   }
   return sign + prefix + body;
 }
@@ -222,8 +362,23 @@ export function describeInteger(value) {
   return { bits, bytes, code, glyph, unicode };
 }
 
-export function convertBase(text, from, to) {
-  return formatBaseInteger(parseBaseInteger(text, from), to);
+export function convertBase(text, from, to, opts = {}) {
+  const value = normalizeFixedWidthInteger(parseBaseInteger(text, from), opts.bits, opts.signed !== false);
+  return formatBaseInteger(value, to, opts);
+}
+
+export function convertBaseLines(text, from, to, opts = {}) {
+  const source = String(text ?? "");
+  return source.split(/\r?\n/).map((line, index) => {
+    if (!line.trim()) return "";
+    try {
+      return convertBase(line, from, to, opts);
+    } catch (cause) {
+      const error = new Error(`Invalid number on line ${index + 1}`, { cause });
+      error.line = index + 1;
+      throw error;
+    }
+  }).join("\n");
 }
 
 export function clampByte(n) {
