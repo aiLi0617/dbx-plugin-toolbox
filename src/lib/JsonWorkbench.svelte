@@ -889,7 +889,6 @@
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: var(--radius-md, 8px);
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
-    box-shadow: 0 10px 28px color-mix(in srgb, CanvasText 16%, transparent);
     transform-origin: top left;
     animation: json-more-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -972,7 +971,6 @@
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: var(--radius-md, 8px);
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
-    box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 12%, transparent);
   }
   @media (max-width: 860px) {
     .json-split {

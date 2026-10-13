@@ -862,7 +862,6 @@ select.dbx-select.dbx-select:focus:not(:focus-visible):not(.invalid):not([aria-i
 }
 .catalog-card:hover {
   border-color: color-mix(in srgb, var(--color-foreground, CanvasText) 28%, transparent);
-  box-shadow: 0 2px 8px color-mix(in srgb, CanvasText 7%, transparent);
 }
 .catalog-card.dragging {
   opacity: 0.5;

@@ -163,7 +163,6 @@
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: var(--radius-md, 8px);
     background: var(--color-card, var(--color-background, Canvas));
-    box-shadow: 0 16px 40px color-mix(in srgb, CanvasText 18%, transparent);
   }
   .copy {
     display: flex;

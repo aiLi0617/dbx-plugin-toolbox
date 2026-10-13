@@ -201,7 +201,7 @@
     background:
       radial-gradient(circle closest-side, #fff 0%, rgba(255, 255, 255, 0) 100%),
       conic-gradient(#ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, CanvasText 14%, transparent);
+    box-shadow: inset 0 0 0 1px var(--color-border);
   }
   .handle {
     position: absolute;
@@ -209,9 +209,7 @@
     height: 16px;
     border: 2px solid #fff;
     border-radius: 50%;
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, CanvasText 40%, transparent),
-      0 1px 4px color-mix(in srgb, CanvasText 28%, transparent);
+    box-shadow: 0 0 0 1px var(--color-border);
     pointer-events: none;
     transform: translate(-50%, -50%);
   }
@@ -254,9 +252,7 @@
     height: 14px;
     border: 2px solid #fff;
     border-radius: 50%;
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, CanvasText 40%, transparent),
-      0 1px 3px color-mix(in srgb, CanvasText 25%, transparent);
+    box-shadow: 0 0 0 1px var(--color-border);
     pointer-events: none;
     transform: translate(-50%, -50%);
   }

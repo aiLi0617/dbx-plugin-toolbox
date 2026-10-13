@@ -633,7 +633,6 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg, 8px);
     background: var(--color-popover, var(--color-card, var(--color-background)));
-    box-shadow: 0 16px 40px color-mix(in srgb, CanvasText 18%, transparent);
   }
   .dialog strong { font-size: 14px; color: var(--color-foreground); }
   .dialog p { margin: 0; font-size: 13px; color: var(--color-muted-foreground); line-height: 1.45; }
