@@ -6215,12 +6215,12 @@
     "en": "Find port",
     "zh-CN": "查询端口"
   },
-  "Recommend free port": {
-    "en": "Recommend free port",
+  "Recommend free ports": {
+    "en": "Recommend free ports",
     "zh-CN": "推荐空闲端口"
   },
-  "Verified free port": {
-    "en": "Verified free port",
+  "Verified free ports": {
+    "en": "Verified free ports",
     "zh-CN": "已实际检测的空闲端口"
   },
   "Process terminated": {
@@ -6283,9 +6283,9 @@
     "en": "Request a graceful process exit (SIGTERM), closing all its ports when it exits.",
     "zh-CN": "将请求整个进程正常退出（SIGTERM），退出后会关闭其所有端口。"
   },
-  "No confirmed free port was found in the next 100 ports.": {
-    "en": "No confirmed free port was found in the next 100 ports.",
-    "zh-CN": "后续 100 个端口中未找到可确认的空闲端口。"
+  "Unable to recommend free ports right now. Try again.": {
+    "en": "Unable to recommend free ports right now. Try again.",
+    "zh-CN": "暂时无法推荐空闲端口，请稍后重试。"
   },
   "Domain": {
     "en": "Domain",

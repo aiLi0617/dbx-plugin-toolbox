@@ -2,6 +2,7 @@ import { mount } from "svelte";
 import App from "./App.svelte";
 import { installFormNavigationGuard } from "./formGuard.js";
 import { applyTheme } from "./lib/host.js";
+import { installRangeProgress } from "./rangeProgress.js";
 import "./app.css";
 
 applyTheme();
@@ -11,3 +12,4 @@ applyTheme();
 installFormNavigationGuard();
 
 mount(App, { target: document.getElementById("app") });
+installRangeProgress();

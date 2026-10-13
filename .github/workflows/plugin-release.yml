@@ -13,6 +13,13 @@ jobs:
     with:
       release-tag: ${{ github.event.release.tag_name }}
       package-command: >-
+        git lfs pull --include='backend/models/*.rten' &&
+        for model in backend/models/*.rten; do
+          if [ "$(dd if="$model" bs=4 count=1 2>/dev/null)" != "RTEN" ]; then
+            echo "::error file=$model::OCR model is not a hydrated RTEN file. Ensure Git LFS objects are available before packaging.";
+            exit 1;
+          fi;
+        done;
         if [ "$RUNNER_OS" = "Linux" ]; then
           sudo apt-get update && sudo apt-get install -y libwayland-dev;
         fi;

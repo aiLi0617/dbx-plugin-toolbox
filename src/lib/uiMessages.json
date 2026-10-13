@@ -22534,5 +22534,41 @@
     "ko": "Key encoding must be auto, utf8, hex, or base64",
     "tr": "Key encoding must be auto, utf8, hex, or base64",
     "az": "Key encoding must be auto, utf8, hex, or base64"
+  },
+  "Recommend free ports": {
+    "en": "Recommend free ports",
+    "zh-CN": "推荐空闲端口",
+    "zh-TW": "Recommend free ports",
+    "es": "Recommend free ports",
+    "it": "Recommend free ports",
+    "ja": "Recommend free ports",
+    "pt-BR": "Recommend free ports",
+    "ko": "Recommend free ports",
+    "tr": "Recommend free ports",
+    "az": "Recommend free ports"
+  },
+  "Verified free ports": {
+    "en": "Verified free ports",
+    "zh-CN": "已实际检测的空闲端口",
+    "zh-TW": "Verified free ports",
+    "es": "Verified free ports",
+    "it": "Verified free ports",
+    "ja": "Verified free ports",
+    "pt-BR": "Verified free ports",
+    "ko": "Verified free ports",
+    "tr": "Verified free ports",
+    "az": "Verified free ports"
+  },
+  "Unable to recommend free ports right now. Try again.": {
+    "en": "Unable to recommend free ports right now. Try again.",
+    "zh-CN": "暂时无法推荐空闲端口，请稍后重试。",
+    "zh-TW": "Unable to recommend free ports right now. Try again.",
+    "es": "Unable to recommend free ports right now. Try again.",
+    "it": "Unable to recommend free ports right now. Try again.",
+    "ja": "Unable to recommend free ports right now. Try again.",
+    "pt-BR": "Unable to recommend free ports right now. Try again.",
+    "ko": "Unable to recommend free ports right now. Try again.",
+    "tr": "Unable to recommend free ports right now. Try again.",
+    "az": "Unable to recommend free ports right now. Try again."
   }
 }
