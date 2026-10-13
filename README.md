@@ -1,5 +1,7 @@
 # DBX 工具箱
 
+[简体中文](README.md) | [English](README.en.md)
+
 > 面向开发者的本地工具集合与加密密钥库。数据格式转换、文本处理、编码编解码、图片处理与密码学操作均在本机完成。
 
 DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench 插件。它将日常开发中分散的小工具整合在一个工作台里，并提供由 Rust Sidecar 支持的本地加密密钥库；插件不声明网络权限，也不会主动上传处理内容。
@@ -27,6 +29,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 
 - **本地优先**：工作台不声明网络权限；格式转换、图像处理和密码学运算均在本机执行。
 - **覆盖高频场景**：提供 9 类、64 个工具入口，支持搜索、收藏、最近使用与分类筛选。
+- **多语言界面**：支持 English、简体中文、繁體中文、Español、Italiano、日本語、Português、한국어、Türkçe 与 Azərbaycanca，并可跟随 DBX 宿主语言实时切换。
 - **精度与边界明确**：数据转换设有 5 MB 输入上限；可能造成结构或数字精度丢失的操作会给出明确提示或拒绝执行。
 - **密钥不离开 Sidecar**：密钥库通过 `keyId` 引用密钥，避免将明文密钥放入 UI 持久化存储或 Workbench context。
 - **适合桌面工作流**：支持本地文件导入导出、二维码/条码生成与识别、批量图片处理和电子表格编辑。
@@ -243,13 +246,9 @@ dbx-plugin package .
 
 ## 贡献
 
-欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告问题或提出建议。提交改动前，请至少运行：
+欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告普通问题或提出建议。准备代码改动前，请阅读[贡献指南](CONTRIBUTING.md)。
 
-```bash
-npm run check
-```
-
-涉及密钥、密码学或本地文件访问的修改，请同时说明安全影响、测试范围与兼容性考虑。
+如果问题可能涉及密钥、凭据、任意文件访问、进程终止或其他安全影响，请不要创建公开 Issue；请按照[安全策略](SECURITY.md)私密报告。
 
 ## 许可证
 
