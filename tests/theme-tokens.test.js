@@ -66,6 +66,8 @@ test("interactive states use DBX theme aliases instead of browser defaults", () 
   assert.match(css, /--dbx-hover-foreground:\s*var\(--color-accent-foreground,\s*var\(--color-foreground\)\);/);
   assert.match(css, /:where\(button\)\s*\{[^}]*appearance:\s*none;[^}]*background:\s*transparent;/s);
   assert.match(css, /:where\(button:not\(:disabled\):hover\)\s*\{[^}]*var\(--dbx-hover-background\)/s);
+  assert.match(css, /--dbx-range-track:\s*var\(--dbx-control-border\);/);
+  assert.match(css, /:where\(input\[type="range"\]:hover\),[^{]*\{[^}]*--dbx-range-track:\s*var\(--color-ring,/s);
   assert.match(css, /:where\(input\[type="range"\]::-webkit-slider-thumb\)\s*\{[^}]*background:\s*var\(--color-primary\);/s);
   assert.match(css, /:where\(input\[type="color"\]:hover\)\s*\{[^}]*var\(--color-ring,/s);
   assert.match(css, /:where\(\.file-button:hover\)\s*\{[^}]*var\(--dbx-hover-background\)/s);
