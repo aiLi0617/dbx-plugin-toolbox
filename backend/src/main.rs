@@ -66,7 +66,9 @@ impl PluginHandler for Plugin {
             return fsutil::handle(&mut sessions, method, params);
         }
         match method {
-            "toolbox/ports/list" | "toolbox/ports/kill" => ports::handle(method, params),
+            "toolbox/ports/list" | "toolbox/ports/kill" | "toolbox/ports/recommend" => {
+                ports::handle(method, params)
+            }
             "toolbox/json" => crypto::json_op(params),
             "toolbox/hash" => crypto::hash_op(params),
             "toolbox/crypto" => {

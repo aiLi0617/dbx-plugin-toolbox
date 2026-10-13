@@ -1,20 +1,30 @@
 use crate::helpers::bad;
 use dbx_plugin_sdk::PluginError;
 use serde_json::Value;
+use std::net::{TcpListener, UdpSocket};
 
 #[cfg(any(target_os = "linux", target_os = "macos", test))]
 #[path = "ports_unix.rs"]
 mod unix;
 
 fn validate(method: &str, params: &Value) -> Result<(), PluginError> {
-    if !matches!(method, "toolbox/ports/list" | "toolbox/ports/kill") {
+    if !matches!(
+        method,
+        "toolbox/ports/list" | "toolbox/ports/kill" | "toolbox/ports/recommend"
+    ) {
         return Err(PluginError::method_not_found(method));
-    }
-    if !matches!(params["port"].as_u64(), Some(1..=65535)) {
-        return Err(bad("PORT_INVALID"));
     }
     if !matches!(params["protocol"].as_str(), Some("tcp" | "udp")) {
         return Err(bad("PORT_PROTOCOL_INVALID"));
+    }
+    if method == "toolbox/ports/recommend" {
+        if !matches!(params["count"].as_u64(), Some(1..=10)) {
+            return Err(bad("PORT_INVALID"));
+        }
+        return Ok(());
+    }
+    if !matches!(params["port"].as_u64(), Some(1..=65535)) {
+        return Err(bad("PORT_INVALID"));
     }
     if method == "toolbox/ports/kill" {
         if params["confirm"].as_bool() != Some(true) {
@@ -37,8 +47,51 @@ fn validate(method: &str, params: &Value) -> Result<(), PluginError> {
     Ok(())
 }
 
+fn recommend(protocol: &str, count: usize) -> Result<Value, PluginError> {
+    let mut ports = Vec::with_capacity(count);
+    match protocol {
+        "tcp" => {
+            let mut reservations = Vec::with_capacity(count);
+            for _ in 0..count {
+                let socket = TcpListener::bind(("0.0.0.0", 0))
+                    .map_err(|_| crate::helpers::err("PORT_RECOMMEND_FAILED"))?;
+                ports.push(
+                    socket
+                        .local_addr()
+                        .map_err(|_| crate::helpers::err("PORT_RECOMMEND_FAILED"))?
+                        .port(),
+                );
+                reservations.push(socket);
+            }
+        }
+        "udp" => {
+            let mut reservations = Vec::with_capacity(count);
+            for _ in 0..count {
+                let socket = UdpSocket::bind(("0.0.0.0", 0))
+                    .map_err(|_| crate::helpers::err("PORT_RECOMMEND_FAILED"))?;
+                ports.push(
+                    socket
+                        .local_addr()
+                        .map_err(|_| crate::helpers::err("PORT_RECOMMEND_FAILED"))?
+                        .port(),
+                );
+                reservations.push(socket);
+            }
+        }
+        _ => unreachable!("protocol was validated"),
+    }
+    ports.sort_unstable();
+    Ok(serde_json::json!({"protocol": protocol, "ports": ports}))
+}
+
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     validate(method, &params)?;
+    if method == "toolbox/ports/recommend" {
+        return recommend(
+            params["protocol"].as_str().unwrap(),
+            params["count"].as_u64().unwrap() as usize,
+        );
+    }
     #[cfg(windows)]
     {
         windows::run(method, params)
@@ -370,6 +423,40 @@ mod tests {
         params["pid"] = json!(12345);
         params["started"] = json!("123'; Stop-Process");
         assert!(validate("toolbox/ports/kill", &params).is_err());
+
+        assert!(validate(
+            "toolbox/ports/recommend",
+            &json!({"protocol":"tcp","count":5})
+        )
+        .is_ok());
+        assert!(validate(
+            "toolbox/ports/recommend",
+            &json!({"protocol":"tcp","count":0})
+        )
+        .is_err());
+        assert!(validate(
+            "toolbox/ports/recommend",
+            &json!({"protocol":"tcp","count":11})
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn recommends_multiple_unique_ports_without_a_query_port() {
+        for protocol in ["tcp", "udp"] {
+            let response = handle(
+                "toolbox/ports/recommend",
+                json!({"protocol":protocol,"count":5}),
+            )
+            .unwrap();
+            let ports = response["ports"].as_array().unwrap();
+            assert_eq!(response["protocol"], protocol);
+            assert_eq!(ports.len(), 5);
+            assert!(ports
+                .iter()
+                .all(|port| matches!(port.as_u64(), Some(1..=65535))));
+            assert!(ports.windows(2).all(|pair| pair[0] != pair[1]));
+        }
     }
 }
 

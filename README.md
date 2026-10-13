@@ -74,7 +74,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 - **开发计算**：Cron 表达式可视化与下次触发预览、2–36 进制转换、电话号码解析、带宽与传输时间估算、IPv4 / IPv6 CIDR 计算及受限子网切分。
 - **开发查询**：SemVer 解析、比较、排序和范围检查；chmod 数字/符号权限互转；离线 HTTP 状态码、User-Agent、设备信息与键盘事件查询。
 
-- **端口进程（Windows / macOS / Linux）**：按 TCP / UDP 本地端口查询 PID、名称、地址和状态，确认后结束并刷新。Windows 强制结束；macOS / Linux 默认 SIGTERM，可勾选 SIGKILL。执行前重新核对启动时间和端口归属，保护系统 PID、DBX 与工具箱自身及祖先进程。Unix 查询依赖系统路径下的 lsof（Linux 需自行安装），仅显示当前权限可见的进程；Linux 安全终止使用 pidfd，需要内核 5.3+。macOS 使用微秒级启动时间复核身份，但系统按 PID 发送信号，仍存在极短的 PID 复用竞态。强制结束可能丢失未保存数据。
+- **端口进程（Windows / macOS / Linux）**：按 TCP / UDP 本地端口查询 PID、名称、地址和状态，也可独立推荐 5 个由系统实际绑定验证的空闲端口。确认后结束并刷新。Windows 强制结束；macOS / Linux 默认 SIGTERM，可勾选 SIGKILL。执行前重新核对启动时间和端口归属，保护系统 PID、DBX 与工具箱自身及祖先进程。Unix 查询依赖系统路径下的 lsof（Linux 需自行安装），仅显示当前权限可见的进程；Linux 安全终止使用 pidfd，需要内核 5.3+。macOS 使用微秒级启动时间复核身份，但系统按 PID 发送信号，仍存在极短的 PID 复用竞态。强制结束可能丢失未保存数据。
 
 > CIDR 工具不会枚举超大网段，以避免无意中耗尽本机资源。
 

@@ -14,7 +14,8 @@
   let killed = $state(null);
   let signalSent = $state(null);
   let force = $state(false);
-  let recommendedPort = $state(null);
+  let recommendedPorts = $state([]);
+  const recommendationLimit = 5;
   const valid = $derived(/^\d+$/.test(String(port)) && Number(port) >= 1 && Number(port) <= 65535);
   const errors = {
     PORT_PLATFORM_UNSUPPORTED: ["此工具支持 Windows、macOS 和 Linux。", "This tool supports Windows, macOS, and Linux."],
@@ -29,9 +30,13 @@
   };
   function showError(err) {
     const key = err?.message;
+    if (key === "PORT_RECOMMEND_FAILED") {
+      error = t("暂时无法推荐空闲端口，请稍后重试。", "Unable to recommend free ports right now. Try again.");
+      return;
+    }
     error = key in errors ? key : String(key || err);
   }
-  function reset() { result = null; pending = null; error = ""; killed = null; signalSent = null; force = false; recommendedPort = null; }
+  function reset() { result = null; pending = null; error = ""; killed = null; signalSent = null; force = false; recommendedPorts = []; }
   async function search() {
     if (busy || !valid) return;
     reset();
@@ -62,16 +67,12 @@
     } finally { busy = false; }
   }
   async function recommend() {
-    if (busy || !valid) return;
+    if (busy) return;
     reset();
     busy = true;
     try {
-      const start = Number(port);
-      for (let candidate = start; candidate <= Math.min(65535, start + 99); candidate += 1) {
-        const checked = await invoke("toolbox/ports/list", { port: candidate, protocol });
-        if (!checked.visibilityLimited && checked.processes.length === 0) { recommendedPort = candidate; return; }
-      }
-      error = t("后续 100 个端口中未找到可确认的空闲端口。", "No confirmed free port was found in the next 100 ports.");
+      const response = await invoke("toolbox/ports/recommend", { protocol, count: recommendationLimit });
+      recommendedPorts = response.ports;
     } catch (err) { showError(err); }
     finally { busy = false; }
   }
@@ -83,9 +84,16 @@
     <label>{t("端口号", "Port number")}<input class="dbx-input" inputmode="numeric" bind:value={port} oninput={reset} onkeydown={(event) => { if (event.key === "Enter") search(); }} disabled={busy} placeholder="3000" /></label>
     <label>{t("协议", "Protocol")}<select class="dbx-input" bind:value={protocol} onchange={reset} disabled={busy}><option value="tcp">TCP</option><option value="udp">UDP</option></select></label>
     <button class="dbx-btn dbx-btn--primary" type="button" onclick={search} disabled={busy || !valid}>{busy ? t("处理中…", "Working…") : t("查询端口", "Find port")}</button>
-    <button class="dbx-btn" type="button" onclick={recommend} disabled={busy || !valid}>{t("推荐空闲端口", "Recommend free port")}</button>
+    <button class="dbx-btn" type="button" onclick={recommend} disabled={busy}>{t("推荐空闲端口", "Recommend free ports")}</button>
   </div>
-  {#if recommendedPort !== null}<p role="status">{t("已实际检测的空闲端口", "Verified free port")}: <strong>{recommendedPort}</strong></p>{/if}
+  {#if recommendedPorts.length > 0}
+    <div class="port-recommendations" role="status">
+      <span>{t("已实际检测的空闲端口", "Verified free ports")}:</span>
+      {#each recommendedPorts as recommendedPort}
+        <button class="dbx-btn port-recommendation" type="button" onclick={() => { port = String(recommendedPort); }}>{recommendedPort}</button>
+      {/each}
+    </div>
+  {/if}
   {#if !valid}<p class="error">{t(...errors.PORT_INVALID)}</p>{/if}
   {#if error}<p class="error" role="alert">{error in errors ? t(...errors[error]) : error}</p>{/if}
   {#if killed !== null}<p role="status">{t("已结束进程", "Process terminated")}: {killed}</p>{/if}
@@ -125,6 +133,8 @@
 <style>
   .port-page { display: grid; gap: 16px; padding: 20px; }
   .port-form, .buttons { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  .port-recommendations { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .port-recommendation { min-width: 72px; }
   label { display: grid; gap: 6px; font-size: 13px; }
   input { width: 180px; }
   .force-option { display: flex; align-items: center; gap: 8px; }
