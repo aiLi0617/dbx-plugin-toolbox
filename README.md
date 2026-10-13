@@ -246,13 +246,9 @@ dbx-plugin package .
 
 ## 贡献
 
-欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告问题或提出建议。提交改动前，请至少运行：
+欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告普通问题或提出建议。准备代码改动前，请阅读[贡献指南](CONTRIBUTING.md)。
 
-```bash
-npm run check
-```
-
-涉及密钥、密码学或本地文件访问的修改，请同时说明安全影响、测试范围与兼容性考虑。
+如果问题可能涉及密钥、凭据、任意文件访问、进程终止或其他安全影响，请不要创建公开 Issue；请按照[安全策略](SECURITY.md)私密报告。
 
 ## 许可证
 

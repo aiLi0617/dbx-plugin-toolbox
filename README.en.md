@@ -225,13 +225,9 @@ For versioning, candidate packages, `releaseNotes`, and store operations, see th
 
 ## Contributing
 
-Issues and suggestions are welcome through [GitHub Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues). Before submitting a change, run at least:
+Regular bug reports and suggestions are welcome through [GitHub Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues). Read the [contribution guide](CONTRIBUTING.en.md) before preparing a code change.
 
-```bash
-npm run check
-```
-
-For changes involving keys, cryptography, or local file access, describe the security impact, test coverage, and compatibility considerations.
+Do not open a public issue for a potential vulnerability involving keys, credentials, arbitrary file access, process termination, or another security impact. Follow the [security policy](SECURITY.en.md) to report it privately.
 
 ## License
 
