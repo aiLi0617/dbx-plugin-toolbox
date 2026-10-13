@@ -1,7 +1,7 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import { pick } from "./i18n.js";
-  import { punycodePair } from "./tools/encode.js";
+  import { analyzePunycode } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
 
@@ -9,8 +9,8 @@
 
   let input = $state("");
   const pair = $derived.by(() => {
-    try { return { ...punycodePair(input), error: "" }; }
-    catch { return { unicode: "", ace: "", error: t("请输入有效域名（Unicode 或 xn-- 编码）", "Enter a valid Unicode or xn-- domain") }; }
+    try { return { ...analyzePunycode(input), error: "" }; }
+    catch (cause) { return { unicode: "", ace: "", labels: [], warnings: [], error: cause?.message || t("请输入有效域名（Unicode 或 xn-- 编码）", "Enter a valid Unicode or xn-- domain") }; }
   });
 </script>
 
@@ -32,6 +32,8 @@
       <CopyButton {locale} text={pair.ace} labelZh="复制 ACE" labelEn="Copy ACE" />
     </div>
   </div>
+  {#if pair.warnings?.length}<div class="warning" role="alert"><strong>{t("疑似仿冒风险","Possible spoofing risk")}</strong>{#each pair.warnings as warning}<span>{warning}</span>{/each}</div>{/if}
+  {#if pair.labels?.length}<div class="labels"><div class="label-head"><span>#</span><span>Unicode</span><span>ACE</span><span>{t("长度","Length")}</span></div>{#each pair.labels as label}<div class:warn={label.mixedScripts||label.asciiLookalike} class="label-row"><span>{label.index}</span><code>{label.unicode}</code><code>{label.ace}</code><span>{label.bytes}/63</span></div>{/each}</div>{/if}
 </div>
 
 <style>
@@ -39,7 +41,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 560px;
+    max-width: 820px;
   }
   .block {
     display: flex;
@@ -65,6 +67,7 @@
     gap: 8px;
     align-items: center;
   }
+  .warning{display:flex;flex-direction:column;gap:3px;padding:9px 11px;border-radius:8px;background:var(--color-warning-bg);color:var(--color-warning);font-size:12px}.labels{overflow:auto;border:1px solid var(--color-border);border-radius:8px}.label-head,.label-row{display:grid;grid-template-columns:34px minmax(100px,1fr) minmax(140px,1.4fr) 68px;gap:8px;padding:7px 9px}.label-head{background:var(--color-muted);color:var(--color-muted-foreground);font-size:11px}.label-row+.label-row{border-top:1px solid var(--color-border)}.label-row code{overflow:hidden;text-overflow:ellipsis}.label-row.warn{background:var(--color-warning-bg)}
 
   @media (max-width: 560px) {
     .row {

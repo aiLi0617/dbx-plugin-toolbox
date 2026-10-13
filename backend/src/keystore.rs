@@ -769,6 +769,7 @@ fn derive_kek_with_salt(password: &str, salt: &[u8; 16]) -> Result<[u8; 32], Plu
 fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
     Ok(match algorithm.trim() {
         "aes-128" => "aes-128",
+        "aes-192" => "aes-192",
         "aes-256" => "aes-256",
         "sm4-128" => "sm4-128",
         "hmac" | "hmac-sha256" => "hmac-sha256",
@@ -851,6 +852,11 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
         }
+        "aes-192" => {
+            let mut bytes = Zeroizing::new(vec![0u8; 24]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(hex::encode(bytes.as_slice()))
+        }
         "hmac-sha1" => {
             let mut bytes = Zeroizing::new(vec![0u8; 20]);
             rng.fill_bytes(bytes.as_mut());
@@ -896,6 +902,7 @@ fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError>
     let bytes = Zeroizing::new(decode_key_bytes(trimmed)?);
     let expected = match algorithm {
         "aes-128" | "sm4-128" => 16,
+        "aes-192" => 24,
         "aes-256" => 32,
         "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" => 0,
         _ => return Err(bad("Unsupported algorithm")),

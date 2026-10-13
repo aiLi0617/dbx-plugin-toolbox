@@ -72,3 +72,23 @@ export function inspectSemver(input, range = "", options = {}) {
   if (result.rangeError) throw new Error(result.rangeError);
   return result;
 }
+
+export function incrementSemver(version, release = "patch", identifier = "rc") {
+  const value = semver.valid(String(version || "").trim());
+  if (!value) throw new Error(`Invalid semantic version: ${version}`);
+  const allowed = new Set(["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"]);
+  if (!allowed.has(release)) throw new Error(`Invalid release type: ${release}`);
+  return semver.inc(value, release, release.startsWith("pre") || release === "prerelease" ? identifier : undefined);
+}
+
+export function intersectSemverRanges(left, right, options = {}) {
+  const leftRange = semver.validRange(String(left || "").trim(), options);
+  const rightRange = semver.validRange(String(right || "").trim(), options);
+  if (leftRange === null || rightRange === null) throw new Error("Invalid semantic version range");
+  return { left: leftRange, right: rightRange, intersects: semver.intersects(leftRange, rightRange, options) };
+}
+
+export function selectSemverCandidates(input, range, options = {}) {
+  const result = inspectSemver(input, range, options);
+  return { candidates: result.matching, minimum: result.matching[0] || "", maximum: result.maximumSatisfying };
+}

@@ -31,8 +31,6 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
       - name: Install Linux native dialog and port query dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libwayland-dev lsof
@@ -42,3 +40,28 @@ jobs:
       - run: cargo fmt -- --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
+
+  ocr-model-integration:
+    runs-on: ubuntu-latest
+    env:
+      DBX_PLUGIN_DATA_DIR: ${{ runner.temp }}/dbx-toolbox-ocr-test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux native dependencies
+        run: sudo apt-get update && sudo apt-get install -y libwayland-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Download pinned official OCR assets once
+        run: |
+          model_dir="$DBX_PLUGIN_DATA_DIR/io.github.aili0617.toolbox/models/ocr/v1"
+          mkdir -p "$model_dir"
+          base="https://github.com/aiLi0617/dbx-plugin-toolbox/releases/download/ocr-models-v1"
+          curl --fail --location --retry 3 --output "$model_dir/detection-ppocrv5.rten" "$base/detection-ppocrv5.rten"
+          curl --fail --location --retry 3 --output "$model_dir/recognition-mobile-opset13.rten" "$base/recognition-mobile-opset13.rten"
+          curl --fail --location --retry 3 --output "$model_dir/recognition-server-opset13.rten" "$base/recognition-server-opset13.rten"
+          echo "06ceb2a0cf56bcd340ace6bf5ac8eea90377fbed931e4ee80b99eb75ef2d090a  $model_dir/detection-ppocrv5.rten" | sha256sum --check
+          echo "19369953e95c4f376fb5310b2740c711b40a1fba6e311c6bb58baed949a85ba6  $model_dir/recognition-mobile-opset13.rten" | sha256sum --check
+          echo "5dad41c89a41ae468a626affb91867b36fe067b54d032138862e61f50c312f6b  $model_dir/recognition-server-opset13.rten" | sha256sum --check
+      - run: cargo test ocr::tests::official_fast_and_accurate_models_load_and_run_inference -- --ignored --exact --test-threads=1

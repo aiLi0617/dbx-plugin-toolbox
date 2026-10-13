@@ -258,6 +258,7 @@ export async function generateRsaKeyPairPem(bits = 2048, format = "pkcs8") {
 
 export const SYMMETRIC_KEY_ALGORITHMS = [
   { id: "aes-256", label: "AES-256", bytes: 32, groupZh: "对称加密 / XOR", groupEn: "Symmetric / XOR" },
+  { id: "aes-192", label: "AES-192", bytes: 24, groupZh: "对称加密 / XOR", groupEn: "Symmetric / XOR" },
   { id: "aes-128", label: "AES-128", bytes: 16, groupZh: "对称加密 / XOR", groupEn: "Symmetric / XOR" },
   { id: "sm4-128", label: "SM4", bytes: 16, groupZh: "对称加密 / XOR", groupEn: "Symmetric / XOR" },
   { id: "hmac-sha1", label: "SHA-1", bytes: 20, groupZh: "HMAC / JWT", groupEn: "HMAC / JWT" },

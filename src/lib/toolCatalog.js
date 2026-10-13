@@ -35,6 +35,17 @@ const LOCALIZED_NAMES = {
   aes: ["Cifrado simétrico", "Cifratura simmetrica", "対称暗号", "Criptografia simétrica"],
   "hmac-sha256": ["HMAC", "HMAC", "HMAC", "HMAC"],
   rsa: ["Cifrado asimétrico", "Cifratura asimmetrica", "非対称暗号", "Criptografia assimétrica"],
+  sm4: ["Cifrado SM4", "Cifratura SM4", "SM4 暗号", "Criptografia SM4"],
+  sm2: ["Cifrado SM2", "Cifratura SM2", "SM2 暗号", "Criptografia SM2"],
+  "modern-aead": ["Cifrado autenticado moderno", "Cifratura autenticata moderna", "最新の認証付き暗号", "Criptografia autenticada moderna"],
+  kdf: ["Derivación de claves", "Derivazione chiavi", "鍵導出", "Derivação de chaves"],
+  signature: ["Firma digital", "Firma digitale", "デジタル署名", "Assinatura digital"],
+  "key-wrap": ["Envoltura de claves", "Wrapping delle chiavi", "鍵ラップ", "Encapsulamento de chaves"],
+  "storage-crypto": ["Cifrado de almacenamiento", "Cifratura archiviazione", "ストレージ暗号", "Criptografia de armazenamento"],
+  "format-preserving": ["Cifrado con formato", "Cifratura formato", "形式保持暗号", "Criptografia com preservação de formato"],
+  "aes-mac": ["MAC basado en AES", "MAC basato su AES", "AES ベース MAC", "MAC baseado em AES"],
+  hpke: ["Cifrado híbrido HPKE", "Cifratura ibrida HPKE", "HPKE ハイブリッド暗号", "Criptografia híbrida HPKE"],
+  "ml-kem": ["Encapsulación poscuántica", "Incapsulamento post-quantum", "耐量子鍵カプセル化", "Encapsulamento pós-quântico"],
   totp: ["TOTP", "TOTP", "TOTP", "TOTP"],
   cert: ["Certificados y SSH", "Certificati e SSH", "証明書と SSH", "Certificados e SSH"],
   jwk: ["JWK / JWKS", "JWK / JWKS", "JWK / JWKS", "JWK / JWKS"],
@@ -194,14 +205,47 @@ const rows = [
   ["jwt", "security", "JWT", "JWT", "JWT", "jwt", [
     "验签", "decode token", "json web token", "令牌", "签发", "jwt解码", "jwt验签", "jwt签发",
   ]],
-  ["aes", "security", "对称加密", "對稱加密", "Symmetric cipher", "aes", [
-    "sm4", "aes", "gcm", "cbc", "ecb", "iv", "nonce", "aad", "对称", "加解密",
-  ]],
+  ["aes", "security", "AES 加密", "AES 加密", "AES cipher", "aes", [
+    "aes", "aes-128", "aes-192", "aes-256", "gcm", "cbc", "ecb", "iv", "nonce", "aad", "对称", "加解密",
+  ], { defaultOptions: { algorithm: "aes-256" } }],
+  ["sm4", "security", "SM4 国密加密", "SM4 國密加密", "SM4 cipher", "aes", [
+    "sm4", "国密", "國密", "cbc", "ecb", "iv", "对称加密", "sm4加密",
+  ], { defaultOptions: { algorithm: "sm4-128" } }],
   ["hmac-sha256", "security", "HMAC", "HMAC", "HMAC", "hmac", [
     "hmac-sm3", "hmac", "hmac-sha1", "hmac-sha384", "hmac-sha512", "消息认证",
   ]],
-  ["rsa", "security", "非对称加密", "非對稱加密", "Asymmetric cipher", "rsa", [
-    "sm2", "rsa", "oaep", "pkcs1", "非对称", "公钥加密",
+  ["rsa", "security", "RSA 加密", "RSA 加密", "RSA cipher", "rsa", [
+    "rsa", "oaep", "oaep-sha1", "oaep-sha256", "oaep-sha384", "oaep-sha512", "pkcs1", "非对称", "公钥加密",
+  ], { defaultOptions: { algorithm: "rsa" } }],
+  ["sm2", "security", "SM2 国密加密", "SM2 國密加密", "SM2 cipher", "rsa", [
+    "sm2", "国密", "國密", "非对称", "公钥加密", "sm2加密",
+  ], { defaultOptions: { algorithm: "sm2" } }],
+  ["modern-aead", "security", "现代认证加密", "現代認證加密", "Modern authenticated cipher", "modern-crypto", [
+    "chacha20", "poly1305", "xchacha20", "aes-gcm-siv", "aes-ccm", "aes-ctr", "aead", "现代加密", "认证加密",
+  ]],
+  ["kdf", "security", "密钥派生 KDF", "金鑰派生 KDF", "Key derivation (KDF)", "modern-crypto", [
+    "argon2id", "scrypt", "pbkdf2", "hkdf", "password derivation", "密钥派生", "口令派生",
+  ]],
+  ["signature", "security", "数字签名与验签", "數位簽章與驗證", "Digital signatures", "signature", [
+    "rsa-pss", "rsa signature", "sm2 signature", "数字签名", "签名", "验签", "verify signature",
+  ]],
+  ["key-wrap", "security", "AES 密钥包装", "AES 金鑰包裝", "AES key wrap", "specialized-crypto", [
+    "aes-kw", "aes-kwp", "rfc3394", "rfc5649", "key wrapping", "密钥包装", "kek",
+  ]],
+  ["storage-crypto", "security", "AES-XTS 存储加密", "AES-XTS 儲存加密", "AES-XTS storage encryption", "specialized-crypto", [
+    "aes-xts", "disk encryption", "sector encryption", "磁盘加密", "扇区加密", "存储加密",
+  ]],
+  ["format-preserving", "security", "AES-FF1 格式保持加密", "AES-FF1 格式保持加密", "AES-FF1 format-preserving encryption", "specialized-crypto", [
+    "aes-ff1", "fpe", "format preserving", "格式保持", "卡号加密", "数字加密",
+  ]],
+  ["aes-mac", "security", "AES-CMAC / GMAC", "AES-CMAC / GMAC", "AES-CMAC / GMAC", "specialized-crypto", [
+    "cmac", "gmac", "aes mac", "消息认证", "认证码",
+  ]],
+  ["hpke", "security", "HPKE 混合公钥加密", "HPKE 混合公鑰加密", "HPKE hybrid encryption", "kem", [
+    "hpke", "rfc9180", "x25519", "hybrid encryption", "混合加密", "公钥加密",
+  ]],
+  ["ml-kem", "security", "ML-KEM 后量子密钥封装", "ML-KEM 後量子金鑰封裝", "ML-KEM post-quantum encapsulation", "kem", [
+    "ml-kem", "fips203", "post quantum", "pq", "后量子", "密钥封装", "kem768", "kem1024",
   ]],
   ["totp", "security", "TOTP", "TOTP", "TOTP", "totp", [
     "otp", "otpauth", "双因素", "二步验证", "动态口令", "验证码", "2fa", "mfa",

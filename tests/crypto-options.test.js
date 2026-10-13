@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { domainToASCII, domainToUnicode } from "node:url";
-import { inspectJwtClaims, parseQuery, punycodePair, symmetricParams, runSymmetricDetailed } from "../src/lib/tools/encode.js";
+import { inspectJwtClaims, parseQuery, punycodePair, symmetricParams, runAsymmetric, runSymmetricDetailed } from "../src/lib/tools/encode.js";
 
 test("Punycode accepts Unicode and ACE input and restores Unicode labels", () => {
   for (const name of ["例子.example", "bücher.de", "日本語.jp", "مثال.إختبار", "mañana.com", "😎.example", "例子。中国", "example.com."]) {
@@ -81,5 +81,19 @@ test("advanced request forwards only applicable parameters and keeps vault keys 
     { action: "encrypt", algorithm: "sm4-128", mode: "ecb", text: "hello", keyMaterial: "1234567890123456", keyEncoding: "utf8" },
   );
   assert.deepEqual(symmetricParams("hello", {}, { keyId: "key" }), { action: "encrypt", algorithm: "aes-256", mode: "gcm", text: "hello", keyId: "key" });
+  delete globalThis.window;
+});
+
+test("professional RSA options forward OAEP digest and binary encodings", async () => {
+  let captured;
+  globalThis.window = { dbxPlugin: { invoke: async (method, params) => { captured = { method, params }; return { text: "beef" }; } } };
+  assert.equal(await runAsymmetric("00ff", {
+    algorithm: "rsa", op: "encrypt", padding: "oaep", oaepHash: "sha512",
+    plainEncoding: "hex", cipherEncoding: "hex",
+  }, { keyId: "rsa-key" }), "beef");
+  assert.deepEqual(captured, {
+    method: "toolbox/crypto",
+    params: { action: "rsa", op: "encrypt", text: "00ff", padding: "oaep", oaepHash: "sha512", cipherEncoding: "hex", plainEncoding: "hex", keyId: "rsa-key" },
+  });
   delete globalThis.window;
 });

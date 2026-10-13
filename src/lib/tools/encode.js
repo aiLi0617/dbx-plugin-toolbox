@@ -293,6 +293,25 @@ export function punycodePair(text) {
   return { unicode, ace };
 }
 
+export function analyzePunycode(text) {
+  const pair = punycodePair(text);
+  if (!pair.ace) return { ...pair, labels: [], warnings: [], valid: true };
+  if (pair.ace.length > 253) throw new Error("Domain exceeds the 253-byte DNS limit");
+  const warnings = [];
+  const labels = pair.ace.split(".").map((ace, index) => {
+    if (!ace || ace.length > 63 || ace.startsWith("-") || ace.endsWith("-")) throw new Error(`Invalid DNS label ${index + 1}`);
+    const unicode = pair.unicode.split(".")[index];
+    const scripts = ["Latin", "Cyrillic", "Greek", "Han", "Hiragana", "Katakana", "Hangul", "Arabic", "Hebrew"]
+      .filter((script) => new RegExp(`\\p{Script=${script}}`, "u").test(unicode));
+    const mixedScripts = scripts.length > 1;
+    const asciiLookalike = /[\p{Script=Cyrillic}\p{Script=Greek}]/u.test(unicode) && /[a-z]/i.test(unicode);
+    if (mixedScripts) warnings.push(`Label ${index + 1} mixes ${scripts.join(" and ")} scripts`);
+    if (asciiLookalike) warnings.push(`Label ${index + 1} may contain ASCII lookalikes`);
+    return { index: index + 1, unicode, ace, bytes: ace.length, scripts, mixedScripts, asciiLookalike };
+  });
+  return { ...pair, labels, warnings, valid: true };
+}
+
 // RFC 3492 section 6.2. URL performs IDNA validation and ASCII normalization;
 // this decoder restores each validated ACE label for the Unicode output.
 function decodePunycodeLabel(input) {
@@ -546,7 +565,12 @@ export async function runXor(input, inputHex, ctx) {
 export async function runAsymmetric(input, opts, ctx) {
   const algorithm = opts.algorithm || "rsa";
   const params = { action: algorithm, op: opts.op || "encrypt", text: input };
-  if (algorithm === "rsa" && opts.padding) params.padding = opts.padding;
+  if (algorithm === "rsa") {
+    if (opts.padding) params.padding = opts.padding;
+    if (opts.oaepHash) params.oaepHash = opts.oaepHash;
+    if (opts.cipherEncoding) params.cipherEncoding = opts.cipherEncoding;
+    if (opts.plainEncoding) params.plainEncoding = opts.plainEncoding;
+  }
   if (opts.op === "decrypt" && opts.outputEncoding) params.outputEncoding = opts.outputEncoding;
   applyKey(params, ctx);
   const result = await invoke("toolbox/crypto", params);
@@ -566,6 +590,8 @@ export const HMAC_ALGORITHMS = [
 ];
 
 export const RSA_PADDINGS = [
-  { value: "oaep", zh: "OAEP-SHA256", en: "OAEP-SHA256" },
+  { value: "oaep", zh: "OAEP（推荐）", en: "OAEP (recommended)" },
   { value: "pkcs1", zh: "PKCS#1 v1.5", en: "PKCS#1 v1.5" },
 ];
+
+export const RSA_OAEP_HASHES = ["sha1", "sha256", "sha384", "sha512"];

@@ -6,7 +6,7 @@
   import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
-  import { runAsymmetric, runSymmetricDetailed, runXor, RSA_PADDINGS } from "./tools/encode.js";
+  import { runAsymmetric, runSymmetricDetailed, runXor, RSA_OAEP_HASHES, RSA_PADDINGS } from "./tools/encode.js";
 
   let { locale = "zh-CN", kind = "aes", initialOptions = {} } = $props();
 
@@ -17,6 +17,7 @@
   let mode = $state("gcm");
   let sm4Mode = $state("cbc");
   let padding = $state("oaep");
+  let oaepHash = $state("sha256");
   let outputEncoding = $state("utf8");
   let inputHex = $state("text");
   let input = $state("");
@@ -40,12 +41,13 @@
 
   $effect(() => {
     const options = initialOptions;
-    const algorithms = kind === "rsa" ? ["rsa", "sm2"] : ["aes-128", "aes-256", "sm4-128"];
+    const algorithms = kind === "rsa" ? ["rsa", "sm2"] : ["aes-128", "aes-192", "aes-256", "sm4-128"];
     algorithm = algorithms.includes(options.algorithm) ? options.algorithm : kind === "rsa" ? "rsa" : "aes-256";
-    mode = options.mode === "cbc" ? "cbc" : "gcm";
+    mode = ["gcm", "cbc", "cfb", "ofb", "ecb"].includes(options.mode) ? options.mode : "gcm";
     sm4Mode = options.mode === "ecb" ? "ecb" : "cbc";
     op = options.op === "decrypt" ? "decrypt" : "encrypt";
     padding = options.padding === "pkcs1" ? "pkcs1" : "oaep";
+    oaepHash = RSA_OAEP_HASHES.includes(options.oaepHash) ? options.oaepHash : "sha256";
     outputEncoding = ["utf8", "hex", "base64"].includes(options.outputEncoding) ? options.outputEncoding : "utf8";
   });
 
@@ -65,6 +67,8 @@
     ? t("Base64(nonce 12 字节 + 密文 + tag 16 字节)，无 AAD。加密时自动生成 nonce。", "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.")
     : activeMode === "cbc"
       ? t("Base64(IV 16 字节 + 密文)，PKCS#7 填充。加密时自动生成 IV。", "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.")
+      : ["cfb", "ofb"].includes(activeMode)
+        ? t("Base64(IV 16 字节 + 密文)，流模式不填充。加密时自动生成 IV。", "Base64(16-byte IV + ciphertext); stream mode without padding. A fresh IV is generated for encryption.")
       : t("Base64(密文)，PKCS#7 填充，ECB 不使用 IV。", "Base64(ciphertext), PKCS#7 padding; ECB has no IV."));
   const leftLabel = $derived(
     kind === "xor"
@@ -115,7 +119,7 @@
   $effect(() => {
     const text = input;
     const next = ctx;
-    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, keyEncoding, iv, aad, aadEncoding, tag };
+    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, oaepHash, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, keyEncoding, iv, aad, aadEncoding, tag };
     const nextKind = kind;
     output = "";
     extra = "";
@@ -188,6 +192,7 @@
           bind:value={algorithm}
           options={[
             { value: "aes-256", label: "AES-256" },
+            { value: "aes-192", label: "AES-192" },
             { value: "aes-128", label: "AES-128" },
             { value: "sm4-128", label: "SM4" },
           ]}
@@ -200,6 +205,8 @@
             bind:value={sm4Mode}
             options={[
               { value: "cbc", label: "CBC" },
+              { value: "cfb", label: "CFB" },
+              { value: "ofb", label: "OFB" },
               { value: "ecb", label: "ECB" },
             ]}
           />
@@ -212,6 +219,7 @@
             options={[
               { value: "gcm", label: "GCM" },
               { value: "cbc", label: "CBC" },
+              { value: "ecb", label: "ECB" },
             ]}
           />
         </label>
@@ -242,6 +250,23 @@
             options={RSA_PADDINGS.map((item) => ({ value: item.value, label: pick(locale, item.zh, item.en) }))}
           />
         </label>
+        {#if padding === "oaep"}
+          <label class="field">
+            <span class="dbx-label">OAEP Hash</span>
+            <Select bind:value={oaepHash} options={RSA_OAEP_HASHES.map((value) => ({ value, label: value.toUpperCase() }))} />
+          </label>
+        {/if}
+        {#if encrypting}
+          <label class="field">
+            <span class="dbx-label">{t("明文编码", "Plaintext encoding")}</span>
+            <Select bind:value={plainEncoding} options={textEncodings} />
+          </label>
+        {:else}
+          <label class="field">
+            <span class="dbx-label">{t("密文编码", "Ciphertext encoding")}</span>
+            <Select bind:value={cipherEncoding} options={encodings} />
+          </label>
+        {/if}
       {/if}
       {#if !encrypting}
         <label class="field">
@@ -311,7 +336,7 @@
         : t("密文不包含 IV；使用 PKCS#7 填充。", "Ciphertext excludes the IV; uses PKCS#7 padding.")}</p>
   {/if}
 
-  {#if kind === "aes" && ((algorithm === "sm4-128" && sm4Mode !== "gcm") || (algorithm !== "sm4-128" && mode === "cbc"))}
+  {#if kind === "aes" && ((algorithm === "sm4-128" && sm4Mode !== "gcm") || (algorithm !== "sm4-128" && mode !== "gcm"))}
     <p class="security-warning">{t("兼容模式不提供密文完整性保护；新数据优先使用 AES-GCM。", "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.")}</p>
   {:else if kind === "rsa" && algorithm === "rsa" && padding === "pkcs1"}
     <p class="security-warning">{t("PKCS#1 v1.5 仅用于兼容旧系统；新数据优先使用 OAEP-SHA256。", "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.")}</p>

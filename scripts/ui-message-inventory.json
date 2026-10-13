@@ -893,6 +893,14 @@
     "en": "Padding",
     "zh-CN": "边距"
   },
+  "Plaintext encoding": {
+    "en": "Plaintext encoding",
+    "zh-CN": "明文编码"
+  },
+  "Ciphertext encoding": {
+    "en": "Ciphertext encoding",
+    "zh-CN": "密文编码"
+  },
   "Decryption output": {
     "en": "Decryption output",
     "zh-CN": "解密输出"
@@ -913,14 +921,6 @@
   "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.": {
     "en": "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.",
     "zh-CN": "对每个字节与密钥循环异或。右侧 Hex 是主结果，下方 UTF-8 是同一字节的可读预览。还原时点「填入输入」或贴回并选 Hex。"
-  },
-  "Ciphertext encoding": {
-    "en": "Ciphertext encoding",
-    "zh-CN": "密文编码"
-  },
-  "Plaintext encoding": {
-    "en": "Plaintext encoding",
-    "zh-CN": "明文编码"
   },
   "IV / tag encoding": {
     "en": "IV / tag encoding",
@@ -1022,6 +1022,10 @@
   "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.": {
     "en": "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.",
     "zh-CN": "Base64(IV 16 字节 + 密文)，PKCS#7 填充。加密时自动生成 IV。"
+  },
+  "Base64(16-byte IV + ciphertext); stream mode without padding. A fresh IV is generated for encryption.": {
+    "en": "Base64(16-byte IV + ciphertext); stream mode without padding. A fresh IV is generated for encryption.",
+    "zh-CN": "Base64(IV 16 字节 + 密文)，流模式不填充。加密时自动生成 IV。"
   },
   "Base64(ciphertext), PKCS#7 padding; ECB has no IV.": {
     "en": "Base64(ciphertext), PKCS#7 padding; ECB has no IV.",
@@ -2074,6 +2078,10 @@
     "en": "Ignore case",
     "zh-CN": "忽略大小写"
   },
+  "Context": {
+    "en": "Context",
+    "zh-CN": "上下文"
+  },
   "Diff": {
     "en": "Diff",
     "zh-CN": "差异"
@@ -2085,6 +2093,10 @@
   "Side by side": {
     "en": "Side by side",
     "zh-CN": "左右对比"
+  },
+  "hunks": {
+    "en": "hunks",
+    "zh-CN": "块"
   },
   "Left input": {
     "en": "Left input",
@@ -2155,9 +2167,9 @@
     "en": "Choose or drop a file",
     "zh-CN": "选择或拖入文件"
   },
-  "Identifies content, not the filename; up to 100 MB": {
-    "en": "Identifies content, not the filename; up to 100 MB",
-    "zh-CN": "根据文件内容识别，不依赖文件名；最大 100 MB"
+  "Batch content inspection; up to 50 files, 100 MB each": {
+    "en": "Batch content inspection; up to 50 files, 100 MB each",
+    "zh-CN": "批量按内容识别；最多 50 个、单文件 100 MB"
   },
   "Confidence": {
     "en": "Confidence",
@@ -2191,9 +2203,29 @@
     "en": "Extension matches the content",
     "zh-CN": "扩展名与内容匹配"
   },
-  "Files are limited to 100 MB.": {
-    "en": "Files are limited to 100 MB.",
-    "zh-CN": "文件不能超过 100 MB。"
+  "Batch inspection report": {
+    "en": "Batch inspection report",
+    "zh-CN": "批量检测报告"
+  },
+  "Extension mismatch": {
+    "en": "Extension mismatch",
+    "zh-CN": "扩展名伪装告警"
+  },
+  "Match": {
+    "en": "Match",
+    "zh-CN": "匹配"
+  },
+  "Extension / MIME lookup": {
+    "en": "Extension / MIME lookup",
+    "zh-CN": "扩展名 / MIME 双向查询"
+  },
+  "No matches": {
+    "en": "No matches",
+    "zh-CN": "没有匹配项"
+  },
+  "Up to 50 files, 100 MB each, and 250 MB total.": {
+    "en": "Up to 50 files, 100 MB each, and 250 MB total.",
+    "zh-CN": "最多 50 个文件、单文件 100 MB、总计 250 MB。"
   },
   "Replace frames": {
     "en": "Replace frames",
@@ -2347,6 +2379,18 @@
   "Decompressed text": {
     "en": "Decompressed text",
     "zh-CN": "解压文本"
+  },
+  "Choose file to compress": {
+    "en": "Choose file to compress",
+    "zh-CN": "选择文件流式压缩"
+  },
+  "Choose .gz to decompress": {
+    "en": "Choose .gz to decompress",
+    "zh-CN": "选择 .gz 流式解压"
+  },
+  "Save Gzip result": {
+    "en": "Save Gzip result",
+    "zh-CN": "保存 Gzip 结果"
   },
   "Input type": {
     "en": "Input type",
@@ -4738,6 +4782,66 @@
     "en": "Save image",
     "zh-CN": "保存图片"
   },
+  "Local OCR models": {
+    "en": "Local OCR models",
+    "zh-CN": "OCR 本地模型"
+  },
+  "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.": {
+    "en": "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.",
+    "zh-CN": "模型仅在你点击安装时从 GitHub Release 下载；校验 SHA-256 后保存在 DBX 插件数据目录，识别过程仍完全离线。"
+  },
+  "Fast model (recommended)": {
+    "en": "Fast model (recommended)",
+    "zh-CN": "快速模型（推荐）"
+  },
+  "Installed": {
+    "en": "Installed",
+    "zh-CN": "已安装"
+  },
+  "Update required": {
+    "en": "Update required",
+    "zh-CN": "需要更新"
+  },
+  "Not installed": {
+    "en": "Not installed",
+    "zh-CN": "未安装"
+  },
+  "Click again to remove all models": {
+    "en": "Click again to remove all models",
+    "zh-CN": "再次点击确认删除全部模型"
+  },
+  "Remove": {
+    "en": "Remove",
+    "zh-CN": "移除"
+  },
+  "Download again": {
+    "en": "Download again",
+    "zh-CN": "重新下载"
+  },
+  "Install fast model": {
+    "en": "Install fast model",
+    "zh-CN": "安装快速模型"
+  },
+  "Accurate extension": {
+    "en": "Accurate extension",
+    "zh-CN": "高精度扩展"
+  },
+  "Optional": {
+    "en": "Optional",
+    "zh-CN": "可选下载"
+  },
+  "Click again to confirm": {
+    "en": "Click again to confirm",
+    "zh-CN": "再次点击确认删除"
+  },
+  "Install accurate model": {
+    "en": "Install accurate model",
+    "zh-CN": "安装高精度模型"
+  },
+  "Cancel download": {
+    "en": "Cancel download",
+    "zh-CN": "取消下载"
+  },
   "Replace image": {
     "en": "Replace image",
     "zh-CN": "更换图片"
@@ -4818,9 +4922,9 @@
     "en": "Reselect",
     "zh-CN": "重新框选"
   },
-  "Choose a Chinese or English image; recognition stays offline": {
-    "en": "Choose a Chinese or English image; recognition stays offline",
-    "zh-CN": "选择中英文图片，识别过程完全离线"
+  "After installing a model, choose a Chinese or English image for fully offline recognition": {
+    "en": "After installing a model, choose a Chinese or English image for fully offline recognition",
+    "zh-CN": "安装模型后，选择中英文图片进行完全离线识别"
   },
   "Recognized text": {
     "en": "Recognized text",
@@ -4878,6 +4982,10 @@
     "en": "Recognition complete",
     "zh-CN": "识别完成"
   },
+  "Install the fast OCR model first": {
+    "en": "Install the fast OCR model first",
+    "zh-CN": "请先安装快速 OCR 模型"
+  },
   "Drag on the image to select a recognition region first": {
     "en": "Drag on the image to select a recognition region first",
     "zh-CN": "请先在图片上拖拽框选识别区域"
@@ -4889,6 +4997,26 @@
   "Save recognized text": {
     "en": "Save recognized text",
     "zh-CN": "保存识别文本"
+  },
+  "Connecting to GitHub Release…": {
+    "en": "Connecting to GitHub Release…",
+    "zh-CN": "正在连接 GitHub Release…"
+  },
+  "Downloading {0}": {
+    "en": "Downloading {0}",
+    "zh-CN": "正在下载 {0}"
+  },
+  "Preparing download…": {
+    "en": "Preparing download…",
+    "zh-CN": "正在准备下载…"
+  },
+  "Model installation complete": {
+    "en": "Model installation complete",
+    "zh-CN": "模型安装完成"
+  },
+  "Model download cancelled": {
+    "en": "Model download cancelled",
+    "zh-CN": "模型下载已取消"
   },
   "Choose an image file": {
     "en": "Choose an image file",
@@ -4937,10 +5065,6 @@
   "Keep current only": {
     "en": "Keep current only",
     "zh-CN": "仅保留当前"
-  },
-  "Remove": {
-    "en": "Remove",
-    "zh-CN": "移除"
   },
   "Batch results": {
     "en": "Batch results",
@@ -5671,7 +5795,7 @@
   },
   "Sign": {
     "en": "Sign",
-    "zh-CN": "签发",
+    "zh-CN": "签名",
     "zh-TW": "簽發",
     "es": "Firmar",
     "it": "Firma",
@@ -5693,6 +5817,54 @@
   "Provide an HMAC key to verify automatically.": {
     "en": "Provide an HMAC key to verify automatically.",
     "zh-CN": "提供 HMAC 密钥后会自动验签。"
+  },
+  "Parameter set": {
+    "en": "Parameter set",
+    "zh-CN": "参数集"
+  },
+  "Plaintext output": {
+    "en": "Plaintext output",
+    "zh-CN": "明文输出"
+  },
+  "Recipient public key (Base64)": {
+    "en": "Recipient public key (Base64)",
+    "zh-CN": "接收方公钥（Base64）"
+  },
+  "Recipient private key (Base64)": {
+    "en": "Recipient private key (Base64)",
+    "zh-CN": "接收方私钥（Base64）"
+  },
+  "Encapsulated key (Base64)": {
+    "en": "Encapsulated key (Base64)",
+    "zh-CN": "封装密钥（Base64）"
+  },
+  "Ciphertext (Base64)": {
+    "en": "Ciphertext (Base64)",
+    "zh-CN": "密文（Base64）"
+  },
+  "Shared secret (Base64)": {
+    "en": "Shared secret (Base64)",
+    "zh-CN": "共享密钥（Base64）"
+  },
+  "HPKE uses X25519 + HKDF-SHA256 + ChaCha20-Poly1305; Info and AAD must match exactly when decrypting.": {
+    "en": "HPKE uses X25519 + HKDF-SHA256 + ChaCha20-Poly1305; Info and AAD must match exactly when decrypting.",
+    "zh-CN": "HPKE 使用 X25519 + HKDF-SHA256 + ChaCha20-Poly1305；Info 和 AAD 解密时必须完全一致。"
+  },
+  "ML-KEM establishes a 32-byte shared secret; it does not encrypt payloads directly. Feed the secret into an AEAD or KDF.": {
+    "en": "ML-KEM establishes a 32-byte shared secret; it does not encrypt payloads directly. Feed the secret into an AEAD or KDF.",
+    "zh-CN": "ML-KEM 只建立 32 字节共享密钥，不直接加密正文；请将共享密钥交给 AEAD 或 KDF 使用。"
+  },
+  "Generate keypair": {
+    "en": "Generate keypair",
+    "zh-CN": "生成密钥对"
+  },
+  "Encapsulate secret": {
+    "en": "Encapsulate secret",
+    "zh-CN": "封装共享密钥"
+  },
+  "Decapsulate secret": {
+    "en": "Decapsulate secret",
+    "zh-CN": "解封共享密钥"
   },
   "Key type": {
     "en": "Key type",
@@ -5923,6 +6095,14 @@
     "tr": "Markdown",
     "az": "Markdown"
   },
+  "words": {
+    "en": "words",
+    "zh-CN": "词"
+  },
+  "Export HTML": {
+    "en": "Export HTML",
+    "zh-CN": "导出 HTML"
+  },
   "Type on the left; the preview updates as you type": {
     "en": "Type on the left; the preview updates as you type",
     "zh-CN": "在左侧输入，右侧即时渲染"
@@ -5930,6 +6110,10 @@
   "Markdown input": {
     "en": "Markdown input",
     "zh-CN": "Markdown 输入"
+  },
+  "Export self-contained HTML": {
+    "en": "Export self-contained HTML",
+    "zh-CN": "导出自包含 HTML"
   },
   "MD5 collision check": {
     "en": "MD5 collision check",
@@ -5978,6 +6162,70 @@
   "Each file is limited to 16 MB.": {
     "en": "Each file is limited to 16 MB.",
     "zh-CN": "单个文件不能超过 16 MB。"
+  },
+  "Input encoding": {
+    "en": "Input encoding",
+    "zh-CN": "输入编码"
+  },
+  "Output encoding": {
+    "en": "Output encoding",
+    "zh-CN": "输出编码"
+  },
+  "Salt": {
+    "en": "Salt",
+    "zh-CN": "盐值"
+  },
+  "At least 8 bytes": {
+    "en": "At least 8 bytes",
+    "zh-CN": "至少 8 字节"
+  },
+  "Salt encoding": {
+    "en": "Salt encoding",
+    "zh-CN": "盐值编码"
+  },
+  "Output bytes": {
+    "en": "Output bytes",
+    "zh-CN": "输出字节数"
+  },
+  "Iterations": {
+    "en": "Iterations",
+    "zh-CN": "迭代次数"
+  },
+  "Memory (KiB)": {
+    "en": "Memory (KiB)",
+    "zh-CN": "内存（KiB）"
+  },
+  "64-byte key": {
+    "en": "64-byte key",
+    "zh-CN": "64 字节密钥"
+  },
+  "32-byte key": {
+    "en": "32-byte key",
+    "zh-CN": "32 字节密钥"
+  },
+  "Leave empty for random": {
+    "en": "Leave empty for random",
+    "zh-CN": "留空随机生成"
+  },
+  "Nonce encoding": {
+    "en": "Nonce encoding",
+    "zh-CN": "Nonce 编码"
+  },
+  "CTR does not authenticate ciphertext. Use only for interoperability; prefer an AEAD for new systems.": {
+    "en": "CTR does not authenticate ciphertext. Use only for interoperability; prefer an AEAD for new systems.",
+    "zh-CN": "CTR 不验证密文完整性，仅用于协议兼容；新系统请使用认证加密。"
+  },
+  "Password / input key material": {
+    "en": "Password / input key material",
+    "zh-CN": "密码 / 输入密钥材料"
+  },
+  "Derived key (Hex)": {
+    "en": "Derived key (Hex)",
+    "zh-CN": "派生密钥（Hex）"
+  },
+  "Provide a key": {
+    "en": "Provide a key",
+    "zh-CN": "请提供密钥"
   },
   "Address family": {
     "en": "Address family",
@@ -6298,6 +6546,10 @@
   "ACE output": {
     "en": "ACE output",
     "zh-CN": "ACE 输出"
+  },
+  "Possible spoofing risk": {
+    "en": "Possible spoofing risk",
+    "zh-CN": "疑似仿冒风险"
   },
   "Enter a valid Unicode or xn-- domain": {
     "en": "Enter a valid Unicode or xn-- domain",
@@ -6734,6 +6986,78 @@
     "en": "View sorted versions",
     "zh-CN": "查看排序结果"
   },
+  "Message": {
+    "en": "Message",
+    "zh-CN": "消息"
+  },
+  "Signature (Base64)": {
+    "en": "Signature (Base64)",
+    "zh-CN": "签名（Base64）"
+  },
+  "Wrap": {
+    "en": "Wrap",
+    "zh-CN": "包装"
+  },
+  "Unwrap": {
+    "en": "Unwrap",
+    "zh-CN": "解包"
+  },
+  "Sector number": {
+    "en": "Sector number",
+    "zh-CN": "扇区编号"
+  },
+  "XTS is only for disk or sector data and does not provide authentication.": {
+    "en": "XTS is only for disk or sector data and does not provide authentication.",
+    "zh-CN": "XTS 仅用于磁盘或固定扇区数据，不提供完整性认证。"
+  },
+  "10 (digits)": {
+    "en": "10 (digits)",
+    "zh-CN": "10（仅数字）"
+  },
+  "36 (digits + a-z)": {
+    "en": "36 (digits + a-z)",
+    "zh-CN": "36（数字 + a-z）"
+  },
+  "FF1 preserves alphabet and length but does not authenticate; the same key and tweak produce deterministic output.": {
+    "en": "FF1 preserves alphabet and length but does not authenticate; the same key and tweak produce deterministic output.",
+    "zh-CN": "FF1 保持字符集和长度，但不提供完整性认证；相同密钥与 tweak 会产生确定性结果。"
+  },
+  "Leave empty to generate": {
+    "en": "Leave empty to generate",
+    "zh-CN": "留空自动生成"
+  },
+  "Random": {
+    "en": "Random",
+    "zh-CN": "随机"
+  },
+  "KW input must be at least 16 bytes and a multiple of 8 bytes.": {
+    "en": "KW input must be at least 16 bytes and a multiple of 8 bytes.",
+    "zh-CN": "KW 输入必须是至少 16 字节且为 8 字节的倍数。"
+  },
+  "KWP supports key material of any non-empty length.": {
+    "en": "KWP supports key material of any non-empty length.",
+    "zh-CN": "KWP 支持任意非空长度的密钥材料。"
+  },
+  "Formatted plaintext / ciphertext": {
+    "en": "Formatted plaintext / ciphertext",
+    "zh-CN": "格式化明文 / 密文"
+  },
+  "Authentication tag": {
+    "en": "Authentication tag",
+    "zh-CN": "认证码"
+  },
+  "Digits / letters": {
+    "en": "Digits / letters",
+    "zh-CN": "数字 / 字母"
+  },
+  "32 or 64-byte double key": {
+    "en": "32 or 64-byte double key",
+    "zh-CN": "32 或 64 字节双密钥"
+  },
+  "AES key": {
+    "en": "AES key",
+    "zh-CN": "AES 密钥"
+  },
   "Open spreadsheet": {
     "en": "Open spreadsheet",
     "zh-CN": "打开表格"
@@ -6966,10 +7290,6 @@
     "en": "chars",
     "zh-CN": "字"
   },
-  "words": {
-    "en": "words",
-    "zh-CN": "词"
-  },
   "lines": {
     "en": "lines",
     "zh-CN": "行"
@@ -7166,9 +7486,9 @@
     "en": "HMAC-SM3",
     "zh-CN": "HMAC-SM3"
   },
-  "OAEP-SHA256": {
-    "en": "OAEP-SHA256",
-    "zh-CN": "OAEP-SHA256"
+  "OAEP (recommended)": {
+    "en": "OAEP (recommended)",
+    "zh-CN": "OAEP（推荐）"
   },
   "PKCS#1 v1.5": {
     "en": "PKCS#1 v1.5",
@@ -7346,9 +7666,33 @@
     "en": "Paste characters to inspect",
     "zh-CN": "粘贴要检查的字符"
   },
+  "Code points": {
+    "en": "Code points",
+    "zh-CN": "码位"
+  },
+  "Graphemes": {
+    "en": "Graphemes",
+    "zh-CN": "字素簇"
+  },
+  "Scripts": {
+    "en": "Scripts",
+    "zh-CN": "脚本"
+  },
+  "Mixed scripts detected; review the text for possible spoofing.": {
+    "en": "Mixed scripts detected; review the text for possible spoofing.",
+    "zh-CN": "检测到混合脚本字符；请检查疑似仿冒文本。"
+  },
+  "Found {0} invisible, bidi, or control characters.": {
+    "en": "Found {0} invisible, bidi, or control characters.",
+    "zh-CN": "发现 {0} 个不可见、Bidi 或控制字符。"
+  },
   "Char": {
     "en": "Char",
     "zh-CN": "字符"
+  },
+  "Cluster / script": {
+    "en": "Cluster / script",
+    "zh-CN": "字素簇 / 脚本"
   },
   "Each character’s code point will appear here.": {
     "en": "Each character’s code point will appear here.",
@@ -8096,15 +8440,7 @@
   },
   "Asymmetric cipher": {
     "en": "Asymmetric cipher",
-    "zh-CN": "非对称加密",
-    "zh-TW": "非對稱加密",
-    "es": "Cifrado asimétrico",
-    "it": "Cifratura asimmetrica",
-    "ja": "非対称暗号",
-    "pt-BR": "Criptografia assimétrica",
-    "ko": "비대칭 암호",
-    "tr": "Asimetrik şifre",
-    "az": "Asimmetrik şifrə"
+    "zh-CN": "非对称加密"
   },
   "How": {
     "en": "How",
@@ -8782,17 +9118,41 @@
     "tr": "JWT",
     "az": "JWT"
   },
-  "Symmetric cipher": {
-    "en": "Symmetric cipher",
-    "zh-CN": "对称加密",
-    "zh-TW": "對稱加密",
+  "AES cipher": {
+    "en": "AES cipher",
+    "zh-CN": "AES 加密",
+    "zh-TW": "AES 加密",
     "es": "Cifrado simétrico",
     "it": "Cifratura simmetrica",
     "ja": "対称暗号",
     "pt-BR": "Criptografia simétrica",
-    "ko": "대칭 암호",
-    "tr": "Simetrik şifre",
-    "az": "Simmetrik şifrə"
+    "ko": "AES cipher",
+    "tr": "AES cipher",
+    "az": "AES cipher"
+  },
+  "SM4 cipher": {
+    "en": "SM4 cipher",
+    "zh-CN": "SM4 国密加密",
+    "zh-TW": "SM4 國密加密",
+    "es": "Cifrado SM4",
+    "it": "Cifratura SM4",
+    "ja": "SM4 暗号",
+    "pt-BR": "Criptografia SM4",
+    "ko": "SM4 cipher",
+    "tr": "SM4 cipher",
+    "az": "SM4 cipher"
+  },
+  "Open SM4 cipher directly with ready-to-use defaults": {
+    "en": "Open SM4 cipher directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开SM4 国密加密",
+    "zh-TW": "使用預設參數直接開啟SM4 國密加密",
+    "es": "Abre directamente Cifrado SM4 con valores preparados",
+    "it": "Apri direttamente Cifratura SM4 con valori pronti",
+    "ja": "SM4 暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia SM4 diretamente com valores prontos",
+    "ko": "SM4 cipher 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "SM4 cipher aracını hazır varsayılanlarla doğrudan açın",
+    "az": "SM4 cipher hazır parametrlərlə birbaşa açılsın"
   },
   "HMAC": {
     "en": "HMAC",
@@ -8805,6 +9165,258 @@
     "ko": "HMAC",
     "tr": "HMAC",
     "az": "HMAC"
+  },
+  "RSA cipher": {
+    "en": "RSA cipher",
+    "zh-CN": "RSA 加密",
+    "zh-TW": "RSA 加密",
+    "es": "Cifrado asimétrico",
+    "it": "Cifratura asimmetrica",
+    "ja": "非対称暗号",
+    "pt-BR": "Criptografia assimétrica",
+    "ko": "RSA cipher",
+    "tr": "RSA cipher",
+    "az": "RSA cipher"
+  },
+  "SM2 cipher": {
+    "en": "SM2 cipher",
+    "zh-CN": "SM2 国密加密",
+    "zh-TW": "SM2 國密加密",
+    "es": "Cifrado SM2",
+    "it": "Cifratura SM2",
+    "ja": "SM2 暗号",
+    "pt-BR": "Criptografia SM2",
+    "ko": "SM2 cipher",
+    "tr": "SM2 cipher",
+    "az": "SM2 cipher"
+  },
+  "Open SM2 cipher directly with ready-to-use defaults": {
+    "en": "Open SM2 cipher directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开SM2 国密加密",
+    "zh-TW": "使用預設參數直接開啟SM2 國密加密",
+    "es": "Abre directamente Cifrado SM2 con valores preparados",
+    "it": "Apri direttamente Cifratura SM2 con valori pronti",
+    "ja": "SM2 暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia SM2 diretamente com valores prontos",
+    "ko": "SM2 cipher 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "SM2 cipher aracını hazır varsayılanlarla doğrudan açın",
+    "az": "SM2 cipher hazır parametrlərlə birbaşa açılsın"
+  },
+  "Modern authenticated cipher": {
+    "en": "Modern authenticated cipher",
+    "zh-CN": "现代认证加密",
+    "zh-TW": "現代認證加密",
+    "es": "Cifrado autenticado moderno",
+    "it": "Cifratura autenticata moderna",
+    "ja": "最新の認証付き暗号",
+    "pt-BR": "Criptografia autenticada moderna",
+    "ko": "Modern authenticated cipher",
+    "tr": "Modern authenticated cipher",
+    "az": "Modern authenticated cipher"
+  },
+  "Open Modern authenticated cipher directly with ready-to-use defaults": {
+    "en": "Open Modern authenticated cipher directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开现代认证加密",
+    "zh-TW": "使用預設參數直接開啟現代認證加密",
+    "es": "Abre directamente Cifrado autenticado moderno con valores preparados",
+    "it": "Apri direttamente Cifratura autenticata moderna con valori pronti",
+    "ja": "最新の認証付き暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia autenticada moderna diretamente com valores prontos",
+    "ko": "Modern authenticated cipher 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Modern authenticated cipher aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Modern authenticated cipher hazır parametrlərlə birbaşa açılsın"
+  },
+  "Key derivation (KDF)": {
+    "en": "Key derivation (KDF)",
+    "zh-CN": "密钥派生 KDF",
+    "zh-TW": "金鑰派生 KDF",
+    "es": "Derivación de claves",
+    "it": "Derivazione chiavi",
+    "ja": "鍵導出",
+    "pt-BR": "Derivação de chaves",
+    "ko": "Key derivation (KDF)",
+    "tr": "Key derivation (KDF)",
+    "az": "Key derivation (KDF)"
+  },
+  "Open Key derivation (KDF) directly with ready-to-use defaults": {
+    "en": "Open Key derivation (KDF) directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开密钥派生 KDF",
+    "zh-TW": "使用預設參數直接開啟金鑰派生 KDF",
+    "es": "Abre directamente Derivación de claves con valores preparados",
+    "it": "Apri direttamente Derivazione chiavi con valori pronti",
+    "ja": "鍵導出を既定値ですぐに開く",
+    "pt-BR": "Abra Derivação de chaves diretamente com valores prontos",
+    "ko": "Key derivation (KDF) 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Key derivation (KDF) aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Key derivation (KDF) hazır parametrlərlə birbaşa açılsın"
+  },
+  "Digital signatures": {
+    "en": "Digital signatures",
+    "zh-CN": "数字签名与验签",
+    "zh-TW": "數位簽章與驗證",
+    "es": "Firma digital",
+    "it": "Firma digitale",
+    "ja": "デジタル署名",
+    "pt-BR": "Assinatura digital",
+    "ko": "Digital signatures",
+    "tr": "Digital signatures",
+    "az": "Digital signatures"
+  },
+  "Open Digital signatures directly with ready-to-use defaults": {
+    "en": "Open Digital signatures directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开数字签名与验签",
+    "zh-TW": "使用預設參數直接開啟數位簽章與驗證",
+    "es": "Abre directamente Firma digital con valores preparados",
+    "it": "Apri direttamente Firma digitale con valori pronti",
+    "ja": "デジタル署名を既定値ですぐに開く",
+    "pt-BR": "Abra Assinatura digital diretamente com valores prontos",
+    "ko": "Digital signatures 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Digital signatures aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Digital signatures hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES key wrap": {
+    "en": "AES key wrap",
+    "zh-CN": "AES 密钥包装",
+    "zh-TW": "AES 金鑰包裝",
+    "es": "Envoltura de claves",
+    "it": "Wrapping delle chiavi",
+    "ja": "鍵ラップ",
+    "pt-BR": "Encapsulamento de chaves",
+    "ko": "AES 키 wrap",
+    "tr": "AES tuşu wrap",
+    "az": "AES açar wrap"
+  },
+  "Open AES key wrap directly with ready-to-use defaults": {
+    "en": "Open AES key wrap directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES 密钥包装",
+    "zh-TW": "使用預設參數直接開啟AES 金鑰包裝",
+    "es": "Abre directamente Envoltura de claves con valores preparados",
+    "it": "Apri direttamente Wrapping delle chiavi con valori pronti",
+    "ja": "鍵ラップを既定値ですぐに開く",
+    "pt-BR": "Abra Encapsulamento de chaves diretamente com valores prontos",
+    "ko": "AES 키 wrap 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES tuşu wrap aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES açar wrap hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-XTS storage encryption": {
+    "en": "AES-XTS storage encryption",
+    "zh-CN": "AES-XTS 存储加密",
+    "zh-TW": "AES-XTS 儲存加密",
+    "es": "Cifrado de almacenamiento",
+    "it": "Cifratura archiviazione",
+    "ja": "ストレージ暗号",
+    "pt-BR": "Criptografia de armazenamento",
+    "ko": "AES-XTS storage encryption",
+    "tr": "AES-XTS storage encryption",
+    "az": "AES-XTS storage encryption"
+  },
+  "Open AES-XTS storage encryption directly with ready-to-use defaults": {
+    "en": "Open AES-XTS storage encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-XTS 存储加密",
+    "zh-TW": "使用預設參數直接開啟AES-XTS 儲存加密",
+    "es": "Abre directamente Cifrado de almacenamiento con valores preparados",
+    "it": "Apri direttamente Cifratura archiviazione con valori pronti",
+    "ja": "ストレージ暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia de armazenamento diretamente com valores prontos",
+    "ko": "AES-XTS storage encryption 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-XTS storage encryption aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-XTS storage encryption hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-FF1 format-preserving encryption": {
+    "en": "AES-FF1 format-preserving encryption",
+    "zh-CN": "AES-FF1 格式保持加密",
+    "zh-TW": "AES-FF1 格式保持加密",
+    "es": "Cifrado con formato",
+    "it": "Cifratura formato",
+    "ja": "形式保持暗号",
+    "pt-BR": "Criptografia com preservação de formato",
+    "ko": "AES-FF1 format-preserving encryption",
+    "tr": "AES-FF1 format-preserving encryption",
+    "az": "AES-FF1 format-preserving encryption"
+  },
+  "Open AES-FF1 format-preserving encryption directly with ready-to-use defaults": {
+    "en": "Open AES-FF1 format-preserving encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-FF1 格式保持加密",
+    "zh-TW": "使用預設參數直接開啟AES-FF1 格式保持加密",
+    "es": "Abre directamente Cifrado con formato con valores preparados",
+    "it": "Apri direttamente Cifratura formato con valori pronti",
+    "ja": "形式保持暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia com preservação de formato diretamente com valores prontos",
+    "ko": "AES-FF1 format-preserving encryption 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-FF1 format-preserving encryption aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-FF1 format-preserving encryption hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-CMAC / GMAC": {
+    "en": "AES-CMAC / GMAC",
+    "zh-CN": "AES-CMAC / GMAC",
+    "zh-TW": "AES-CMAC / GMAC",
+    "es": "MAC basado en AES",
+    "it": "MAC basato su AES",
+    "ja": "AES ベース MAC",
+    "pt-BR": "MAC baseado em AES",
+    "ko": "AES-CMAC / GMAC",
+    "tr": "AES-CMAC / GMAC",
+    "az": "AES-CMAC / GMAC"
+  },
+  "Open AES-CMAC / GMAC directly with ready-to-use defaults": {
+    "en": "Open AES-CMAC / GMAC directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-CMAC / GMAC",
+    "zh-TW": "使用預設參數直接開啟AES-CMAC / GMAC",
+    "es": "Abre directamente MAC basado en AES con valores preparados",
+    "it": "Apri direttamente MAC basato su AES con valori pronti",
+    "ja": "AES ベース MACを既定値ですぐに開く",
+    "pt-BR": "Abra MAC baseado em AES diretamente com valores prontos",
+    "ko": "AES-CMAC / GMAC 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-CMAC / GMAC aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-CMAC / GMAC hazır parametrlərlə birbaşa açılsın"
+  },
+  "HPKE hybrid encryption": {
+    "en": "HPKE hybrid encryption",
+    "zh-CN": "HPKE 混合公钥加密",
+    "zh-TW": "HPKE 混合公鑰加密",
+    "es": "Cifrado híbrido HPKE",
+    "it": "Cifratura ibrida HPKE",
+    "ja": "HPKE ハイブリッド暗号",
+    "pt-BR": "Criptografia híbrida HPKE",
+    "ko": "HPKE hybrid encryption",
+    "tr": "HPKE hybrid encryption",
+    "az": "HPKE hybrid encryption"
+  },
+  "Open HPKE hybrid encryption directly with ready-to-use defaults": {
+    "en": "Open HPKE hybrid encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HPKE 混合公钥加密",
+    "zh-TW": "使用預設參數直接開啟HPKE 混合公鑰加密",
+    "es": "Abre directamente Cifrado híbrido HPKE con valores preparados",
+    "it": "Apri direttamente Cifratura ibrida HPKE con valori pronti",
+    "ja": "HPKE ハイブリッド暗号を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia híbrida HPKE diretamente com valores prontos",
+    "ko": "HPKE hybrid encryption 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HPKE hybrid encryption aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HPKE hybrid encryption hazır parametrlərlə birbaşa açılsın"
+  },
+  "ML-KEM post-quantum encapsulation": {
+    "en": "ML-KEM post-quantum encapsulation",
+    "zh-CN": "ML-KEM 后量子密钥封装",
+    "zh-TW": "ML-KEM 後量子金鑰封裝",
+    "es": "Encapsulación poscuántica",
+    "it": "Incapsulamento post-quantum",
+    "ja": "耐量子鍵カプセル化",
+    "pt-BR": "Encapsulamento pós-quântico",
+    "ko": "ML-KEM post-quantum encapsulation",
+    "tr": "ML-KEM post-quantum encapsulation",
+    "az": "ML-KEM post-quantum encapsulation"
+  },
+  "Open ML-KEM post-quantum encapsulation directly with ready-to-use defaults": {
+    "en": "Open ML-KEM post-quantum encapsulation directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开ML-KEM 后量子密钥封装",
+    "zh-TW": "使用預設參數直接開啟ML-KEM 後量子金鑰封裝",
+    "es": "Abre directamente Encapsulación poscuántica con valores preparados",
+    "it": "Apri direttamente Incapsulamento post-quantum con valori pronti",
+    "ja": "耐量子鍵カプセル化を既定値ですぐに開く",
+    "pt-BR": "Abra Encapsulamento pós-quântico diretamente com valores prontos",
+    "ko": "ML-KEM post-quantum encapsulation 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "ML-KEM post-quantum encapsulation aracını hazır varsayılanlarla doğrudan açın",
+    "az": "ML-KEM post-quantum encapsulation hazır parametrlərlə birbaşa açılsın"
   },
   "TOTP": {
     "en": "TOTP",

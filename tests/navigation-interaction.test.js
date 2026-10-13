@@ -62,7 +62,7 @@ test("search finds localized categories and multiple keywords", () => {
   assert.ok(searchTools("安全加密", "zh-CN").length >= 8);
   assert.ok(searchTools("Security & crypto", "en").every((tool) => tool.category === "security"));
   assert.ok(searchTools("セキュリティと暗号", "ja").every((tool) => tool.category === "security"));
-  assert.ok(searchTools("SM4 CBC", "zh-CN").some((tool) => tool.id === "aes"));
+  assert.ok(searchTools("SM4 CBC", "zh-CN").some((tool) => tool.id === "sm4"));
   assert.equal(searchTools("ULID", "zh-CN")[0].id, "uuid");
   assert.ok(tools.some((tool) => tool.id === "data-convert" && tool.category === "data"));
   assert.ok(EPHEMERAL_TOOL_IDS.has("jwt") && EPHEMERAL_TOOL_IDS.has("password") && EPHEMERAL_TOOL_IDS.has("random-bytes"));
@@ -71,7 +71,7 @@ test("search finds localized categories and multiple keywords", () => {
 
 test("search ranks intent matches first", () => {
   assert.equal(searchTools("验签", "zh-CN")[0].id, "jwt");
-  assert.equal(searchTools("SM4 CBC", "zh-CN")[0].id, "aes");
+  assert.equal(searchTools("SM4 CBC", "zh-CN")[0].id, "sm4");
   assert.equal(searchTools("crontab", "zh-CN")[0].id, "cron");
   assert.equal(searchTools("decode token", "en")[0].id, "jwt");
   assert.equal(searchTools("去重", "zh-CN")[0].id, "whitespace");

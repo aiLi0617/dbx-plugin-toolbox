@@ -125,6 +125,7 @@ function optionsAes(q) {
   const options = {};
   if (/sm4/.test(q)) options.algorithm = "sm4-128";
   else if (/aes.?128/.test(q)) options.algorithm = "aes-128";
+  else if (/aes.?192/.test(q)) options.algorithm = "aes-192";
   else if (/aes/.test(q)) options.algorithm = "aes-256";
   if (/cbc/.test(q)) options.mode = "cbc";
   else if (/gcm/.test(q)) options.mode = "gcm";
@@ -134,7 +135,15 @@ function optionsAes(q) {
 }
 
 function optionsRsa(q) {
-  return /sm2/.test(q) ? { algorithm: "sm2" } : {};
+  if (/sm2/.test(q)) return { algorithm: "sm2" };
+  const options = {};
+  if (/pkcs\s*#?\s*1|pkcs1|v1\.5/.test(q)) options.padding = "pkcs1";
+  else if (/oaep/.test(q)) options.padding = "oaep";
+  if (/sha.?512/.test(q)) options.oaepHash = "sha512";
+  else if (/sha.?384/.test(q)) options.oaepHash = "sha384";
+  else if (/sha.?256/.test(q)) options.oaepHash = "sha256";
+  else if (/sha.?1\b/.test(q)) options.oaepHash = "sha1";
+  return options;
 }
 
 function optionsHmac(q) {
@@ -299,14 +308,14 @@ export function resolveIntent(query = "") {
 
   const aes = optionsAes(q);
   if (aes.algorithm || aes.mode || /sm4|aes|对称加密|对称加解密/.test(q)) {
-    push(out, "aes", aes, labelFrom(aes), 12);
+    push(out, aes.algorithm === "sm4-128" ? "sm4" : "aes", aes, labelFrom(aes), 12);
   } else if (/^(?:加密|解密|encrypt|decrypt)$/.test(q)) {
     push(out, "aes", /解密|decrypt/.test(q) ? { op: "decrypt" } : {}, labelFrom({ op: /解密|decrypt/.test(q) ? "decrypt" : "" }), 9);
   }
 
   const rsa = optionsRsa(q);
   if (Object.keys(rsa).length || /非对称|\brsa\b|公钥加密|sm2\s*加密/.test(q)) {
-    push(out, "rsa", rsa, labelFrom(rsa), Object.keys(rsa).length ? 12 : 8);
+    push(out, rsa.algorithm === "sm2" ? "sm2" : "rsa", rsa, labelFrom(rsa), Object.keys(rsa).length ? 12 : 8);
   }
 
   if (/\bhmac\b|hmac-|消息认证/.test(q)) {

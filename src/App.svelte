@@ -12,7 +12,7 @@
     setVaultAutoLockMinutes,
   } from "./lib/prefs.js";
   import { moveToolId, pushRecent, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
-  import { EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS } from "./lib/viewRegistry.js";
+  import { EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
   import { loadVaultKeys } from "./lib/keySource.js";
   import ToolboxSidebar from "./lib/ToolboxSidebar.svelte";
   import ToolboxHome from "./lib/ToolboxHome.svelte";
@@ -271,16 +271,9 @@
   {@const initialOptions = toolOptions[item.id] || {}}
   {@const demo = demoByToolId.get(item.id)}
   {@const shortcut = false}
+  {@const activeProps = viewPropsForTool(item, { locale, initialOptions, shortcut, demo, demoRequest: demoRevisions[item.id] || 0, onVaultChange: refreshKeys })}
   {#if ActiveView}
-    {#if item.view === "live-io"}<ActiveView {locale} toolId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "aes" || item.view === "rsa" || item.view === "xor"}<ActiveView {locale} kind={item.view} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "keypair" || item.view === "symmetric-key" || item.view === "key-generator"}<ActiveView {locale} onVaultChange={refreshKeys} />
-    {:else if item.view === "whitespace"}<ActiveView {locale} initialAction={initialOptions.action || "trim"} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "image-utility"}<ActiveView {locale} toolId={item.id} {demo} />
-    {:else if item.view === "image-process"}<ActiveView {locale} {shortcut} focusedOperation={initialOptions.op || ""} />
-    {:else if item.view === "developer-utility"}<ActiveView {locale} toolId={item.id} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else if item.view === "utility-suite"}<ActiveView {locale} toolId={item.id} {initialOptions} {demo} demoRequest={demoRevisions[item.id] || 0} />
-    {:else}<ActiveView {locale} {initialOptions} {shortcut} shortcutId={item.id} {demo} demoRequest={demoRevisions[item.id] || 0} />{/if}
+    <ActiveView {...activeProps} />
   {:else if viewLoadErrors[item.view]}
     <div class="view-load-state" role="alert">
       <span>{pick(locale, chrome.toolLoadFailed)}: {viewLoadErrors[item.view]}</span>

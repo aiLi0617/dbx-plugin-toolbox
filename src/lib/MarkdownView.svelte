@@ -3,6 +3,8 @@
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { pick } from "./i18n.js";
   import { renderMarkdown } from "./tools/text.js";
+  import { analyzeMarkdownDocument, markdownToc, selfContainedMarkdownHtml } from "./markdownDocument.js";
+  import { saveBlobThroughHost } from "./fileSave.js";
 
   let { locale = "zh-CN" } = $props();
 
@@ -20,6 +22,9 @@
   });
   const html = $derived(rendered.html);
   const empty = $derived(!input.trim());
+  const documentInfo = $derived(analyzeMarkdownDocument(input));
+  const toc = $derived(markdownToc(documentInfo.headings));
+  async function exportHtml(){const value=selfContainedMarkdownHtml(html,{title:documentInfo.headings[0]?.text||"Markdown document"});await saveBlobThroughHost(new Blob([value],{type:"text/html;charset=utf-8"}),{fileName:"markdown-export.html",mimeType:"text/html",title:t("导出自包含 HTML","Export self-contained HTML")});}
 </script>
 
 <div class="page">
@@ -38,8 +43,8 @@
 
   <div class="col">
     <div class="caption-row">
-      <span class="caption">{t("预览", "Preview")}</span>
-      <CopyButton {locale} text={html} labelZh="复制 HTML" labelEn="Copy HTML" />
+      <span class="caption">{t("预览", "Preview")} · {documentInfo.stats.words} {t("词","words")} · {documentInfo.stats.readingMinutes} min</span>
+      <span class="actions"><CopyButton {locale} text={toc} labelZh="复制目录" labelEn="Copy TOC" /><CopyButton {locale} text={html} labelZh="复制 HTML" labelEn="Copy HTML" /><button class="dbx-btn" type="button" disabled={empty||rendered.error} onclick={exportHtml}>{t("导出 HTML","Export HTML")}</button></span>
     </div>
     <div class="preview" class:empty>
       {#if rendered.error}
@@ -98,6 +103,7 @@
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
   .error { margin: 0; color: var(--color-destructive); }
+  .actions { display: flex; align-items: center; gap: 6px; }
   .preview :global(:first-child) {
     margin-top: 0;
   }

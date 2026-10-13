@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { TOOL_IDS, TOOL_REGISTRY } from "../src/lib/viewRegistry.js";
+import { TOOL_IDS, TOOL_REGISTRY, viewPropsForTool } from "../src/lib/viewRegistry.js";
 import { assertDemoCoverage, createToolDemo } from "../src/lib/demoCatalog.js";
 import { canonicalToolId } from "../src/lib/catalog.js";
 
@@ -24,7 +24,8 @@ test("legacy client diagnostics favorites migrate to device information", () => 
 });
 
 test("all tools declare navigation, action, and demo metadata", () => {
-  assert.equal(TOOL_REGISTRY.length, 64);
+  assert.equal(TOOL_REGISTRY.length, 75);
+  for (const id of ["aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem"]) assert.ok(TOOL_IDS.includes(id), `missing crypto tool: ${id}`);
   assert.equal(TOOL_REGISTRY.filter((tool) => tool.kind === "shortcut").length, 0);
   assert.ok(assertDemoCoverage(TOOL_REGISTRY));
   for (const tool of TOOL_REGISTRY) {
@@ -75,6 +76,18 @@ test("every demo-aware view consumes each demo request only once", () => {
 test("loading a demo updates mounted views without resetting their local mode", () => {
   const source = fs.readFileSync(new URL("../src/App.svelte", import.meta.url), "utf8");
   assert.doesNotMatch(source, /#key[^\n]*demoRevisions/, "demo requests must not remount the active tool view");
+});
+
+test("App uses one normalized prop contract for every tool view", () => {
+  const source = fs.readFileSync(new URL("../src/App.svelte", import.meta.url), "utf8");
+  assert.match(source, /<ActiveView \{\.\.\.activeProps\} \/>/);
+  assert.doesNotMatch(source, /item\.view ===/);
+  const tool = TOOL_REGISTRY.find((item) => item.id === "aes");
+  const props = viewPropsForTool(tool, { locale: "en", initialOptions: { op: "encrypt" }, demoRequest: 2 });
+  assert.equal(props.kind, "aes");
+  assert.equal(props.toolId, "aes");
+  assert.equal(props.focusedOperation, "encrypt");
+  assert.equal(props.demoRequest, 2);
 });
 
 test("JSON workbench demo covers every JSON value type", () => {

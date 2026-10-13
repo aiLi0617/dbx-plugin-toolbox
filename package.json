@@ -10,6 +10,7 @@
     "build:watch": "vite build --watch",
     "i18n:sync": "node scripts/collect-ui-messages.mjs",
     "i18n:check": "node scripts/collect-ui-messages.mjs --check",
+    "package:check": "node scripts/check-package-budget.mjs dist",
     "test": "node --test tests/*.test.js",
     "check": "npm run i18n:check && npm test && npm run build"
   },

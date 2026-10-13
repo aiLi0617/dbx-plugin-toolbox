@@ -9,7 +9,7 @@ DBX Toolbox is a Workbench plugin for [DBX](https://github.com/t8y2/dbx). It bri
 | Item | Value |
 | --- | --- |
 | Plugin ID | `io.github.aili0617.toolbox` |
-| Current version | `0.1.4` |
+| Current version | `0.2.0` |
 | Requirements | DBX `>= 0.5.68`, Host API `1` |
 | Source and homepage | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | License | [Apache-2.0](LICENSE) |
@@ -99,7 +99,7 @@ After packaging the project, open **Plugin Center → Settings → Third-party a
 | Image processing | Crop, resize, rotate, flip, and watermark up to 20 local images; export PNG, JPEG, or WebP |
 | Image utilities | Compression, format conversion, grid slicing, pixelation, and image/Base64 conversion |
 | Stitching and GIF | Stitch images horizontally or vertically and create GIF animations from local image sequences |
-| Image OCR | Offline Chinese and English OCR through the Rust sidecar and bundled models; images are not sent to a network service |
+| Image OCR | OCR code ships with the plugin. Fast and accurate models are downloaded from a pinned GitHub Release only after an explicit click and are verified before use. Recognition is fully offline after installation; images are never sent to a network service. |
 | Placeholder images | Generate placeholders with specified pixel dimensions and target file sizes |
 
 ### Security and cryptography
@@ -108,14 +108,17 @@ After packaging the project, open **Plugin Center → Settings → Third-party a
 | --- | --- |
 | Hash and HMAC | MD5, SHA, SM3, CRC32, and HMAC-SHA-1/SHA-256/SHA-384/SHA-512/SM3 for text or files |
 | JWT | Decode, issue, and verify HS, RS, and PS algorithm families |
-| Symmetric encryption | AES and SM4 with GCM, CBC, and ECB modes |
-| Asymmetric encryption | RSA OAEP/PKCS#1 and SM2; decode plaintext as UTF-8, Hex, or Base64 |
+| Symmetric encryption | AES-128/192/256 (GCM, CBC, ECB) and SM4 (CBC, ECB), with separate IV/nonce/tag, AAD, and UTF-8/Hex/Base64 interoperability |
+| Asymmetric encryption | RSA OAEP-SHA1/256/384/512 or PKCS#1 v1.5 and SM2; RSA plaintext, ciphertext, and decrypted output support UTF-8, Hex, or Base64 |
+| Modern authenticated encryption | ChaCha20-Poly1305, XChaCha20-Poly1305, AES-256-GCM-SIV, AES-256-CCM, plus AES-256-CTR for interoperability |
+| Key derivation | Argon2id, scrypt, PBKDF2-HMAC-SHA256, and HKDF-SHA256 with configurable salt and cost parameters |
+| Digital signatures | RSA-PSS-SHA256, RSA-PKCS#1-SHA256, and SM2-SM3 signing and verification |
 | Keys and certificates | Generate AES, SM4, HMAC, RSA, and SM2 key material; inspect X.509, SSH public keys, JWK, and JWKS |
 | Other | TOTP and an XOR utility intended only for debugging and comparison |
 
 ### Encrypted key vault
 
-The sidecar stores the vault in the plugin-specific data directory. Key material is protected with **Argon2id + AES-GCM**. The UI displays only names, algorithms, and fingerprints. AES, SM4, and HMAC operations can use either a vault entry or one-time key input; when a vault entry is selected, the UI sends only its `keyId` to the sidecar.
+The sidecar stores the vault in the plugin-specific data directory. Key material is protected with **Argon2id + AES-GCM**. The UI displays only names, algorithms, and fingerprints. AES (128/192/256-bit), SM4, and HMAC operations can use either a vault entry or one-time key input; when a vault entry is selected, the UI sends only its `keyId` to the sidecar.
 
 The official host supplies a `DBX_PLUGIN_DATA_DIR` ending in `plugin-data/<id>`. Custom environments are namespaced with `io.github.aili0617.toolbox`:
 

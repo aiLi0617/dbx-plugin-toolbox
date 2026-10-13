@@ -52,6 +52,7 @@ test("ASN.1 unwrap helpers extract PKCS#1 bodies", async () => {
 test("symmetric key material matches algorithm byte lengths", () => {
   const lengths = {
     "aes-256": 64,
+    "aes-192": 48,
     "aes-128": 32,
     "sm4-128": 32,
     "hmac-sha1": 40,

@@ -54,16 +54,20 @@ export const VIEW_LOADERS = {
   keypair: () => import("./KeyPairView.svelte"),
   "symmetric-key": () => import("./KeyView.svelte"),
   "key-generator": () => import("./KeyGeneratorView.svelte"),
+  "modern-crypto": () => import("./ModernCryptoView.svelte"),
+  signature: () => import("./SignatureView.svelte"),
+  "specialized-crypto": () => import("./SpecializedCryptoView.svelte"),
+  kem: () => import("./KemView.svelte"),
 };
 
 export const FILL_VIEWS = new Set([
-  "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa",
-  "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "image-stitch", "gif-tools", "image-ocr", "utility-suite", "lorem",
+  "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa", "modern-crypto", "signature",
+  "specialized-crypto", "kem", "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "image-stitch", "gif-tools", "image-ocr", "utility-suite", "lorem",
   "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "key-generator", "unicode-inspect", "developer-utility", "http-status",
 ]);
 
 export const EPHEMERAL_TOOL_IDS = new Set([
-  "aes", "rsa", "xor", "jwt", "jwk", "hmac-sha256", "totp", "password", "random-bytes", "key-generator",
+  "aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem", "xor", "jwt", "jwk", "hmac-sha256", "totp", "password", "random-bytes", "key-generator",
 ]);
 
 const TOOL_LIMITS = Object.freeze({
@@ -113,7 +117,7 @@ const CALCULATOR_IDS = new Set(["timestamp", "color", "cron", "base-convert", "s
 const LIVE_IDS = new Set(["base64", "url", "html-entities", "sql-escape", "punycode", "quoted-printable"]);
 const FILE_IDS = new Set(["hash", "file-type", "cert", "image-ocr"]);
 const GENERATOR_IDS = new Set(["uuid", "password", "random-bytes", "qrcode", "lorem", "fake-data", "chart", "key-generator"]);
-const EXPLICIT_IDS = new Set(["hash", "file-type", "cert", "image-process", "image-compress", "image-grid", "image-pixelate", "image-base64", "image-stitch", "gif-tools", "image-ocr", "aes", "rsa", "hmac-sha256", "password", "random-bytes", "key-generator", "windows-port"]);
+const EXPLICIT_IDS = new Set(["hash", "file-type", "cert", "image-process", "image-compress", "image-grid", "image-pixelate", "image-base64", "image-stitch", "gif-tools", "image-ocr", "aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem", "hmac-sha256", "password", "random-bytes", "key-generator", "windows-port"]);
 function layoutKind(tool) {
   if (LIVE_IDS.has(tool.id)) return "live-io";
   if (CALCULATOR_IDS.has(tool.id)) return "calculator";
@@ -144,3 +148,26 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
 })));
 
 export const TOOL_IDS = Object.freeze(TOOL_REGISTRY.map((tool) => tool.id));
+
+/**
+ * Every tool view receives one stable prop contract. Individual views can pick
+ * only the fields they use, while App.svelte no longer needs view-specific
+ * rendering branches.
+ */
+export function viewPropsForTool(tool, context = {}) {
+  const initialOptions = context.initialOptions || {};
+  return {
+    locale: context.locale || "zh-CN",
+    toolId: tool.id,
+    view: tool.view,
+    kind: ["aes", "rsa", "xor"].includes(tool.view) ? tool.view : tool.kind || "tool",
+    initialOptions,
+    initialAction: initialOptions.action || "trim",
+    focusedOperation: initialOptions.op || "",
+    shortcut: Boolean(context.shortcut),
+    shortcutId: tool.id,
+    demo: context.demo,
+    demoRequest: Number(context.demoRequest || 0),
+    onVaultChange: context.onVaultChange,
+  };
+}

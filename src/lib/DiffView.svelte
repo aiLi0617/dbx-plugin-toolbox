@@ -3,7 +3,7 @@
   import Select from "./Select.svelte";
   import { pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
-  import { alignSideBySideRows, decorateInlineLineChanges, diffParts } from "./tools/text.js";
+  import { alignSideBySideRows, createUnifiedDiff, decorateInlineLineChanges, diffParts, structuredDiff } from "./tools/text.js";
 
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -14,9 +14,11 @@
   let layout = $state("stacked");
   let ignoreWhitespace = $state(false);
   let ignoreCase = $state(false);
+  let contextLines = $state(3);
   const inputError = $derived(inputLimitError(left, INPUT_LIMITS.diff, t("左侧输入", "Left input")) || inputLimitError(right, INPUT_LIMITS.diff, t("右侧输入", "Right input")));
   const parts = $derived(inputError ? [] : diffParts(left, right, { mode, ignoreWhitespace, ignoreCase }));
-  const patchText = $derived(parts.map((part) => `${part.mark === "add" ? "+" : part.mark === "del" ? "-" : " "}${part.value}`).join(""));
+  const unifiedPatch = $derived(inputError ? "" : createUnifiedDiff(left,right,{context:contextLines}));
+  const patchStructure = $derived(inputError ? null : structuredDiff(left,right,{context:contextLines}));
   const lineRows = $derived.by(() => {
     if (mode !== "lines" || inputError) return [];
     const rows = [];
@@ -56,6 +58,7 @@
     <div class="diff-actions">
       <label class="diff-check"><input type="checkbox" bind:checked={ignoreWhitespace} /><span>{t("忽略空白差异", "Ignore whitespace")}</span></label>
       <label class="diff-check"><input type="checkbox" bind:checked={ignoreCase} /><span>{t("忽略大小写", "Ignore case")}</span></label>
+      <label class="diff-check"><span>{t("上下文", "Context")}</span><input class="dbx-input context" type="number" min="0" max="100" bind:value={contextLines}/></label>
       <button class="dbx-btn" type="button" onclick={swap}>{t("交换左右", "Swap")}</button>
     </div>
   </div>
@@ -79,7 +82,9 @@
           <button class="dbx-btn" type="button" aria-pressed={layout === "stacked"} onclick={() => (layout = "stacked")}>{t("上下对比", "Top/bottom")}</button>
           <button class="dbx-btn" type="button" aria-pressed={layout === "side"} onclick={() => (layout = "side")}>{t("左右对比", "Side by side")}</button>
         </div>
-        <CopyButton {locale} text={patchText} labelZh="复制差异" labelEn="Copy diff" />
+        {#if patchStructure}<span class="diff-stats">+{patchStructure.stats.additions} −{patchStructure.stats.deletions} · {patchStructure.stats.hunks} {t("块","hunks")}</span>{/if}
+        <CopyButton {locale} text={unifiedPatch} labelZh="复制 Unified Patch" labelEn="Copy unified patch" />
+        <CopyButton {locale} text={JSON.stringify(patchStructure,null,2)} labelZh="复制结构化 JSON" labelEn="Copy structured JSON" />
       </div>
     </div>
     {#if layout === "side" && mode === "lines"}
@@ -120,6 +125,7 @@
   .diff-mode :global(.dbx-custom-select) { width: 100%; min-width: 0; }
   .diff-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-width: 0; }
   .diff-check { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 6px; min-height: 30px; font-size: 12px; white-space: nowrap; }
+  .context{width:64px}.diff-stats{color:var(--color-muted-foreground);font:11px var(--font-mono)}
   .editors { flex: 1 1 46%; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--ui-gap, 12px); align-items: stretch; }
   .col, .diff { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: var(--ui-field-gap, 6px); }
   .diff { flex: 1 1 40%; }

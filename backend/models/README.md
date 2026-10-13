@@ -9,5 +9,7 @@
   mobile/server recognition assets used with the dictionary generated into
   `backend/src/ocr_alphabet.rs`.
 
-The original ONNX file is intentionally not committed because the Sidecar only
-loads the converted RTen asset.
+The original ONNX files and converted RTen files are intentionally not committed.
+The immutable converted assets are published in the `ocr-models-v1` GitHub
+Release. DBX Toolbox pins their release URLs, exact byte lengths, and SHA-256
+digests in `backend/src/ocr_models.rs`; packaging never downloads them.

@@ -128,7 +128,7 @@
   }
 
   function usesFor(algorithm) {
-    if (algorithm === "aes-256" || algorithm === "aes-128" || algorithm === "sm4-128") {
+    if (algorithm === "aes-256" || algorithm === "aes-192" || algorithm === "aes-128" || algorithm === "sm4-128") {
       return t("对称加密 · XOR", "Symmetric · XOR");
     }
     if (algorithm === "hmac-sm3") {
@@ -144,7 +144,7 @@
   }
 
   function algHint(algorithm) {
-    if (algorithm === "aes-256" || algorithm === "aes-128") {
+    if (algorithm === "aes-256" || algorithm === "aes-192" || algorithm === "aes-128") {
       return t("给「对称加密」选用，也可给 XOR 当字节密钥。", "For Symmetric cipher; XOR can reuse these byte keys.");
     }
     if (algorithm === "sm4-128") {
@@ -726,6 +726,7 @@
               bind:value={createAlg}
               options={[
                 { value: "aes-256", label: "AES-256", group: t("对称加密 / XOR", "Symmetric / XOR") },
+                { value: "aes-192", label: "AES-192", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "aes-128", label: "AES-128", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "sm4-128", label: "SM4", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "hmac-sha1", label: "SHA-1", group: t("HMAC / JWT", "HMAC / JWT") },
