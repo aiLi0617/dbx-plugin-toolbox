@@ -54,7 +54,6 @@
     border-radius: var(--radius-md, 6px);
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
     color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
-    box-shadow: 0 8px 24px color-mix(in srgb, CanvasText 14%, transparent);
     font-size: 11px;
     line-height: 1.4;
     white-space: normal;

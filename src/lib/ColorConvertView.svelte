@@ -1147,7 +1147,7 @@
   .fix-role button.active {
     background: var(--color-background);
     color: var(--color-foreground);
-    box-shadow: 0 1px 2px color-mix(in srgb, CanvasText 10%, transparent);
+    box-shadow: inset 0 0 0 1px var(--color-border);
   }
   .contrast-action-grid {
     display: grid;

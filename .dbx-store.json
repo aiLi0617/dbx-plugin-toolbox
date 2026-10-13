@@ -15,7 +15,7 @@
   "source": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "homepage": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "license": "Apache-2.0",
-  "releaseNotes": "0.1.3：工具目录扩展到 64 个入口，新增离线原生 OCR、图片拼接与 GIF 生成、图表/假数据/开发辅助工具，并增强颜色对比度、JSON、文本、网络与密钥生成能力。0.1.3: Expands the catalog to 64 entries with native offline OCR, image stitching and GIF creation, chart/fake-data/developer utilities, plus improvements to color contrast, JSON, text, networking, and key generation.",
+  "releaseNotes": "0.1.4：空闲端口推荐改为独立探测，一次返回 5 个经系统绑定验证的 TCP/UDP 候选；修复 OCR 模型在发布包中的拉取与完整性校验；优化范围滑块进度、焦点状态及多处主题阴影样式。0.1.4: Makes free-port recommendations independent and returns five TCP/UDP candidates verified by system binding; fixes OCR model hydration and validation during release packaging; improves range-slider progress, focus states, and theme-aware shadow styling.",
   "localizations": {
     "zh-CN": {
       "name": "DBX 工具箱",

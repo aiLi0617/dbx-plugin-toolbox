@@ -41,6 +41,22 @@ test("component theme tokens do not pin DBX colors to hex fallbacks", () => {
   assert.deepEqual(violations, []);
 });
 
+test("non-semantic shadows do not derive from the theme foreground", () => {
+  const violations = [];
+
+  for (const file of sourceFiles(sourceRoot)) {
+    const source = fs.readFileSync(file, "utf8");
+
+    for (const match of source.matchAll(/box-shadow\s*:\s*([^;}]*CanvasText[^;}]*);/gi)) {
+      if (match[1].includes("var(--color-border")) continue;
+      const line = source.slice(0, match.index).split("\n").length;
+      violations.push(`${path.relative(sourceRoot, file)}:${line}: ${match[0]}`);
+    }
+  }
+
+  assert.deepEqual(violations, []);
+});
+
 test("persistent selection aliases follow the injected DBX primary pair", () => {
   const css = fs.readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
 
