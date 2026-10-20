@@ -53,14 +53,14 @@
   --dbx-hover-background: var(--color-accent, var(--color-muted));
   --dbx-hover-foreground: var(--color-accent-foreground, var(--color-foreground));
   --dbx-active-background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
-  --dbx-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-ring, var(--color-primary)) 50%, transparent);
-  /* Plugin-level semantic effects derived from DBX colors. Keep overlays and
-     elevation themeable without asking the host for non-standard tokens. */
+  --dbx-focus-ring: inset 0 0 0 1px var(--color-ring, var(--color-primary));
+  /* Overlays use theme colors. Elevation shadows remain neutral black: using
+     foreground here would turn dark-theme popovers into white glowing panels. */
   --dbx-overlay: color-mix(in srgb, var(--color-foreground) 35%, transparent);
   --dbx-overlay-soft: color-mix(in srgb, var(--color-foreground) 22%, transparent);
-  --dbx-shadow-sm: 0 4px 12px color-mix(in srgb, var(--color-foreground) 16%, transparent);
-  --dbx-shadow-md: 0 12px 30px color-mix(in srgb, var(--color-foreground) 20%, transparent);
-  --dbx-shadow-lg: 0 24px 70px color-mix(in srgb, var(--color-foreground) 28%, transparent);
+  --dbx-shadow-sm: 0 4px 12px rgb(0 0 0 / 0.16);
+  --dbx-shadow-md: 0 12px 30px rgb(0 0 0 / 0.20);
+  --dbx-shadow-lg: 0 24px 70px rgb(0 0 0 / 0.28);
   --ui-gap: 12px;
   --ui-field-gap: 6px;
   --ui-caption: 20px;
@@ -247,12 +247,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 :where(input[type="range"]:focus-visible::-webkit-slider-thumb) {
   box-shadow:
     0 0 0 1px var(--color-border),
-    0 0 0 4px color-mix(in srgb, var(--color-ring, var(--color-primary)) 45%, transparent);
+    inset 0 0 0 1px var(--color-ring, var(--color-primary));
 }
 :where(input[type="range"]:focus-visible::-moz-range-thumb) {
   box-shadow:
     0 0 0 1px var(--color-border),
-    0 0 0 4px color-mix(in srgb, var(--color-ring, var(--color-primary)) 45%, transparent);
+    inset 0 0 0 1px var(--color-ring, var(--color-primary));
 }
 :where(input[type="range"]:disabled) {
   opacity: 0.5;
@@ -561,6 +561,8 @@ select.dbx-select.dbx-select:focus:not(:focus-visible):not(.invalid):not([aria-i
 
 .app {
   display: grid;
+  min-width: 0;
+  width: 100%;
   grid-template-columns: 216px minmax(0, 1fr);
   flex: 1 1 auto;
   min-height: 0;
@@ -885,7 +887,7 @@ select.dbx-select.dbx-select:focus:not(:focus-visible):not(.invalid):not([aria-i
 }
 .catalog-card.drag-over {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 .catalog-drag {
   display: inline-flex;
@@ -1138,8 +1140,6 @@ h3 {
 .sidebar-scrim { display: none; }
 
 @media (max-width: 959px) {
-  .app { grid-template-columns: 52px minmax(0, 1fr); }
-  .app > .sidebar { width: 52px; }
   .io { grid-template-columns: 1fr; }
 }
 @media (max-width: 719px) {

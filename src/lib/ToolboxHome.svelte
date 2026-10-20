@@ -279,6 +279,7 @@
   .home-search-box { display:flex; align-items:center; gap:9px; height:42px; padding:0 12px; border:1px solid var(--color-input); border-radius:8px; background:var(--color-background); color:var(--color-muted-foreground); }
   .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:var(--dbx-focus-ring); }
   .home-search-box input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--color-foreground); font:inherit; }
+  .home-search-box input:focus, .home-search-box input:focus-visible { outline:none; box-shadow:none; }
   .home-search-box input::placeholder { color:var(--color-muted-foreground); }
   .home-search-box input::-webkit-search-cancel-button { display:none; }
   .home-search-box kbd { flex:0 0 auto; padding:2px 6px; border:1px solid var(--color-border); border-radius:4px; font-size:10px; }
@@ -305,7 +306,7 @@
   .tool-card { position:relative; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; min-height:70px; border:1px solid var(--color-border); border-radius:9px; background:var(--color-card); cursor:grab; user-select:none; transition:opacity 120ms,border-color 120ms,transform 120ms; }
   .tool-card:hover,.tool-card:focus-within { z-index:2; border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); }
   .tool-card.dragging { opacity:.5; cursor:grabbing; transform:scale(.985); }
-  .tool-card.drop-target { border-color:var(--color-primary); box-shadow:0 0 0 2px color-mix(in srgb,var(--color-primary) 18%,transparent); }
+  .tool-card.drop-target { border-color:var(--color-primary); box-shadow:inset 0 0 0 1px var(--color-primary); }
   .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:var(--dbx-shadow-md); transform:scale(1.02); }
   .ghost-handle { color:var(--color-muted-foreground); text-align:center; }
   .ghost-copy { display:flex; min-width:0; flex-direction:column; gap:4px; padding:10px 5px; }

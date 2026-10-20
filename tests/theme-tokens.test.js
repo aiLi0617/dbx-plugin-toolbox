@@ -47,7 +47,7 @@ test("non-semantic shadows do not derive from the theme foreground", () => {
   for (const file of sourceFiles(sourceRoot)) {
     const source = fs.readFileSync(file, "utf8");
 
-    for (const match of source.matchAll(/box-shadow\s*:\s*([^;}]*CanvasText[^;}]*);/gi)) {
+    for (const match of source.matchAll(/box-shadow\s*:\s*([^;}]*(?:CanvasText|var\(--color-foreground)[^;}]*);/gi)) {
       if (match[1].includes("var(--color-border")) continue;
       const line = source.slice(0, match.index).split("\n").length;
       violations.push(`${path.relative(sourceRoot, file)}:${line}: ${match[0]}`);
@@ -55,6 +55,20 @@ test("non-semantic shadows do not derive from the theme foreground", () => {
   }
 
   assert.deepEqual(violations, []);
+});
+
+test("shared popover elevation stays dark instead of becoming a light-theme foreground halo", () => {
+  const css = fs.readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
+  for (const size of ["sm", "md", "lg"]) {
+    const value = css.match(new RegExp(`--dbx-shadow-${size}:\\s*([^;]+);`))?.[1];
+    assert.ok(value, size);
+    assert.match(value, /rgb\(0 0 0 \/ 0\.\d+\)/, size);
+    assert.doesNotMatch(value, /foreground|CanvasText|currentColor/, size);
+  }
+  for (const [file, token] of [["ToolboxHome.svelte", "md"], ["Select.svelte", "sm"], ["ToolLauncher.svelte", "lg"]]) {
+    const source = fs.readFileSync(new URL(`../src/lib/${file}`, import.meta.url), "utf8");
+    assert.match(source, new RegExp(`box-shadow:\\s*var\\(--dbx-shadow-${token}\\)`), file);
+  }
 });
 
 test("persistent selection aliases follow the injected DBX primary pair", () => {
@@ -71,7 +85,7 @@ test("persistent selection aliases follow the injected DBX primary pair", () => 
   assert.match(css, /--dbx-selection-border:\s*var\(--color-primary\);/);
   assert.match(
     css,
-    /--dbx-focus-ring:\s*0 0 0 3px color-mix\(in srgb,\s*var\(--color-ring,\s*var\(--color-primary\)\) 50%,\s*transparent\);/,
+    /--dbx-focus-ring:\s*inset 0 0 0 1px var\(--color-ring,\s*var\(--color-primary\)\);/,
   );
 });
 
@@ -132,6 +146,28 @@ test("overlay and elevation chrome use semantic plugin tokens", () => {
   assert.match(launcher, /background:var\(--dbx-overlay\)/);
   assert.match(launcher, /box-shadow:var\(--dbx-shadow-lg\)/);
   assert.match(select, /box-shadow:\s*var\(--dbx-shadow-sm\)/);
+});
+
+test("launcher input suppresses host focus halos and keeps an in-bounds focus marker", () => {
+  const source = fs.readFileSync(new URL("../src/lib/ToolLauncher.svelte", import.meta.url), "utf8");
+  assert.match(source, /\.search-row input:focus,[\s\S]*?\.search-row input:focus-visible\s*\{[^}]*outline:none;[^}]*box-shadow:none;/);
+  assert.match(source, /\.search-row:has\(input:focus-visible\)\s*\{[^}]*border-bottom-color:var\(--color-ring/);
+  const select = fs.readFileSync(new URL("../src/lib/Select.svelte", import.meta.url), "utf8");
+  assert.match(select, /\.trigger\.keyboard-focus\s*\{[^}]*outline-offset:\s*-2px;/s);
+});
+
+test("selection and drag feedback use in-bounds borders instead of glowing halos", () => {
+  for (const file of sourceFiles(sourceRoot)) {
+    const source = fs.readFileSync(file, "utf8");
+    for (const [, selector, body] of source.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/active|selected|drag-over|drop-target|dragging|focus-visible/.test(selector)) continue;
+      assert.doesNotMatch(body, /filter\s*:[^;}]*(?:brightness|drop-shadow)/, `${path.basename(file)}: ${selector}`);
+      assert.doesNotMatch(body, /(?:^|,)\s*0 0 0 [2-9]px/, `${path.basename(file)}: ${selector}`);
+      assert.doesNotMatch(body, /box-shadow\s*:\s*0 0 0 [2-9]px/, `${path.basename(file)}: ${selector}`);
+    }
+  }
+  const home = fs.readFileSync(new URL("../src/lib/ToolboxHome.svelte", import.meta.url), "utf8");
+  assert.match(home, /\.home-search-box input:focus, \.home-search-box input:focus-visible\s*\{[^}]*box-shadow:none;/);
 });
 
 test("color copy format uses the themeable custom select menu", () => {

@@ -21,8 +21,8 @@ function visit(node) {
   if (node.type === 'CallExpression') {
     const name = node.callee?.name;
     const args = node.arguments;
-    if (name === 'L') {
-      const vals = args.map(value);
+    if (name === 'L' || name === 'errorGroup') {
+      const vals = (name === 'errorGroup' ? args.slice(1) : args).map(value);
       if (vals[0] && vals[1]) add(vals[0], vals[1], Object.fromEntries(langs.slice(2).map((l, i) => [l, vals[i + 2]]).filter(([, v]) => v)));
     } else if (name === 't') add(value(args[1]), value(args[0]));
     else if (name === 'pick') add(value(args[2]), value(args[1]));

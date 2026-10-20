@@ -193,7 +193,7 @@
 <style>
   .sidebar { position: relative; display:flex; flex-direction:column; min-width:0; min-height:0; overflow:visible; background:var(--color-sidebar,var(--color-background)); color:var(--color-sidebar-foreground,var(--color-foreground)); border-right:1px solid var(--color-sidebar-border,var(--color-border)); }
   .brand-row { height:48px; flex:0 0 48px; display:flex; align-items:center; justify-content:space-between; padding:0 10px 0 14px; border-bottom:1px solid var(--color-sidebar-border,var(--color-border)); }
-  .brand-row strong { font-size:14px; }
+  .brand-row strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; }
   button { font:inherit; color:inherit; cursor:pointer; }
   .icon { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; padding:0; border:0; border-radius:6px; background:transparent; }
   .icon:hover,.icon.active { background:var(--color-sidebar-accent,var(--color-muted)); }

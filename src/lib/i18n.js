@@ -1,5 +1,18 @@
 import { L, localize, isZh, normalizeLocale, pick } from "./locale.js";
 import { SIDECAR_ERRORS, APP_ERRORS } from "./i18nErrors.js";
+import { UI_MESSAGES } from "./uiMessages.js";
+import { errorMessage } from "./errorMessage.js";
+
+export { errorMessage } from "./errorMessage.js";
+
+// Only bundled, trusted copy can bypass the unknown-error fallback. Do not
+// classify arbitrary non-English text as safe: it may contain input or secrets.
+const knownErrorCopy = new Map();
+for (const dict of [...Object.values(SIDECAR_ERRORS), ...Object.values(APP_ERRORS), ...Object.values(UI_MESSAGES)]) {
+  for (const value of Object.values(dict)) {
+    if (typeof value === "string" && value.trim() && !knownErrorCopy.has(value)) knownErrorCopy.set(value, dict);
+  }
+}
 
 export {
   L,
@@ -327,12 +340,6 @@ function localizeJsonSyntaxError(locale, raw) {
   ));
 }
 
-export function errorMessage(err) {
-  if (err == null) return "";
-  if (typeof err === "string") return err;
-  return String(err.message || err.msg || err.data?.message || err.toString?.() || "");
-}
-
 export function localizeError(locale, err) {
   const raw = errorMessage(err).trim();
   if (!raw) {
@@ -349,8 +356,17 @@ export function localizeError(locale, err) {
   if (/sidecar is not ready|backend is not ready/i.test(raw)) {
     return localize(locale, SIDECAR_ERRORS["Sidecar is not ready"]);
   }
-  const exact = SIDECAR_ERRORS[raw] || APP_ERRORS[raw];
+  const exact = SIDECAR_ERRORS[raw] || APP_ERRORS[raw] || knownErrorCopy.get(raw);
   if (exact) return localize(locale, exact);
+
+  // Classify known model failures without echoing OS paths, URLs, or response data.
+  const modelFailure = [
+    [/^OCR model \S+ is not installed$/, "OCR_MODEL_MISSING"],
+    [/^OCR model \S+ (?:has an invalid (?:file type or size|RTEN header)|failed SHA-256 verification)$/, "OCR_MODEL_INTEGRITY"],
+    [/^(?:Could not download OCR model:|Could not read the OCR model response:|OCR model server returned HTTP \d{3}$)/, "OCR_MODEL_NETWORK"],
+    [/^(?:Could not (?:create|write|flush|publish) the OCR model(?: directory| download)?:|Could not (?:open|read|verify) OCR model \S+:|Could not (?:inspect|remove) OCR model|Could not read the OCR model directory:)/, "OCR_MODEL_IO"],
+  ].find(([pattern]) => pattern.test(raw));
+  if (modelFailure) return localize(locale, SIDECAR_ERRORS[modelFailure[1]]);
 
   const keyLen = raw.match(/^Key length must be (\d+) bytes$/);
   if (keyLen) {
@@ -479,15 +495,7 @@ export function localizeError(locale, err) {
   const jsonErr = localizeJsonSyntaxError(locale, raw);
   if (jsonErr) return jsonErr;
   if (normalizeLocale(locale) === "en") return raw;
-  return localize(locale, L(
-    "The operation failed. Check the technical details and try again.",
-    "操作失败，请检查技术详情后重试。",
-    "操作失敗，請檢查技術詳情後重試。",
-    "La operación falló. Revisa los detalles técnicos e inténtalo de nuevo.",
-    "Operazione non riuscita. Controlla i dettagli tecnici e riprova.",
-    "操作に失敗しました。技術的な詳細を確認して再試行してください。",
-    "A operação falhou. Verifique os detalhes técnicos e tente novamente.",
-  ));
+  return localize(locale, SIDECAR_ERRORS.UNKNOWN_OPERATION_FAILURE);
 }
 
 export const chrome = {

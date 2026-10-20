@@ -579,7 +579,7 @@
     background: var(--dbx-selection-background);
     color: var(--dbx-selection-foreground);
     font-weight: 600;
-    box-shadow: 0 0 0 1px var(--dbx-selection-border);
+    box-shadow: inset 0 0 0 1px var(--dbx-selection-border);
   }
   .modes {
     display: flex;
