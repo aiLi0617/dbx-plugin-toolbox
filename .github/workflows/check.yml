@@ -43,8 +43,6 @@ jobs:
 
   ocr-model-integration:
     runs-on: ubuntu-latest
-    env:
-      DBX_PLUGIN_DATA_DIR: ${{ runner.temp }}/dbx-toolbox-ocr-test
     defaults:
       run:
         working-directory: backend
@@ -53,6 +51,8 @@ jobs:
       - name: Install Linux native dependencies
         run: sudo apt-get update && sudo apt-get install -y libwayland-dev
       - uses: dtolnay/rust-toolchain@stable
+      - name: Configure OCR test directory
+        run: echo "DBX_PLUGIN_DATA_DIR=$RUNNER_TEMP/dbx-toolbox-ocr-test" >> "$GITHUB_ENV"
       - name: Download pinned official OCR assets once
         run: |
           model_dir="$DBX_PLUGIN_DATA_DIR/io.github.aili0617.toolbox/models/ocr/v1"
