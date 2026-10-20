@@ -2,7 +2,7 @@
   import { onDestroy } from "svelte";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError as localizeAppError, pick } from "./i18n.js";
   import { invoke } from "./host.js";
   import {
     buildFileName,
@@ -89,7 +89,7 @@
     if (/exact target|too small for/.test(message)) {
       return t("无法精确命中目标大小，请略微调整目标体积", "Could not hit the exact target size; try a slightly different target");
     }
-    return message || t("生成失败", "Generation failed");
+    return message ? localizeAppError(locale, cause) : t("生成失败", "Generation failed");
   }
 
   function sizeAdjustNotice(result) {
@@ -218,7 +218,7 @@
       const note = await saveOne(resultMeta);
       savedNotes = note ? [note] : [];
     } catch (cause) {
-      error = String(cause.message || cause);
+      error = localizeError(cause);
     } finally {
       saving = false;
     }

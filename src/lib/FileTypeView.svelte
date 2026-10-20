@@ -1,5 +1,5 @@
 <script>
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import CopyButton from "./CopyButton.svelte";
   import { extensionMatches, fileExtension, fileTypeReport, identifyFileType, lookupFileTypes } from "./fileType.js";
   let { locale = "zh-CN" } = $props();
@@ -15,7 +15,7 @@
     try {
       const next=[]; for(const file of selected){const bytes=new Uint8Array(await file.slice(0,1024*1024).arrayBuffer());const detected=identifyFileType(bytes);next.push(fileTypeReport(detected,file));}
       reports=next; const first=next[0]; info=first.detected;fileName=first.fileName;fileSize=first.size;reportedType=first.browserMime;
-    } catch (cause) { error = cause?.message || String(cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally { loading = false; }
   }
   function onFile(event) { const files = [...(event.currentTarget.files || [])]; event.currentTarget.value = ""; void inspectFiles(files); }

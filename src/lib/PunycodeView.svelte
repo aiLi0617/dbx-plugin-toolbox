@@ -1,6 +1,6 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { analyzePunycode } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
@@ -10,7 +10,7 @@
   let input = $state("");
   const pair = $derived.by(() => {
     try { return { ...analyzePunycode(input), error: "" }; }
-    catch (cause) { return { unicode: "", ace: "", labels: [], warnings: [], error: cause?.message || t("请输入有效域名（Unicode 或 xn-- 编码）", "Enter a valid Unicode or xn-- domain") }; }
+    catch (cause) { return { unicode: "", ace: "", labels: [], warnings: [], error: localizeError(locale, cause) || t("请输入有效域名（Unicode 或 xn-- 编码）", "Enter a valid Unicode or xn-- domain") }; }
   });
 </script>
 

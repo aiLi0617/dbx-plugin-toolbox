@@ -9,6 +9,9 @@
   let confirmPassword = $state("");
   let error = $state("");
   let busy = $state(false);
+  let dialogEl = $state(null);
+  let firstInput = $state(null);
+  let previousFocus;
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -19,6 +22,8 @@
     error = "";
     busy = false;
     exists = true;
+    previousFocus = document.activeElement;
+    queueMicrotask(() => firstInput?.focus());
     let cancelled = false;
     (async () => {
       try {
@@ -32,6 +37,15 @@
       if (event.key === "Escape") {
         event.preventDefault();
         close();
+      } else if (event.key === "Tab" && dialogEl) {
+        const focusable = [...dialogEl.querySelectorAll('input,button:not([disabled])')];
+        if (!focusable.length) return;
+        const at = focusable.indexOf(document.activeElement);
+        const next = event.shiftKey
+          ? (at <= 0 ? focusable.length - 1 : at - 1)
+          : (at >= focusable.length - 1 ? 0 : at + 1);
+        event.preventDefault();
+        focusable[next].focus();
       }
     }
     window.addEventListener("keydown", onKey);
@@ -47,6 +61,9 @@
     password = "";
     confirmPassword = "";
     error = "";
+    queueMicrotask(() => {
+      if (previousFocus?.isConnected && previousFocus.getClientRects().length) previousFocus.focus();
+    });
   }
 
   function onEnter(event, action) {
@@ -96,12 +113,12 @@
 
 {#if open}
   <div class="overlay" onclick={onOverlayClick} role="presentation">
-    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="unlock-vault-title">
+    <div class="dialog" bind:this={dialogEl} role="dialog" aria-modal="true" aria-labelledby="unlock-vault-title" aria-describedby="unlock-vault-description">
       <div class="copy">
         <strong id="unlock-vault-title">
           {exists ? t("解锁密钥库", "Unlock key vault") : t("创建密钥库", "Create key vault")}
         </strong>
-        <p>
+        <p id="unlock-vault-description">
           {exists
             ? purpose === "select"
               ? t("解锁后即可选择已保存的密钥。", "Unlock the vault to choose a saved key.")
@@ -109,18 +126,18 @@
             : t("还没有密钥库。设置主密码（至少 8 位）后即可保存。", "No vault yet. Set a master password (8+ characters) to save the key.")}
         </p>
       </div>
-      {#if error}<div class="banner">{error}</div>{/if}
+      {#if error}<div class="banner" role="alert">{error}</div>{/if}
       <label class="field">
         <span>{t("主密码", "Master password")}</span>
         {#if exists}
           <div class="unlock-row">
-            <input class="dbx-input" type="password" bind:value={password} autocomplete="current-password" onkeydown={(event) => onEnter(event, submit)} />
+            <input class="dbx-input" bind:this={firstInput} type="password" bind:value={password} autocomplete="current-password" onkeydown={(event) => onEnter(event, submit)} />
             <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={submit} type="button">
               {busy ? t("解锁中…", "Unlocking…") : t("解锁", "Unlock")}
             </button>
           </div>
         {:else}
-          <input class="dbx-input" type="password" bind:value={password} autocomplete="new-password" onkeydown={(event) => onEnter(event, submit)} />
+          <input class="dbx-input" bind:this={firstInput} type="password" bind:value={password} autocomplete="new-password" onkeydown={(event) => onEnter(event, submit)} />
         {/if}
       </label>
       {#if !exists}
@@ -152,7 +169,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: color-mix(in srgb, CanvasText 28%, transparent);
+    background: var(--dbx-overlay);
   }
   .dialog {
     display: flex;

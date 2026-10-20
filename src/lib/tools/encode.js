@@ -483,7 +483,7 @@ export const JWT_ALGORITHMS = ["HS256", "HS384", "HS512", "RS256", "RS384", "RS5
 
 export async function signJwt(payload, ctx, algorithm = "HS256") {
   JSON.parse(payload);
-  const params = { action: "jwt-sign", text: payload, algorithm };
+  const params = { action: "jwt-sign", text: payload, algorithm, requiredPurpose: algorithm.startsWith("HS") ? "jwt-hmac" : "jwt-rsa" };
   applyKey(params, ctx);
   const result = await invoke("toolbox/crypto", params);
   return result.text;
@@ -491,7 +491,7 @@ export async function signJwt(payload, ctx, algorithm = "HS256") {
 
 export async function verifyJwt(token, ctx, algorithm = "HS256") {
   decodeJwt(token);
-  const params = { action: "jwt-verify", text: String(token ?? "").trim(), algorithm };
+  const params = { action: "jwt-verify", text: String(token ?? "").trim(), algorithm, requiredPurpose: algorithm.startsWith("HS") ? "jwt-hmac" : "jwt-rsa" };
   applyKey(params, ctx);
   const result = await invoke("toolbox/crypto", params);
   return Boolean(result.valid);
@@ -549,14 +549,14 @@ export async function runSymmetricDetailed(input, opts, ctx) {
 }
 
 export async function runHmac(input, algorithm, ctx) {
-  const params = { action: "hmac", algorithm: algorithm || "hmac-sha256", text: input };
+  const params = { action: "hmac", algorithm: algorithm || "hmac-sha256", text: input, requiredPurpose: "hmac" };
   applyKey(params, ctx);
   const result = await invoke("toolbox/crypto", params);
   return result.digest;
 }
 
 export async function runXor(input, inputHex, ctx) {
-  const params = { action: "xor", text: input, inputHex: Boolean(inputHex) };
+  const params = { action: "xor", text: input, inputHex: Boolean(inputHex), requiredPurpose: "debug-xor" };
   applyKey(params, ctx);
   const result = await invoke("toolbox/crypto", params);
   return { hex: result.text || "", utf8: result.utf8 || "" };
@@ -590,7 +590,7 @@ export const HMAC_ALGORITHMS = [
 ];
 
 export const RSA_PADDINGS = [
-  { value: "oaep", zh: "OAEP（推荐）", en: "OAEP (recommended)" },
+  { value: "oaep", zh: "OAEP", en: "OAEP" },
   { value: "pkcs1", zh: "PKCS#1 v1.5", en: "PKCS#1 v1.5" },
 ];
 

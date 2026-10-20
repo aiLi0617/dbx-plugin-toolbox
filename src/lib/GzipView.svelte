@@ -2,7 +2,7 @@
   import CopyButton from "./CopyButton.svelte";
   import { gzipCompressFile, gzipCompressText, gzipDecompressFile, gzipDecompressText } from "./gzip.js";
   import { saveBlobThroughHost } from "./fileSave.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
 
   let { locale = "zh-CN", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -16,7 +16,7 @@
   let conversionRevision = 0;
   let appliedDemoRequest = 0;
   let fileResult = $state(null); let fileName=$state(""); let fileBusy=$state(false);
-  async function onFile(event){const file=event.currentTarget.files?.[0];event.currentTarget.value="";if(!file)return;fileBusy=true;error="";try{const result=mode==="compress"?await gzipCompressFile(file):await gzipDecompressFile(file);fileResult=result;fileName=mode==="compress"?`${file.name}.gz`:file.name.replace(/\.gz$/i,"")||"decompressed.bin";}catch(cause){error=cause?.message||String(cause);fileResult=null;}finally{fileBusy=false;}}
+  async function onFile(event){const file=event.currentTarget.files?.[0];event.currentTarget.value="";if(!file)return;fileBusy=true;error="";try{const result=mode==="compress"?await gzipCompressFile(file):await gzipDecompressFile(file);fileResult=result;fileName=mode==="compress"?`${file.name}.gz`:file.name.replace(/\.gz$/i,"")||"decompressed.bin";}catch(cause){error=localizeError(locale,cause);fileResult=null;}finally{fileBusy=false;}}
   async function saveFile(){if(!fileResult)return;await saveBlobThroughHost(fileResult.blob,{fileName,mimeType:mode==="compress"?"application/gzip":"application/octet-stream",title:t("保存 Gzip 结果","Save Gzip result"),binary:true});}
 
   $effect(() => {
@@ -60,7 +60,7 @@
         if (revision !== conversionRevision) return;
         output = "";
         stats = null;
-        error = cause?.message || String(cause);
+        error = localizeError(locale, cause);
       } finally {
         if (revision === conversionRevision) busy = false;
       }

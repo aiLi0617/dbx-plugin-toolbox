@@ -4,9 +4,12 @@ import {
   DEFAULT_VAULT_AUTO_LOCK_MINUTES,
   getFavoriteToolIds,
   getVaultAutoLockMinutes,
+  getWorkspacePreferences,
   sanitizeVaultAutoLockMinutes,
   setFavoriteToolIds,
   setVaultAutoLockMinutes,
+  setRecentToolIds,
+  setSidebarCollapsed,
   VAULT_AUTO_LOCK_MINUTES,
 } from "../src/lib/prefs.js";
 
@@ -19,6 +22,39 @@ test("vault auto-lock accepts supported intervals and defaults invalid values", 
   assert.equal(sanitizeVaultAutoLockMinutes(null), DEFAULT_VAULT_AUTO_LOCK_MINUTES);
   assert.equal(sanitizeVaultAutoLockMinutes(""), DEFAULT_VAULT_AUTO_LOCK_MINUTES);
   assert.equal(sanitizeVaultAutoLockMinutes(10), DEFAULT_VAULT_AUTO_LOCK_MINUTES);
+});
+
+test("workspace navigation preferences migrate to and persist through the sidecar", async (t) => {
+  const values = new Map([
+    ["toolbox.recentToolIds", '["json","hash"]'],
+    ["toolbox.sidebarCollapsed", "true"],
+  ]);
+  const calls = [];
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  globalThis.localStorage = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+  globalThis.window = {
+    dbxPlugin: {
+      invoke: async (method, params) => {
+        calls.push({ method, params });
+        if (method === "toolbox/prefs/get") return { recentToolIds: ["uuid"], sidebarCollapsed: false };
+        return params;
+      },
+    },
+  };
+  t.after(() => {
+    globalThis.window = originalWindow;
+    globalThis.localStorage = originalStorage;
+  });
+
+  assert.deepEqual(await getWorkspacePreferences(true), { recentToolIds: ["uuid"], sidebarCollapsed: false });
+  assert.deepEqual(await setRecentToolIds(["hash", "json"]), ["hash", "json"]);
+  assert.equal(await setSidebarCollapsed(true), true);
+  assert.deepEqual(calls.at(-2), { method: "toolbox/prefs/set", params: { recentToolIds: ["hash", "json"] } });
+  assert.deepEqual(calls.at(-1), { method: "toolbox/prefs/set", params: { sidebarCollapsed: true } });
 });
 
 test("current sidecar settings override stale local auto-lock state", async (t) => {

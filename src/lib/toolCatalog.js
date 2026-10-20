@@ -206,60 +206,84 @@ const rows = [
     "验签", "decode token", "json web token", "令牌", "签发", "jwt解码", "jwt验签", "jwt签发",
   ]],
   ["aes", "security", "AES 加密", "AES 加密", "AES cipher", "aes", [
-    "aes", "aes-128", "aes-192", "aes-256", "gcm", "cbc", "ecb", "iv", "nonce", "aad", "对称", "加解密",
-  ], { defaultOptions: { algorithm: "aes-256" } }],
+    "aes", "aes-128", "aes-192", "aes-256", "gcm", "cbc", "ctr", "ecb", "iv", "nonce", "aad", "对称", "加解密",
+  ], { defaultOptions: { algorithm: "aes-256", mode: "gcm" }, capabilityId: "aes", supportLevel: "recommended" }],
   ["sm4", "security", "SM4 国密加密", "SM4 國密加密", "SM4 cipher", "aes", [
     "sm4", "国密", "國密", "cbc", "ecb", "iv", "对称加密", "sm4加密",
-  ], { defaultOptions: { algorithm: "sm4-128" } }],
+  ], { defaultOptions: { algorithm: "sm4-128", mode: "cbc" }, capabilityId: "sm4", supportLevel: "supported" }],
   ["hmac-sha256", "security", "HMAC", "HMAC", "HMAC", "hmac", [
     "hmac-sm3", "hmac", "hmac-sha1", "hmac-sha384", "hmac-sha512", "消息认证",
-  ]],
+  ], { capabilityId: "hmac-sha256", supportLevel: "recommended" }],
+  ["rsa-oaep", "security", "RSA-OAEP 加密与解密", "RSA-OAEP 加密與解密", "RSA-OAEP encrypt & decrypt", "rsa", [
+    "rsa", "oaep", "oaep-sha1", "oaep-sha256", "oaep-sha384", "oaep-sha512", "公钥加密",
+  ], { parentId: "rsa", defaultOptions: { algorithm: "rsa", padding: "oaep", oaepHash: "sha256" }, capabilityId: "rsa-oaep", supportLevel: "recommended", lockOptions: ["algorithm", "padding"] }],
+  ["rsa-pkcs1", "security", "RSA-PKCS#1 v1.5 加密与解密", "RSA-PKCS#1 v1.5 加密與解密", "RSA-PKCS#1 v1.5 encrypt & decrypt", "rsa", [
+    "rsa", "pkcs1", "pkcs1 v1.5", "兼容加密",
+  ], { parentId: "rsa", defaultOptions: { algorithm: "rsa", padding: "pkcs1" }, capabilityId: "rsa-pkcs1", supportLevel: "compatibility", lockOptions: ["algorithm", "padding"] }],
   ["rsa", "security", "RSA 加密", "RSA 加密", "RSA cipher", "rsa", [
     "rsa", "oaep", "oaep-sha1", "oaep-sha256", "oaep-sha384", "oaep-sha512", "pkcs1", "非对称", "公钥加密",
-  ], { defaultOptions: { algorithm: "rsa" } }],
+  ], { defaultOptions: { algorithm: "rsa" }, catalogVisible: false }],
   ["sm2", "security", "SM2 国密加密", "SM2 國密加密", "SM2 cipher", "rsa", [
     "sm2", "国密", "國密", "非对称", "公钥加密", "sm2加密",
-  ], { defaultOptions: { algorithm: "sm2" } }],
+  ], { defaultOptions: { algorithm: "sm2" }, capabilityId: "sm2", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["chacha20-poly1305", "security", "ChaCha20-Poly1305", "ChaCha20-Poly1305", "ChaCha20-Poly1305", "modern-crypto", ["chacha20", "poly1305", "aead"], { parentId: "modern-aead", defaultOptions: { algorithm: "chacha20-poly1305" }, capabilityId: "chacha20-poly1305", supportLevel: "recommended", lockOptions: ["algorithm"] }],
+  ["xchacha20-poly1305", "security", "XChaCha20-Poly1305", "XChaCha20-Poly1305", "XChaCha20-Poly1305", "modern-crypto", ["xchacha20", "poly1305", "aead"], { parentId: "modern-aead", defaultOptions: { algorithm: "xchacha20-poly1305" }, capabilityId: "xchacha20-poly1305", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-gcm-siv", "security", "AES-256-GCM-SIV", "AES-256-GCM-SIV", "AES-256-GCM-SIV", "modern-crypto", ["aes gcm siv", "misuse resistant", "aead"], { parentId: "modern-aead", defaultOptions: { algorithm: "aes-256-gcm-siv" }, capabilityId: "aes-gcm-siv", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-siv", "security", "AES-256-SIV", "AES-256-SIV", "AES-256-SIV", "modern-crypto", ["aes siv", "misuse resistant", "aead"], { parentId: "modern-aead", defaultOptions: { algorithm: "aes-256-siv" }, capabilityId: "aes-siv", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-ccm", "security", "AES-256-CCM", "AES-256-CCM", "AES-256-CCM", "modern-crypto", ["aes ccm", "aead"], { parentId: "modern-aead", defaultOptions: { algorithm: "aes-256-ccm" }, capabilityId: "aes-ccm", supportLevel: "supported", lockOptions: ["algorithm"] }],
   ["modern-aead", "security", "现代认证加密", "現代認證加密", "Modern authenticated cipher", "modern-crypto", [
     "chacha20", "poly1305", "xchacha20", "aes-gcm-siv", "aes-ccm", "aes-ctr", "aead", "现代加密", "认证加密",
-  ]],
+  ], { catalogVisible: false }],
+  ["argon2id-kdf", "security", "Argon2id", "Argon2id", "Argon2id", "modern-crypto", ["argon2", "password kdf", "口令派生"], { parentId: "kdf", defaultOptions: { algorithm: "argon2id" }, capabilityId: "argon2id-kdf", supportLevel: "recommended", lockOptions: ["algorithm"] }],
+  ["scrypt-kdf", "security", "scrypt", "scrypt", "scrypt", "modern-crypto", ["scrypt", "password kdf", "口令派生"], { parentId: "kdf", defaultOptions: { algorithm: "scrypt" }, capabilityId: "scrypt-kdf", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["pbkdf2-kdf", "security", "PBKDF2-HMAC-SHA256", "PBKDF2-HMAC-SHA256", "PBKDF2-HMAC-SHA256", "modern-crypto", ["pbkdf2", "sha256", "password kdf"], { parentId: "kdf", defaultOptions: { algorithm: "pbkdf2-sha256" }, capabilityId: "pbkdf2-kdf", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["hkdf", "security", "HKDF-SHA256", "HKDF-SHA256", "HKDF-SHA256", "modern-crypto", ["hkdf", "sha256", "key derivation"], { parentId: "kdf", defaultOptions: { algorithm: "hkdf-sha256" }, capabilityId: "hkdf", supportLevel: "recommended", lockOptions: ["algorithm"] }],
   ["kdf", "security", "密钥派生 KDF", "金鑰派生 KDF", "Key derivation (KDF)", "modern-crypto", [
     "argon2id", "scrypt", "pbkdf2", "hkdf", "password derivation", "密钥派生", "口令派生",
-  ]],
+  ], { catalogVisible: false }],
+  ["rsa-pss-signature", "security", "RSA-PSS-SHA256 签名与验签", "RSA-PSS-SHA256 簽章與驗證", "RSA-PSS-SHA256 sign & verify", "signature", ["rsa pss", "sha256", "签名", "验签"], { parentId: "signature", defaultOptions: { algorithm: "rsa-pss-sha256" }, capabilityId: "rsa-pss-signature", supportLevel: "recommended", lockOptions: ["algorithm"] }],
+  ["rsa-pkcs1-signature", "security", "RSA-PKCS#1 v1.5-SHA256 签名与验签", "RSA-PKCS#1 v1.5-SHA256 簽章與驗證", "RSA-PKCS#1 v1.5-SHA256 sign & verify", "signature", ["rsa pkcs1 signature", "sha256", "兼容签名"], { parentId: "signature", defaultOptions: { algorithm: "rsa-pkcs1-sha256" }, capabilityId: "rsa-pkcs1-signature", supportLevel: "compatibility", lockOptions: ["algorithm"] }],
+  ["sm2-sm3-signature", "security", "SM2-SM3 签名与验签", "SM2-SM3 簽章與驗證", "SM2-SM3 sign & verify", "signature", ["sm2", "sm3", "国密签名"], { parentId: "signature", defaultOptions: { algorithm: "sm2-sm3" }, capabilityId: "sm2-sm3-signature", supportLevel: "supported", lockOptions: ["algorithm"] }],
   ["signature", "security", "数字签名与验签", "數位簽章與驗證", "Digital signatures", "signature", [
     "rsa-pss", "rsa signature", "sm2 signature", "数字签名", "签名", "验签", "verify signature",
-  ]],
+  ], { catalogVisible: false }],
   ["key-wrap", "security", "AES 密钥包装", "AES 金鑰包裝", "AES key wrap", "specialized-crypto", [
     "aes-kw", "aes-kwp", "rfc3394", "rfc5649", "key wrapping", "密钥包装", "kek",
-  ]],
+  ], { capabilityId: "key-wrap", supportLevel: "supported" }],
   ["storage-crypto", "security", "AES-XTS 存储加密", "AES-XTS 儲存加密", "AES-XTS storage encryption", "specialized-crypto", [
     "aes-xts", "disk encryption", "sector encryption", "磁盘加密", "扇区加密", "存储加密",
-  ]],
+  ], { capabilityId: "storage-crypto", supportLevel: "supported", lockOptions: ["algorithm"] }],
   ["format-preserving", "security", "AES-FF1 格式保持加密", "AES-FF1 格式保持加密", "AES-FF1 format-preserving encryption", "specialized-crypto", [
     "aes-ff1", "fpe", "format preserving", "格式保持", "卡号加密", "数字加密",
-  ]],
+  ], { capabilityId: "format-preserving", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-cmac", "security", "AES-CMAC", "AES-CMAC", "AES-CMAC", "specialized-crypto", ["cmac", "aes mac"], { parentId: "aes-mac", defaultOptions: { algorithm: "aes-cmac" }, capabilityId: "aes-cmac", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-128-gmac", "security", "AES-128-GMAC", "AES-128-GMAC", "AES-128-GMAC", "specialized-crypto", ["gmac", "aes 128 mac"], { parentId: "aes-mac", defaultOptions: { algorithm: "aes-128-gmac" }, capabilityId: "aes-128-gmac", supportLevel: "supported", lockOptions: ["algorithm"] }],
+  ["aes-256-gmac", "security", "AES-256-GMAC", "AES-256-GMAC", "AES-256-GMAC", "specialized-crypto", ["gmac", "aes 256 mac"], { parentId: "aes-mac", defaultOptions: { algorithm: "aes-256-gmac" }, capabilityId: "aes-256-gmac", supportLevel: "supported", lockOptions: ["algorithm"] }],
   ["aes-mac", "security", "AES-CMAC / GMAC", "AES-CMAC / GMAC", "AES-CMAC / GMAC", "specialized-crypto", [
     "cmac", "gmac", "aes mac", "消息认证", "认证码",
-  ]],
+  ], { catalogVisible: false }],
   ["hpke", "security", "HPKE 混合公钥加密", "HPKE 混合公鑰加密", "HPKE hybrid encryption", "kem", [
     "hpke", "rfc9180", "x25519", "hybrid encryption", "混合加密", "公钥加密",
-  ]],
+  ], { capabilityId: "hpke", supportLevel: "supported", lockOptions: ["algorithm"] }],
   ["ml-kem", "security", "ML-KEM 后量子密钥封装", "ML-KEM 後量子金鑰封裝", "ML-KEM post-quantum encapsulation", "kem", [
     "ml-kem", "fips203", "post quantum", "pq", "后量子", "密钥封装", "kem768", "kem1024",
-  ]],
+  ], { capabilityId: "ml-kem", supportLevel: "supported" }],
   ["totp", "security", "TOTP", "TOTP", "TOTP", "totp", [
     "otp", "otpauth", "双因素", "二步验证", "动态口令", "验证码", "2fa", "mfa",
-  ]],
+  ], { capabilityId: "totp", supportLevel: "supported" }],
   ["cert", "security", "证书与 SSH", "憑證與 SSH", "Certificate & SSH", "cert", [
     "ssh-fingerprint", "x509", "pem", "证书", "指纹", "ssh公钥", "certificate", "san",
   ]],
   ["jwk", "security", "JWK / JWKS", "JWK / JWKS", "JWK / JWKS", "jwk", [
     "jwk", "jwks", "json web key", "JSON Web Key", "jwk转pem", "pem转jwk",
   ]],
+  ["symmetric-key-generator", "security", "AES / SM4 / HMAC 密钥生成", "AES / SM4 / HMAC 金鑰產生", "AES / SM4 / HMAC key generator", "key-generator", ["aes key", "sm4 key", "hmac key", "对称密钥"], { parentId: "key-generator", defaultOptions: { generator: "symmetric" } }],
+  ["rsa-key-generator", "security", "RSA 密钥对生成", "RSA 金鑰對產生", "RSA key-pair generator", "key-generator", ["rsa keypair", "rsa 密钥对"], { parentId: "key-generator", defaultOptions: { generator: "keypair", algorithm: "rsa" }, lockOptions: ["algorithm"] }],
+  ["sm2-key-generator", "security", "SM2 国密密钥对生成", "SM2 國密金鑰對產生", "SM2 key-pair generator", "key-generator", ["sm2 keypair", "国密密钥对"], { parentId: "key-generator", defaultOptions: { generator: "keypair", algorithm: "sm2" }, lockOptions: ["algorithm"] }],
   ["key-generator", "security", "密钥生成", "金鑰產生", "Key generator", "key-generator", [
     "aes-key", "hmac-key", "symmetric-key", "key-pair", "keypair", "rsa", "sm2", "生成密钥", "生成密钥对", "公私钥",
-  ]],
-  ["xor", "security", "XOR（调试）", "XOR（除錯）", "XOR (debug)", "xor", [
+  ], { catalogVisible: false }],
+  ["xor", "developer", "XOR（调试）", "XOR（除錯）", "XOR (debug)", "xor", [
     "异或", "xor加密", "debug xor",
   ]],
 
@@ -324,6 +348,10 @@ export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhT
     kind: metadata.parentId ? "shortcut" : "tool",
     parentId: metadata.parentId || null,
     defaultOptions: metadata.defaultOptions || {},
+    catalogVisible: metadata.catalogVisible !== false,
+    capabilityId: metadata.capabilityId || null,
+    supportLevel: metadata.supportLevel || null,
+    lockOptions: metadata.lockOptions || [],
     demoPreset: supportsDemo ? id : null,
     actions: supportsDemo ? ["demo", "reset", "copy", "save", "drop"] : ["reset", "copy", "save", "drop"],
   };

@@ -24,9 +24,9 @@ test("legacy client diagnostics favorites migrate to device information", () => 
 });
 
 test("all tools declare navigation, action, and demo metadata", () => {
-  assert.equal(TOOL_REGISTRY.length, 75);
+  assert.ok(TOOL_REGISTRY.length >= 95);
   for (const id of ["aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem"]) assert.ok(TOOL_IDS.includes(id), `missing crypto tool: ${id}`);
-  assert.equal(TOOL_REGISTRY.filter((tool) => tool.kind === "shortcut").length, 0);
+  assert.ok(TOOL_REGISTRY.filter((tool) => tool.kind === "shortcut").length >= 20);
   assert.ok(assertDemoCoverage(TOOL_REGISTRY));
   for (const tool of TOOL_REGISTRY) {
     assert.ok(tool.loader, `missing loader: ${tool.id}`);

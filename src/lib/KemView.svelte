@@ -2,6 +2,7 @@
   import CopyButton from "./CopyButton.svelte";
   import IoSplit from "./IoSplit.svelte";
   import Select from "./Select.svelte";
+  import KeySourceBar from "./KeySourceBar.svelte";
   import { invoke } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
 
@@ -20,6 +21,9 @@
   let outputEncoding = $state("utf8");
   let error = $state("");
   let busy = $state(false);
+  let source = $state("once");
+  let keyId = $state("");
+  let saveName = $state("");
   const hpke = $derived(toolId === "hpke");
   const operations = $derived(hpke ? [
     { value: "generate", label: t("生成密钥对", "Generate keypair") },
@@ -42,6 +46,7 @@
       const result = await invoke("toolbox/crypto", {
         action: "kem", algorithm, op, text: input, inputEncoding: "utf8", outputEncoding,
         publicKey, privateKey, encapsulatedKey, info, aad,
+        keyId: source === "vault" ? keyId : undefined,
       });
       if (result.publicKey) publicKey = result.publicKey;
       if (result.privateKey) privateKey = result.privateKey;
@@ -50,6 +55,16 @@
       output = result.text || "";
     } catch (err) { error = localizeError(locale, err); }
     finally { busy = false; }
+  }
+
+  async function savePair() {
+    error = "";
+    if (!saveName.trim() || !privateKey || !publicKey) { error = t("请先生成密钥对并填写名称", "Generate a keypair and enter a name first"); return; }
+    try {
+      await invoke("toolbox/keys/create", { name: saveName.trim(), algorithm: hpke ? "hpke-x25519" : algorithm, generate: false, material: privateKey, publicMaterial: publicKey });
+      saveName = "";
+      window.dispatchEvent(new Event("toolbox-vault-change"));
+    } catch (err) { error = localizeError(locale, err); }
   }
 </script>
 
@@ -60,14 +75,16 @@
     {#if hpke && op === "decrypt"}<label class="field"><span class="dbx-label">{t("明文输出", "Plaintext output")}</span><Select bind:value={outputEncoding} options={[{value:"utf8",label:"UTF-8"},{value:"hex",label:"Hex"},{value:"base64",label:"Base64"}]} /></label>{/if}
   </div>
 
-  <div class="keys">
+  {#if op !== "generate"}<KeySourceBar {locale} picker={hpke ? "hpke-x25519" : algorithm} requiredPurpose={hpke ? "hpke" : "ml-kem"} allowedAlgorithms={[hpke ? "hpke-x25519" : algorithm]} multiline={true} hideMaterial={true} bind:source bind:keyId />{/if}
+
+  {#if source === "once" || op === "generate"}<div class="keys">
     {#if op === "generate" || op === "encrypt" || op === "encapsulate"}
       <label><span>{t("接收方公钥（Base64）", "Recipient public key (Base64)")}</span><textarea class="dbx-textarea mono key" bind:value={publicKey}></textarea><CopyButton {locale} text={publicKey} /></label>
     {/if}
     {#if op === "generate" || op === "decrypt" || op === "decapsulate"}
       <label><span>{t("接收方私钥（Base64）", "Recipient private key (Base64)")}</span><textarea class="dbx-textarea mono key" bind:value={privateKey}></textarea><CopyButton {locale} text={privateKey} /></label>
     {/if}
-  </div>
+  </div>{/if}
 
   {#if op === "decrypt" || op === "decapsulate"}
     <label class="block"><span>{t("封装密钥（Base64）", "Encapsulated key (Base64)")}</span><textarea class="dbx-textarea mono short" bind:value={encapsulatedKey}></textarea></label>
@@ -83,6 +100,7 @@
   {/if}
 
   <button class="dbx-btn dbx-btn--primary run" type="button" onclick={run} disabled={busy}>{busy ? t("处理中…", "Working…") : op === "generate" ? t("生成", "Generate") : t("执行", "Run")}</button>
+  {#if op === "generate" && privateKey}<div class="options"><label class="field grow"><span class="dbx-label">{t("密钥名称", "Key name")}</span><input class="dbx-input" bind:value={saveName} /></label><button class="dbx-btn" onclick={savePair}>{t("保存到密钥库", "Save to vault")}</button></div>{/if}
   {#if error}<p class="error">{error}</p>{/if}
   {#if (op === "encrypt" || op === "encapsulate") && encapsulatedKey}<div class="result"><span>{t("封装密钥（Base64）", "Encapsulated key (Base64)")}</span><textarea class="dbx-textarea mono short" readonly value={encapsulatedKey}></textarea><CopyButton {locale} text={encapsulatedKey} /></div>{/if}
   <p class="warning">{hpke ? t("HPKE 使用 X25519 + HKDF-SHA256 + ChaCha20-Poly1305；Info 和 AAD 解密时必须完全一致。", "HPKE uses X25519 + HKDF-SHA256 + ChaCha20-Poly1305; Info and AAD must match exactly when decrypting.") : t("ML-KEM 只建立 32 字节共享密钥，不直接加密正文；请将共享密钥交给 AEAD 或 KDF 使用。", "ML-KEM establishes a 32-byte shared secret; it does not encrypt payloads directly. Feed the secret into an AEAD or KDF.")}</p>

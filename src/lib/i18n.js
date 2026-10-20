@@ -478,7 +478,16 @@ export function localizeError(locale, err) {
   }
   const jsonErr = localizeJsonSyntaxError(locale, raw);
   if (jsonErr) return jsonErr;
-  return raw;
+  if (normalizeLocale(locale) === "en") return raw;
+  return localize(locale, L(
+    "The operation failed. Check the technical details and try again.",
+    "操作失败，请检查技术详情后重试。",
+    "操作失敗，請檢查技術詳情後重試。",
+    "La operación falló. Revisa los detalles técnicos e inténtalo de nuevo.",
+    "Operazione non riuscita. Controlla i dettagli tecnici e riprova.",
+    "操作に失敗しました。技術的な詳細を確認して再試行してください。",
+    "A operação falhou. Verifique os detalhes técnicos e tente novamente.",
+  ));
 }
 
 export const chrome = {
@@ -596,7 +605,7 @@ export const chrome = {
   expandSidebar: L("Expand sidebar", "展开侧栏", "展開側欄", "Expandir barra lateral", "Espandi barra laterale", "サイドバーを展開", "Expandir barra lateral"),
   collapseSidebar: L("Collapse sidebar", "收起侧栏", "收起側欄", "Contraer barra lateral", "Comprimi barra laterale", "サイドバーを折りたたむ", "Recolher barra lateral"),
   primaryNav: L("Primary navigation", "主导航", "主導覽", "Navegación principal", "Navigazione principale", "メインナビゲーション", "Navegação principal"),
-  home: L("Home", "首页", "首頁", "Inicio", "Home", "ホーム", "Início"),
+  home: L("Home", "首页", "首頁", "Inicio", "Pagina iniziale", "ホーム", "Início"),
   collapse: L("Collapse", "收起", "收起", "Contraer", "Comprimi", "折りたたむ", "Recolher"),
   showAll: (n) => L(
     `Show all (${n})`,
@@ -653,9 +662,19 @@ export const chrome = {
     `${name} の順序を変更`,
     `Reordenar ${name}`,
   ),
+  reorderedItem: (name) => L(
+    `${name} moved`,
+    `${name} 已移动`,
+    `${name} 已移動`,
+    `${name} se ha movido`,
+    `${name} è stato spostato`,
+    `${name} を移動しました`,
+    `${name} foi movido`,
+  ),
   select: L("Select", "选择", "選擇", "Seleccionar", "Seleziona", "選択", "Selecionar"),
   open: L("Open", "打开", "開啟", "Abrir", "Apri", "開く", "Abrir"),
   close: L("Close", "关闭", "關閉", "Cerrar", "Chiudi", "閉じる", "Fechar"),
+  openTools: L("Open tools", "已打开工具", "已開啟工具", "Herramientas abiertas", "Strumenti aperti", "開いているツール", "Ferramentas abertas"),
   allToolsHint: L(
     "Browse every tool by category. Pin the ones you use often to keep them in the sidebar.",
     "按分类浏览全部工具；固定常用工具后，它会出现在左侧栏。",
@@ -677,8 +696,8 @@ export const chrome = {
   run: L("Run", "运行", "執行", "Ejecutar", "Esegui", "実行", "Executar"),
   copy: L("Copy output", "复制输出", "複製輸出", "Copiar salida", "Copia output", "出力をコピー", "Copiar saída"),
   clear: L("Clear", "清空", "清空", "Borrar", "Cancella", "クリア", "Limpar"),
-  input: L("Input", "输入", "輸入", "Entrada", "Input", "入力", "Entrada"),
-  output: L("Output", "输出", "輸出", "Salida", "Output", "出力", "Saída"),
+  input: L("Input", "输入", "輸入", "Entrada", "Ingresso", "入力", "Entrada"),
+  output: L("Output", "输出", "輸出", "Salida", "Risultato", "出力", "Saída"),
   copied: L("Copied", "已复制", "已複製", "Copiado", "Copiato", "コピーしました", "Copiado"),
   ready: L("Ready", "已就绪", "已就緒", "Listo", "Pronto", "準備完了", "Pronto"),
   subtitle: L(

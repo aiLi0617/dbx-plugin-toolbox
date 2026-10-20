@@ -3,6 +3,7 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 
 use aes_gcm::aead::{Aead, KeyInit};
 use aes_gcm::{Aes256Gcm, Nonce};
@@ -12,9 +13,13 @@ use dbx_plugin_sdk::PluginError;
 use rand::RngCore;
 use rsa::pkcs1::{DecodeRsaPrivateKey, DecodeRsaPublicKey};
 use rsa::pkcs8::{DecodePrivateKey, DecodePublicKey};
+use rsa::traits::PublicKeyParts;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
+use sha1::Sha1;
+use sha2::Sha512;
+use hmac::{Hmac, Mac};
 use uuid::Uuid;
 use zeroize::{Zeroize, Zeroizing};
 
@@ -38,6 +43,10 @@ pub struct StoredKey {
     /// Public half for asymmetric keys (RSA PEM / SM2 hex). Empty for symmetric.
     #[serde(default, rename = "publicMaterial")]
     pub public_material: String,
+    /// None is reserved for migrated v1 entries whose historical uses have not
+    /// been confirmed. New entries always store an explicit restriction list.
+    #[serde(default, rename = "allowedPurposes")]
+    pub allowed_purposes: Option<Vec<String>>,
     #[serde(rename = "createdAt")]
     pub created_at: String,
 }
@@ -51,6 +60,8 @@ impl Drop for StoredKey {
 
 #[derive(Default, Serialize, Deserialize)]
 struct VaultFile {
+    #[serde(default, rename = "schemaVersion")]
+    schema_version: u8,
     keys: Vec<StoredKey>,
 }
 
@@ -58,6 +69,7 @@ struct Unlocked {
     kek: [u8; 32],
     salt: [u8; 16],
     keys: Vec<StoredKey>,
+    needs_migration: bool,
 }
 
 impl Drop for Unlocked {
@@ -88,6 +100,8 @@ impl Vault {
             "toolbox/keys/list" => self.list(),
             "toolbox/keys/create" => self.create(params),
             "toolbox/keys/rename" => self.rename(params),
+            "toolbox/keys/update-purposes" => self.update_purposes(params),
+            "toolbox/keys/totp" => self.totp(params),
             "toolbox/keys/reorder" => self.reorder(params),
             "toolbox/keys/delete" => self.delete(params),
             "toolbox/keys/import" => self.import_pem(params),
@@ -112,6 +126,14 @@ impl Vault {
             .ok_or_else(|| bad("Unknown key id"))
     }
 
+    pub fn material_for(&self, key_id: &str, purpose: &str) -> Result<&StoredKey, PluginError> {
+        let key = self.material(key_id)?;
+        if purpose.is_empty() { return Ok(key); }
+        let effective = key.allowed_purposes.clone().unwrap_or_else(|| capabilities_for(&key.algorithm));
+        if !effective.iter().any(|item| item == purpose) { return Err(bad("Key is not allowed for this purpose")); }
+        Ok(key)
+    }
+
     fn status(&self) -> Result<Value, PluginError> {
         Ok(json!({
             "exists": vault_exists()?,
@@ -133,6 +155,7 @@ impl Vault {
             kek,
             salt,
             keys: Vec::new(),
+            needs_migration: false,
         };
         persist_contents(&unlocked.kek, &unlocked.salt, &unlocked.keys)?;
         self.unlocked = Some(unlocked);
@@ -176,9 +199,13 @@ impl Vault {
         } else {
             let raw = str_param(&params, "material")?;
             let material = normalize_material(algorithm, raw)?;
-            let public_material = companion_public(algorithm, &material)?;
+            let supplied_public = opt_str(&params, "publicMaterial").unwrap_or("").trim();
+            let public_material = if supplied_public.is_empty() { companion_public(algorithm, &material)? } else { normalize_public_material(algorithm, supplied_public)? };
             (material, public_material)
         };
+        if matches!(algorithm, "hpke-x25519" | "ml-kem-768" | "ml-kem-1024") && public_material.is_empty() {
+            return Err(bad("Public key is required for this key type"));
+        }
         let key = StoredKey {
             id: Uuid::new_v4().to_string(),
             name: name.to_string(),
@@ -186,6 +213,7 @@ impl Vault {
             algorithm: algorithm.to_string(),
             material,
             public_material,
+            allowed_purposes: Some(default_allowed_purposes(algorithm)),
             created_at: now_iso(),
         };
         let meta = metadata(&key);
@@ -213,6 +241,37 @@ impl Vault {
         persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
+    }
+
+    fn update_purposes(&mut self, params: Value) -> Result<Value, PluginError> {
+        let id = str_param(&params, "id")?;
+        let requested = params.get("allowedPurposes").and_then(Value::as_array).ok_or_else(|| bad("Missing allowedPurposes"))?;
+        let purposes = requested.iter().map(|value| value.as_str().map(str::to_string).ok_or_else(|| bad("Purposes must be strings"))).collect::<Result<Vec<_>, _>>()?;
+        let unlocked = self.unlocked.as_ref().ok_or_else(|| err("Key vault is locked"))?;
+        let mut keys = unlocked.keys.clone();
+        let key = keys.iter_mut().find(|key| key.id == id).ok_or_else(|| bad("Unknown key id"))?;
+        validate_allowed_purposes(&key.algorithm, &purposes)?;
+        key.allowed_purposes = Some(purposes);
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        self.unlocked.as_mut().expect("vault checked above").keys = keys;
+        Ok(json!({ "ok": true }))
+    }
+
+    fn totp(&self, params: Value) -> Result<Value, PluginError> {
+        let id = str_param(&params, "id")?;
+        let key = self.material_for(id, "totp")?;
+        let secret = base32_decode(&key.material)?;
+        let digits = params.get("digits").and_then(Value::as_u64).unwrap_or(6) as u32;
+        let step = params.get("step").and_then(Value::as_u64).unwrap_or(30);
+        let algorithm = opt_str(&params, "algorithm").unwrap_or("SHA-1");
+        if !matches!(digits, 6 | 8) || !matches!(step, 15 | 30 | 60) { return Err(bad("Invalid TOTP configuration")); }
+        let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|_| err("System clock is invalid"))?.as_secs();
+        let counter = now / step;
+        let windows = [-1_i64, 0, 1].into_iter().map(|offset| {
+            let value = if offset < 0 { counter.saturating_sub(offset.unsigned_abs()) } else { counter.saturating_add(offset as u64) };
+            Ok(json!({ "offset": offset, "code": totp_code(&secret, value, digits, algorithm)? }))
+        }).collect::<Result<Vec<_>, PluginError>>()?;
+        Ok(json!({ "windows": windows, "digits": digits, "step": step, "algorithm": algorithm, "remaining": step - (now % step) }))
     }
 
     fn reorder(&mut self, params: Value) -> Result<Value, PluginError> {
@@ -279,6 +338,7 @@ impl Vault {
             algorithm: algorithm.to_string(),
             material,
             public_material,
+            allowed_purposes: Some(default_allowed_purposes(algorithm)),
             created_at: now_iso(),
         };
         let meta = metadata(&key);
@@ -399,6 +459,7 @@ impl Vault {
                 algorithm: algorithm.to_string(),
                 material: material.clone(),
                 public_material: String::new(),
+                allowed_purposes: Some(default_allowed_purposes(algorithm)),
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
@@ -465,6 +526,7 @@ impl Vault {
                 algorithm: stored_alg.to_string(),
                 material: private.clone(),
                 public_material: public.clone(),
+                allowed_purposes: Some(default_allowed_purposes(stored_alg)),
                 created_at: now_iso(),
             };
             let meta = metadata(&key);
@@ -482,6 +544,8 @@ impl Vault {
 
 #[derive(Serialize)]
 struct VaultFileRef<'a> {
+    #[serde(rename = "schemaVersion")]
+    schema_version: u8,
     keys: &'a [StoredKey],
 }
 
@@ -504,7 +568,7 @@ fn encode_vault_file(
     keys: &[StoredKey],
 ) -> Result<Vec<u8>, PluginError> {
     let mut plain =
-        serde_json::to_vec(&VaultFileRef { keys }).map_err(|error| err(error.to_string()))?;
+        serde_json::to_vec(&VaultFileRef { schema_version: 2, keys }).map_err(|error| err(error.to_string()))?;
     if plain.len() > MAX_VAULT_BYTES - VAULT_FILE_OVERHEAD {
         plain.zeroize();
         return Err(bad("Key vault is too large"));
@@ -590,14 +654,16 @@ fn decrypt_vault_bytes(bytes: &[u8], password: &str) -> Result<Unlocked, PluginE
     validate_loaded_keys(&file.keys)?;
     let mut keys = file.keys;
     let filled = backfill_public_material(&mut keys);
+    let legacy = file.schema_version < 2;
+    if legacy {
+        for key in &mut keys { key.allowed_purposes = None; }
+    }
     let unlocked = Unlocked {
         kek: *kek,
         salt: parsed.salt,
         keys,
+        needs_migration: legacy || filled,
     };
-    if filled {
-        let _ = persist_contents(&unlocked.kek, &unlocked.salt, &unlocked.keys);
-    }
     Ok(unlocked)
 }
 
@@ -605,17 +671,29 @@ fn read_unlocked_vault(path: &Path, password: &str) -> Result<Unlocked, PluginEr
     let backup = vault_backup_path(path);
     match read_limited(path) {
         Ok(bytes) => match decrypt_vault_bytes(&bytes, password) {
-            Ok(unlocked) => Ok(unlocked),
+            Ok(mut unlocked) => { migrate_unlocked(path, path, &mut unlocked)?; Ok(unlocked) },
             Err(primary_error) => {
                 match read_limited(&backup).and_then(|bytes| decrypt_vault_bytes(&bytes, password))
                 {
-                    Ok(unlocked) => Ok(unlocked),
+                    Ok(mut unlocked) => { migrate_unlocked(path, &backup, &mut unlocked)?; Ok(unlocked) },
                     Err(_) => Err(primary_error),
                 }
             }
         },
-        Err(_) => read_limited(&backup).and_then(|bytes| decrypt_vault_bytes(&bytes, password)),
+        Err(_) => read_limited(&backup).and_then(|bytes| decrypt_vault_bytes(&bytes, password)).and_then(|mut unlocked| { migrate_unlocked(path, &backup, &mut unlocked)?; Ok(unlocked) }),
     }
+}
+
+fn migrate_unlocked(path: &Path, source: &Path, unlocked: &mut Unlocked) -> Result<(), PluginError> {
+    if !unlocked.needs_migration { return Ok(()); }
+    let migration_backup = path.with_extension("v1.bak");
+    if source.exists() && !migration_backup.exists() {
+        fs::copy(source, &migration_backup).map_err(|error| err(format!("Failed to create migration backup: {error}")))?;
+    }
+    let bytes = encode_vault_file(&unlocked.kek, &unlocked.salt, &unlocked.keys)?;
+    persist_atomically(path, &bytes)?;
+    unlocked.needs_migration = false;
+    Ok(())
 }
 
 fn validate_loaded_keys(keys: &[StoredKey]) -> Result<(), PluginError> {
@@ -637,6 +715,9 @@ fn validate_loaded_keys(keys: &[StoredKey]) -> Result<(), PluginError> {
             .map_err(|_| err("Vault contains oversized key material"))?;
         canonical_algorithm(&key.algorithm)
             .map_err(|_| err("Vault contains an unsupported key algorithm"))?;
+        if let Some(purposes) = &key.allowed_purposes {
+            validate_allowed_purposes(&key.algorithm, purposes).map_err(|_| err("Vault contains invalid key purposes"))?;
+        }
     }
     Ok(())
 }
@@ -771,6 +852,10 @@ fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
         "aes-128" => "aes-128",
         "aes-192" => "aes-192",
         "aes-256" => "aes-256",
+        "chacha20" | "chacha20-256" => "chacha20-256",
+        "aes-siv" | "aes-siv-512" => "aes-siv-512",
+        "aes-xts-256" => "aes-xts-256",
+        "aes-xts" | "aes-xts-512" => "aes-xts-512",
         "sm4-128" => "sm4-128",
         "hmac" | "hmac-sha256" => "hmac-sha256",
         "hmac-sha1" => "hmac-sha1",
@@ -779,6 +864,10 @@ fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
         "hmac-sm3" => "hmac-sm3",
         "rsa" | "rsa-pem" | "rsa-2048" => "rsa-pem",
         "sm2" => "sm2",
+        "hpke-x25519" => "hpke-x25519",
+        "ml-kem-768" => "ml-kem-768",
+        "ml-kem-1024" => "ml-kem-1024",
+        "totp" | "totp-base32" => "totp-base32",
         _ => return Err(bad("Unsupported algorithm")),
     })
 }
@@ -793,8 +882,8 @@ fn rsa_bits(params: &Value) -> Result<usize, PluginError> {
         })
         .unwrap_or(2048) as usize;
     match bits {
-        2048 | 3072 | 4096 => Ok(bits),
-        _ => Err(bad("RSA bits must be 2048, 3072, or 4096")),
+        2048 | 3072 | 4096 | 8192 => Ok(bits),
+        _ => Err(bad("RSA bits must be 2048, 3072, 4096, or 8192")),
     }
 }
 
@@ -862,7 +951,7 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
         }
-        "aes-256" | "hmac" | "hmac-sha256" | "hmac-sm3" => {
+        "aes-256" | "chacha20-256" | "aes-xts-256" | "hmac" | "hmac-sha256" | "hmac-sm3" => {
             let mut bytes = Zeroizing::new(vec![0u8; 32]);
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
@@ -872,7 +961,7 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
         }
-        "hmac-sha512" => {
+        "hmac-sha512" | "aes-siv-512" | "aes-xts-512" => {
             let mut bytes = Zeroizing::new(vec![0u8; 64]);
             rng.fill_bytes(bytes.as_mut());
             Ok(hex::encode(bytes.as_slice()))
@@ -881,6 +970,11 @@ fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginEr
             Ok(generate_rsa_pem(rsa_bits(params)?, rsa_pem_format(params)?)?.1)
         }
         "sm2" => Ok(generate_sm2_pair().1),
+        "totp-base32" => {
+            let mut bytes = Zeroizing::new(vec![0u8; 20]);
+            rng.fill_bytes(bytes.as_mut());
+            Ok(base32_encode(bytes.as_slice()))
+        }
         _ => Err(bad(
             "Cannot generate this algorithm; import material instead",
         )),
@@ -899,11 +993,22 @@ fn normalize_material(algorithm: &str, raw: &str) -> Result<String, PluginError>
         }
         return Ok(trimmed.to_string());
     }
+    if algorithm == "totp-base32" {
+        let normalized = trimmed.replace([' ', '-'], "").to_ascii_uppercase();
+        if normalized.len() < 16 || !normalized.bytes().all(|byte| matches!(byte, b'A'..=b'Z' | b'2'..=b'7')) { return Err(bad("TOTP secret must be Base32")); }
+        return Ok(normalized);
+    }
+    if matches!(algorithm, "hpke-x25519" | "ml-kem-768" | "ml-kem-1024") {
+        let bytes = B64.decode(trimmed.as_bytes()).map_err(|_| bad("Key material must be Base64"))?;
+        if bytes.is_empty() { return Err(bad("Material is required")); }
+        return Ok(B64.encode(bytes));
+    }
     let bytes = Zeroizing::new(decode_key_bytes(trimmed)?);
     let expected = match algorithm {
         "aes-128" | "sm4-128" => 16,
         "aes-192" => 24,
-        "aes-256" => 32,
+        "aes-256" | "chacha20-256" | "aes-xts-256" => 32,
+        "aes-siv-512" | "aes-xts-512" => 64,
         "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" => 0,
         _ => return Err(bad("Unsupported algorithm")),
     };
@@ -952,17 +1057,28 @@ fn infer_pem_algorithm(pem: &str) -> Result<&'static str, PluginError> {
 
 fn kind_for(algorithm: &str) -> &'static str {
     match algorithm {
-        "rsa-pem" | "sm2" => "asymmetric",
+        "rsa-pem" | "sm2" | "hpke-x25519" | "ml-kem-768" | "ml-kem-1024" => "asymmetric",
         _ => "symmetric",
     }
 }
 
 fn metadata(key: &StoredKey) -> Value {
+    let capabilities = capabilities_for(&key.algorithm);
+    let effective = key.allowed_purposes.clone().unwrap_or_else(|| capabilities.clone());
+    let (display_type, bits, format) = key_display(&key.algorithm, &key.material);
     let mut meta = json!({
         "id": key.id,
         "name": key.name,
         "kind": key.kind,
         "algorithm": key.algorithm,
+        "displayType": display_type,
+        "bits": bits,
+        "format": format,
+        "capabilities": capabilities,
+        "allowedPurposes": key.allowed_purposes,
+        "effectivePurposes": effective,
+        "supportLevel": support_level_for(&key.algorithm),
+        "legacyPurposeState": if key.allowed_purposes.is_none() { "pending" } else { "confirmed" },
         "fingerprint": fingerprint(&key.material),
         "hasPublic": !key.public_material.is_empty(),
         "createdAt": key.created_at
@@ -995,6 +1111,105 @@ fn companion_public(algorithm: &str, material: &str) -> Result<String, PluginErr
         "sm2" => derive_sm2_public(material),
         _ => Ok(String::new()),
     }
+}
+
+fn normalize_public_material(algorithm: &str, material: &str) -> Result<String, PluginError> {
+    validate_material_size(material)?;
+    match algorithm {
+        "rsa-pem" | "sm2" => companion_public(algorithm, material),
+        "hpke-x25519" | "ml-kem-768" | "ml-kem-1024" => {
+            let bytes = B64.decode(material.as_bytes()).map_err(|_| bad("Public key must be Base64"))?;
+            if bytes.is_empty() { return Err(bad("Public key is required")); }
+            Ok(B64.encode(bytes))
+        }
+        _ => Err(bad("This key type does not have public material")),
+    }
+}
+
+fn capabilities_for(algorithm: &str) -> Vec<String> {
+    capability_manifest()["keyTypes"][algorithm]["capabilities"].as_array().map(|values| values.iter().filter_map(Value::as_str).map(str::to_string).collect()).unwrap_or_default()
+}
+
+fn default_allowed_purposes(algorithm: &str) -> Vec<String> {
+    capabilities_for(algorithm).into_iter().filter(|purpose| purpose != "debug-xor").collect()
+}
+
+fn validate_allowed_purposes(algorithm: &str, purposes: &[String]) -> Result<(), PluginError> {
+    let capabilities = capabilities_for(algorithm);
+    let mut seen = HashSet::new();
+    if purposes.iter().any(|purpose| !capabilities.contains(purpose) || !seen.insert(purpose)) {
+        return Err(bad("Purpose is not supported by this key"));
+    }
+    Ok(())
+}
+
+fn support_level_for(algorithm: &str) -> &'static str {
+    if capability_manifest()["keyTypes"][algorithm]["supportLevel"].as_str() == Some("compatibility") { "compatibility" } else { "supported" }
+}
+
+fn capability_manifest() -> &'static Value {
+    static MANIFEST: OnceLock<Value> = OnceLock::new();
+    MANIFEST.get_or_init(|| serde_json::from_str(include_str!("../../src/lib/crypto-capabilities.json")).expect("valid crypto capability manifest"))
+}
+
+fn key_display(algorithm: &str, material: &str) -> (String, Option<usize>, String) {
+    let bits = match algorithm {
+        "aes-128" | "sm4-128" => Some(128), "aes-192" => Some(192),
+        "aes-256" | "chacha20-256" | "aes-xts-256" | "hmac-sha256" | "hmac-sm3" | "hpke-x25519" => Some(256),
+        "aes-siv-512" | "aes-xts-512" | "hmac-sha512" => Some(512), "hmac-sha1" => Some(160), "hmac-sha384" => Some(384),
+        "rsa-pem" => rsa_material_bits(material),
+        _ => None,
+    };
+    let format = if algorithm == "rsa-pem" { if material.contains("BEGIN RSA") { "PKCS#1 PEM" } else { "PKCS#8 PEM" } } else if matches!(algorithm, "hpke-x25519" | "ml-kem-768" | "ml-kem-1024") { "Base64" } else if algorithm == "totp-base32" { "Base32" } else if algorithm == "sm2" { "Hex key pair" } else { "Hex" };
+    (algorithm.to_ascii_uppercase(), bits, format.to_string())
+}
+
+fn rsa_material_bits(material: &str) -> Option<usize> {
+    let trimmed = material.trim();
+    rsa::RsaPrivateKey::from_pkcs8_pem(trimmed)
+        .map(|key| key.n().bits())
+        .or_else(|_| rsa::RsaPrivateKey::from_pkcs1_pem(trimmed).map(|key| key.n().bits()))
+        .or_else(|_| rsa::RsaPublicKey::from_public_key_pem(trimmed).map(|key| key.n().bits()))
+        .or_else(|_| rsa::RsaPublicKey::from_pkcs1_pem(trimmed).map(|key| key.n().bits()))
+        .ok()
+}
+
+fn base32_encode(bytes: &[u8]) -> String {
+    const ALPHABET: &[u8; 32] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    let mut output = String::new();
+    let mut buffer = 0u32;
+    let mut bits = 0u8;
+    for byte in bytes { buffer = (buffer << 8) | u32::from(*byte); bits += 8; while bits >= 5 { bits -= 5; output.push(ALPHABET[((buffer >> bits) & 31) as usize] as char); } }
+    if bits > 0 { output.push(ALPHABET[((buffer << (5 - bits)) & 31) as usize] as char); }
+    output
+}
+
+fn base32_decode(value: &str) -> Result<Vec<u8>, PluginError> {
+    let mut output = Vec::new();
+    let mut buffer = 0u32;
+    let mut bits = 0u8;
+    for byte in value.bytes().filter(|byte| !byte.is_ascii_whitespace() && *byte != b'-') {
+        let upper = byte.to_ascii_uppercase();
+        let digit = match upper { b'A'..=b'Z' => upper - b'A', b'2'..=b'7' => upper - b'2' + 26, b'=' => continue, _ => return Err(bad("TOTP secret must be Base32")) };
+        buffer = (buffer << 5) | u32::from(digit);
+        bits += 5;
+        if bits >= 8 { bits -= 8; output.push((buffer >> bits) as u8); buffer &= (1u32 << bits).saturating_sub(1); }
+    }
+    if output.is_empty() { return Err(bad("TOTP secret must be Base32")); }
+    Ok(output)
+}
+
+fn totp_code(secret: &[u8], counter: u64, digits: u32, algorithm: &str) -> Result<String, PluginError> {
+    let message = counter.to_be_bytes();
+    let digest = match algorithm.to_ascii_uppercase().as_str() {
+        "SHA-1" | "SHA1" => { let mut mac = <Hmac<Sha1> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
+        "SHA-256" | "SHA256" => { let mut mac = <Hmac<Sha256> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
+        "SHA-512" | "SHA512" => { let mut mac = <Hmac<Sha512> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
+        _ => return Err(bad("Unsupported TOTP algorithm")),
+    };
+    let offset = usize::from(digest[digest.len() - 1] & 0x0f);
+    let binary = (u32::from(digest[offset] & 0x7f) << 24) | (u32::from(digest[offset + 1]) << 16) | (u32::from(digest[offset + 2]) << 8) | u32::from(digest[offset + 3]);
+    Ok(format!("{:0width$}", binary % 10u32.pow(digits), width = digits as usize))
 }
 
 fn backfill_public_material(keys: &mut [StoredKey]) -> bool {
@@ -1083,6 +1298,7 @@ mod tests {
         assert_eq!(rsa_bits(&json!({})).unwrap(), 2048);
         assert!(rsa_bits(&json!({ "bits": 1024 })).is_err());
         assert_eq!(rsa_bits(&json!({ "bits": "4096" })).unwrap(), 4096);
+        assert_eq!(rsa_bits(&json!({ "bits": 8192 })).unwrap(), 8192);
         assert!(rsa_bits(&json!({ "bits": 512 })).is_err());
     }
 
@@ -1106,6 +1322,8 @@ mod tests {
         assert!(private.contains("BEGIN PRIVATE KEY"));
         assert!(!private.contains("BEGIN RSA PRIVATE KEY"));
         assert!(public.contains("BEGIN PUBLIC KEY"));
+        assert_eq!(key_display("rsa-pem", &private).1, Some(2048));
+        assert_eq!(key_display("rsa-pem", &public).1, Some(2048));
 
         let (public, private) = generate_rsa_pem(2048, "pkcs1").unwrap();
         assert!(private.contains("BEGIN RSA PRIVATE KEY"));
@@ -1121,6 +1339,7 @@ mod tests {
             algorithm: "aes-256".into(),
             material: "aa".into(),
             public_material: String::new(),
+            allowed_purposes: Some(default_allowed_purposes("aes-256")),
             created_at: now_iso(),
         };
         let keys = vec![sample("a"), sample("b"), sample("c")];
@@ -1160,6 +1379,7 @@ mod tests {
             algorithm: "rsa-pem".into(),
             material: private,
             public_material: String::new(),
+            allowed_purposes: None,
             created_at: now_iso(),
         }];
         assert!(backfill_public_material(&mut keys));
@@ -1179,6 +1399,18 @@ mod tests {
         assert_eq!(generate_material("hmac-sha512", &empty).unwrap().len(), 128);
         assert_eq!(generate_material("hmac-sm3", &empty).unwrap().len(), 64);
         assert!(canonical_algorithm("rsa").ok().is_some());
+        assert_eq!(generate_material("chacha20-256", &empty).unwrap().len(), 64);
+        assert_eq!(generate_material("aes-siv-512", &empty).unwrap().len(), 128);
+        assert_eq!(generate_material("aes-xts-512", &empty).unwrap().len(), 128);
+        assert!(generate_material("totp-base32", &empty).unwrap().bytes().all(|byte| matches!(byte, b'A'..=b'Z' | b'2'..=b'7')));
+    }
+
+    #[test]
+    fn shared_manifest_drives_key_capabilities_and_totp_matches_rfc() {
+        assert!(capabilities_for("aes-256").contains(&"aes-aead".to_string()));
+        assert!(capabilities_for("aes-256").contains(&"debug-xor".to_string()));
+        assert!(!default_allowed_purposes("aes-256").contains(&"debug-xor".to_string()));
+        assert_eq!(totp_code(b"12345678901234567890", 1, 8, "SHA-1").unwrap(), "94287082");
     }
 
     #[test]
@@ -1222,6 +1454,36 @@ mod tests {
         let unlocked = read_unlocked_vault(&path, password).unwrap();
         assert!(unlocked.keys.is_empty());
 
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn v1_payload_migrates_atomically_to_schema_v2_and_keeps_legacy_purposes_pending() {
+        let directory = std::env::temp_dir().join(format!("toolbox-vault-v1-{}", Uuid::new_v4()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("keystore");
+        let password = "correct horse battery staple";
+        let salt = [9u8; 16];
+        let kek = derive_kek_with_salt(password, &salt).unwrap();
+        let plain = serde_json::to_vec(&json!({ "keys": [{
+            "id": "legacy-id", "name": "legacy", "kind": "symmetric", "algorithm": "aes-256",
+            "material": "11".repeat(32), "publicMaterial": "", "createdAt": "123"
+        }] })).unwrap();
+        let nonce_bytes = [3u8; 12];
+        let cipher = Aes256Gcm::new_from_slice(&kek).unwrap();
+        let ciphertext = cipher.encrypt(Nonce::from_slice(&nonce_bytes), plain.as_ref()).unwrap();
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(MAGIC); bytes.push(VERSION); bytes.extend_from_slice(&salt); bytes.extend_from_slice(&nonce_bytes);
+        bytes.extend_from_slice(&(ciphertext.len() as u32).to_be_bytes()); bytes.extend_from_slice(&ciphertext);
+        fs::write(&path, bytes).unwrap();
+
+        let unlocked = read_unlocked_vault(&path, password).unwrap();
+        assert_eq!(unlocked.keys[0].id, "legacy-id");
+        assert!(unlocked.keys[0].allowed_purposes.is_none());
+        assert!(path.with_extension("v1.bak").exists());
+        let migrated = decrypt_vault_bytes(&fs::read(&path).unwrap(), password).unwrap();
+        assert!(!migrated.needs_migration);
+        assert!(migrated.keys[0].allowed_purposes.is_none());
         fs::remove_dir_all(directory).unwrap();
     }
 }

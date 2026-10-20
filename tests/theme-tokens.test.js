@@ -112,8 +112,26 @@ test("custom select only shows focus chrome for keyboard focus", () => {
   assert.match(source, /onmousedown=\{\(event\)\s*=>\s*\{\s*keyboardFocus\s*=\s*false;/s);
   assert.doesNotMatch(source, /\.trigger:focus-visible/);
   assert.doesNotMatch(source, /\.open \.trigger\s*\{/);
-  assert.match(source, /box-shadow:\s*0 4px 12px rgb\(0 0 0 \/ 16%\)/);
+  assert.match(source, /box-shadow:\s*var\(--dbx-shadow-sm\)/);
   assert.doesNotMatch(source, /box-shadow:[^;]*CanvasText/);
+  assert.match(source, /aria-disabled=\{row\.disabled \? "true" : undefined\}/);
+  assert.match(source, /class="disabled-mark"/);
+  assert.match(source, /\.item\[aria-disabled="true"\]\s*\{[^}]*cursor:\s*not-allowed;/s);
+  assert.match(source, /\.item:hover:not\(\[aria-disabled="true"\]\)/);
+});
+
+test("overlay and elevation chrome use semantic plugin tokens", () => {
+  const css = fs.readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
+  const launcher = fs.readFileSync(new URL("../src/lib/ToolLauncher.svelte", import.meta.url), "utf8");
+  const select = fs.readFileSync(new URL("../src/lib/Select.svelte", import.meta.url), "utf8");
+
+  assert.match(css, /--dbx-overlay:\s*color-mix\(in srgb,\s*var\(--color-foreground\) 35%,\s*transparent\);/);
+  assert.match(css, /--dbx-shadow-sm:/);
+  assert.match(css, /--dbx-shadow-md:/);
+  assert.match(css, /--dbx-shadow-lg:/);
+  assert.match(launcher, /background:var\(--dbx-overlay\)/);
+  assert.match(launcher, /box-shadow:var\(--dbx-shadow-lg\)/);
+  assert.match(select, /box-shadow:\s*var\(--dbx-shadow-sm\)/);
 });
 
 test("color copy format uses the themeable custom select menu", () => {

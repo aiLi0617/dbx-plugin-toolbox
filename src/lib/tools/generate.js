@@ -141,7 +141,7 @@ export function generateSecret(kind, length, options = {}) {
   return randomPassword(Number(length) || 16, settings);
 }
 
-export const RSA_BIT_OPTIONS = ["2048", "3072", "4096"];
+export const RSA_BIT_OPTIONS = ["2048", "3072", "4096", "8192"];
 export const RSA_PEM_FORMATS = [
   { value: "pkcs8", zh: "PKCS#8 PEM", en: "PKCS#8 PEM" },
   { value: "pkcs1", zh: "PKCS#1 PEM", en: "PKCS#1 PEM" },
@@ -150,6 +150,7 @@ export const RSA_PEM_FORMATS = [
 /** Vault save after local WebCrypto gen is quick; keep a modest host timeout. */
 export function rsaGenerateTimeoutMs(bits) {
   const n = Number(bits) || 2048;
+  if (n >= 8192) return 60000;
   if (n >= 4096) return 30000;
   if (n >= 3072) return 20000;
   return 15000;
@@ -215,14 +216,14 @@ export function unwrapSpkiToPkcs1(spki) {
 
 /**
  * Generate an RSA key pair via WebCrypto (OS-backed, much faster than pure-Rust rsa).
- * @param {number|string} bits 2048 | 3072 | 4096
+ * @param {number|string} bits 2048 | 3072 | 4096 | 8192
  * @param {"pkcs8"|"pkcs1"} format
  * @returns {Promise<{ publicKey: string, privateKey: string, bits: number, format: string }>}
  */
 export async function generateRsaKeyPairPem(bits = 2048, format = "pkcs8") {
   const modulusLength = Number(bits) || 2048;
-  if (![2048, 3072, 4096].includes(modulusLength)) {
-    throw new Error("RSA bits must be 2048, 3072, or 4096");
+  if (![2048, 3072, 4096, 8192].includes(modulusLength)) {
+    throw new Error("RSA bits must be 2048, 3072, 4096, or 8192");
   }
   const pemFormat = String(format || "pkcs8").toLowerCase() === "pkcs1" ? "pkcs1" : "pkcs8";
   const subtle = requireSubtle();

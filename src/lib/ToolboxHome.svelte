@@ -14,6 +14,7 @@
   let searchActive = $state(false);
   let searchSelected = $state(0);
   let searchInput = $state(null);
+  let reorderAnnouncement = $state("");
   const draggingTool = $derived(pointerDrag ? favorites.find((item) => item.id === pointerDrag.sourceId) : null);
   const visibleFavorites = $derived(showAllFavorites ? favorites : favorites.slice(0, FAVORITE_PREVIEW_LIMIT));
   const defaultSearchTools = $derived.by(() => {
@@ -122,10 +123,12 @@
     if (!target) return;
     event.preventDefault();
     onMoveFavorite?.(item.id, target.id, !backwards);
+    reorderAnnouncement = t(chrome.reorderedItem(pick(locale, item.name)));
   }
 </script>
 
 <div class="home-page">
+  <span class="sr-only" aria-live="polite">{reorderAnnouncement}</span>
   <section class="hero">
     <div class="hero-copy"><h2>{t(chrome.homeTitle)}</h2><p>{t(chrome.homeSubtitle)}</p></div>
     <div class="home-search" onfocusout={searchFocusOut}>
@@ -271,7 +274,7 @@
   .home-search-box kbd { flex:0 0 auto; padding:2px 6px; border:1px solid var(--color-border); border-radius:4px; font-size:10px; }
   .search-clear { display:inline-flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; padding:0; border:0; border-radius:5px; background:transparent; color:var(--color-muted-foreground); font-size:18px; line-height:1; }
   .search-clear:hover { background:var(--color-muted); color:var(--color-foreground); }
-  .home-search-results { position:absolute; z-index:50; top:calc(100% + 6px); right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:0 14px 36px rgba(0,0,0,.18); }
+  .home-search-results { position:absolute; z-index:50; top:calc(100% + 6px); right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:var(--dbx-shadow-md); }
   .search-result-label { padding:4px 8px 6px; color:var(--color-muted-foreground); font-size:10px; font-weight:600; }
   .home-search-results button { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:48px; padding:7px 9px; border:0; border-radius:7px; background:transparent; text-align:left; }
   .home-search-results button.selected { background:var(--color-accent,var(--color-muted)); }
@@ -289,7 +292,7 @@
   .tool-card:hover,.tool-card:focus-within { z-index:2; border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); }
   .tool-card.dragging { opacity:.5; cursor:grabbing; transform:scale(.985); }
   .tool-card.drop-target { border-color:var(--color-primary); box-shadow:0 0 0 2px color-mix(in srgb,var(--color-primary) 18%,transparent); }
-  .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:0 14px 34px rgba(0,0,0,.22); transform:scale(1.02); }
+  .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:var(--dbx-shadow-md); transform:scale(1.02); }
   .ghost-handle { color:var(--color-muted-foreground); text-align:center; }
   .ghost-copy { display:flex; min-width:0; flex-direction:column; gap:4px; padding:10px 5px; }
   .ghost-copy strong { font-size:13px; }

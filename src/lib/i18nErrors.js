@@ -208,14 +208,14 @@ export const SIDECAR_ERRORS = {
     "RSA / SM2 には「キーペア」を使用してください",
     "Use Par de chaves para RSA e SM2",
   ),
-  "RSA bits must be 2048, 3072, or 4096": L(
-    "RSA bits must be 2048, 3072, or 4096",
-    "RSA 位数须为 2048、3072 或 4096",
-    "RSA 位數須為 2048、3072 或 4096",
-    "Los bits RSA deben ser 2048, 3072 o 4096",
-    "I bit RSA devono essere 2048, 3072 o 4096",
-    "RSA のビット数は 2048、3072、または 4096 である必要があります",
-    "Os bits RSA devem ser 2048, 3072 ou 4096",
+  "RSA bits must be 2048, 3072, 4096, or 8192": L(
+    "RSA bits must be 2048, 3072, 4096, or 8192",
+    "RSA 位数须为 2048、3072、4096 或 8192",
+    "RSA 位數須為 2048、3072、4096 或 8192",
+    "Los bits RSA deben ser 2048, 3072, 4096 u 8192",
+    "I bit RSA devono essere 2048, 3072, 4096 o 8192",
+    "RSA のビット数は 2048、3072、4096、または 8192 である必要があります",
+    "Os bits RSA devem ser 2048, 3072, 4096 ou 8192",
   ),
   "RSA format must be pkcs8 or pkcs1": L(
     "RSA format must be pkcs8 or pkcs1",

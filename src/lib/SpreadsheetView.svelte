@@ -3,7 +3,7 @@
   import Select from "./Select.svelte";
   import { toBase64 } from "./codec.js";
   import { invoke } from "./host.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { csvToGrid, gridToCsv, gridToObjects, gridToTsv, objectsToGrid, readXlsx, spreadsheetLimits, tsvToGrid, writeXlsx } from "./spreadsheet.js";
 
   let { locale = "zh-CN" } = $props();
@@ -176,7 +176,7 @@
       else throw new Error(t("请选择 XLSX、CSV、TSV 或 JSON 文件。", "Choose an XLSX, CSV, TSV, or JSON file."));
       resetSheets(next.map((sheet) => ({ ...sheet, rows: sheet.rows.length ? sheet.rows : [[""]] })));
       fileName = file.name; searchQuery = "";
-    } catch (cause) { error = String(cause.message || cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally { busy = false; }
   }
   function inPluginHost() {
@@ -209,7 +209,7 @@
       }
       browserDownload(bytes, name, mimeType);
     } catch (cause) {
-      error = String(cause.message || cause) || t("导出失败。", "Export failed.");
+      error = localizeError(locale, cause) || t("导出失败。", "Export failed.");
     } finally {
       busy = false;
     }
@@ -238,7 +238,7 @@
       }
       browserDownload(bytes, fileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     } catch (cause) {
-      error = String(cause.message || cause) || t("导出失败。", "Export failed.");
+      error = localizeError(locale, cause) || t("导出失败。", "Export failed.");
     } finally {
       busy = false;
     }

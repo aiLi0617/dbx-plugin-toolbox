@@ -2,8 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createPrivateKey, createPublicKey } from "node:crypto";
 import {
+  RSA_BIT_OPTIONS,
   generateRsaKeyPairPem,
   generateSymmetricKeyMaterial,
+  rsaGenerateTimeoutMs,
   unwrapPkcs8ToPkcs1,
   unwrapSpkiToPkcs1,
 } from "../src/lib/tools/generate.js";
@@ -71,5 +73,7 @@ test("symmetric key material matches algorithm byte lengths", () => {
 });
 
 test("RSA generate rejects unsupported bit lengths", async () => {
-  await assert.rejects(() => generateRsaKeyPairPem(1024, "pkcs8"), /2048, 3072, or 4096/);
+  assert.deepEqual(RSA_BIT_OPTIONS, ["2048", "3072", "4096", "8192"]);
+  assert.equal(rsaGenerateTimeoutMs(8192), 60000);
+  await assert.rejects(() => generateRsaKeyPairPem(1024, "pkcs8"), /2048, 3072, 4096, or 8192/);
 });

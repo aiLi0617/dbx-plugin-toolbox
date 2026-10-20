@@ -58,7 +58,7 @@
 </script>
 
 <div class="page">
-  <KeySourceBar {locale} {picker} bind:source bind:material bind:keyId />
+  <KeySourceBar {locale} {picker} requiredPurpose="hmac" bind:source bind:material bind:keyId />
   <label class="block">
     <span class="label">{t("输入", "Input")}</span>
     <textarea class="dbx-textarea area" spellcheck="false" maxlength={INPUT_LIMITS.hmac} bind:value={input}></textarea>

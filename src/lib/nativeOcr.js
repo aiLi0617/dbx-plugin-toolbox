@@ -3,7 +3,10 @@ import { invoke, ready, sendBinary } from "./host.js";
 export const OCR_CHUNK_BYTES = 4 * 1024 * 1024;
 
 function abortError() {
-  return Object.assign(new DOMException("OCR recognition was cancelled", "AbortError"), { code: "OCR_CANCELLED" });
+  const error = new Error("OCR recognition was cancelled");
+  error.name = "AbortError";
+  error.code = "OCR_CANCELLED";
+  return error;
 }
 
 function throwIfAborted(signal) {
@@ -44,11 +47,14 @@ export async function getOcrModelStatus() {
 }
 
 export async function installOcrModels(tier, options = {}) {
-  const { onProgress = () => {} } = options;
+  const { onProgress = () => {}, signal } = options;
+  throwIfAborted(signal);
   await ready();
+  throwIfAborted(signal);
   let sessionId = "";
   let settle;
   const completion = new Promise((resolve, reject) => { settle = { resolve, reject }; });
+  const abort = () => settle.reject(abortError());
   const offEvent = window.dbxPlugin?.onEvent?.((event) => {
     const payload = modelEventPayload(event);
     if (!payload || !sessionId || payload.sessionId !== sessionId) return;
@@ -61,20 +67,24 @@ export async function installOcrModels(tier, options = {}) {
     const started = await invoke("toolbox/ocr/models/install", { tier });
     if (started.installed) return started;
     sessionId = started.sessionId;
+    throwIfAborted(signal);
+    signal?.addEventListener("abort", abort, { once: true });
     onProgress({ sessionId, tier, stage: "starting", progress: 0 });
-    const status = await getOcrModelStatus();
+    const status = await Promise.race([getOcrModelStatus(), completion]);
+    if (status?.stage === "complete") return status;
     if ((tier === "base" && status.base?.installed) || (tier === "accurate" && status.accurate?.installed)) {
       return { sessionId, tier, stage: "complete" };
     }
     return await completion;
   } finally {
+    signal?.removeEventListener("abort", abort);
     if (typeof offEvent === "function") offEvent();
   }
 }
 
 export async function cancelOcrModelInstall(sessionId) {
   if (!sessionId) return;
-  await invoke("toolbox/ocr/models/cancel", { sessionId });
+  return invoke("toolbox/ocr/models/cancel", { sessionId });
 }
 
 export async function removeOcrModels(tier) {

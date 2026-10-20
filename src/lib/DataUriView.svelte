@@ -3,7 +3,7 @@
   import Select from "./Select.svelte";
   import { toBase64 } from "./codec.js";
   import { invoke } from "./host.js";
-  import { chrome, pick } from "./i18n.js";
+  import { chrome, localizeError, pick } from "./i18n.js";
   import { dataUriFromBytes, parseDataUri, toDataUri } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
@@ -59,7 +59,7 @@
     try {
       return { value: toDataUri(input, mime, { encoding: payloadEncoding }), error: "" };
     } catch (error) {
-      return { value: "", error: error?.message || String(error) };
+      return { value: "", error: localizeError(locale, error) };
     }
   });
   const generated = $derived(generatedState.value);
@@ -69,7 +69,7 @@
     try {
       return { value: parseDataUri(input), error: "" };
     } catch (error) {
-      return { value: null, error: error?.message || String(error) };
+      return { value: null, error: localizeError(locale, error) };
     }
   });
 
@@ -182,7 +182,7 @@
       payloadEncoding = nextEncoding;
       fileError = "";
     } catch (err) {
-      fileError = err?.message || String(err);
+      fileError = localizeError(locale, err);
       fileUri = "";
       fileSize = 0;
     }
@@ -339,7 +339,7 @@
 
       downloadFromDataUri(uri, name);
     } catch (err) {
-      saveError = err?.message || String(err) || t("保存失败", "Save failed");
+      saveError = localizeError(locale, err) || t("保存失败", "Save failed");
     } finally {
       saving = false;
     }

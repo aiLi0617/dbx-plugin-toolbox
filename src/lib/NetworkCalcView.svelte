@@ -1,5 +1,5 @@
 <script>
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { calculateIpv4, calculateIpv6, integerToIpv4, maskToPrefix, previewSubnets, expandIpv4Range, generateIpv6Ula, generateMacAddress, lookupOui } from "./network.js";
 
   let { locale = "zh-CN" } = $props();
@@ -14,8 +14,8 @@
   let ula = $state("");
   let mac = $state("");
   let ouiInput = $state("");
-  const rangeResult = $derived.by(() => { try { return { value: rangeInput ? expandIpv4Range(rangeInput) : [], error: "" }; } catch (error) { return { value: [], error: String(error.message || error) }; } });
-  const ouiResult = $derived.by(() => { try { return { value: ouiInput ? lookupOui(ouiInput) : null, error: "" }; } catch (error) { return { value: null, error: String(error.message || error) }; } });
+  const rangeResult = $derived.by(() => { try { return { value: rangeInput ? expandIpv4Range(rangeInput) : [], error: "" }; } catch (error) { return { value: [], error: localizeError(locale, error) }; } });
+  const ouiResult = $derived.by(() => { try { return { value: ouiInput ? lookupOui(ouiInput) : null, error: "" }; } catch (error) { return { value: null, error: localizeError(locale, error) }; } });
 
   function setAddressFamily(value) {
     addressFamily = value;
@@ -26,22 +26,22 @@
   const result = $derived.by(() => {
     if (!input.trim()) return { value: null, error: "" };
     try { return { value: addressFamily === "ipv6" ? calculateIpv6(input, fallbackPrefix) : calculateIpv4(input, fallbackPrefix), error: "" }; }
-    catch (error) { return { value: null, error: String(error.message || error) }; }
+    catch (error) { return { value: null, error: localizeError(locale, error) }; }
   });
   const maskResult = $derived.by(() => {
     if (!maskInput.trim()) return { value: null, error: "" };
     try { return { value: maskToPrefix(maskInput), error: "" }; }
-    catch (error) { return { value: null, error: String(error.message || error) }; }
+    catch (error) { return { value: null, error: localizeError(locale, error) }; }
   });
   const integerResult = $derived.by(() => {
     if (!integerInput.trim()) return { value: "", error: "" };
     try { return { value: integerToIpv4(integerInput), error: "" }; }
-    catch (error) { return { value: "", error: String(error.message || error) }; }
+    catch (error) { return { value: "", error: localizeError(locale, error) }; }
   });
   const splitResult = $derived.by(() => {
     if (!input.trim() || splitPrefix === "") return { value: null, error: "" };
     try { return { value: previewSubnets(input, Number(splitPrefix), 64), error: "" }; }
-    catch (error) { return { value: null, error: String(error.message || error) }; }
+    catch (error) { return { value: null, error: localizeError(locale, error) }; }
   });
   const typeLabels = {
     private: ["私有地址", "Private"], public: ["公网地址", "Public"], loopback: ["环回地址", "Loopback"],

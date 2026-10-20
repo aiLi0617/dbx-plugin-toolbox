@@ -54,6 +54,13 @@
   --dbx-hover-foreground: var(--color-accent-foreground, var(--color-foreground));
   --dbx-active-background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
   --dbx-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-ring, var(--color-primary)) 50%, transparent);
+  /* Plugin-level semantic effects derived from DBX colors. Keep overlays and
+     elevation themeable without asking the host for non-standard tokens. */
+  --dbx-overlay: color-mix(in srgb, var(--color-foreground) 35%, transparent);
+  --dbx-overlay-soft: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+  --dbx-shadow-sm: 0 4px 12px color-mix(in srgb, var(--color-foreground) 16%, transparent);
+  --dbx-shadow-md: 0 12px 30px color-mix(in srgb, var(--color-foreground) 20%, transparent);
+  --dbx-shadow-lg: 0 24px 70px color-mix(in srgb, var(--color-foreground) 28%, transparent);
   --ui-gap: 12px;
   --ui-field-gap: 6px;
   --ui-caption: 20px;
@@ -101,6 +108,16 @@ html.dark {
 }
 
 * { box-sizing: border-box; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 html, body, #app {
   margin: 0;
@@ -1127,11 +1144,11 @@ h3 {
 }
 @media (max-width: 719px) {
   .app,.app.sidebar-collapsed { grid-template-columns: minmax(0,1fr); }
-  .app > .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 81; width: 216px; transform: translateX(-100%); transition: transform 160ms ease; box-shadow: 12px 0 30px rgba(0,0,0,.22); }
+  .app > .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 81; width: 216px; transform: translateX(-100%); transition: transform 160ms ease; box-shadow: var(--dbx-shadow-md); }
   .app.mobile-sidebar-open > .sidebar { transform: translateX(0); }
   .app.mobile-sidebar-open > .sidebar :where(.brand-row strong,.primary span,.sidebar-bottom span) { display: initial; }
   .app.mobile-sidebar-open > .sidebar :where(.primary button,.sidebar-bottom button) { width: 100%; padding: 0 9px; }
-  .sidebar-scrim { position: fixed; inset: 0; z-index: 80; display: block; border: 0; background: rgba(0,0,0,.35); }
+  .sidebar-scrim { position: fixed; inset: 0; z-index: 80; display: block; border: 0; background: var(--dbx-overlay); }
   .mobile-menu { display: inline-flex; }
   .toolbar { padding-inline: 10px; }
   .pane { padding: 10px; }

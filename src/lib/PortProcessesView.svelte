@@ -1,5 +1,5 @@
 <script>
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { invoke } from "./host.js";
   import { localizePortState } from "./portStates.js";
 
@@ -34,7 +34,7 @@
       error = t("暂时无法推荐空闲端口，请稍后重试。", "Unable to recommend free ports right now. Try again.");
       return;
     }
-    error = key in errors ? key : String(key || err);
+    error = key in errors ? t(...errors[key]) : localizeError(locale, err);
   }
   function reset() { result = null; pending = null; error = ""; killed = null; signalSent = null; force = false; recommendedPorts = []; }
   async function search() {
@@ -145,6 +145,6 @@
   th, td { padding: 12px; border-bottom: 1px solid var(--color-border); }
   td .dbx-hint { display: block; margin-top: 4px; }
   .error { color: var(--color-destructive); }
-  .confirm-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgb(0 0 0 / 0.45); }
-  .confirm { display: grid; gap: 14px; width: min(520px, calc(100vw - 40px)); padding: 20px; border: 1px solid var(--color-destructive); border-radius: 10px; background: var(--color-background); color: var(--color-foreground); box-shadow: 0 18px 48px rgb(0 0 0 / 0.28); }
+  .confirm-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: var(--dbx-overlay); }
+  .confirm { display: grid; gap: 14px; width: min(520px, calc(100vw - 40px)); padding: 20px; border: 1px solid var(--color-destructive); border-radius: 10px; background: var(--color-background); color: var(--color-foreground); box-shadow: var(--dbx-shadow-lg); }
 </style>

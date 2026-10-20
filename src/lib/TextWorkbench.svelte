@@ -1,6 +1,6 @@
 <script>
   import IoSplit from "./IoSplit.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import {
     applyWhitespace, applyCaseStyle, CASE_STYLES, textStats, slugify, stripHtml,
     maskSensitiveText, numeronym, pluralizeEnglish, normalizeEmails, extractEmails, extractUrls, asciiBanner,
@@ -102,7 +102,7 @@
       }
       return { value, error: "" };
     } catch (error) {
-      return { value: "", error: String(error?.message || error) };
+      return { value: "", error: localizeError(locale, error) };
     }
   });
   const output = $derived(transform.value);

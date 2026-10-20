@@ -1,5 +1,5 @@
 <script>
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { hashBytes } from "./tools/generate.js";
   import { bytesEqual, classifyMd5Comparison } from "./collision.js";
 
@@ -27,7 +27,7 @@
       files[index] = { name: file.name, size: file.size, bytes };
       digests[index] = digest;
       files = [...files]; digests = [...digests];
-    } catch (cause) { if (currentRun === runId) error = cause?.message || String(cause); }
+    } catch (cause) { if (currentRun === runId) error = localizeError(locale, cause); }
     finally { if (currentRun === runId) checking = false; }
   }
 

@@ -1,7 +1,7 @@
 <script>
   import { onDestroy, onMount } from "svelte";
   import Select from "./Select.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { invoke } from "./host.js";
   import {
     MAX_IMAGE_SIDE,
@@ -414,7 +414,7 @@
           : null;
         nextItems.push(createQueueItem(file, image, url, itemShared));
       } catch (cause) {
-        error = String(cause.message || cause);
+        error = localizeError(locale, cause);
       }
     }
     if (!nextItems.length) return;
@@ -562,7 +562,7 @@
         batchNotice = t(`已导出 ${results.length} 张（${zipName}）`, `Exported ${results.length} images (${zipName})`);
       }
     } catch (cause) {
-      error = String(cause.message || cause);
+      error = localizeError(locale, cause);
     } finally {
       batchProcessing = false;
       schedulePreview(0);
@@ -612,7 +612,7 @@
           savedPath = saved.path;
         }
       } catch (cause) {
-        error = String(cause.message || cause);
+        error = localizeError(locale, cause);
       }
       return;
     }
@@ -997,7 +997,7 @@
       resultUrl = URL.createObjectURL(rendered.blob);
       resultWidth = rendered.width;
       resultHeight = rendered.height;
-    } catch (cause) { error = String(cause.message || cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally {
       processing = false;
       if (processQueued && !batchProcessing) schedulePreview(0);
@@ -1027,7 +1027,7 @@
         if (saved?.cancelled) return;
         savedPath = saved?.path || "";
       } else triggerDownload(resultBlob, outputName());
-    } catch (cause) { error = String(cause.message || cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally { saving = false; }
   }
 </script>

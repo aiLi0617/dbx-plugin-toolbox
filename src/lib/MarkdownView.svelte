@@ -1,7 +1,7 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { renderMarkdown } from "./tools/text.js";
   import { analyzeMarkdownDocument, markdownToc, selfContainedMarkdownHtml } from "./markdownDocument.js";
   import { saveBlobThroughHost } from "./fileSave.js";
@@ -17,7 +17,7 @@
     try {
       return { html: renderMarkdown(input), error: "" };
     } catch (err) {
-      return { html: "", error: err?.message || String(err) };
+      return { html: "", error: localizeError(locale, err) };
     }
   });
   const html = $derived(rendered.html);

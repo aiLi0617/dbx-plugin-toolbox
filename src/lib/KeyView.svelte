@@ -18,6 +18,7 @@
 
   const t = (zh, en) => pick(locale, zh, en);
   const selected = $derived(SYMMETRIC_KEY_ALGORITHMS.find((item) => item.id === algorithm) || SYMMETRIC_KEY_ALGORITHMS[0]);
+  const hexCharacters = $derived(selected.bytes * 2);
 
   function isLockedError(err) {
     return /key vault is locked/i.test(errorMessage(err));
@@ -137,7 +138,7 @@
   {#if notice}<p class="dbx-hint">{notice}</p>{/if}
   <label class="block">
     <div class="caption-row">
-      <span class="caption">{t(`密钥 · ${selected.bytes} 字节 hex`, `Key · ${selected.bytes}-byte hex`)}</span>
+      <span class="caption">{t(`密钥 · ${selected.bytes} 字节 · Hex（${hexCharacters} 字符）`, `Key · ${selected.bytes} bytes · Hex (${hexCharacters} characters)`)}</span>
       {#if material}
         <button class="dbx-btn dbx-btn--ghost clear-btn" onclick={() => (material = "")} type="button">{t("清除", "Clear")}</button>
       {/if}

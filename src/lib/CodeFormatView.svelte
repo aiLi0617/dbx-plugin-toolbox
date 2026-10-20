@@ -1,7 +1,7 @@
 <script>
   import IoSplit from "./IoSplit.svelte";
   import Select from "./Select.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { CODE_LANGUAGES, formatCode, SQL_DIALECTS } from "./tools/format.js";
 
   let { locale = "zh-CN", initialOptions = {}, shortcut = false, demo = null, demoRequest = 0 } = $props();
@@ -43,7 +43,7 @@
           ? next.ok ? { text: next.text, error: "", notice: next.text } : { text: "", error: next.text, notice: "" }
           : { text: String(next ?? ""), error: "", notice: "" };
       } catch (err) {
-        if (!cancelled) result = { text: "", error: err?.message || String(err), notice: "" };
+        if (!cancelled) result = { text: "", error: localizeError(locale, err), notice: "" };
       } finally {
         if (!cancelled) busy = false;
       }

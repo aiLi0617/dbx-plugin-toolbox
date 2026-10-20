@@ -1,6 +1,6 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { inspectCert } from "./tools/encode.js";
 
@@ -66,7 +66,7 @@
       } catch (err) {
         if (cancelled) return;
         info = null;
-        error = err?.message || String(err);
+        error = localizeError(locale, err);
       }
     }, 160);
     return () => {

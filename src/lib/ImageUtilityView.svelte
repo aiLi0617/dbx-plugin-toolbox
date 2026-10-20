@@ -2,7 +2,7 @@
   import { onDestroy } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { saveBlobThroughHost } from "./fileSave.js";
   import { encodeCanvasImage } from "./imageGenerate.js";
   import { buildZipStore } from "./zipStore.js";
@@ -82,7 +82,7 @@
       file = fileValue; image = decoded; sourceUrl = url;
       busy = false;
       if (mode !== "base64") await generate();
-    } catch (cause) { error = cause?.message || String(cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally { busy = false; }
   }
   function onFile(event) { const value = event.currentTarget.files?.[0]; event.currentTarget.value = ""; void load(value); }
@@ -97,7 +97,7 @@
       const decoded = parseBase64Image(base64Input);
       decodedMime = decoded.mime;
       await setOutput(new Blob([decoded.bytes], { type: decoded.mime }), `base64-image.${decoded.extension}`);
-    } catch (cause) { error = cause?.message || String(cause); outputBlob = null; if (outputUrl) URL.revokeObjectURL(outputUrl); outputUrl = ""; }
+    } catch (cause) { error = localizeError(locale, cause); outputBlob = null; if (outputUrl) URL.revokeObjectURL(outputUrl); outputUrl = ""; }
     finally { busy = false; }
   }
 
@@ -125,7 +125,7 @@
         }
         const blob = new Blob([buildZipStore(entries)], { type: "application/zip" }); await setOutput(blob, `${baseName}-${rows}x${columns}.zip`);
       }
-    } catch (cause) { error = cause?.message || String(cause); }
+    } catch (cause) { error = localizeError(locale, cause); }
     finally { busy = false; }
   }
   function changeMode(value) { mode = value; outputBlob = null; error = ""; decodedMime = ""; if (outputUrl) URL.revokeObjectURL(outputUrl); outputUrl = ""; if (file && value !== "base64" && value !== "base64-decode") void generate(); }
@@ -136,7 +136,7 @@
       if (window.dbxPlugin?.invoke) {
         await saveBlobThroughHost(outputBlob, { fileName: outputName, mimeType: outputBlob.type, title: t("保存文件", "Save file"), binary: true });
       } else download(outputBlob, outputName);
-    } catch (cause) { error = cause?.message || String(cause); } finally { saving = false; }
+    } catch (cause) { error = localizeError(locale, cause); } finally { saving = false; }
   }
 </script>
 

@@ -1,6 +1,8 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
+  import KeySourceBar from "./KeySourceBar.svelte";
+  import { invoke } from "./host.js";
   import { parseTotpConfig, totpWindows } from "./codec.js";
   import { pick } from "./i18n.js";
 
@@ -11,16 +13,17 @@
   let digits = $state("6");
   let step = $state("30");
   let algorithm = $state("SHA-1");
-  let revealSecret = $state(false);
   let windows = $state([]);
   let effectiveConfig = $state(null);
   let error = $state("");
   let remaining = $state(30);
   let activeStep = $state(30);
+  let source = $state("once");
+  let keyId = $state("");
 
   $effect(() => {
     const raw = secret.trim();
-    if (!raw) {
+    if (source === "once" && !raw || source === "vault" && !keyId) {
       windows = [];
       effectiveConfig = null;
       error = "";
@@ -31,6 +34,18 @@
     let cancelled = false;
     let lastCounter = -1;
     const refresh = async () => {
+      if (source === "vault") {
+        try {
+          const result = await invoke("toolbox/keys/totp", { id: keyId, digits: Number(digits), step: Number(step), algorithm });
+          if (cancelled) return;
+          windows = result.windows || [];
+          effectiveConfig = { digits: result.digits, step: result.step, algorithm: result.algorithm };
+          remaining = result.remaining;
+          activeStep = result.step;
+          error = "";
+        } catch { windows = []; effectiveConfig = null; error = t("无法使用所选 TOTP 密钥", "Cannot use the selected TOTP key"); }
+        return;
+      }
       let config;
       try {
         config = parseTotpConfig(raw, { digits, step, algorithm });
@@ -67,7 +82,7 @@
     };
   });
 
-  const isUri = $derived(/^otpauth:\/\//i.test(secret.trim()));
+  const isUri = $derived(source === "once" && /^otpauth:\/\//i.test(secret.trim()));
   const previousWindow = $derived(windows.find((item) => item.offset === -1));
   const currentWindow = $derived(windows.find((item) => item.offset === 0));
   const nextWindow = $derived(windows.find((item) => item.offset === 1));
@@ -88,41 +103,7 @@
 </script>
 
 <div class="page">
-  <label class="block">
-    <span class="label">{t("密钥（Base32）", "Secret (Base32)")}</span>
-    <span class="secret-input-wrap">
-      <input
-        class="dbx-input mono secret-input"
-        type={revealSecret ? "text" : "password"}
-        spellcheck="false"
-        autocomplete="off"
-        placeholder="JBSWY3DPEHPK3PXP / otpauth://..."
-        bind:value={secret}
-      />
-      <button
-        class="secret-toggle"
-        type="button"
-        aria-pressed={revealSecret}
-        aria-label={revealSecret ? t("隐藏密钥", "Hide secret") : t("显示密钥", "Show secret")}
-        title={revealSecret ? t("隐藏密钥", "Hide secret") : t("显示密钥", "Show secret")}
-        onclick={() => revealSecret = !revealSecret}
-      >
-        {#if revealSecret}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m3 3 18 18"></path>
-            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
-            <path d="M9.9 4.2A10.5 10.5 0 0 1 12 4c5 0 9 4.1 10 8a10.8 10.8 0 0 1-2.2 4.1"></path>
-            <path d="M6.6 6.6A11.1 11.1 0 0 0 2 12c1 3.9 5 8 10 8 1.6 0 3-.4 4.3-1"></path>
-          </svg>
-        {:else}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        {/if}
-      </button>
-    </span>
-  </label>
+  <KeySourceBar {locale} picker="totp-base32" allowedAlgorithms={["totp-base32"]} requiredPurpose="totp" materialLabel={t("密钥（Base32 / otpauth URI）", "Secret (Base32 / otpauth URI)")} materialPlaceholder="JBSWY3DPEHPK3PXP / otpauth://..." bind:source bind:material={secret} bind:keyId />
   <div class="totp-options">
     <label class="block"><span class="label">{t("位数", "Digits")}</span><Select value={shownDigits} onchange={(value) => digits = value} disabled={isUri} options={[{ value: "6", label: "6" }, { value: "8", label: "8" }]} /></label>
     <label class="block"><span class="label">{t("周期", "Period")}</span><Select value={shownStep} onchange={(value) => step = value} disabled={isUri} options={stepOptions} /></label>
@@ -195,25 +176,6 @@
     flex-direction: column;
     gap: 6px;
   }
-  .secret-input-wrap { position: relative; display: block; }
-  .secret-input { width: 100%; padding-right: 42px; }
-  .secret-toggle {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    display: grid;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    place-items: center;
-    transform: translateY(-50%);
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
-  }
-  .secret-toggle:hover { background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent)); }
-  .secret-toggle:focus-visible { outline: none; box-shadow: var(--dbx-focus-ring); }
   .totp-options { display: flex; flex-wrap: wrap; gap: 8px; }
   .totp-options :global(.dbx-custom-select) { width: auto; min-width: 100px; }
   .config-hint { margin: -4px 0 0; }

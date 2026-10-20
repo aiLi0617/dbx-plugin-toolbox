@@ -469,17 +469,29 @@
     "tr": "SHA-1, SHA-256, SHA-384, SHA-512 veya SM3 ile HMAC",
     "az": "SHA-1, SHA-256, SHA-384, SHA-512 və ya SM3 ilə HMAC"
   },
-  "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt": {
-    "en": "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-    "zh-CN": "RSA（OAEP / PKCS#1）或 SM2 加解密",
-    "zh-TW": "RSA（OAEP / PKCS#1）或 SM2 加解密",
-    "es": "Cifra y descifra con RSA OAEP / PKCS#1 o SM2",
-    "it": "Cifra e decifra con RSA OAEP / PKCS#1 o SM2",
-    "ja": "RSA OAEP / PKCS#1 または SM2 の暗号化・復号",
-    "pt-BR": "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2",
-    "ko": "RSA OAEP/PKCS#1 또는 SM2 암호화 및 복호화",
-    "tr": "RSA OAEP/PKCS#1 veya SM2 şifreleme ve çözme",
-    "az": "RSA OAEP/PKCS#1 və ya SM2 şifrələmə və açma"
+  "RSA encryption and decryption with OAEP or PKCS#1 v1.5": {
+    "en": "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    "zh-CN": "RSA 加解密，支持 OAEP 与 PKCS#1 v1.5",
+    "zh-TW": "RSA 加解密，支援 OAEP 與 PKCS#1 v1.5",
+    "es": "Cifra y descifra con RSA OAEP o PKCS#1 v1.5",
+    "it": "Cifra e decifra con RSA OAEP o PKCS#1 v1.5",
+    "ja": "RSA OAEP / PKCS#1 v1.5 の暗号化・復号",
+    "pt-BR": "Criptografe e descriptografe com RSA OAEP ou PKCS#1 v1.5",
+    "ko": "OAEP 또는 PKCS#1 v1.5를 사용하는 RSA 암호화 및 복호화",
+    "tr": "OAEP veya PKCS#1 v1.5 ile RSA şifreleme ve şifre çözme",
+    "az": "OAEP və ya PKCS#1 v1.5 ilə RSA şifrələmə və deşifrələmə"
+  },
+  "SM2 encryption and decryption with Chinese commercial cryptography keys": {
+    "en": "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    "zh-CN": "SM2 国密加解密，使用十六进制公私钥",
+    "zh-TW": "SM2 國密加解密，使用十六進位公私鑰",
+    "es": "Cifra y descifra con claves públicas y privadas SM2",
+    "it": "Cifra e decifra con chiavi pubbliche e private SM2",
+    "ja": "SM2 公開鍵・秘密鍵による暗号化・復号",
+    "pt-BR": "Criptografe e descriptografe com chaves públicas e privadas SM2",
+    "ko": "SM2 공개 키와 개인 키를 사용한 암호화 및 복호화",
+    "tr": "SM2 açık ve özel anahtarlarıyla şifreleme ve şifre çözme",
+    "az": "SM2 açıq və şəxsi açarları ilə şifrələmə və deşifrələmə"
   },
   "Generate the current TOTP code from a secret": {
     "en": "Generate the current TOTP code from a secret",
@@ -859,15 +871,6 @@
     "ja": "アルゴリズム",
     "pt-BR": "Algoritmo"
   },
-  "SM4 mode": {
-    "en": "SM4 mode",
-    "zh-CN": "SM4 模式",
-    "zh-TW": "SM4 模式",
-    "es": "Modo SM4",
-    "it": "Modalità SM4",
-    "ja": "SM4 モード",
-    "pt-BR": "Modo SM4"
-  },
   "Mode": {
     "en": "Mode",
     "zh-CN": "模式",
@@ -888,6 +891,15 @@
   "Separate parameters": {
     "en": "Separate parameters",
     "zh-CN": "高级互操作"
+  },
+  "SM4 mode": {
+    "en": "SM4 mode",
+    "zh-CN": "SM4 模式",
+    "zh-TW": "SM4 模式",
+    "es": "Modo SM4",
+    "it": "Modalità SM4",
+    "ja": "SM4 モード",
+    "pt-BR": "Modo SM4"
   },
   "Padding": {
     "en": "Padding",
@@ -953,14 +965,6 @@
   "Ciphertext excludes the IV; uses PKCS#7 padding.": {
     "en": "Ciphertext excludes the IV; uses PKCS#7 padding.",
     "zh-CN": "密文不包含 IV；使用 PKCS#7 填充。"
-  },
-  "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.": {
-    "en": "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.",
-    "zh-CN": "兼容模式不提供密文完整性保护；新数据优先使用 AES-GCM。"
-  },
-  "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.": {
-    "en": "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.",
-    "zh-CN": "PKCS#1 v1.5 仅用于兼容旧系统；新数据优先使用 OAEP-SHA256。"
   },
   "Key": {
     "en": "Key",
@@ -1800,6 +1804,22 @@
     "en": "Not a valid cron expression",
     "zh-CN": "不是有效的 Cron 表达式"
   },
+  "Recommended": {
+    "en": "Recommended",
+    "zh-CN": "推荐默认"
+  },
+  "Supported": {
+    "en": "Supported",
+    "zh-CN": "完整支持"
+  },
+  "Compatibility": {
+    "en": "Compatibility",
+    "zh-CN": "兼容模式"
+  },
+  "Verification only / warning": {
+    "en": "Verification only / warning",
+    "zh-CN": "仅校验 / 强警告"
+  },
   "Conversion direction": {
     "en": "Conversion direction",
     "zh-CN": "转换方向"
@@ -2449,7 +2469,7 @@
     "zh-CN": "输入",
     "zh-TW": "輸入",
     "es": "Entrada",
-    "it": "Input",
+    "it": "Ingresso",
     "ja": "入力",
     "pt-BR": "Entrada"
   },
@@ -2876,6 +2896,15 @@
     "ja": "TOML は {0} の null を表現できません。削除するか別形式を選んでください。",
     "pt-BR": "TOML não pode representar null em {0}. Remova-o ou escolha outro formato."
   },
+  "The operation failed. Check the technical details and try again.": {
+    "en": "The operation failed. Check the technical details and try again.",
+    "zh-CN": "操作失败，请检查技术详情后重试。",
+    "zh-TW": "操作失敗，請檢查技術詳情後重試。",
+    "es": "La operación falló. Revisa los detalles técnicos e inténtalo de nuevo.",
+    "it": "Operazione non riuscita. Controlla i dettagli tecnici e riprova.",
+    "ja": "操作に失敗しました。技術的な詳細を確認して再試行してください。",
+    "pt-BR": "A operação falhou. Verifique os detalhes técnicos e tente novamente."
+  },
   "DBX Toolbox": {
     "en": "DBX Toolbox",
     "zh-CN": "DBX 工具箱",
@@ -3223,7 +3252,7 @@
     "zh-CN": "首页",
     "zh-TW": "首頁",
     "es": "Inicio",
-    "it": "Home",
+    "it": "Pagina iniziale",
     "ja": "ホーム",
     "pt-BR": "Início"
   },
@@ -3299,6 +3328,15 @@
     "ja": "{0} の順序を変更",
     "pt-BR": "Reordenar {0}"
   },
+  "{0} moved": {
+    "en": "{0} moved",
+    "zh-CN": "{0} 已移动",
+    "zh-TW": "{0} 已移動",
+    "es": "{0} se ha movido",
+    "it": "{0} è stato spostato",
+    "ja": "{0} を移動しました",
+    "pt-BR": "{0} foi movido"
+  },
   "Select": {
     "en": "Select",
     "zh-CN": "选择",
@@ -3325,6 +3363,15 @@
     "it": "Chiudi",
     "ja": "閉じる",
     "pt-BR": "Fechar"
+  },
+  "Open tools": {
+    "en": "Open tools",
+    "zh-CN": "已打开工具",
+    "zh-TW": "已開啟工具",
+    "es": "Herramientas abiertas",
+    "it": "Strumenti aperti",
+    "ja": "開いているツール",
+    "pt-BR": "Ferramentas abertas"
   },
   "Browse every tool by category. Pin the ones you use often to keep them in the sidebar.": {
     "en": "Browse every tool by category. Pin the ones you use often to keep them in the sidebar.",
@@ -3358,7 +3405,7 @@
     "zh-CN": "输出",
     "zh-TW": "輸出",
     "es": "Salida",
-    "it": "Output",
+    "it": "Risultato",
     "ja": "出力",
     "pt-BR": "Saída"
   },
@@ -3878,14 +3925,14 @@
     "ja": "RSA / SM2 には「キーペア」を使用してください",
     "pt-BR": "Use Par de chaves para RSA e SM2"
   },
-  "RSA bits must be 2048, 3072, or 4096": {
-    "en": "RSA bits must be 2048, 3072, or 4096",
-    "zh-CN": "RSA 位数须为 2048、3072 或 4096",
-    "zh-TW": "RSA 位數須為 2048、3072 或 4096",
-    "es": "Los bits RSA deben ser 2048, 3072 o 4096",
-    "it": "I bit RSA devono essere 2048, 3072 o 4096",
-    "ja": "RSA のビット数は 2048、3072、または 4096 である必要があります",
-    "pt-BR": "Os bits RSA devem ser 2048, 3072 ou 4096"
+  "RSA bits must be 2048, 3072, 4096, or 8192": {
+    "en": "RSA bits must be 2048, 3072, 4096, or 8192",
+    "zh-CN": "RSA 位数须为 2048、3072、4096 或 8192",
+    "zh-TW": "RSA 位數須為 2048、3072、4096 或 8192",
+    "es": "Los bits RSA deben ser 2048, 3072, 4096 u 8192",
+    "it": "I bit RSA devono essere 2048, 3072, 4096 o 8192",
+    "ja": "RSA のビット数は 2048、3072、4096、または 8192 である必要があります",
+    "pt-BR": "Os bits RSA devem ser 2048, 3072, 4096 ou 8192"
   },
   "RSA format must be pkcs8 or pkcs1": {
     "en": "RSA format must be pkcs8 or pkcs1",
@@ -4786,13 +4833,9 @@
     "en": "Local OCR models",
     "zh-CN": "OCR 本地模型"
   },
-  "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.": {
-    "en": "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.",
-    "zh-CN": "模型仅在你点击安装时从 GitHub Release 下载；校验 SHA-256 后保存在 DBX 插件数据目录，识别过程仍完全离线。"
-  },
-  "Fast model (recommended)": {
-    "en": "Fast model (recommended)",
-    "zh-CN": "快速模型（推荐）"
+  "Fast model": {
+    "en": "Fast model",
+    "zh-CN": "快速模型"
   },
   "Installed": {
     "en": "Installed",
@@ -4805,6 +4848,22 @@
   "Not installed": {
     "en": "Not installed",
     "zh-CN": "未安装"
+  },
+  "Accurate": {
+    "en": "Accurate",
+    "zh-CN": "高精度"
+  },
+  "Manage models": {
+    "en": "Manage models",
+    "zh-CN": "管理模型"
+  },
+  "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.": {
+    "en": "Models are downloaded from GitHub Release only after you click Install. They are SHA-256 verified, stored in DBX plugin data, and recognition remains fully offline.",
+    "zh-CN": "模型仅在你点击安装时从 GitHub Release 下载；校验 SHA-256 后保存在 DBX 插件数据目录，识别过程仍完全离线。"
+  },
+  "Fast model (recommended)": {
+    "en": "Fast model (recommended)",
+    "zh-CN": "快速模型（推荐）"
   },
   "Click again to remove all models": {
     "en": "Click again to remove all models",
@@ -4853,18 +4912,6 @@
   "Recognition quality": {
     "en": "Recognition quality",
     "zh-CN": "识别质量"
-  },
-  "Smart (recommended)": {
-    "en": "Smart (recommended)",
-    "zh-CN": "智能（推荐）"
-  },
-  "Full accuracy": {
-    "en": "Full accuracy",
-    "zh-CN": "全量高精度"
-  },
-  "Fast": {
-    "en": "Fast",
-    "zh-CN": "快速"
   },
   "Recommended for low-contrast or slightly blurred documents only": {
     "en": "Recommended for low-contrast or slightly blurred documents only",
@@ -4945,6 +4992,18 @@
   "Recognition result will appear here": {
     "en": "Recognition result will appear here",
     "zh-CN": "识别结果将显示在这里"
+  },
+  "Smart (recommended)": {
+    "en": "Smart (recommended)",
+    "zh-CN": "智能（推荐）"
+  },
+  "Full accuracy": {
+    "en": "Full accuracy",
+    "zh-CN": "全量高精度"
+  },
+  "Fast": {
+    "en": "Fast",
+    "zh-CN": "快速"
   },
   "Transferring image…": {
     "en": "Transferring image…",
@@ -5486,9 +5545,9 @@
     "ja": "{0}は {1} 文字までに制限されています",
     "pt-BR": "{0} está limitado a {1} caracteres"
   },
-  "Expand": {
-    "en": "Expand",
-    "zh-CN": "展开"
+  "JSON text editor": {
+    "en": "JSON text editor",
+    "zh-CN": "JSON 文本编辑器"
   },
   "new_key": {
     "en": "new_key",
@@ -5583,6 +5642,10 @@
     "en": "CSV",
     "zh-CN": "CSV"
   },
+  "Expand": {
+    "en": "Expand",
+    "zh-CN": "展开"
+  },
   "The original value is a JSON string; nested edits are written back to the string": {
     "en": "The original value is a JSON string; nested edits are written back to the string",
     "zh-CN": "原始值是 JSON 字符串，内部修改会自动写回字符串"
@@ -5626,10 +5689,6 @@
   "Sort keys Z–A": {
     "en": "Sort keys Z–A",
     "zh-CN": "降序排列 key"
-  },
-  "JSON text editor": {
-    "en": "JSON text editor",
-    "zh-CN": "JSON 文本编辑器"
   },
   "Unicode and escaping": {
     "en": "Unicode and escaping",
@@ -5846,6 +5905,14 @@
     "en": "Shared secret (Base64)",
     "zh-CN": "共享密钥（Base64）"
   },
+  "Key name": {
+    "en": "Key name",
+    "zh-CN": "密钥名称"
+  },
+  "Save to vault": {
+    "en": "Save to vault",
+    "zh-CN": "保存到密钥库"
+  },
   "HPKE uses X25519 + HKDF-SHA256 + ChaCha20-Poly1305; Info and AAD must match exactly when decrypting.": {
     "en": "HPKE uses X25519 + HKDF-SHA256 + ChaCha20-Poly1305; Info and AAD must match exactly when decrypting.",
     "zh-CN": "HPKE 使用 X25519 + HKDF-SHA256 + ChaCha20-Poly1305；Info 和 AAD 解密时必须完全一致。"
@@ -5866,6 +5933,10 @@
     "en": "Decapsulate secret",
     "zh-CN": "解封共享密钥"
   },
+  "Generate a keypair and enter a name first": {
+    "en": "Generate a keypair and enter a name first",
+    "zh-CN": "请先生成密钥对并填写名称"
+  },
   "Key type": {
     "en": "Key type",
     "zh-CN": "密钥类型"
@@ -5878,13 +5949,13 @@
     "en": "Key pair",
     "zh-CN": "密钥对"
   },
+  "8192-bit · Advanced · Slower": {
+    "en": "8192-bit · Advanced · Slower",
+    "zh-CN": "8192 位 · 高级选项 · 生成较慢"
+  },
   "{0}-bit": {
     "en": "{0}-bit",
     "zh-CN": "{0} 位"
-  },
-  "Save to vault": {
-    "en": "Save to vault",
-    "zh-CN": "写入密钥库"
   },
   "No, show once": {
     "en": "No, show once",
@@ -5914,9 +5985,9 @@
     "en": "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
     "zh-CN": "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。"
   },
-  "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.": {
-    "en": "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "RSA 可选 2048 / 3072 / 4096 位，PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。"
+  "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.": {
+    "en": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
+    "zh-CN": "RSA 可选 2048 / 3072 / 4096 / 8192 位；8192 位生成较慢。PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供 RSA 工具选用；未解锁时会提示输入主密码。"
   },
   "Key source": {
     "en": "Key source",
@@ -5925,6 +5996,10 @@
   "This time only": {
     "en": "This time only",
     "zh-CN": "当次输入"
+  },
+  "No matching keys": {
+    "en": "No matching keys",
+    "zh-CN": "没有匹配的密钥"
   },
   "Choose a saved key": {
     "en": "Choose a saved key",
@@ -5942,9 +6017,9 @@
     "en": "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.",
     "zh-CN": "AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。"
   },
-  "Key · {0}-byte hex": {
-    "en": "Key · {0}-byte hex",
-    "zh-CN": "密钥 · {0} 字节 hex"
+  "Key · {0} bytes · Hex ({1} characters)": {
+    "en": "Key · {0} bytes · Hex ({1} characters)",
+    "zh-CN": "密钥 · {0} 字节 · Hex（{1} 字符）"
   },
   "Generated symmetric key": {
     "en": "Generated symmetric key",
@@ -6211,10 +6286,6 @@
     "en": "Nonce encoding",
     "zh-CN": "Nonce 编码"
   },
-  "CTR does not authenticate ciphertext. Use only for interoperability; prefer an AEAD for new systems.": {
-    "en": "CTR does not authenticate ciphertext. Use only for interoperability; prefer an AEAD for new systems.",
-    "zh-CN": "CTR 不验证密文完整性，仅用于协议兼容；新系统请使用认证加密。"
-  },
   "Password / input key material": {
     "en": "Password / input key material",
     "zh-CN": "密码 / 输入密钥材料"
@@ -6223,9 +6294,29 @@
     "en": "Derived key (Hex)",
     "zh-CN": "派生密钥（Hex）"
   },
+  "Calculating automatically…": {
+    "en": "Calculating automatically…",
+    "zh-CN": "正在自动计算…"
+  },
+  "Save as": {
+    "en": "Save as",
+    "zh-CN": "保存为"
+  },
+  "No key type matches this output length; change the output byte count.": {
+    "en": "No key type matches this output length; change the output byte count.",
+    "zh-CN": "当前输出长度没有匹配的密钥类型，请调整输出字节数。"
+  },
   "Provide a key": {
     "en": "Provide a key",
     "zh-CN": "请提供密钥"
+  },
+  "Derive a key and enter a name first": {
+    "en": "Derive a key and enter a name first",
+    "zh-CN": "请先派生密钥并填写名称"
+  },
+  "Target key type does not match the output length": {
+    "en": "Target key type does not match the output length",
+    "zh-CN": "目标密钥类型与输出长度不匹配"
   },
   "Address family": {
     "en": "Address family",
@@ -7006,10 +7097,6 @@
     "en": "Sector number",
     "zh-CN": "扇区编号"
   },
-  "XTS is only for disk or sector data and does not provide authentication.": {
-    "en": "XTS is only for disk or sector data and does not provide authentication.",
-    "zh-CN": "XTS 仅用于磁盘或固定扇区数据，不提供完整性认证。"
-  },
   "10 (digits)": {
     "en": "10 (digits)",
     "zh-CN": "10（仅数字）"
@@ -7017,10 +7104,6 @@
   "36 (digits + a-z)": {
     "en": "36 (digits + a-z)",
     "zh-CN": "36（数字 + a-z）"
-  },
-  "FF1 preserves alphabet and length but does not authenticate; the same key and tweak produce deterministic output.": {
-    "en": "FF1 preserves alphabet and length but does not authenticate; the same key and tweak produce deterministic output.",
-    "zh-CN": "FF1 保持字符集和长度，但不提供完整性认证；相同密钥与 tweak 会产生确定性结果。"
   },
   "Leave empty to generate": {
     "en": "Leave empty to generate",
@@ -7486,9 +7569,9 @@
     "en": "HMAC-SM3",
     "zh-CN": "HMAC-SM3"
   },
-  "OAEP (recommended)": {
-    "en": "OAEP (recommended)",
-    "zh-CN": "OAEP（推荐）"
+  "OAEP": {
+    "en": "OAEP",
+    "zh-CN": "OAEP"
   },
   "PKCS#1 v1.5": {
     "en": "PKCS#1 v1.5",
@@ -7602,17 +7685,9 @@
     "en": "Halfwidth",
     "zh-CN": "转半角"
   },
-  "Secret (Base32)": {
-    "en": "Secret (Base32)",
-    "zh-CN": "密钥（Base32）"
-  },
-  "Hide secret": {
-    "en": "Hide secret",
-    "zh-CN": "隐藏密钥"
-  },
-  "Show secret": {
-    "en": "Show secret",
-    "zh-CN": "显示原文"
+  "Secret (Base32 / otpauth URI)": {
+    "en": "Secret (Base32 / otpauth URI)",
+    "zh-CN": "密钥（Base32 / otpauth URI）"
   },
   "Digits": {
     "en": "Digits",
@@ -7653,6 +7728,10 @@
   "Paste an authenticator secret to see the current code.": {
     "en": "Paste an authenticator secret to see the current code.",
     "zh-CN": "粘贴身份验证器密钥后会显示当前口令。"
+  },
+  "Cannot use the selected TOTP key": {
+    "en": "Cannot use the selected TOTP key",
+    "zh-CN": "无法使用所选 TOTP 密钥"
   },
   "Not a valid TOTP secret or URI": {
     "en": "Not a valid TOTP secret or URI",
@@ -8370,9 +8449,9 @@
     "en": "Filter",
     "zh-CN": "筛选"
   },
-  "Filter by name, algorithm, or fingerprint": {
-    "en": "Filter by name, algorithm, or fingerprint",
-    "zh-CN": "按名称、算法或指纹筛选"
+  "Filter by name, algorithm, purpose, status, or fingerprint": {
+    "en": "Filter by name, algorithm, purpose, status, or fingerprint",
+    "zh-CN": "按名称、算法、用途、状态或指纹筛选"
   },
   "Filter keys": {
     "en": "Filter keys",
@@ -8390,13 +8469,17 @@
     "en": "{0} key{1}",
     "zh-CN": "{0} 把密钥"
   },
-  "No matching keys": {
-    "en": "No matching keys",
-    "zh-CN": "没有匹配的密钥"
+  "Size / format": {
+    "en": "Size / format",
+    "zh-CN": "大小 / 格式"
   },
   "Used by": {
     "en": "Used by",
     "zh-CN": "用途"
+  },
+  "Support": {
+    "en": "Support",
+    "zh-CN": "支持状态"
   },
   "Fingerprint": {
     "en": "Fingerprint",
@@ -8414,9 +8497,9 @@
     "en": "Clear the filter to reorder",
     "zh-CN": "筛选时不能排序"
   },
-  "Key name": {
-    "en": "Key name",
-    "zh-CN": "密钥名称"
+  "Legacy · pending": {
+    "en": "Legacy · pending",
+    "zh-CN": "历史兼容 · 待确认"
   },
   "Save": {
     "en": "Save",
@@ -8430,6 +8513,10 @@
     "en": "Reveal",
     "zh-CN": "原文"
   },
+  "Purposes": {
+    "en": "Purposes",
+    "zh-CN": "用途"
+  },
   "Add key": {
     "en": "Add key",
     "zh-CN": "添加密钥"
@@ -8438,9 +8525,21 @@
     "en": "e.g. test-key",
     "zh-CN": "例如：测试密钥"
   },
+  "Authenticated encryption": {
+    "en": "Authenticated encryption",
+    "zh-CN": "认证加密"
+  },
+  "Specialized encryption": {
+    "en": "Specialized encryption",
+    "zh-CN": "专用加密"
+  },
   "Asymmetric cipher": {
     "en": "Asymmetric cipher",
     "zh-CN": "非对称加密"
+  },
+  "Public key / KEM (import)": {
+    "en": "Public key / KEM (import)",
+    "zh-CN": "公钥 / KEM（导入）"
   },
   "How": {
     "en": "How",
@@ -8461,6 +8560,10 @@
   "Material (hex / base64)": {
     "en": "Material (hex / base64)",
     "zh-CN": "材料（hex / base64）"
+  },
+  "Public key material (Base64)": {
+    "en": "Public key material (Base64)",
+    "zh-CN": "公钥材料（Base64）"
   },
   "Current password": {
     "en": "Current password",
@@ -8498,6 +8601,18 @@
     "en": "Verify master password again",
     "zh-CN": "再次验证主密码"
   },
+  "Show secret": {
+    "en": "Show secret",
+    "zh-CN": "显示原文"
+  },
+  "Purposes · {0}": {
+    "en": "Purposes · {0}",
+    "zh-CN": "用途 · {0}"
+  },
+  "Restrict purposes only within derived capabilities; XOR debug is disabled by default.": {
+    "en": "Restrict purposes only within derived capabilities; XOR debug is disabled by default.",
+    "zh-CN": "只能在自动推导的能力范围内限制用途；XOR 调试默认不启用。"
+  },
   "Delete key": {
     "en": "Delete key",
     "zh-CN": "删除密钥"
@@ -8518,21 +8633,9 @@
     "en": "{0} min",
     "zh-CN": "{0} 分钟"
   },
-  "Symmetric · XOR": {
-    "en": "Symmetric · XOR",
-    "zh-CN": "对称加密 · XOR"
-  },
-  "HMAC · XOR": {
-    "en": "HMAC · XOR",
-    "zh-CN": "HMAC · XOR"
-  },
-  "HMAC · JWT · XOR": {
-    "en": "HMAC · JWT · XOR",
-    "zh-CN": "HMAC · JWT · XOR"
-  },
-  "Cipher tools": {
-    "en": "Cipher tools",
-    "zh-CN": "加解密工具"
+  "Legacy · confirmation needed": {
+    "en": "Legacy · confirmation needed",
+    "zh-CN": "历史兼容 · 待确认"
   },
   "For Symmetric cipher; XOR can reuse these byte keys.": {
     "en": "For Symmetric cipher; XOR can reuse these byte keys.",
@@ -8597,6 +8700,10 @@
   "Deleted": {
     "en": "Deleted",
     "zh-CN": "已删除"
+  },
+  "Purposes updated": {
+    "en": "Purposes updated",
+    "zh-CN": "用途已更新"
   },
   "Space": {
     "en": "Space",
@@ -9166,6 +9273,54 @@
     "tr": "HMAC",
     "az": "HMAC"
   },
+  "RSA-OAEP encrypt & decrypt": {
+    "en": "RSA-OAEP encrypt & decrypt",
+    "zh-CN": "RSA-OAEP 加密与解密",
+    "zh-TW": "RSA-OAEP 加密與解密",
+    "es": "RSA-OAEP encrypt & decrypt",
+    "it": "RSA-OAEP encrypt & decrypt",
+    "ja": "RSA-OAEP encrypt & decrypt",
+    "pt-BR": "RSA-OAEP encrypt & decrypt",
+    "ko": "RSA-OAEP encrypt & decrypt",
+    "tr": "RSA-OAEP encrypt & decrypt",
+    "az": "RSA-OAEP encrypt & decrypt"
+  },
+  "Open RSA-OAEP encrypt & decrypt directly with ready-to-use defaults": {
+    "en": "Open RSA-OAEP encrypt & decrypt directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开RSA-OAEP 加密与解密",
+    "zh-TW": "使用預設參數直接開啟RSA-OAEP 加密與解密",
+    "es": "Abre directamente RSA-OAEP encrypt & decrypt con valores preparados",
+    "it": "Apri direttamente RSA-OAEP encrypt & decrypt con valori pronti",
+    "ja": "RSA-OAEP encrypt & decryptを既定値ですぐに開く",
+    "pt-BR": "Abra RSA-OAEP encrypt & decrypt diretamente com valores prontos",
+    "ko": "RSA-OAEP encrypt & decrypt 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "RSA-OAEP encrypt & decrypt aracını hazır varsayılanlarla doğrudan açın",
+    "az": "RSA-OAEP encrypt & decrypt hazır parametrlərlə birbaşa açılsın"
+  },
+  "RSA-PKCS#1 v1.5 encrypt & decrypt": {
+    "en": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "zh-CN": "RSA-PKCS#1 v1.5 加密与解密",
+    "zh-TW": "RSA-PKCS#1 v1.5 加密與解密",
+    "es": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "it": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "ja": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "pt-BR": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "ko": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "tr": "RSA-PKCS#1 v1.5 encrypt & decrypt",
+    "az": "RSA-PKCS#1 v1.5 encrypt & decrypt"
+  },
+  "Open RSA-PKCS#1 v1.5 encrypt & decrypt directly with ready-to-use defaults": {
+    "en": "Open RSA-PKCS#1 v1.5 encrypt & decrypt directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开RSA-PKCS#1 v1.5 加密与解密",
+    "zh-TW": "使用預設參數直接開啟RSA-PKCS#1 v1.5 加密與解密",
+    "es": "Abre directamente RSA-PKCS#1 v1.5 encrypt & decrypt con valores preparados",
+    "it": "Apri direttamente RSA-PKCS#1 v1.5 encrypt & decrypt con valori pronti",
+    "ja": "RSA-PKCS#1 v1.5 encrypt & decryptを既定値ですぐに開く",
+    "pt-BR": "Abra RSA-PKCS#1 v1.5 encrypt & decrypt diretamente com valores prontos",
+    "ko": "RSA-PKCS#1 v1.5 encrypt & decrypt 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "RSA-PKCS#1 v1.5 encrypt & decrypt aracını hazır varsayılanlarla doğrudan açın",
+    "az": "RSA-PKCS#1 v1.5 encrypt & decrypt hazır parametrlərlə birbaşa açılsın"
+  },
   "RSA cipher": {
     "en": "RSA cipher",
     "zh-CN": "RSA 加密",
@@ -9190,17 +9345,125 @@
     "tr": "SM2 cipher",
     "az": "SM2 cipher"
   },
-  "Open SM2 cipher directly with ready-to-use defaults": {
-    "en": "Open SM2 cipher directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开SM2 国密加密",
-    "zh-TW": "使用預設參數直接開啟SM2 國密加密",
-    "es": "Abre directamente Cifrado SM2 con valores preparados",
-    "it": "Apri direttamente Cifratura SM2 con valori pronti",
-    "ja": "SM2 暗号を既定値ですぐに開く",
-    "pt-BR": "Abra Criptografia SM2 diretamente com valores prontos",
-    "ko": "SM2 cipher 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "SM2 cipher aracını hazır varsayılanlarla doğrudan açın",
-    "az": "SM2 cipher hazır parametrlərlə birbaşa açılsın"
+  "ChaCha20-Poly1305": {
+    "en": "ChaCha20-Poly1305",
+    "zh-CN": "ChaCha20-Poly1305",
+    "zh-TW": "ChaCha20-Poly1305",
+    "es": "ChaCha20-Poly1305",
+    "it": "ChaCha20-Poly1305",
+    "ja": "ChaCha20-Poly1305",
+    "pt-BR": "ChaCha20-Poly1305",
+    "ko": "ChaCha20-Poly1305",
+    "tr": "ChaCha20-Poly1305",
+    "az": "ChaCha20-Poly1305"
+  },
+  "Open ChaCha20-Poly1305 directly with ready-to-use defaults": {
+    "en": "Open ChaCha20-Poly1305 directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开ChaCha20-Poly1305",
+    "zh-TW": "使用預設參數直接開啟ChaCha20-Poly1305",
+    "es": "Abre directamente ChaCha20-Poly1305 con valores preparados",
+    "it": "Apri direttamente ChaCha20-Poly1305 con valori pronti",
+    "ja": "ChaCha20-Poly1305を既定値ですぐに開く",
+    "pt-BR": "Abra ChaCha20-Poly1305 diretamente com valores prontos",
+    "ko": "ChaCha20-Poly1305 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "ChaCha20-Poly1305 aracını hazır varsayılanlarla doğrudan açın",
+    "az": "ChaCha20-Poly1305 hazır parametrlərlə birbaşa açılsın"
+  },
+  "XChaCha20-Poly1305": {
+    "en": "XChaCha20-Poly1305",
+    "zh-CN": "XChaCha20-Poly1305",
+    "zh-TW": "XChaCha20-Poly1305",
+    "es": "XChaCha20-Poly1305",
+    "it": "XChaCha20-Poly1305",
+    "ja": "XChaCha20-Poly1305",
+    "pt-BR": "XChaCha20-Poly1305",
+    "ko": "XChaCha20-Poly1305",
+    "tr": "XChaCha20-Poly1305",
+    "az": "XChaCha20-Poly1305"
+  },
+  "Open XChaCha20-Poly1305 directly with ready-to-use defaults": {
+    "en": "Open XChaCha20-Poly1305 directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开XChaCha20-Poly1305",
+    "zh-TW": "使用預設參數直接開啟XChaCha20-Poly1305",
+    "es": "Abre directamente XChaCha20-Poly1305 con valores preparados",
+    "it": "Apri direttamente XChaCha20-Poly1305 con valori pronti",
+    "ja": "XChaCha20-Poly1305を既定値ですぐに開く",
+    "pt-BR": "Abra XChaCha20-Poly1305 diretamente com valores prontos",
+    "ko": "XChaCha20-Poly1305 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "XChaCha20-Poly1305 aracını hazır varsayılanlarla doğrudan açın",
+    "az": "XChaCha20-Poly1305 hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-GCM-SIV": {
+    "en": "AES-256-GCM-SIV",
+    "zh-CN": "AES-256-GCM-SIV",
+    "zh-TW": "AES-256-GCM-SIV",
+    "es": "AES-256-GCM-SIV",
+    "it": "AES-256-GCM-SIV",
+    "ja": "AES-256-GCM-SIV",
+    "pt-BR": "AES-256-GCM-SIV",
+    "ko": "AES-256-GCM-SIV",
+    "tr": "AES-256-GCM-SIV",
+    "az": "AES-256-GCM-SIV"
+  },
+  "Open AES-256-GCM-SIV directly with ready-to-use defaults": {
+    "en": "Open AES-256-GCM-SIV directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-GCM-SIV",
+    "zh-TW": "使用預設參數直接開啟AES-256-GCM-SIV",
+    "es": "Abre directamente AES-256-GCM-SIV con valores preparados",
+    "it": "Apri direttamente AES-256-GCM-SIV con valori pronti",
+    "ja": "AES-256-GCM-SIVを既定値ですぐに開く",
+    "pt-BR": "Abra AES-256-GCM-SIV diretamente com valores prontos",
+    "ko": "AES-256-GCM-SIV 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-GCM-SIV aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-GCM-SIV hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-SIV": {
+    "en": "AES-256-SIV",
+    "zh-CN": "AES-256-SIV",
+    "zh-TW": "AES-256-SIV",
+    "es": "AES-256-SIV",
+    "it": "AES-256-SIV",
+    "ja": "AES-256-SIV",
+    "pt-BR": "AES-256-SIV",
+    "ko": "AES-256-SIV",
+    "tr": "AES-256-SIV",
+    "az": "AES-256-SIV"
+  },
+  "Open AES-256-SIV directly with ready-to-use defaults": {
+    "en": "Open AES-256-SIV directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-SIV",
+    "zh-TW": "使用預設參數直接開啟AES-256-SIV",
+    "es": "Abre directamente AES-256-SIV con valores preparados",
+    "it": "Apri direttamente AES-256-SIV con valori pronti",
+    "ja": "AES-256-SIVを既定値ですぐに開く",
+    "pt-BR": "Abra AES-256-SIV diretamente com valores prontos",
+    "ko": "AES-256-SIV 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-SIV aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-SIV hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-CCM": {
+    "en": "AES-256-CCM",
+    "zh-CN": "AES-256-CCM",
+    "zh-TW": "AES-256-CCM",
+    "es": "AES-256-CCM",
+    "it": "AES-256-CCM",
+    "ja": "AES-256-CCM",
+    "pt-BR": "AES-256-CCM",
+    "ko": "AES-256-CCM",
+    "tr": "AES-256-CCM",
+    "az": "AES-256-CCM"
+  },
+  "Open AES-256-CCM directly with ready-to-use defaults": {
+    "en": "Open AES-256-CCM directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-CCM",
+    "zh-TW": "使用預設參數直接開啟AES-256-CCM",
+    "es": "Abre directamente AES-256-CCM con valores preparados",
+    "it": "Apri direttamente AES-256-CCM con valori pronti",
+    "ja": "AES-256-CCMを既定値ですぐに開く",
+    "pt-BR": "Abra AES-256-CCM diretamente com valores prontos",
+    "ko": "AES-256-CCM 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-CCM aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-CCM hazır parametrlərlə birbaşa açılsın"
   },
   "Modern authenticated cipher": {
     "en": "Modern authenticated cipher",
@@ -9226,6 +9489,102 @@
     "tr": "Modern authenticated cipher aracını hazır varsayılanlarla doğrudan açın",
     "az": "Modern authenticated cipher hazır parametrlərlə birbaşa açılsın"
   },
+  "Argon2id": {
+    "en": "Argon2id",
+    "zh-CN": "Argon2id",
+    "zh-TW": "Argon2id",
+    "es": "Argon2id",
+    "it": "Argon2id",
+    "ja": "Argon2id",
+    "pt-BR": "Argon2id",
+    "ko": "Argon2id",
+    "tr": "Argon2id",
+    "az": "Argon2id"
+  },
+  "Open Argon2id directly with ready-to-use defaults": {
+    "en": "Open Argon2id directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开Argon2id",
+    "zh-TW": "使用預設參數直接開啟Argon2id",
+    "es": "Abre directamente Argon2id con valores preparados",
+    "it": "Apri direttamente Argon2id con valori pronti",
+    "ja": "Argon2idを既定値ですぐに開く",
+    "pt-BR": "Abra Argon2id diretamente com valores prontos",
+    "ko": "Argon2id 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Argon2id aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Argon2id hazır parametrlərlə birbaşa açılsın"
+  },
+  "scrypt": {
+    "en": "scrypt",
+    "zh-CN": "scrypt",
+    "zh-TW": "scrypt",
+    "es": "scrypt",
+    "it": "scrypt",
+    "ja": "scrypt",
+    "pt-BR": "scrypt",
+    "ko": "scrypt",
+    "tr": "scrypt",
+    "az": "scrypt"
+  },
+  "Open scrypt directly with ready-to-use defaults": {
+    "en": "Open scrypt directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开scrypt",
+    "zh-TW": "使用預設參數直接開啟scrypt",
+    "es": "Abre directamente scrypt con valores preparados",
+    "it": "Apri direttamente scrypt con valori pronti",
+    "ja": "scryptを既定値ですぐに開く",
+    "pt-BR": "Abra scrypt diretamente com valores prontos",
+    "ko": "scrypt 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "scrypt aracını hazır varsayılanlarla doğrudan açın",
+    "az": "scrypt hazır parametrlərlə birbaşa açılsın"
+  },
+  "PBKDF2-HMAC-SHA256": {
+    "en": "PBKDF2-HMAC-SHA256",
+    "zh-CN": "PBKDF2-HMAC-SHA256",
+    "zh-TW": "PBKDF2-HMAC-SHA256",
+    "es": "PBKDF2-HMAC-SHA256",
+    "it": "PBKDF2-HMAC-SHA256",
+    "ja": "PBKDF2-HMAC-SHA256",
+    "pt-BR": "PBKDF2-HMAC-SHA256",
+    "ko": "PBKDF2-HMAC-SHA256",
+    "tr": "PBKDF2-HMAC-SHA256",
+    "az": "PBKDF2-HMAC-SHA256"
+  },
+  "Open PBKDF2-HMAC-SHA256 directly with ready-to-use defaults": {
+    "en": "Open PBKDF2-HMAC-SHA256 directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开PBKDF2-HMAC-SHA256",
+    "zh-TW": "使用預設參數直接開啟PBKDF2-HMAC-SHA256",
+    "es": "Abre directamente PBKDF2-HMAC-SHA256 con valores preparados",
+    "it": "Apri direttamente PBKDF2-HMAC-SHA256 con valori pronti",
+    "ja": "PBKDF2-HMAC-SHA256を既定値ですぐに開く",
+    "pt-BR": "Abra PBKDF2-HMAC-SHA256 diretamente com valores prontos",
+    "ko": "PBKDF2-HMAC-SHA256 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "PBKDF2-HMAC-SHA256 aracını hazır varsayılanlarla doğrudan açın",
+    "az": "PBKDF2-HMAC-SHA256 hazır parametrlərlə birbaşa açılsın"
+  },
+  "HKDF-SHA256": {
+    "en": "HKDF-SHA256",
+    "zh-CN": "HKDF-SHA256",
+    "zh-TW": "HKDF-SHA256",
+    "es": "HKDF-SHA256",
+    "it": "HKDF-SHA256",
+    "ja": "HKDF-SHA256",
+    "pt-BR": "HKDF-SHA256",
+    "ko": "HKDF-SHA256",
+    "tr": "HKDF-SHA256",
+    "az": "HKDF-SHA256"
+  },
+  "Open HKDF-SHA256 directly with ready-to-use defaults": {
+    "en": "Open HKDF-SHA256 directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HKDF-SHA256",
+    "zh-TW": "使用預設參數直接開啟HKDF-SHA256",
+    "es": "Abre directamente HKDF-SHA256 con valores preparados",
+    "it": "Apri direttamente HKDF-SHA256 con valori pronti",
+    "ja": "HKDF-SHA256を既定値ですぐに開く",
+    "pt-BR": "Abra HKDF-SHA256 diretamente com valores prontos",
+    "ko": "HKDF-SHA256 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HKDF-SHA256 aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HKDF-SHA256 hazır parametrlərlə birbaşa açılsın"
+  },
   "Key derivation (KDF)": {
     "en": "Key derivation (KDF)",
     "zh-CN": "密钥派生 KDF",
@@ -9249,6 +9608,78 @@
     "ko": "Key derivation (KDF) 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Key derivation (KDF) aracını hazır varsayılanlarla doğrudan açın",
     "az": "Key derivation (KDF) hazır parametrlərlə birbaşa açılsın"
+  },
+  "RSA-PSS-SHA256 sign & verify": {
+    "en": "RSA-PSS-SHA256 sign & verify",
+    "zh-CN": "RSA-PSS-SHA256 签名与验签",
+    "zh-TW": "RSA-PSS-SHA256 簽章與驗證",
+    "es": "RSA-PSS-SHA256 sign & verify",
+    "it": "RSA-PSS-SHA256 sign & verify",
+    "ja": "RSA-PSS-SHA256 sign & verify",
+    "pt-BR": "RSA-PSS-SHA256 sign & verify",
+    "ko": "RSA-PSS-SHA256 sign & verify",
+    "tr": "RSA-PSS-SHA256 sign & verify",
+    "az": "RSA-PSS-SHA256 sign & verify"
+  },
+  "Open RSA-PSS-SHA256 sign & verify directly with ready-to-use defaults": {
+    "en": "Open RSA-PSS-SHA256 sign & verify directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开RSA-PSS-SHA256 签名与验签",
+    "zh-TW": "使用預設參數直接開啟RSA-PSS-SHA256 簽章與驗證",
+    "es": "Abre directamente RSA-PSS-SHA256 sign & verify con valores preparados",
+    "it": "Apri direttamente RSA-PSS-SHA256 sign & verify con valori pronti",
+    "ja": "RSA-PSS-SHA256 sign & verifyを既定値ですぐに開く",
+    "pt-BR": "Abra RSA-PSS-SHA256 sign & verify diretamente com valores prontos",
+    "ko": "RSA-PSS-SHA256 sign & verify 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "RSA-PSS-SHA256 sign & verify aracını hazır varsayılanlarla doğrudan açın",
+    "az": "RSA-PSS-SHA256 sign & verify hazır parametrlərlə birbaşa açılsın"
+  },
+  "RSA-PKCS#1 v1.5-SHA256 sign & verify": {
+    "en": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "zh-CN": "RSA-PKCS#1 v1.5-SHA256 签名与验签",
+    "zh-TW": "RSA-PKCS#1 v1.5-SHA256 簽章與驗證",
+    "es": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "it": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "ja": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "pt-BR": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "ko": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "tr": "RSA-PKCS#1 v1.5-SHA256 sign & verify",
+    "az": "RSA-PKCS#1 v1.5-SHA256 sign & verify"
+  },
+  "Open RSA-PKCS#1 v1.5-SHA256 sign & verify directly with ready-to-use defaults": {
+    "en": "Open RSA-PKCS#1 v1.5-SHA256 sign & verify directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开RSA-PKCS#1 v1.5-SHA256 签名与验签",
+    "zh-TW": "使用預設參數直接開啟RSA-PKCS#1 v1.5-SHA256 簽章與驗證",
+    "es": "Abre directamente RSA-PKCS#1 v1.5-SHA256 sign & verify con valores preparados",
+    "it": "Apri direttamente RSA-PKCS#1 v1.5-SHA256 sign & verify con valori pronti",
+    "ja": "RSA-PKCS#1 v1.5-SHA256 sign & verifyを既定値ですぐに開く",
+    "pt-BR": "Abra RSA-PKCS#1 v1.5-SHA256 sign & verify diretamente com valores prontos",
+    "ko": "RSA-PKCS#1 v1.5-SHA256 sign & verify 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "RSA-PKCS#1 v1.5-SHA256 sign & verify aracını hazır varsayılanlarla doğrudan açın",
+    "az": "RSA-PKCS#1 v1.5-SHA256 sign & verify hazır parametrlərlə birbaşa açılsın"
+  },
+  "SM2-SM3 sign & verify": {
+    "en": "SM2-SM3 sign & verify",
+    "zh-CN": "SM2-SM3 签名与验签",
+    "zh-TW": "SM2-SM3 簽章與驗證",
+    "es": "SM2-SM3 sign & verify",
+    "it": "SM2-SM3 sign & verify",
+    "ja": "SM2-SM3 sign & verify",
+    "pt-BR": "SM2-SM3 sign & verify",
+    "ko": "SM2-SM3 sign & verify",
+    "tr": "SM2-SM3 sign & verify",
+    "az": "SM2-SM3 sign & verify"
+  },
+  "Open SM2-SM3 sign & verify directly with ready-to-use defaults": {
+    "en": "Open SM2-SM3 sign & verify directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开SM2-SM3 签名与验签",
+    "zh-TW": "使用預設參數直接開啟SM2-SM3 簽章與驗證",
+    "es": "Abre directamente SM2-SM3 sign & verify con valores preparados",
+    "it": "Apri direttamente SM2-SM3 sign & verify con valori pronti",
+    "ja": "SM2-SM3 sign & verifyを既定値ですぐに開く",
+    "pt-BR": "Abra SM2-SM3 sign & verify diretamente com valores prontos",
+    "ko": "SM2-SM3 sign & verify 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "SM2-SM3 sign & verify aracını hazır varsayılanlarla doğrudan açın",
+    "az": "SM2-SM3 sign & verify hazır parametrlərlə birbaşa açılsın"
   },
   "Digital signatures": {
     "en": "Digital signatures",
@@ -9345,6 +9776,78 @@
     "ko": "AES-FF1 format-preserving encryption 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "AES-FF1 format-preserving encryption aracını hazır varsayılanlarla doğrudan açın",
     "az": "AES-FF1 format-preserving encryption hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-CMAC": {
+    "en": "AES-CMAC",
+    "zh-CN": "AES-CMAC",
+    "zh-TW": "AES-CMAC",
+    "es": "AES-CMAC",
+    "it": "AES-CMAC",
+    "ja": "AES-CMAC",
+    "pt-BR": "AES-CMAC",
+    "ko": "AES-CMAC",
+    "tr": "AES-CMAC",
+    "az": "AES-CMAC"
+  },
+  "Open AES-CMAC directly with ready-to-use defaults": {
+    "en": "Open AES-CMAC directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-CMAC",
+    "zh-TW": "使用預設參數直接開啟AES-CMAC",
+    "es": "Abre directamente AES-CMAC con valores preparados",
+    "it": "Apri direttamente AES-CMAC con valori pronti",
+    "ja": "AES-CMACを既定値ですぐに開く",
+    "pt-BR": "Abra AES-CMAC diretamente com valores prontos",
+    "ko": "AES-CMAC 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-CMAC aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-CMAC hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-128-GMAC": {
+    "en": "AES-128-GMAC",
+    "zh-CN": "AES-128-GMAC",
+    "zh-TW": "AES-128-GMAC",
+    "es": "AES-128-GMAC",
+    "it": "AES-128-GMAC",
+    "ja": "AES-128-GMAC",
+    "pt-BR": "AES-128-GMAC",
+    "ko": "AES-128-GMAC",
+    "tr": "AES-128-GMAC",
+    "az": "AES-128-GMAC"
+  },
+  "Open AES-128-GMAC directly with ready-to-use defaults": {
+    "en": "Open AES-128-GMAC directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-128-GMAC",
+    "zh-TW": "使用預設參數直接開啟AES-128-GMAC",
+    "es": "Abre directamente AES-128-GMAC con valores preparados",
+    "it": "Apri direttamente AES-128-GMAC con valori pronti",
+    "ja": "AES-128-GMACを既定値ですぐに開く",
+    "pt-BR": "Abra AES-128-GMAC diretamente com valores prontos",
+    "ko": "AES-128-GMAC 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-128-GMAC aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-128-GMAC hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-GMAC": {
+    "en": "AES-256-GMAC",
+    "zh-CN": "AES-256-GMAC",
+    "zh-TW": "AES-256-GMAC",
+    "es": "AES-256-GMAC",
+    "it": "AES-256-GMAC",
+    "ja": "AES-256-GMAC",
+    "pt-BR": "AES-256-GMAC",
+    "ko": "AES-256-GMAC",
+    "tr": "AES-256-GMAC",
+    "az": "AES-256-GMAC"
+  },
+  "Open AES-256-GMAC directly with ready-to-use defaults": {
+    "en": "Open AES-256-GMAC directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-GMAC",
+    "zh-TW": "使用預設參數直接開啟AES-256-GMAC",
+    "es": "Abre directamente AES-256-GMAC con valores preparados",
+    "it": "Apri direttamente AES-256-GMAC con valori pronti",
+    "ja": "AES-256-GMACを既定値ですぐに開く",
+    "pt-BR": "Abra AES-256-GMAC diretamente com valores prontos",
+    "ko": "AES-256-GMAC 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-GMAC aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-GMAC hazır parametrlərlə birbaşa açılsın"
   },
   "AES-CMAC / GMAC": {
     "en": "AES-CMAC / GMAC",
@@ -9453,6 +9956,78 @@
     "ko": "JWK / JWKS",
     "tr": "JWK / JWKS",
     "az": "JWK / JWKS"
+  },
+  "AES / SM4 / HMAC key generator": {
+    "en": "AES / SM4 / HMAC key generator",
+    "zh-CN": "AES / SM4 / HMAC 密钥生成",
+    "zh-TW": "AES / SM4 / HMAC 金鑰產生",
+    "es": "AES / SM4 / HMAC key generator",
+    "it": "AES / SM4 / HMAC key generator",
+    "ja": "AES / SM4 / HMAC key generator",
+    "pt-BR": "AES / SM4 / HMAC key generator",
+    "ko": "AES / SM4 / HMAC 키 generator",
+    "tr": "AES / SM4 / HMAC tuşu generator",
+    "az": "AES / SM4 / HMAC açar generator"
+  },
+  "Open AES / SM4 / HMAC key generator directly with ready-to-use defaults": {
+    "en": "Open AES / SM4 / HMAC key generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES / SM4 / HMAC 密钥生成",
+    "zh-TW": "使用預設參數直接開啟AES / SM4 / HMAC 金鑰產生",
+    "es": "Abre directamente AES / SM4 / HMAC key generator con valores preparados",
+    "it": "Apri direttamente AES / SM4 / HMAC key generator con valori pronti",
+    "ja": "AES / SM4 / HMAC key generatorを既定値ですぐに開く",
+    "pt-BR": "Abra AES / SM4 / HMAC key generator diretamente com valores prontos",
+    "ko": "AES / SM4 / HMAC 키 generator 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES / SM4 / HMAC tuşu generator aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES / SM4 / HMAC açar generator hazır parametrlərlə birbaşa açılsın"
+  },
+  "RSA key-pair generator": {
+    "en": "RSA key-pair generator",
+    "zh-CN": "RSA 密钥对生成",
+    "zh-TW": "RSA 金鑰對產生",
+    "es": "RSA key-pair generator",
+    "it": "RSA key-pair generator",
+    "ja": "RSA key-pair generator",
+    "pt-BR": "RSA key-pair generator",
+    "ko": "RSA 키-pair generator",
+    "tr": "RSA tuşu-pair generator",
+    "az": "RSA açar-pair generator"
+  },
+  "Open RSA key-pair generator directly with ready-to-use defaults": {
+    "en": "Open RSA key-pair generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开RSA 密钥对生成",
+    "zh-TW": "使用預設參數直接開啟RSA 金鑰對產生",
+    "es": "Abre directamente RSA key-pair generator con valores preparados",
+    "it": "Apri direttamente RSA key-pair generator con valori pronti",
+    "ja": "RSA key-pair generatorを既定値ですぐに開く",
+    "pt-BR": "Abra RSA key-pair generator diretamente com valores prontos",
+    "ko": "RSA 키-pair generator 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "RSA tuşu-pair generator aracını hazır varsayılanlarla doğrudan açın",
+    "az": "RSA açar-pair generator hazır parametrlərlə birbaşa açılsın"
+  },
+  "SM2 key-pair generator": {
+    "en": "SM2 key-pair generator",
+    "zh-CN": "SM2 国密密钥对生成",
+    "zh-TW": "SM2 國密金鑰對產生",
+    "es": "SM2 key-pair generator",
+    "it": "SM2 key-pair generator",
+    "ja": "SM2 key-pair generator",
+    "pt-BR": "SM2 key-pair generator",
+    "ko": "SM2 키-pair generator",
+    "tr": "SM2 tuşu-pair generator",
+    "az": "SM2 açar-pair generator"
+  },
+  "Open SM2 key-pair generator directly with ready-to-use defaults": {
+    "en": "Open SM2 key-pair generator directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开SM2 国密密钥对生成",
+    "zh-TW": "使用預設參數直接開啟SM2 國密金鑰對產生",
+    "es": "Abre directamente SM2 key-pair generator con valores preparados",
+    "it": "Apri direttamente SM2 key-pair generator con valori pronti",
+    "ja": "SM2 key-pair generatorを既定値ですぐに開く",
+    "pt-BR": "Abra SM2 key-pair generator diretamente com valores prontos",
+    "ko": "SM2 키-pair generator 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "SM2 tuşu-pair generator aracını hazır varsayılanlarla doğrudan açın",
+    "az": "SM2 açar-pair generator hazır parametrlərlə birbaşa açılsın"
   },
   "Key generator": {
     "en": "Key generator",

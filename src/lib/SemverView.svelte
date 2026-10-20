@@ -1,7 +1,7 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import { loadAssetModule } from "./assetModules.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
 
   let { locale = "zh-CN", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -60,7 +60,7 @@
       result = module.analyzeSemver(source, expression, { includePrerelease: prerelease });
     } catch (cause) {
       if (currentRevision !== revision) return;
-      error = String(cause?.message || cause);
+      error = localizeError(locale, cause);
       result = null;
     } finally {
       if (currentRevision === revision) busy = false;

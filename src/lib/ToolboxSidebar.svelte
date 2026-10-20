@@ -11,6 +11,7 @@
   let pointerDrag = $state(null);
   let suppressOpen = $state(false);
   let sidebarEl = $state(null);
+  let reorderAnnouncement = $state("");
   const draggingTool = $derived(pointerDrag ? favorites.find((item) => item.id === pointerDrag.sourceId) : null);
 
   $effect(() => {
@@ -90,10 +91,12 @@
     if (!target) return;
     event.preventDefault();
     onMoveFavorite?.(item.id, target.id, event.key === "ArrowDown");
+    reorderAnnouncement = t(chrome.reorderedItem(pick(locale, item.name)));
   }
 </script>
 
 <aside class="sidebar" class:collapsed bind:this={sidebarEl}>
+  <span class="sr-only" aria-live="polite">{reorderAnnouncement}</span>
   <div class="brand-row">
     {#if !collapsed}<strong>{t(chrome.brand)}</strong>{/if}
     <button class="icon" type="button" onclick={onToggleCollapse} aria-label={collapsed ? t(chrome.expandSidebar) : t(chrome.collapseSidebar)} title={collapsed ? t(chrome.expandSidebar) : t(chrome.collapseSidebar)}>
@@ -210,7 +213,7 @@
   .tool-row:hover { background:var(--color-sidebar-accent,var(--color-muted)); }
   .tool-row.dragging { opacity:.45; cursor:grabbing; }
   .tool-row.drop-target { border-color:var(--color-primary); background:color-mix(in srgb,var(--color-primary) 9%,transparent); }
-  .row-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr); align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:6px; background:var(--color-popover,var(--color-background)); box-shadow:0 10px 26px rgba(0,0,0,.2); }
+  .row-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr); align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:6px; background:var(--color-popover,var(--color-background)); box-shadow:var(--dbx-shadow-md); }
   .row-ghost span { color:var(--color-muted-foreground); text-align:center; }
   .row-ghost strong { overflow:hidden; padding:0 7px; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
   .drag { flex:0 0 24px; width:24px; border:0; background:transparent; color:var(--color-muted-foreground); opacity:.45; }
@@ -226,7 +229,7 @@
   .collapsed .primary span,.collapsed .sidebar-bottom span { display:none; }
   .rail-groups { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 0; }
   .collapsed .sidebar-bottom { display:flex; justify-content:center; padding:7px 0; }
-  .flyout { position:absolute; z-index:40; left:52px; top:148px; width:210px; max-height:320px; overflow:auto; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-popover,var(--color-background)); box-shadow:0 12px 30px rgba(0,0,0,.16); }
+  .flyout { position:absolute; z-index:40; left:52px; top:148px; width:210px; max-height:320px; overflow:auto; padding:8px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-popover,var(--color-background)); box-shadow:var(--dbx-shadow-md); }
   .flyout strong { display:block; padding:4px 7px 7px; font-size:12px; }
   .flyout button { display:block; width:100%; height:30px; padding:0 7px; overflow:hidden; border:0; border-radius:5px; background:transparent; text-align:left; text-overflow:ellipsis; white-space:nowrap; }
   .flyout button:hover { background:var(--color-muted); }

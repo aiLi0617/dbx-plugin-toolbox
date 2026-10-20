@@ -13,7 +13,7 @@ use uuid::Uuid;
 
 use crate::helpers::{bad, err};
 
-const PREFS_VERSION: u32 = 3;
+const PREFS_VERSION: u32 = 4;
 const DEFAULT_VAULT_AUTO_LOCK_MINUTES: u32 = 15;
 static PREFS_LOCK: Mutex<()> = Mutex::new(());
 
@@ -33,6 +33,10 @@ struct PrefsFile {
         default = "default_vault_auto_lock_minutes"
     )]
     vault_auto_lock_minutes: u32,
+    #[serde(rename = "recentToolIds", default)]
+    recent_tool_ids: Vec<String>,
+    #[serde(rename = "sidebarCollapsed", default)]
+    sidebar_collapsed: bool,
 }
 
 fn default_vault_auto_lock_minutes() -> u32 {
@@ -105,12 +109,12 @@ fn prefs_path() -> Result<PathBuf, PluginError> {
     Ok(crate::data_dir::data_dir()?.join("prefs.json"))
 }
 
-fn read_preferences() -> Result<(Vec<String>, u32), PluginError> {
+fn read_preferences() -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
     let path = prefs_path()?;
     read_preferences_at(&path)
 }
 
-fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
+fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
     if !path
         .try_exists()
         .map_err(|error| err(format!("Failed to access prefs: {error}")))?
@@ -122,7 +126,7 @@ fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
         {
             read_preferences_file(&backup)
         } else {
-            Ok((default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES))
+            Ok((default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES, Vec::new(), false))
         };
     }
     match read_preferences_file(path) {
@@ -133,20 +137,22 @@ fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
     }
 }
 
-fn read_preferences_file(path: &Path) -> Result<(Vec<String>, u32), PluginError> {
+fn read_preferences_file(path: &Path) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
     let text =
         fs::read_to_string(path).map_err(|error| err(format!("Failed to read prefs: {error}")))?;
     let parsed: PrefsFile =
         serde_json::from_str(&text).map_err(|error| err(format!("Invalid prefs.json: {error}")))?;
     let auto_lock_minutes = sanitize_vault_auto_lock_minutes(parsed.vault_auto_lock_minutes);
-    Ok((ids_from_file(parsed), auto_lock_minutes))
+    let favorite_tool_ids = ids_from_file(&parsed);
+    let recent_tool_ids = filter_known(parsed.recent_tool_ids).into_iter().take(10).collect();
+    Ok((favorite_tool_ids, auto_lock_minutes, recent_tool_ids, parsed.sidebar_collapsed))
 }
 
-fn ids_from_file(parsed: PrefsFile) -> Vec<String> {
+fn ids_from_file(parsed: &PrefsFile) -> Vec<String> {
     let ids = if parsed.version >= 2 {
-        parsed.favorite_tool_ids
+        parsed.favorite_tool_ids.clone()
     } else {
-        parsed.enabled_tool_ids
+        parsed.enabled_tool_ids.clone()
     };
     filter_known(ids)
 }
@@ -154,9 +160,12 @@ fn ids_from_file(parsed: PrefsFile) -> Vec<String> {
 fn write_preferences(
     ids: Vec<String>,
     vault_auto_lock_minutes: u32,
-) -> Result<(Vec<String>, u32), PluginError> {
+    recent_tool_ids: Vec<String>,
+    sidebar_collapsed: bool,
+) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
     let cleaned = filter_known(ids);
     let auto_lock_minutes = sanitize_vault_auto_lock_minutes(vault_auto_lock_minutes);
+    let recent_tool_ids: Vec<String> = filter_known(recent_tool_ids).into_iter().take(10).collect();
     let path = prefs_path()?;
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)
@@ -167,10 +176,12 @@ fn write_preferences(
         favorite_tool_ids: cleaned.clone(),
         enabled_tool_ids: Vec::new(),
         vault_auto_lock_minutes: auto_lock_minutes,
+        recent_tool_ids: recent_tool_ids.clone(),
+        sidebar_collapsed,
     };
     let text = serde_json::to_string_pretty(&payload).map_err(|error| err(error.to_string()))?;
     persist_preferences(&path, text.as_bytes())?;
-    Ok((cleaned, auto_lock_minutes))
+    Ok((cleaned, auto_lock_minutes, recent_tool_ids, sidebar_collapsed))
 }
 
 fn persist_preferences(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
@@ -242,29 +253,52 @@ fn auto_lock_from_params(params: &Value) -> Result<Option<u32>, PluginError> {
     Ok(Some(value))
 }
 
+fn recent_from_params(params: &Value) -> Result<Option<Vec<String>>, PluginError> {
+    let Some(raw) = params.get("recentToolIds") else { return Ok(None); };
+    let raw = raw.as_array().ok_or_else(|| bad("recentToolIds must be an array"))?;
+    let mut ids = Vec::new();
+    for item in raw.iter().take(10) {
+        let id = item.as_str().ok_or_else(|| bad("recentToolIds must be strings"))?;
+        ids.push(id.to_string());
+    }
+    Ok(Some(filter_known(ids).into_iter().take(10).collect()))
+}
+
+fn sidebar_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
+    let Some(raw) = params.get("sidebarCollapsed") else { return Ok(None); };
+    raw.as_bool().map(Some).ok_or_else(|| bad("sidebarCollapsed must be a boolean"))
+}
+
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     let _guard = PREFS_LOCK
         .lock()
         .map_err(|_| err("Preferences lock is poisoned"))?;
     match method {
         "toolbox/prefs/get" => {
-            let (ids, auto_lock_minutes) = read_preferences()?;
+            let (ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed) = read_preferences()?;
             Ok(json!({
                 "version": PREFS_VERSION,
                 "favoriteToolIds": ids,
                 "vaultAutoLockMinutes": auto_lock_minutes,
+                "recentToolIds": recent_tool_ids,
+                "sidebarCollapsed": sidebar_collapsed,
             }))
         }
         "toolbox/prefs/set" => {
-            let (current_ids, current_auto_lock_minutes) = read_preferences()?;
+            let (current_ids, current_auto_lock_minutes, current_recent, current_sidebar) = read_preferences()?;
             let ids = ids_from_params(&params)?.unwrap_or(current_ids);
             let auto_lock_minutes =
                 auto_lock_from_params(&params)?.unwrap_or(current_auto_lock_minutes);
-            let (ids, auto_lock_minutes) = write_preferences(ids, auto_lock_minutes)?;
+            let recent_tool_ids = recent_from_params(&params)?.unwrap_or(current_recent);
+            let sidebar_collapsed = sidebar_from_params(&params)?.unwrap_or(current_sidebar);
+            let (ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed) =
+                write_preferences(ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed)?;
             Ok(json!({
                 "version": PREFS_VERSION,
                 "favoriteToolIds": ids,
                 "vaultAutoLockMinutes": auto_lock_minutes,
+                "recentToolIds": recent_tool_ids,
+                "sidebarCollapsed": sidebar_collapsed,
             }))
         }
         _ => Err(PluginError::method_not_found(method)),
@@ -283,7 +317,7 @@ mod tests {
         let path = directory.join("prefs.json");
         assert_eq!(
             read_preferences_at(&path).unwrap(),
-            (default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES)
+            (default_ids(), DEFAULT_VAULT_AUTO_LOCK_MINUTES, Vec::new(), false)
         );
         let backup = path.with_extension("json.bak");
         fs::write(
@@ -293,12 +327,12 @@ mod tests {
         .unwrap();
         assert_eq!(
             read_preferences_at(&path).unwrap(),
-            (vec!["hash".to_string()], 30)
+            (vec!["hash".to_string()], 30, Vec::new(), false)
         );
         fs::write(&path, b"broken json").unwrap();
         assert_eq!(
             read_preferences_at(&path).unwrap(),
-            (vec!["hash".to_string()], 30)
+            (vec!["hash".to_string()], 30, Vec::new(), false)
         );
         fs::write(&backup, b"also broken").unwrap();
         assert!(read_preferences_at(&path).is_err());
@@ -411,7 +445,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            ids_from_file(parsed),
+            ids_from_file(&parsed),
             vec![
                 "hash".to_string(),
                 "json".to_string(),
@@ -426,7 +460,7 @@ mod tests {
         let parsed: PrefsFile =
             serde_json::from_str(r#"{"version":2,"favoriteToolIds":[],"enabledToolIds":["hash"]}"#)
                 .unwrap();
-        assert!(ids_from_file(parsed).is_empty());
+        assert!(ids_from_file(&parsed).is_empty());
     }
 
     #[test]

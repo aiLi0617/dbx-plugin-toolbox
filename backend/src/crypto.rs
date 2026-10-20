@@ -54,6 +54,8 @@ type Aes256CbcDec = CbcDecryptor<Aes256>;
 type Aes192Gcm = aes_gcm::AesGcm<Aes192, aes_gcm::aead::consts::U12>;
 type Aes256Ccm = Ccm<Aes256, U16, U13>;
 type Aes256Ctr = ctr::Ctr128BE<Aes256>;
+type Aes128Ctr = ctr::Ctr128BE<Aes128>;
+type Aes192Ctr = ctr::Ctr128BE<Aes192>;
 type Aes128Ofb = ofb::Ofb<Aes128>;
 type Aes192Ofb = ofb::Ofb<Aes192>;
 type Aes256Ofb = ofb::Ofb<Aes256>;
@@ -291,7 +293,7 @@ pub fn crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
         "kdf" => kdf_op(params),
         "signature" => signature_op(vault, params),
         "specialized" => specialized_crypto_op(vault, params),
-        "kem" => kem_op(params),
+        "kem" => kem_op(vault, params),
         "jwt-sign" => jwt_sign(vault, params),
         "jwt-verify" => jwt_verify(vault, params),
         _ => Err(bad("Unknown crypto action")),
@@ -432,13 +434,13 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
             ("aes-256", "cbc") | ("aes", "cbc") if key.len() == 32 => {
                 cbc_encrypt_aes256(&key, plaintext)?
             }
-            ("aes-128" | "aes-192" | "aes-256", "cfb" | "ofb") => {
+            ("aes-128" | "aes-192" | "aes-256", "cfb" | "ofb" | "ctr") => {
                 aes_stream_packed(&key, plaintext, mode, true)?
             }
             ("aes-128", "ecb") if key.len() == 16 => aes_ecb_encrypt(&key, plaintext, 128)?,
             ("aes-192", "ecb") if key.len() == 24 => aes_ecb_encrypt(&key, plaintext, 192)?,
             ("aes-256", "ecb") if key.len() == 32 => aes_ecb_encrypt(&key, plaintext, 256)?,
-            ("sm4-128", _) | ("sm4", _) => sm4_encrypt(&key, plaintext, mode)?,
+            ("sm4-128" | "sm4", "cbc" | "ecb") => sm4_encrypt(&key, plaintext, mode)?,
             _ => return Err(bad("Unsupported algorithm/mode or key length")),
         };
         Ok(json!({ "ok": true, "text": packed }))
@@ -463,7 +465,7 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
             ("aes-256", "cbc") | ("aes", "cbc") if key.len() == 32 => {
                 cbc_decrypt_aes256(&key, packed)?
             }
-            ("aes-128" | "aes-192" | "aes-256", "cfb" | "ofb") => {
+            ("aes-128" | "aes-192" | "aes-256", "cfb" | "ofb" | "ctr") => {
                 let data = decode_base64_limited(packed.trim(), "Ciphertext", MAX_PACKED_CRYPTO_BYTES)?;
                 if data.len() < 16 { return Err(bad("Ciphertext is too short")); }
                 aes_stream_transform(&key, &data[16..], mode, false, &data[..16])?
@@ -471,7 +473,7 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
             ("aes-128", "ecb") if key.len() == 16 => aes_ecb_decrypt(&key, packed, 128)?,
             ("aes-192", "ecb") if key.len() == 24 => aes_ecb_decrypt(&key, packed, 192)?,
             ("aes-256", "ecb") if key.len() == 32 => aes_ecb_decrypt(&key, packed, 256)?,
-            ("sm4-128", _) | ("sm4", _) => sm4_decrypt(&key, packed, mode)?,
+            ("sm4-128" | "sm4", "cbc" | "ecb") => sm4_decrypt(&key, packed, mode)?,
             _ => return Err(bad("Unsupported algorithm/mode or key length")),
         };
         let (text, text_encoding) = match String::from_utf8(plain) {
@@ -484,10 +486,10 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
 
 fn validate_symmetric_key(key: &[u8], algorithm: &str, mode: &str) -> Result<(), PluginError> {
     let valid = match (algorithm, mode) {
-        ("aes-128", "gcm" | "cbc" | "ecb" | "cfb" | "ofb") => key.len() == 16,
-        ("aes-192", "gcm" | "cbc" | "ecb" | "cfb" | "ofb") => key.len() == 24,
-        ("aes-256", "gcm" | "cbc" | "ecb" | "cfb" | "ofb") => key.len() == 32,
-        ("aes", "gcm" | "cbc" | "ecb" | "cfb" | "ofb") => matches!(key.len(), 16 | 24 | 32),
+        ("aes-128", "gcm" | "cbc" | "ecb" | "cfb" | "ofb" | "ctr") => key.len() == 16,
+        ("aes-192", "gcm" | "cbc" | "ecb" | "cfb" | "ofb" | "ctr") => key.len() == 24,
+        ("aes-256", "gcm" | "cbc" | "ecb" | "cfb" | "ofb" | "ctr") => key.len() == 32,
+        ("aes", "gcm" | "cbc" | "ecb" | "cfb" | "ofb" | "ctr") => matches!(key.len(), 16 | 24 | 32),
         ("sm4" | "sm4-128", "cbc" | "ecb") => key.len() == 16,
         _ => false,
     };
@@ -548,7 +550,7 @@ fn symmetric_separate(
     }
     let iv_len = match mode {
         "gcm" => 12,
-        "cbc" | "cfb" | "ofb" => 16,
+        "cbc" | "cfb" | "ofb" | "ctr" => 16,
         _ => 0,
     };
     let raw_iv = opt_str(params, "iv").unwrap_or("");
@@ -652,7 +654,7 @@ fn symmetric_bytes(
         };
         return result.map_err(|_| err("AES-GCM authentication or encryption failed"));
     }
-    if matches!(mode, "cfb" | "ofb") {
+    if matches!(mode, "cfb" | "ofb" | "ctr") {
         return aes_stream_transform(key, data, mode, encrypting, iv);
     }
     let sm4 = algorithm.starts_with("sm4");
@@ -720,6 +722,9 @@ fn aes_stream_transform(key: &[u8], data: &[u8], mode: &str, encrypting: bool, i
         ("ofb", 16, _) => Aes128Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
         ("ofb", 24, _) => Aes192Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
         ("ofb", 32, _) => Aes256Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
+        ("ctr", 16, _) => Aes128Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
+        ("ctr", 24, _) => Aes192Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
+        ("ctr", 32, _) => Aes256Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
         _ => return Err(bad("Unsupported AES stream mode or key length")),
     }
     Ok(output)
@@ -893,13 +898,22 @@ fn specialized_crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginEr
     Err(bad("Unsupported specialized crypto algorithm"))
 }
 
-fn kem_op(params: Value) -> Result<Value, PluginError> {
+fn kem_op(vault: &Vault, mut params: Value) -> Result<Value, PluginError> {
     let algorithm = str_param(&params, "algorithm")?.to_ascii_lowercase();
-    let op = str_param(&params, "op")?;
+    let op = str_param(&params, "op")?.to_string();
+    let stored = opt_str(&params, "keyId").filter(|id| !id.is_empty()).map(|id| vault.material_for(id, if algorithm.starts_with("hpke") { "hpke" } else { "ml-kem" })).transpose()?;
+    if let Some(key) = stored {
+        let expected = if algorithm.starts_with("hpke") { "hpke-x25519" } else { algorithm.as_str() };
+        if key.algorithm != expected {
+            return Err(bad("Stored key type does not match the selected KEM algorithm"));
+        }
+        params["privateKey"] = json!(key.material);
+        params["publicKey"] = json!(key.public_material);
+    }
     match algorithm.as_str() {
-        "hpke-x25519-chacha20" => hpke_x25519_op(op, &params),
-        "ml-kem-768" => ml_kem_op::<hpke::kem::MlKem768>(op, &params),
-        "ml-kem-1024" => ml_kem_op::<hpke::kem::MlKem1024>(op, &params),
+        "hpke-x25519-chacha20" => hpke_x25519_op(&op, &params),
+        "ml-kem-768" => ml_kem_op::<hpke::kem::MlKem768>(&op, &params),
+        "ml-kem-1024" => ml_kem_op::<hpke::kem::MlKem1024>(&op, &params),
         _ => Err(bad("Unsupported KEM algorithm")),
     }
 }
@@ -1583,7 +1597,12 @@ fn resolve_key(
 ) -> Result<Zeroizing<Vec<u8>>, PluginError> {
     if let Some(id) = opt_str(params, "keyId") {
         if !id.is_empty() {
-            let material = &vault.material(id)?.material;
+            let purpose = opt_str(params, "requiredPurpose").unwrap_or("");
+            let stored = vault.material_for(id, purpose)?;
+            if !stored_key_matches_algorithm(&stored.algorithm, algorithm) {
+                return Err(bad("Stored key type does not match the selected algorithm"));
+            }
+            let material = &stored.material;
             ensure_input_size(material, "Key material", MAX_KEY_INPUT_BYTES)?;
             return decode_key_bytes(material).map(Zeroizing::new);
         }
@@ -1615,6 +1634,27 @@ fn resolve_key(
     Ok(Zeroizing::new(bytes))
 }
 
+fn stored_key_matches_algorithm(stored: &str, requested: &str) -> bool {
+    match requested {
+        "aes-128" | "aes-192" | "aes-256" | "sm4-128" => stored == requested,
+        "sm4" => stored == "sm4-128",
+        "aes" | "aes-kw" | "aes-kwp" | "aes-ff1" | "aes-cmac" => {
+            matches!(stored, "aes-128" | "aes-192" | "aes-256")
+        }
+        "aes-128-gmac" => stored == "aes-128",
+        "aes-256-gmac" | "aes-256-gcm-siv" | "aes-256-ccm" => stored == "aes-256",
+        "aes-256-siv" => stored == "aes-siv-512",
+        "aes-xts" => matches!(stored, "aes-xts-256" | "aes-xts-512"),
+        "chacha20-poly1305" | "xchacha20-poly1305" => stored == "chacha20-256",
+        "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" | "sm3" => {
+            stored == "hmac" || stored.starts_with("hmac-")
+        }
+        // XOR is deliberately purpose-gated rather than coupled to a key type.
+        "xor" => true,
+        _ => true,
+    }
+}
+
 fn key_length_matches_algorithm(algorithm: &str, length: usize) -> bool {
     match algorithm {
         "aes-128" | "sm4" | "sm4-128" => length == 16,
@@ -1628,7 +1668,8 @@ fn key_length_matches_algorithm(algorithm: &str, length: usize) -> bool {
 fn resolve_text_key(vault: &Vault, params: &Value) -> Result<Zeroizing<String>, PluginError> {
     if let Some(id) = opt_str(params, "keyId") {
         if !id.is_empty() {
-            let material = &vault.material(id)?.material;
+            let purpose = opt_str(params, "requiredPurpose").unwrap_or("");
+            let material = &vault.material_for(id, purpose)?.material;
             ensure_input_size(material, "Key material", MAX_KEY_INPUT_BYTES)?;
             return Ok(Zeroizing::new(material.clone()));
         }
@@ -1805,20 +1846,25 @@ fn sm4_encrypt(key: &[u8], plaintext: &[u8], mode: &str) -> Result<String, Plugi
     if key.len() != 16 {
         return Err(bad("SM4 key must be 16 bytes"));
     }
-    if mode == "ecb" {
-        use cipher::KeyInit;
-        type Sm4EcbEnc = ecb::Encryptor<sm4::Sm4>;
-        let encryptor = Sm4EcbEnc::new(key.into());
-        let ct = encryptor.encrypt_padded_vec_mut::<Pkcs7>(plaintext);
-        return Ok(B64.encode(ct));
+    match mode {
+        "ecb" => {
+            use cipher::KeyInit;
+            type Sm4EcbEnc = ecb::Encryptor<sm4::Sm4>;
+            let encryptor = Sm4EcbEnc::new(key.into());
+            let ct = encryptor.encrypt_padded_vec_mut::<Pkcs7>(plaintext);
+            Ok(B64.encode(ct))
+        }
+        "cbc" => {
+            let mut iv = [0u8; 16];
+            rand::thread_rng().fill_bytes(&mut iv);
+            let encryptor = Sm4CbcEnc::new(key.into(), &iv.into());
+            let ct = encryptor.encrypt_padded_vec_mut::<Pkcs7>(plaintext);
+            let mut packed = Vec::from(iv);
+            packed.extend_from_slice(&ct);
+            Ok(B64.encode(packed))
+        }
+        _ => Err(bad("Unsupported algorithm/mode or key length")),
     }
-    let mut iv = [0u8; 16];
-    rand::thread_rng().fill_bytes(&mut iv);
-    let encryptor = Sm4CbcEnc::new(key.into(), &iv.into());
-    let ct = encryptor.encrypt_padded_vec_mut::<Pkcs7>(plaintext);
-    let mut packed = Vec::from(iv);
-    packed.extend_from_slice(&ct);
-    Ok(B64.encode(packed))
 }
 
 fn sm4_decrypt(key: &[u8], packed: &str, mode: &str) -> Result<Vec<u8>, PluginError> {
@@ -1826,21 +1872,26 @@ fn sm4_decrypt(key: &[u8], packed: &str, mode: &str) -> Result<Vec<u8>, PluginEr
         return Err(bad("SM4 key must be 16 bytes"));
     }
     let data = decode_base64_limited(packed.trim(), "Ciphertext", MAX_PACKED_CRYPTO_BYTES)?;
-    if mode == "ecb" {
-        use cipher::KeyInit;
-        type Sm4EcbDec = ecb::Decryptor<sm4::Sm4>;
-        let decryptor = Sm4EcbDec::new(key.into());
-        return decryptor
-            .decrypt_padded_vec_mut::<Pkcs7>(&data)
-            .map_err(|_| err("SM4-ECB decrypt failed"));
+    match mode {
+        "ecb" => {
+            use cipher::KeyInit;
+            type Sm4EcbDec = ecb::Decryptor<sm4::Sm4>;
+            let decryptor = Sm4EcbDec::new(key.into());
+            decryptor
+                .decrypt_padded_vec_mut::<Pkcs7>(&data)
+                .map_err(|_| err("SM4-ECB decrypt failed"))
+        }
+        "cbc" => {
+            if data.len() < 32 {
+                return Err(bad("Ciphertext is too short"));
+            }
+            let decryptor = Sm4CbcDec::new(key.into(), data[..16].into());
+            decryptor
+                .decrypt_padded_vec_mut::<Pkcs7>(&data[16..])
+                .map_err(|_| err("SM4-CBC decrypt failed"))
+        }
+        _ => Err(bad("Unsupported algorithm/mode or key length")),
     }
-    if data.len() < 32 {
-        return Err(bad("Ciphertext is too short"));
-    }
-    let decryptor = Sm4CbcDec::new(key.into(), data[..16].into());
-    decryptor
-        .decrypt_padded_vec_mut::<Pkcs7>(&data[16..])
-        .map_err(|_| err("SM4-CBC decrypt failed"))
 }
 
 fn decode_rsa_private(pem: &str) -> Result<RsaPrivateKey, PluginError> {
@@ -2041,6 +2092,20 @@ mod crypto_tests {
     }
 
     #[test]
+    fn sm4_rejects_aes_only_modes_on_every_path() {
+        for mode in ["gcm", "cfb", "ofb"] {
+            let separate = request("sm4-128", mode);
+            assert!(symmetric(&Vault::default(), "encrypt", separate).is_err());
+
+            let mut packed = request("sm4-128", mode);
+            packed["payloadFormat"] = json!("packed");
+            packed["text"] = json!("hello");
+            assert!(symmetric(&Vault::default(), "encrypt", packed).is_err());
+            assert!(sm4_encrypt(&[0; 16], b"hello", mode).is_err());
+        }
+    }
+
+    #[test]
     fn invalid_parameters_return_errors_instead_of_panicking() {
         let mut params = request("aes-128", "gcm");
         params["iv"] = json!("00");
@@ -2206,12 +2271,12 @@ mod crypto_tests {
 
     #[test]
     fn hpke_and_ml_kem_round_trip() {
-        let hpke_keys = kem_op(json!({ "algorithm": "hpke-x25519-chacha20", "op": "generate", "text": "" })).unwrap();
-        let encrypted = kem_op(json!({
+        let hpke_keys = kem_op(&Vault::default(), json!({ "algorithm": "hpke-x25519-chacha20", "op": "generate", "text": "" })).unwrap();
+        let encrypted = kem_op(&Vault::default(), json!({
             "algorithm": "hpke-x25519-chacha20", "op": "encrypt", "text": "hello",
             "publicKey": hpke_keys["publicKey"], "info": "toolbox", "aad": "context"
         })).unwrap();
-        let decrypted = kem_op(json!({
+        let decrypted = kem_op(&Vault::default(), json!({
             "algorithm": "hpke-x25519-chacha20", "op": "decrypt", "text": encrypted["text"],
             "privateKey": hpke_keys["privateKey"], "encapsulatedKey": encrypted["encapsulatedKey"],
             "info": "toolbox", "aad": "context"
@@ -2219,11 +2284,11 @@ mod crypto_tests {
         assert_eq!(decrypted["text"], "hello");
 
         for algorithm in ["ml-kem-768", "ml-kem-1024"] {
-            let keys = kem_op(json!({ "algorithm": algorithm, "op": "generate", "text": "" })).unwrap();
-            let encapsulated = kem_op(json!({
+            let keys = kem_op(&Vault::default(), json!({ "algorithm": algorithm, "op": "generate", "text": "" })).unwrap();
+            let encapsulated = kem_op(&Vault::default(), json!({
                 "algorithm": algorithm, "op": "encapsulate", "text": "", "publicKey": keys["publicKey"]
             })).unwrap();
-            let decapsulated = kem_op(json!({
+            let decapsulated = kem_op(&Vault::default(), json!({
                 "algorithm": algorithm, "op": "decapsulate", "text": "", "privateKey": keys["privateKey"],
                 "encapsulatedKey": encapsulated["encapsulatedKey"]
             })).unwrap();

@@ -40,6 +40,8 @@ function retainKnownExtras(primary, extras) {
 const LOCAL_KEY = "toolbox.favoriteToolIds";
 const LEGACY_LOCAL_KEY = "toolbox.enabledToolIds";
 const VAULT_AUTO_LOCK_KEY = "toolbox.vaultAutoLockMinutes";
+const RECENT_KEY = "toolbox.recentToolIds";
+const SIDEBAR_KEY = "toolbox.sidebarCollapsed";
 export const DEFAULT_VAULT_AUTO_LOCK_MINUTES = 15;
 export const VAULT_AUTO_LOCK_MINUTES = [0, 5, 15, 30, 60];
 
@@ -157,6 +159,72 @@ export async function setVaultAutoLockMinutes(value) {
     if (window.dbxPlugin?.invoke) throw err;
     writeLocalVaultAutoLockMinutes(next);
     return next;
+  }
+}
+
+function readLocalWorkspace(defaultCollapsed = false) {
+  let recentToolIds = [];
+  let sidebarCollapsed = Boolean(defaultCollapsed);
+  try { recentToolIds = sanitize(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]")).slice(0, 10); } catch { /* ignore */ }
+  try {
+    const saved = localStorage.getItem(SIDEBAR_KEY);
+    if (saved != null) sidebarCollapsed = saved === "true";
+  } catch { /* ignore */ }
+  return { recentToolIds, sidebarCollapsed };
+}
+
+function writeLocalWorkspace({ recentToolIds, sidebarCollapsed }) {
+  try {
+    if (recentToolIds) localStorage.setItem(RECENT_KEY, JSON.stringify(recentToolIds));
+    if (typeof sidebarCollapsed === "boolean") localStorage.setItem(SIDEBAR_KEY, String(sidebarCollapsed));
+  } catch { /* sandboxed or unavailable storage */ }
+}
+
+/** Load navigation preferences from the Sidecar, migrating the former browser-only values. */
+export async function getWorkspacePreferences(defaultCollapsed = false) {
+  const local = readLocalWorkspace(defaultCollapsed);
+  try {
+    const result = await invoke("toolbox/prefs/get");
+    const next = {
+      recentToolIds: Array.isArray(result?.recentToolIds)
+        ? sanitize(result.recentToolIds).slice(0, 10)
+        : local.recentToolIds,
+      sidebarCollapsed: typeof result?.sidebarCollapsed === "boolean"
+        ? result.sidebarCollapsed
+        : local.sidebarCollapsed,
+    };
+    writeLocalWorkspace(next);
+    return next;
+  } catch {
+    return local;
+  }
+}
+
+export async function setRecentToolIds(ids) {
+  const recentToolIds = sanitize(ids).slice(0, 10);
+  writeLocalWorkspace({ recentToolIds });
+  try {
+    const result = await invoke("toolbox/prefs/set", { recentToolIds });
+    const saved = Array.isArray(result?.recentToolIds) ? sanitize(result.recentToolIds).slice(0, 10) : recentToolIds;
+    writeLocalWorkspace({ recentToolIds: saved });
+    return saved;
+  } catch (err) {
+    if (window.dbxPlugin?.invoke) throw err;
+    return recentToolIds;
+  }
+}
+
+export async function setSidebarCollapsed(value) {
+  const sidebarCollapsed = Boolean(value);
+  writeLocalWorkspace({ sidebarCollapsed });
+  try {
+    const result = await invoke("toolbox/prefs/set", { sidebarCollapsed });
+    const saved = typeof result?.sidebarCollapsed === "boolean" ? result.sidebarCollapsed : sidebarCollapsed;
+    writeLocalWorkspace({ sidebarCollapsed: saved });
+    return saved;
+  } catch (err) {
+    if (window.dbxPlugin?.invoke) throw err;
+    return sidebarCollapsed;
   }
 }
 

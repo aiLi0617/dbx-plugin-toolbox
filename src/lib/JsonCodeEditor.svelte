@@ -1,8 +1,9 @@
 <script>
-  import { pick } from "./i18n.js";
-  import { indentSelection } from "./editorIndent.js";
-  let tabMovesFocus = false;
-  import { jsonTextFolds, tokenizeJson, visibleTextLines } from "./jsonOps.js";
+  import { onMount } from "svelte";
+  import "codemirror/lib/codemirror.css";
+  import "codemirror/addon/fold/foldgutter.css";
+  import { loadAssetModule } from "./assetModules.js";
+  import { localizeError, pick } from "./i18n.js";
 
   let {
     value = $bindable(""),
@@ -13,329 +14,189 @@
     locale = "zh-CN",
   } = $props();
 
-  let textareaEl = $state(null);
-  let gutterEl = $state(null);
-  let measureEl = $state(null);
-  let highlightEl = $state(null);
-  let lineCollapsed = $state({});
-  let gutterHeights = $state([]);
+  let hostEl = $state(null);
+  let editor = null;
+  let applyingExternalValue = false;
+  let tabMovesFocus = false;
+  let loadError = $state("");
 
-  const folds = $derived(jsonTextFolds(value));
-  const visible = $derived(visibleTextLines(folds.lines, folds.foldable, lineCollapsed));
-  const shownText = $derived(visible.map((line) => line.text).join("\n"));
-  const hasActiveFolds = $derived(visible.some((line) => line.folded));
-  const overlayTokens = $derived(tokenizeJson(hasActiveFolds ? shownText : value));
   const t = (zh, en) => pick(locale, zh, en);
 
-  $effect(() => {
-    const foldable = folds.foldable;
-    const stale = Object.keys(lineCollapsed).filter((k) => lineCollapsed[k] && foldable[k] == null);
-    if (!stale.length) return;
-    const next = { ...lineCollapsed };
-    for (const k of stale) delete next[k];
-    lineCollapsed = next;
-  });
+  onMount(() => {
+    let disposed = false;
+    async function mountEditor() {
+      try {
+        // Vite serves the source module during local development. DBX builds
+        // load the same self-contained module through the resource bridge so
+        // CodeMirror never enters the home-page bundle.
+        const module = import.meta.env.DEV
+          ? await import("./lazy/codemirror.js")
+          : await loadAssetModule("codemirror");
+        if (disposed) return;
+        const CodeMirror = module.default;
+        editor = CodeMirror(hostEl, {
+          value,
+          mode: "application/json",
+          lineNumbers: showLineNumbers,
+          lineWrapping: true,
+          foldGutter: true,
+          gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+          viewportMargin: 10,
+          placeholder,
+          tabSize: 2,
+          indentUnit: 2,
+          indentWithTabs: false,
+          extraKeys: {
+            Tab(cm) {
+              if (tabMovesFocus) {
+                tabMovesFocus = false;
+                return CodeMirror.Pass;
+              }
+              cm.execCommand(cm.somethingSelected() ? "indentMore" : "insertSoftTab");
+            },
+            "Shift-Tab": "indentLess",
+            Esc() {
+              tabMovesFocus = true;
+              return CodeMirror.Pass;
+            },
+          },
+        });
 
-  function measureGutter() {
-    const ta = textareaEl;
-    const box = measureEl;
-    if (!ta || !box) return;
-    const cs = getComputedStyle(ta);
-    const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
-    box.style.width = `${Math.max(40, ta.clientWidth - pad)}px`;
-    const rows = visible.length ? visible.map((line) => line.text) : [""];
-    gutterHeights = rows.map((line) => {
-      box.textContent = line.length ? line : " ";
-      return Math.max(20, box.offsetHeight);
-    });
-  }
+        const input = editor.getInputField();
+        input.setAttribute("aria-label", ariaLabel || t("JSON 文本编辑器", "JSON text editor"));
+        input.setAttribute("title", t("Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点", "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus"));
+        input.setAttribute("spellcheck", "false");
 
-  $effect(() => {
-    shownText;
-    showLineNumbers;
-    queueMicrotask(measureGutter);
-  });
+        editor.on("change", (cm) => {
+          if (applyingExternalValue) return;
+          // Native maxlength silently truncates large pasted logs. Validation is
+          // reported by the workbench without mutating the editor's source text.
+          value = cm.getValue();
+        });
 
-  $effect(() => {
-    const ta = textareaEl;
-    if (!ta || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => measureGutter());
-    ro.observe(ta);
-    return () => ro.disconnect();
-  });
-
-  function syncScroll() {
-    if (gutterEl && textareaEl) gutterEl.scrollTop = textareaEl.scrollTop;
-    if (highlightEl && textareaEl) {
-      highlightEl.scrollTop = textareaEl.scrollTop;
-      highlightEl.scrollLeft = textareaEl.scrollLeft;
+        editor.setSize("100%", "100%");
+        requestAnimationFrame(() => editor?.refresh());
+      } catch (err) {
+        if (!disposed) loadError = localizeError(locale, err);
+      }
     }
-  }
 
-  function onKeydown(event) {
-    if (event.key === "Escape") { tabMovesFocus = true; return; }
-    if (event.key === "Tab" && tabMovesFocus) { tabMovesFocus = false; return; }
-    tabMovesFocus = false;
-    if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
-    event.preventDefault();
-    const ta = event.currentTarget;
-    const next = indentSelection(value, ta.selectionStart, ta.selectionEnd, event.shiftKey);
-    value = next.value;
-    queueMicrotask(() => {
-      ta.setSelectionRange(next.start, next.end);
-    });
-  }
+    mountEditor();
 
-  function expandFolds() {
-    if (!hasActiveFolds) return;
-    lineCollapsed = {};
-    queueMicrotask(() => textareaEl?.focus());
-  }
+    return () => {
+      disposed = true;
+      editor = null;
+    };
+  });
 
-  function onCopy(event) {
-    if (!hasActiveFolds) return;
-    event.preventDefault();
-    event.clipboardData?.setData("text/plain", value);
-  }
+  $effect(() => {
+    const next = value;
+    if (!editor || editor.getValue() === next) return;
+    applyingExternalValue = true;
+    const cursor = editor.getCursor();
+    editor.setValue(next);
+    editor.setCursor(cursor);
+    applyingExternalValue = false;
+  });
 
-  function toggleFold(start, event) {
-    event.preventDefault();
-    event.stopPropagation();
-    lineCollapsed = { ...lineCollapsed, [start]: !lineCollapsed[start] };
-    textareaEl?.blur();
-  }
+  $effect(() => {
+    if (editor) editor.setOption("lineNumbers", showLineNumbers);
+  });
+
+  $effect(() => {
+    if (editor) editor.setOption("placeholder", placeholder);
+  });
+
+  $effect(() => {
+    maxLength;
+    locale;
+    if (!editor) return;
+    const input = editor.getInputField();
+    input.setAttribute("aria-label", ariaLabel || t("JSON 文本编辑器", "JSON text editor"));
+    input.setAttribute("title", t("Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点", "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus"));
+  });
 </script>
 
-<div class="json-code">
-  <div class="json-gutter" class:no-nums={!showLineNumbers} bind:this={gutterEl}>
-    {#each visible as line, i (`${line.start}:${line.folded}`)}
-      <div class="gutter-row" style:height="{(gutterHeights[i] || 20) + "px"}">
-        {#if showLineNumbers}
-          <span class="gutter-no">{line.no}</span>
-        {/if}
-        {#if line.foldable}
-          <button
-            class="fold-arrow"
-            class:closed={line.folded}
-            onclick={(event) => toggleFold(line.start, event)}
-            onmousedown={(event) => event.preventDefault()}
-            type="button"
-            tabindex="-1"
-            title={line.folded ? t("展开", "Expand") : t("折叠", "Collapse")}
-            aria-label={line.folded ? t("展开", "Expand") : t("折叠", "Collapse")}
-          ></button>
-        {:else}
-          <span class="fold-arrow-space"></span>
-        {/if}
-      </div>
-    {/each}
-  </div>
-  <div class="json-edit-stack">
-    <pre class="json-highlight" bind:this={highlightEl} aria-hidden="true">{#each overlayTokens as tok, ti (`${ti}-${tok.type}`)}<span class="tok tok-{tok.type}">{tok.text}</span>{/each}</pre>
-    {#if hasActiveFolds}
-      <textarea
-        class="json-textarea"
-        bind:this={textareaEl}
-        value={shownText}
-        {placeholder}
-        aria-label={ariaLabel || undefined}
-        readonly
-        maxlength={maxLength}
-        spellcheck="false"
-        onscroll={syncScroll}
-        onpointerdown={expandFolds}
-        onfocus={expandFolds}
-        oncopy={onCopy}
-      ></textarea>
-    {:else}
-      <textarea
-        class="json-textarea"
-        bind:this={textareaEl}
-        bind:value
-        maxlength={maxLength}
-        {placeholder}
-        aria-label={ariaLabel || undefined}
-        spellcheck="false"
-        onscroll={syncScroll}
-        onkeydown={onKeydown}
-        title={t("Tab：缩进 · Shift+Tab：减少缩进 · Esc、Tab：移动焦点", "Tab: indent · Shift+Tab: outdent · Esc, Tab: move focus")}
-      ></textarea>
-    {/if}
-  </div>
-  <div class="json-measure" bind:this={measureEl} aria-hidden="true"></div>
+<div class="json-code-editor" bind:this={hostEl}>
+  {#if loadError}<p class="editor-load-error" role="status">{loadError}</p>{/if}
 </div>
 
 <style>
-  .json-code {
-    --json-pad-y: 10px;
-    --json-pad-x: 12px;
-    --json-pad-bottom: var(--json-editor-bottom-space, var(--json-pad-y));
-    position: relative;
-    display: flex;
+  .json-code-editor {
     flex: 1;
+    min-width: 0;
     min-height: 0;
     overflow: hidden;
     border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 14%, transparent)));
     border-radius: var(--radius-md, 8px);
     background: var(--color-card, var(--color-background, Canvas));
+  }
+  .json-code-editor :global(.CodeMirror) {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: var(--color-foreground, CanvasText);
     font-family: var(--font-mono);
     font-size: var(--dbx-editor-font-size, 13px);
     line-height: 20px;
   }
-  .json-gutter {
-    flex: 0 0 auto;
-    min-width: 3.8em;
-    overflow: hidden;
-    padding: var(--json-pad-y) 0 var(--json-pad-bottom);
+  .json-code-editor :global(.CodeMirror-scroll) {
+    padding-bottom: var(--json-editor-bottom-space, 10px);
+  }
+  .json-code-editor :global(.CodeMirror-gutters) {
+    border-right: 0;
     background: color-mix(in srgb, CanvasText 5%, transparent);
+  }
+  .json-code-editor :global(.CodeMirror-linenumber),
+  .json-code-editor :global(.CodeMirror-foldgutter-open),
+  .json-code-editor :global(.CodeMirror-foldgutter-folded) {
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 48%, transparent));
-    user-select: none;
   }
-  .json-gutter.no-nums {
-    min-width: 22px;
+  .json-code-editor :global(.CodeMirror-lines) {
+    padding: 10px 0 var(--json-editor-bottom-space, 10px);
   }
-  .gutter-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    box-sizing: border-box;
-    padding: 0 4px 0 8px;
+  .json-code-editor :global(.CodeMirror pre.CodeMirror-line),
+  .json-code-editor :global(.CodeMirror pre.CodeMirror-line-like) {
+    padding: 0 12px;
   }
-  .gutter-no {
-    min-width: 1.6em;
-    text-align: right;
-  }
-  .fold-arrow,
-  .fold-arrow-space {
-    width: 12px;
-    height: 12px;
-    margin-left: 4px;
-    margin-top: 4px;
-    flex: 0 0 12px;
-  }
-  .fold-arrow {
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm, 4px);
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: inherit;
-    line-height: 0;
-  }
-  .fold-arrow:hover {
-    border-color: var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
-    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 8%, transparent)));
-  }
-  .fold-arrow:focus-visible {
-    outline: none;
-    box-shadow: var(--dbx-focus-ring);
-  }
-  .fold-arrow::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 4px 0 4px 6px;
-    border-color: transparent transparent transparent var(--color-muted-foreground, color-mix(in srgb, CanvasText 55%, transparent));
-    transform-origin: 35% 50%;
-    transform: translate(-35%, -50%) rotate(90deg);
-  }
-  .fold-arrow.closed::before {
-    transform: translate(-35%, -50%) rotate(0deg);
-  }
-  .json-edit-stack {
-    position: relative;
-    flex: 1;
-    min-width: 0;
-    min-height: 0;
-  }
-  .json-highlight,
-  .json-textarea {
-    box-sizing: border-box;
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    border: 0;
-    padding: var(--json-pad-y) var(--json-pad-x) var(--json-pad-bottom);
-    font: inherit;
-    line-height: 20px;
-    tab-size: 2;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-  .json-highlight {
-    overflow: hidden;
-    pointer-events: none;
-    color: inherit;
-  }
-  .json-textarea {
-    z-index: 1;
-    width: auto;
-    height: auto;
-    resize: none;
-    background: transparent;
-    color: transparent;
-    caret-color: var(--color-foreground, CanvasText);
-    overflow: auto;
-  }
-  .json-textarea:focus {
-    outline: none;
-  }
-  .json-textarea::placeholder {
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 45%, transparent));
-  }
-  .json-textarea::selection {
-    color: transparent;
+  .json-code-editor :global(.CodeMirror-selected) {
     background: color-mix(in srgb, var(--color-primary) 28%, transparent);
   }
-  .tok-key,
-  .tok-string {
-    color: #a31515;
-    font-weight: 400;
+  .json-code-editor :global(.CodeMirror-focused .CodeMirror-selected) {
+    background: color-mix(in srgb, var(--color-primary) 32%, transparent);
   }
-  .tok-number {
+  .json-code-editor :global(.CodeMirror-cursor) {
+    border-left-color: var(--color-foreground, CanvasText);
+  }
+  .json-code-editor :global(.cm-property),
+  .json-code-editor :global(.cm-string) {
+    color: #a31515;
+  }
+  .json-code-editor :global(.cm-number) {
     color: #098658;
   }
-  .tok-boolean,
-  .tok-null {
+  .json-code-editor :global(.cm-atom) {
     color: #0000ff;
   }
-  .tok-punct {
-    color: inherit;
-  }
-  :global([data-dbx-theme="dark"]) .tok-key {
+  :global([data-dbx-theme="dark"]) .json-code-editor :global(.cm-property) {
     color: #9cdcfe;
   }
-  :global([data-dbx-theme="dark"]) .tok-string {
+  :global([data-dbx-theme="dark"]) .json-code-editor :global(.cm-string) {
     color: #ce9178;
   }
-  :global([data-dbx-theme="dark"]) .tok-number {
+  :global([data-dbx-theme="dark"]) .json-code-editor :global(.cm-number) {
     color: #b5cea8;
   }
-  :global([data-dbx-theme="dark"]) .tok-boolean,
-  :global([data-dbx-theme="dark"]) .tok-null {
+  :global([data-dbx-theme="dark"]) .json-code-editor :global(.cm-atom) {
     color: #569cd6;
   }
-  .json-measure {
-    position: absolute;
-    left: 0;
-    top: 0;
-    visibility: hidden;
-    pointer-events: none;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    font: inherit;
-    line-height: 20px;
-    padding: 0;
+  .json-code-editor :global(.CodeMirror-placeholder) {
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 45%, transparent));
+  }
+  .editor-load-error {
     margin: 0;
+    padding: 12px;
+    color: var(--color-destructive);
+    font-size: 12px;
   }
 </style>

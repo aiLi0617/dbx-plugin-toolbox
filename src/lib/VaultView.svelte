@@ -4,6 +4,8 @@
   import Select from "./Select.svelte";
   import { invoke, ready } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
+  import { normalizeVaultKey } from "./keySource.js";
+  import { supportLabel } from "./cryptoCapabilities.js";
   import { moveId } from "./navigation.js";
   import { VAULT_AUTO_LOCK_MINUTES } from "./prefs.js";
   import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem, generateSymmetricKeyMaterial } from "./tools/generate.js";
@@ -33,6 +35,8 @@
   let createBits = $state("2048");
   let createFormat = $state("pkcs8");
   let createMaterial = $state("");
+  let createPublicMaterial = $state("");
+  let purposeEdit = $state(null);
   let reveal = $state(null);
   let pendingDelete = $state(null);
   let renameId = $state("");
@@ -51,7 +55,7 @@
     const query = listQuery.trim().toLowerCase();
     if (!query) return keys;
     return keys.filter((key) => {
-      const hay = `${key.name} ${key.algorithm} ${key.fingerprint || ""}`.toLowerCase();
+      const hay = `${key.name} ${key.algorithm} ${key.displayType || ""} ${(key.effectivePurposes || []).join(" ")} ${key.supportLevel || ""} ${key.fingerprint || ""}`.toLowerCase();
       return hay.includes(query);
     });
   })());
@@ -100,11 +104,14 @@
     newPassword = "";
     confirmNewPassword = "";
     createMaterial = "";
+    createPublicMaterial = "";
+    purposeEdit = null;
   }
 
   function closeDialogs() {
     reveal = null;
     pendingDelete = null;
+    purposeEdit = null;
   }
 
   function formatCreated(value) {
@@ -127,20 +134,21 @@
     });
   }
 
-  function usesFor(algorithm) {
-    if (algorithm === "aes-256" || algorithm === "aes-192" || algorithm === "aes-128" || algorithm === "sm4-128") {
-      return t("对称加密 · XOR", "Symmetric · XOR");
-    }
-    if (algorithm === "hmac-sm3") {
-      return t("HMAC · XOR", "HMAC · XOR");
-    }
-    if (String(algorithm || "").startsWith("hmac")) {
-      return t("HMAC · JWT · XOR", "HMAC · JWT · XOR");
-    }
-    if (algorithm === "rsa-pem" || algorithm === "sm2") {
-      return t("非对称加密", "Asymmetric cipher");
-    }
-    return t("加解密工具", "Cipher tools");
+  const PURPOSE_LABELS = {
+    "aes-cipher": ["AES 通用加密", "AES cipher"], "sm4-cipher": ["SM4 国密加密", "SM4 cipher"],
+    "aes-aead": ["AES 认证加密", "AES authenticated encryption"], "chacha-aead": ["ChaCha 认证加密", "ChaCha authenticated encryption"],
+    "rsa-encrypt": ["RSA 加密", "RSA encryption"], "sm2-encrypt": ["SM2 加密", "SM2 encryption"],
+    "rsa-sign": ["RSA 签名", "RSA signatures"], "sm2-sign": ["SM2 签名", "SM2 signatures"],
+    hmac: ["HMAC", "HMAC"], "jwt-hmac": ["JWT-HMAC", "JWT-HMAC"], "jwt-rsa": ["JWT-RSA", "JWT-RSA"],
+    "aes-mac": ["AES-MAC", "AES-MAC"], "aes-key-wrap": ["AES 密钥包装", "AES key wrap"],
+    "aes-xts": ["AES-XTS", "AES-XTS"], "aes-ff1": ["AES-FF1", "AES-FF1"], hpke: ["HPKE", "HPKE"],
+    "ml-kem": ["ML-KEM", "ML-KEM"], totp: ["TOTP", "TOTP"], "debug-xor": ["XOR 调试", "XOR debug"],
+  };
+  const purposeLabel = (purpose) => PURPOSE_LABELS[purpose] ? t(...PURPOSE_LABELS[purpose]) : purpose;
+  function usesFor(key) {
+    const labels = (key.effectivePurposes || []).map(purposeLabel);
+    if (key.legacyPurposeState === "pending") labels.unshift(t("历史兼容 · 待确认", "Legacy · confirmation needed"));
+    return labels.length > 2 ? `${labels.slice(0, 2).join(" · ")} +${labels.length - 2}` : labels.join(" · ") || "—";
   }
 
   function algHint(algorithm) {
@@ -182,7 +190,7 @@
     status = await invoke("toolbox/keys/status");
     if (status.unlocked) {
       const listed = await invoke("toolbox/keys/list");
-      keys = listed.keys || [];
+      keys = (listed.keys || []).map(normalizeVaultKey);
     } else {
       keys = [];
     }
@@ -264,7 +272,7 @@
         const pair = await generateRsaKeyPairPem(createBits, createFormat);
         material = pair.privateKey;
         generate = false;
-      } else if (!pasteExisting && createAlg !== "sm2") {
+      } else if (!pasteExisting && ["aes-128", "aes-192", "aes-256", "sm4-128", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sm3"].includes(createAlg)) {
         // AES / SM4 / HMAC: CSPRNG on the frontend; backend only validates + stores.
         material = generateSymmetricKeyMaterial(createAlg).material;
         generate = false;
@@ -274,11 +282,13 @@
         algorithm: createAlg,
         generate,
         material,
+        publicMaterial: createPublicMaterial,
         bits: createAlg === "rsa-pem" ? Number(createBits) : undefined,
         format: createAlg === "rsa-pem" ? createFormat : undefined,
       }, 30000);
       createName = "";
       createMaterial = "";
+      createPublicMaterial = "";
       createMode = "generate";
       ok(t("密钥已保存", "Key saved"));
       await refresh();
@@ -502,12 +512,34 @@
     });
   }
 
+  function editPurposes(key) {
+    purposeEdit = { key, selected: [...(key.allowedPurposes ?? key.effectivePurposes ?? [])] };
+  }
+
+  function togglePurpose(purpose) {
+    const selected = purposeEdit.selected.includes(purpose)
+      ? purposeEdit.selected.filter((item) => item !== purpose)
+      : [...purposeEdit.selected, purpose];
+    purposeEdit = { ...purposeEdit, selected };
+  }
+
+  async function savePurposes() {
+    const current = purposeEdit;
+    if (!current) return;
+    await run(async () => {
+      await invoke("toolbox/keys/update-purposes", { id: current.key.id, allowedPurposes: current.selected });
+      purposeEdit = null;
+      ok(t("用途已更新", "Purposes updated"));
+      await refresh();
+    });
+  }
+
   function onOverlayClick(event) {
     if (event.target === event.currentTarget) closeDialogs();
   }
 
   $effect(() => {
-    if (!reveal && !pendingDelete) return;
+    if (!reveal && !pendingDelete && !purposeEdit) return;
     function onKey(event) {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -612,7 +644,7 @@
           <input
             class="dbx-input"
             bind:value={listQuery}
-            placeholder={t("按名称、算法或指纹筛选", "Filter by name, algorithm, or fingerprint")}
+            placeholder={t("按名称、算法、用途、状态或指纹筛选", "Filter by name, algorithm, purpose, status, or fingerprint")}
             aria-label={t("筛选密钥", "Filter keys")}
           />
         </label>
@@ -635,8 +667,10 @@
               <tr>
                 <th class="drag-col" aria-hidden="true"></th>
                 <th>{t("名称", "Name")}</th>
-                <th>{t("算法", "Algorithm")}</th>
+                <th>{t("密钥类型", "Key type")}</th>
+                <th>{t("大小 / 格式", "Size / format")}</th>
                 <th>{t("用途", "Used by")}</th>
+                <th>{t("支持状态", "Support")}</th>
                 <th>{t("指纹", "Fingerprint")}</th>
                 <th>{t("创建时间", "Created")}</th>
                 <th></th>
@@ -681,8 +715,10 @@
                       {key.name}
                     {/if}
                   </td>
-                  <td>{key.algorithm}</td>
-                  <td class="uses">{usesFor(key.algorithm)}</td>
+                  <td>{key.displayType || key.algorithm}</td>
+                  <td>{key.bits ? `${key.bits} bit · ${key.format}` : key.format || "—"}</td>
+                  <td class="uses" title={(key.effectivePurposes || []).map(purposeLabel).join(" · ")}>{usesFor(key)}</td>
+                  <td>{key.legacyPurposeState === "pending" ? t("历史兼容 · 待确认", "Legacy · pending") : supportLabel(key.supportLevel, locale)}</td>
                   <td class="mono" title={key.fingerprint}>{key.fingerprint}</td>
                   <td class="muted">{formatCreated(key.createdAt)}</td>
                   <td class="actions">
@@ -696,6 +732,7 @@
                         <button class="dbx-btn" disabled={busy} onclick={() => showPublic(key)} type="button">{t("公钥", "Public")}</button>
                       {/if}
                       <button class="dbx-btn" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
+                      <button class="dbx-btn" disabled={busy} onclick={() => editPurposes(key)} type="button">{t("用途", "Purposes")}</button>
                       <button class="dbx-btn" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
                       <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
                     {/if}
@@ -724,11 +761,16 @@
             <span>{t("算法", "Algorithm")}</span>
             <Select
               bind:value={createAlg}
+              onchange={(value) => { if (["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(value)) createMode = "paste"; }}
               options={[
                 { value: "aes-256", label: "AES-256", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "aes-192", label: "AES-192", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "aes-128", label: "AES-128", group: t("对称加密 / XOR", "Symmetric / XOR") },
                 { value: "sm4-128", label: "SM4", group: t("对称加密 / XOR", "Symmetric / XOR") },
+                { value: "chacha20-256", label: "ChaCha20-256", group: t("认证加密", "Authenticated encryption") },
+                { value: "aes-siv-512", label: "AES-SIV-512", group: t("认证加密", "Authenticated encryption") },
+                { value: "aes-xts-256", label: "AES-XTS-256", group: t("专用加密", "Specialized encryption") },
+                { value: "aes-xts-512", label: "AES-XTS-512", group: t("专用加密", "Specialized encryption") },
                 { value: "hmac-sha1", label: "SHA-1", group: t("HMAC / JWT", "HMAC / JWT") },
                 { value: "hmac-sha256", label: "SHA-256", group: t("HMAC / JWT", "HMAC / JWT") },
                 { value: "hmac-sha384", label: "SHA-384", group: t("HMAC / JWT", "HMAC / JWT") },
@@ -736,6 +778,10 @@
                 { value: "hmac-sm3", label: "SM3", group: t("HMAC / JWT", "HMAC / JWT") },
                 { value: "rsa-pem", label: "RSA", group: t("非对称加密", "Asymmetric cipher") },
                 { value: "sm2", label: "SM2", group: t("非对称加密", "Asymmetric cipher") },
+                { value: "hpke-x25519", label: "HPKE-X25519", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
+                { value: "ml-kem-768", label: "ML-KEM-768", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
+                { value: "ml-kem-1024", label: "ML-KEM-1024", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
+                { value: "totp-base32", label: "TOTP Base32 Secret", group: "TOTP" },
               ]}
             />
           </label>
@@ -754,7 +800,12 @@
               <span>{t("位数", "Bits")}</span>
               <Select
                 bind:value={createBits}
-                options={RSA_BIT_OPTIONS.map((value) => ({ value, label: t(`${value} 位`, `${value}-bit`) }))}
+                options={RSA_BIT_OPTIONS.map((value) => ({
+                  value,
+                  label: value === "8192"
+                    ? t("8192 位 · 高级选项 · 生成较慢", "8192-bit · Advanced · Slower")
+                    : t(`${value} 位`, `${value}-bit`),
+                }))}
               />
             </label>
             <label class="field">
@@ -786,6 +837,9 @@
             </span>
             <textarea class="dbx-textarea pem" bind:value={createMaterial} spellcheck="false" autocomplete="off" placeholder={createAlg === "rsa-pem" ? "-----BEGIN ... KEY-----" : ""}></textarea>
           </label>
+          {#if ["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(createAlg)}
+            <label class="field material"><span>{t("公钥材料（Base64）", "Public key material (Base64)")}</span><textarea class="dbx-textarea pem" bind:value={createPublicMaterial} spellcheck="false"></textarea></label>
+          {/if}
         {/if}
         <p class="lead">{algHint(createAlg)}</p>
       </div>
@@ -812,7 +866,7 @@
     {/if}
   {/if}
 
-  {#if reveal || pendingDelete}
+  {#if reveal || pendingDelete || purposeEdit}
     <div class="overlay" onclick={onOverlayClick} role="presentation">
       {#if reveal}
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="vault-reveal-title">
@@ -863,6 +917,17 @@
               </label>
             {/if}
           {/if}
+        </div>
+      {:else if purposeEdit}
+        <div class="dialog" role="dialog" aria-modal="true">
+          <strong>{t(`用途 · ${purposeEdit.key.name}`, `Purposes · ${purposeEdit.key.name}`)}</strong>
+          <p>{t("只能在自动推导的能力范围内限制用途；XOR 调试默认不启用。", "Restrict purposes only within derived capabilities; XOR debug is disabled by default.")}</p>
+          <div class="purpose-list">
+            {#each purposeEdit.key.capabilities || [] as purpose}
+              <label><input type="checkbox" checked={purposeEdit.selected.includes(purpose)} onchange={() => togglePurpose(purpose)} /> {purposeLabel(purpose)}</label>
+            {/each}
+          </div>
+          <div class="inline"><button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={savePurposes}>{t("保存", "Save")}</button><button class="dbx-btn" onclick={() => (purposeEdit = null)}>{t("取消", "Cancel")}</button></div>
         </div>
       {:else if pendingDelete}
         <div class="dialog danger" role="dialog" aria-modal="true" aria-labelledby="vault-delete-title">
@@ -952,6 +1017,7 @@
     align-items: stretch;
     width: 100%;
   }
+  .purpose-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.purpose-list label{font-size:12px}
   .options, .inline, .status, .export-head, .actions {
     display: flex;
     flex-wrap: wrap;

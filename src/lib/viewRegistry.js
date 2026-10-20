@@ -118,6 +118,7 @@ const LIVE_IDS = new Set(["base64", "url", "html-entities", "sql-escape", "punyc
 const FILE_IDS = new Set(["hash", "file-type", "cert", "image-ocr"]);
 const GENERATOR_IDS = new Set(["uuid", "password", "random-bytes", "qrcode", "lorem", "fake-data", "chart", "key-generator"]);
 const EXPLICIT_IDS = new Set(["hash", "file-type", "cert", "image-process", "image-compress", "image-grid", "image-pixelate", "image-base64", "image-stitch", "gif-tools", "image-ocr", "aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem", "hmac-sha256", "password", "random-bytes", "key-generator", "windows-port"]);
+const DEBOUNCED_CRYPTO_IDS = new Set(["kdf", "argon2id-kdf", "scrypt-kdf", "pbkdf2-kdf", "hkdf", "key-wrap", "storage-crypto", "format-preserving", "aes-cmac"]);
 function layoutKind(tool) {
   if (LIVE_IDS.has(tool.id)) return "live-io";
   if (CALCULATOR_IDS.has(tool.id)) return "calculator";
@@ -138,13 +139,17 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   kind: tool.kind || "tool",
   parentId: tool.parentId || null,
   defaultOptions: Object.freeze({ ...(tool.defaultOptions || {}) }),
+  catalogVisible: tool.catalogVisible !== false,
+  capabilityId: tool.capabilityId || null,
+  supportLevel: tool.supportLevel || null,
+  lockOptions: Object.freeze([...(tool.lockOptions || [])]),
   demoPreset: tool.demoPreset,
   actions: Object.freeze([...(tool.actions || [])]),
-  ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id),
+  ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id) || EPHEMERAL_TOOL_IDS.has(tool.parentId),
   fill: FILL_VIEWS.has(tool.view),
   limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || null,
   layoutKind: layoutKind(tool),
-  executionKind: EXPLICIT_IDS.has(tool.id) ? "explicit" : LIVE_IDS.has(tool.id) ? "live" : "debounced",
+  executionKind: DEBOUNCED_CRYPTO_IDS.has(tool.id) || DEBOUNCED_CRYPTO_IDS.has(tool.parentId) ? "debounced" : EXPLICIT_IDS.has(tool.id) || EXPLICIT_IDS.has(tool.parentId) ? "explicit" : LIVE_IDS.has(tool.id) ? "live" : "debounced",
 })));
 
 export const TOOL_IDS = Object.freeze(TOOL_REGISTRY.map((tool) => tool.id));
@@ -166,8 +171,11 @@ export function viewPropsForTool(tool, context = {}) {
     focusedOperation: initialOptions.op || "",
     shortcut: Boolean(context.shortcut),
     shortcutId: tool.id,
+    capabilityId: tool.capabilityId || null,
+    lockOptions: tool.lockOptions || [],
     demo: context.demo,
     demoRequest: Number(context.demoRequest || 0),
     onVaultChange: context.onVaultChange,
+    onSupportLevelChange: context.onSupportLevelChange,
   };
 }

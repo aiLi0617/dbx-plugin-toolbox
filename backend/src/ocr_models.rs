@@ -211,11 +211,12 @@ impl OcrModelManager {
             .state
             .lock()
             .map_err(|_| internal("OCR model download lock is poisoned"))?;
-        let active = state
-            .active
-            .as_ref()
-            .filter(|active| active.session_id == request.session_id)
-            .ok_or_else(|| bad("OCR model download session was not found"))?;
+        let Some(active) = state.active.as_ref() else {
+            return Ok(json!({ "cancelled": false, "alreadyFinished": true }));
+        };
+        if active.session_id != request.session_id {
+            return Ok(json!({ "cancelled": false, "stale": true }));
+        }
         active.cancelled.store(true, Ordering::Relaxed);
         Ok(json!({ "cancelled": true }))
     }
@@ -628,14 +629,26 @@ mod tests {
             tier: ModelTier::Base,
             cancelled: cancelled.clone(),
         });
-        assert!(manager
+        let stale = manager
             .cancel(json!({ "sessionId": "other-session" }))
-            .is_err());
+            .unwrap();
+        assert_eq!(stale["cancelled"], false);
+        assert_eq!(stale["stale"], true);
+        assert!(!cancelled.load(Ordering::Relaxed));
         manager
             .clone()
             .cancel(json!({ "sessionId": "active-session" }))
             .unwrap();
         assert!(cancelled.load(Ordering::Relaxed));
+    }
+
+    #[test]
+    fn cancelling_an_already_finished_download_is_idempotent() {
+        let result = OcrModelManager::default()
+            .cancel(json!({ "sessionId": "finished-session" }))
+            .unwrap();
+        assert_eq!(result["cancelled"], false);
+        assert_eq!(result["alreadyFinished"], true);
     }
 
     #[test]
