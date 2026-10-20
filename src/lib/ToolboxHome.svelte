@@ -277,7 +277,7 @@
   h2,h3,p { margin:0; } h2 { font-size:20px; line-height:1.3; text-wrap:balance; } h3 { font-size:14px; } .hero p,.section-head p { margin-top:7px; color:var(--color-muted-foreground); font-size:12px; line-height:1.55; }
   .home-search { position:relative; min-width:0; }
   .home-search-box { display:flex; align-items:center; gap:9px; height:42px; padding:0 12px; border:1px solid var(--color-input); border-radius:8px; background:var(--color-background); color:var(--color-muted-foreground); }
-  .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:var(--dbx-focus-ring); }
+  .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:none; }
   .home-search-box input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--color-foreground); font:inherit; }
   .home-search-box input:focus, .home-search-box input:focus-visible { outline:none; box-shadow:none; }
   .home-search-box input::placeholder { color:var(--color-muted-foreground); }
@@ -285,7 +285,7 @@
   .home-search-box kbd { flex:0 0 auto; padding:2px 6px; border:1px solid var(--color-border); border-radius:4px; font-size:10px; }
   .search-clear { display:inline-flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; padding:0; border:0; border-radius:5px; background:transparent; color:var(--color-muted-foreground); font-size:18px; line-height:1; }
   .search-clear:hover { background:var(--color-muted); color:var(--color-foreground); }
-  .home-search-results { position:absolute; z-index:50; top:48px; right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:var(--dbx-shadow-md); }
+  .home-search-results { position:absolute; z-index:50; top:48px; right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:none; }
   .search-result-label { padding:4px 8px 6px; color:var(--color-muted-foreground); font-size:10px; font-weight:600; }
   .home-search-results button { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:48px; padding:7px 9px; border:0; border-radius:7px; background:transparent; text-align:left; }
   .home-search-results button.selected { background:var(--color-accent,var(--color-muted)); }
