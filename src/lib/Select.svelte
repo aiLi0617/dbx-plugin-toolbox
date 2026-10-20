@@ -345,7 +345,7 @@
   .trigger.keyboard-focus {
     border-color: var(--color-ring, var(--color-primary));
     outline: 1px solid var(--color-ring, var(--color-primary));
-    outline-offset: -2px;
+    outline-offset: -1px;
     box-shadow: none;
   }
   .trigger:disabled {
@@ -380,8 +380,8 @@
     border-radius: var(--radius-md, 8px);
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
     color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
-    /* Shadows remain dark in both color schemes; CanvasText becomes white. */
-    box-shadow: var(--dbx-shadow-sm);
+    /* The theme border separates the menu without an outer halo in either theme. */
+    box-shadow: none;
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .group {

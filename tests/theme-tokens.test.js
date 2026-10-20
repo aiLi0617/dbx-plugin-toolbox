@@ -65,10 +65,22 @@ test("shared popover elevation stays dark instead of becoming a light-theme fore
     assert.match(value, /rgb\(0 0 0 \/ 0\.\d+\)/, size);
     assert.doesNotMatch(value, /foreground|CanvasText|currentColor/, size);
   }
-  for (const [file, token] of [["ToolboxHome.svelte", "md"], ["Select.svelte", "sm"], ["ToolLauncher.svelte", "lg"]]) {
-    const source = fs.readFileSync(new URL(`../src/lib/${file}`, import.meta.url), "utf8");
-    assert.match(source, new RegExp(`box-shadow:\\s*var\\(--dbx-shadow-${token}\\)`), file);
+});
+
+test("search and select panels have no outer shadow in either theme", () => {
+  for (const [file, selector] of [["ToolboxHome.svelte", ".home-search-results"], ["Select.svelte", ".menu"], ["ToolLauncher.svelte", ".launcher-dialog"]]) {
+    const source = fs.readFileSync(new URL(`../src/lib/${file}`, import.meta.url), "utf8").split("<style>")[1];
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rule = source.match(new RegExp(`${escaped}\\s*\\{([^}]+)\\}`))?.[1];
+    assert.ok(rule, `${file}: ${selector}`);
+    assert.match(rule, /box-shadow:\s*none\b/, file);
+    assert.match(rule, /border:\s*1px solid var\(--color-border/, file);
+    assert.doesNotMatch(rule, /drop-shadow|brightness|--dbx-shadow/, file);
   }
+  const home = fs.readFileSync(new URL("../src/lib/ToolboxHome.svelte", import.meta.url), "utf8");
+  assert.match(home, /\.home-search-box:has\(input:focus-visible\)\s*\{[^}]*border-color:var\(--color-ring[^}]*box-shadow:none;/);
+  const launcher = fs.readFileSync(new URL("../src/lib/ToolLauncher.svelte", import.meta.url), "utf8");
+  assert.match(launcher, /\.backdrop\{[^}]*backdrop-filter:none/);
 });
 
 test("persistent selection aliases follow the injected DBX primary pair", () => {
@@ -126,7 +138,7 @@ test("custom select only shows focus chrome for keyboard focus", () => {
   assert.match(source, /onmousedown=\{\(event\)\s*=>\s*\{\s*keyboardFocus\s*=\s*false;/s);
   assert.doesNotMatch(source, /\.trigger:focus-visible/);
   assert.doesNotMatch(source, /\.open \.trigger\s*\{/);
-  assert.match(source, /box-shadow:\s*var\(--dbx-shadow-sm\)/);
+  assert.match(source, /\.menu\s*\{[^}]*box-shadow:\s*none;/s);
   assert.doesNotMatch(source, /box-shadow:[^;]*CanvasText/);
   assert.match(source, /aria-disabled=\{row\.disabled \? "true" : undefined\}/);
   assert.match(source, /class="disabled-mark"/);
@@ -144,8 +156,8 @@ test("overlay and elevation chrome use semantic plugin tokens", () => {
   assert.match(css, /--dbx-shadow-md:/);
   assert.match(css, /--dbx-shadow-lg:/);
   assert.match(launcher, /background:var\(--dbx-overlay\)/);
-  assert.match(launcher, /box-shadow:var\(--dbx-shadow-lg\)/);
-  assert.match(select, /box-shadow:\s*var\(--dbx-shadow-sm\)/);
+  assert.match(launcher, /\.launcher-dialog\{[^}]*box-shadow:none/);
+  assert.match(select, /\.menu\s*\{[^}]*box-shadow:\s*none;/s);
 });
 
 test("launcher input suppresses host focus halos and keeps an in-bounds focus marker", () => {
@@ -153,7 +165,7 @@ test("launcher input suppresses host focus halos and keeps an in-bounds focus ma
   assert.match(source, /\.search-row input:focus,[\s\S]*?\.search-row input:focus-visible\s*\{[^}]*outline:none;[^}]*box-shadow:none;/);
   assert.match(source, /\.search-row:has\(input:focus-visible\)\s*\{[^}]*border-bottom-color:var\(--color-ring/);
   const select = fs.readFileSync(new URL("../src/lib/Select.svelte", import.meta.url), "utf8");
-  assert.match(select, /\.trigger\.keyboard-focus\s*\{[^}]*outline-offset:\s*-2px;/s);
+  assert.match(select, /\.trigger\.keyboard-focus\s*\{[^}]*outline-offset:\s*-1px;/s);
 });
 
 test("selection and drag feedback use in-bounds borders instead of glowing halos", () => {
