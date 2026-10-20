@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { indentSelection } from "../src/lib/editorIndent.js";
+import { createSidebarState } from "../src/lib/sidebarState.js";
 import { tools, searchTools } from "../src/lib/catalog.js";
 import { toolOptionsForQuery, EPHEMERAL_TOOL_IDS, navigationTargetFromContext, resolveIntent } from "../src/lib/navigation.js";
 
@@ -9,13 +10,46 @@ test("narrow sidebar state stays in sync with saved preferences and viewport cha
   const app = readFileSync(new URL("../src/App.svelte", import.meta.url), "utf8");
   const css = readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
   assert.match(app, /window\.matchMedia\("\(max-width: 959px\)"\)/);
-  assert.match(app, /sidebarCollapsed = workspacePrefs\.sidebarCollapsed \|\| compactSidebar\.matches/);
-  assert.match(app, /if \(compactSidebar\.matches\) sidebarCollapsed = true/);
+  assert.match(app, /sidebarState\.restore\(workspacePrefs\.sidebarCollapsed\)/);
+  assert.match(app, /sidebarState\.resize\(compactSidebar\.matches\)/);
+  assert.match(app, /sidebarState\.select\(next\)/);
+  assert.match(app, /getWorkspacePreferences\(false\)/);
   assert.match(app, /compactSidebar\.addEventListener\("change", onSidebarResize\)/);
   assert.match(app, /compactSidebar\.removeEventListener\("change", onSidebarResize\)/);
   const compact = css.match(/@media \(max-width: 959px\) \{([\s\S]*?)\n\}/)?.[1];
   assert.ok(compact);
   assert.doesNotMatch(compact, /\.sidebar|grid-template-columns:\s*52px/);
+});
+
+test("automatic sidebar collapse reverses when the viewport becomes wide", () => {
+  const state = createSidebarState();
+  assert.equal(state.resize(true), true);
+  assert.equal(state.restore(false), true);
+  assert.equal(state.resize(false), false);
+  assert.equal(state.resize(true), true);
+  assert.equal(state.resize(false), false);
+});
+
+test("manual sidebar collapse survives viewport changes and saved preferences", () => {
+  const state = createSidebarState();
+  assert.equal(state.restore(true), true);
+  assert.equal(state.resize(true), true);
+  assert.equal(state.resize(false), true);
+  assert.equal(state.select(false), false);
+  assert.equal(state.resize(true), true);
+  assert.equal(state.resize(false), false);
+  assert.equal(state.select(true), true);
+  assert.equal(state.resize(false), true);
+});
+
+test("late preference loading cannot override a manual sidebar action", () => {
+  const state = createSidebarState();
+  state.resize(true);
+  assert.equal(state.select(false), false);
+  assert.equal(state.restore(true), false);
+  assert.equal(state.resize(false), false);
+  state.select(true);
+  assert.equal(state.restore(false), true);
 });
 
 test("merged tool searches open the requested operation", () => {

@@ -15,6 +15,7 @@
     setVaultAutoLockMinutes,
   } from "./lib/prefs.js";
   import { moveToolId, navigationTargetFromContext, pushRecent, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
+  import { createSidebarState } from "./lib/sidebarState.js";
   import { EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
   import { loadVaultKeys } from "./lib/keySource.js";
   import ToolboxSidebar from "./lib/ToolboxSidebar.svelte";
@@ -40,6 +41,7 @@
   let catalogCategory = $state("all");
   let launcherOpen = $state(false);
   let sidebarCollapsed = $state(false);
+  const sidebarState = createSidebarState();
   let mobileSidebarOpen = $state(false);
   let savingPrefs = $state(false);
   let prefsError = $state("");
@@ -83,8 +85,8 @@
     let offInit;
     let offContext;
     const compactSidebar = window.matchMedia("(max-width: 959px)");
-    const onSidebarResize = () => { if (compactSidebar.matches) sidebarCollapsed = true; };
-    sidebarCollapsed = compactSidebar.matches;
+    const onSidebarResize = () => { sidebarCollapsed = sidebarState.resize(compactSidebar.matches); };
+    onSidebarResize();
     compactSidebar.addEventListener("change", onSidebarResize);
     const onEnv = (environment) => {
       locale = hostLocale(environment);
@@ -113,13 +115,13 @@
       const [savedFavorites, savedAutoLock, workspacePrefs] = await Promise.all([
         getFavoriteToolIds(),
         getVaultAutoLockMinutes(),
-        getWorkspacePreferences(window.innerWidth < 960),
+        getWorkspacePreferences(false),
       ]);
       if (disposed) return;
       favoriteIds = savedFavorites;
       vaultAutoLockMinutes = savedAutoLock;
       recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, 10);
-      sidebarCollapsed = workspacePrefs.sidebarCollapsed || compactSidebar.matches;
+      sidebarCollapsed = sidebarState.restore(workspacePrefs.sidebarCollapsed);
       applyWorkbenchContext(hostContext());
       await refreshKeys();
     };
@@ -144,7 +146,7 @@
     void setRecentToolIds(recentIds).catch(() => {});
   }
   function setCollapsed(next) {
-    sidebarCollapsed = next;
+    sidebarCollapsed = sidebarState.select(next);
     void setSidebarCollapsed(next).catch(() => {});
   }
   function closeOverlays() { mobileSidebarOpen = false; window.dispatchEvent(new Event("toolbox-close-overlays")); }
