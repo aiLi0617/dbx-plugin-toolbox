@@ -7,33 +7,41 @@ use aes_gcm::{Aes128Gcm, Aes256Gcm, Nonce};
 use aes_gcm_siv::{Aes256GcmSiv, Nonce as GcmSivNonce};
 use aes_kw::{KekAes128, KekAes192, KekAes256};
 use aes_siv::{Aes256SivAead, Nonce as SivNonce};
-use ccm::{consts::{U13, U16}, Ccm};
-use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
 use base64::{engine::general_purpose::STANDARD as B64, Engine};
 use cbc::{Decryptor as CbcDecryptor, Encryptor as CbcEncryptor};
-use cipher::{block_padding::Pkcs7, AsyncStreamCipher, BlockDecryptMut, BlockEncryptMut, KeyIvInit, StreamCipher};
+use ccm::{
+    consts::{U13, U16},
+    Ccm,
+};
+use chacha20poly1305::{ChaCha20Poly1305, XChaCha20Poly1305};
+use cipher::{
+    block_padding::Pkcs7, AsyncStreamCipher, BlockDecryptMut, BlockEncryptMut, KeyIvInit,
+    StreamCipher,
+};
 use cmac::Cmac;
 use crc32fast::Hasher as Crc32;
 use dbx_plugin_sdk::PluginError;
-use hmac::{digest::KeyInit as HmacKeyInit, Hmac, Mac as HmacMac};
-use hkdf::Hkdf;
-use hpke::{Deserializable as HpkeDeserializable, Kem as HpkeKem, Serializable as HpkeSerializable};
 use fpe::ff1::{FlexibleNumeralString, FF1};
+use hkdf::Hkdf;
+use hmac::{digest::KeyInit as HmacKeyInit, Hmac, Mac as HmacMac};
+use hpke::{
+    Deserializable as HpkeDeserializable, Kem as HpkeKem, Serializable as HpkeSerializable,
+};
 use md5::Md5;
-use rand::RngCore;
 use pbkdf2::pbkdf2_hmac;
+use rand::RngCore;
 use rsa::pkcs1::{DecodeRsaPrivateKey, DecodeRsaPublicKey};
 use rsa::pkcs8::{DecodePrivateKey, DecodePublicKey};
 use rsa::{Oaep, Pkcs1v15Encrypt, Pkcs1v15Sign, Pss, RsaPrivateKey, RsaPublicKey};
+use scrypt::{scrypt, Params as ScryptParams};
 use serde_json::{json, Map, Value};
 use sha1::Sha1;
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512};
 use sha3::Sha3_256;
-use scrypt::{scrypt, Params as ScryptParams};
 use sm3::Sm3;
 use x509_parser::prelude::*;
-use zeroize::Zeroizing;
 use xts_mode::{get_tweak_default, Xts128};
+use zeroize::Zeroizing;
 
 use crate::helpers::{bad, bool_param, err, opt_str, str_param, u32_param};
 use crate::keystore::{decode_key_bytes, Vault};
@@ -466,8 +474,11 @@ fn symmetric(vault: &Vault, action: &str, params: Value) -> Result<Value, Plugin
                 cbc_decrypt_aes256(&key, packed)?
             }
             ("aes-128" | "aes-192" | "aes-256", "cfb" | "ofb" | "ctr") => {
-                let data = decode_base64_limited(packed.trim(), "Ciphertext", MAX_PACKED_CRYPTO_BYTES)?;
-                if data.len() < 16 { return Err(bad("Ciphertext is too short")); }
+                let data =
+                    decode_base64_limited(packed.trim(), "Ciphertext", MAX_PACKED_CRYPTO_BYTES)?;
+                if data.len() < 16 {
+                    return Err(bad("Ciphertext is too short"));
+                }
                 aes_stream_transform(&key, &data[16..], mode, false, &data[..16])?
             }
             ("aes-128", "ecb") if key.len() == 16 => aes_ecb_decrypt(&key, packed, 128)?,
@@ -699,7 +710,12 @@ fn symmetric_bytes(
     }
 }
 
-fn aes_stream_packed(key: &[u8], data: &[u8], mode: &str, encrypting: bool) -> Result<String, PluginError> {
+fn aes_stream_packed(
+    key: &[u8],
+    data: &[u8],
+    mode: &str,
+    encrypting: bool,
+) -> Result<String, PluginError> {
     let mut iv = [0u8; 16];
     rand::thread_rng().fill_bytes(&mut iv);
     let transformed = aes_stream_transform(key, data, mode, encrypting, &iv)?;
@@ -709,22 +725,54 @@ fn aes_stream_packed(key: &[u8], data: &[u8], mode: &str, encrypting: bool) -> R
     Ok(B64.encode(packed))
 }
 
-fn aes_stream_transform(key: &[u8], data: &[u8], mode: &str, encrypting: bool, iv: &[u8]) -> Result<Vec<u8>, PluginError> {
-    if iv.len() != 16 { return Err(bad("IV must be 16 bytes")); }
+fn aes_stream_transform(
+    key: &[u8],
+    data: &[u8],
+    mode: &str,
+    encrypting: bool,
+    iv: &[u8],
+) -> Result<Vec<u8>, PluginError> {
+    if iv.len() != 16 {
+        return Err(bad("IV must be 16 bytes"));
+    }
     let mut output = data.to_vec();
     match (mode, key.len(), encrypting) {
-        ("cfb", 16, true) => cfb_mode::Encryptor::<Aes128>::new_from_slices(key, iv).unwrap().encrypt(&mut output),
-        ("cfb", 24, true) => cfb_mode::Encryptor::<Aes192>::new_from_slices(key, iv).unwrap().encrypt(&mut output),
-        ("cfb", 32, true) => cfb_mode::Encryptor::<Aes256>::new_from_slices(key, iv).unwrap().encrypt(&mut output),
-        ("cfb", 16, false) => cfb_mode::Decryptor::<Aes128>::new_from_slices(key, iv).unwrap().decrypt(&mut output),
-        ("cfb", 24, false) => cfb_mode::Decryptor::<Aes192>::new_from_slices(key, iv).unwrap().decrypt(&mut output),
-        ("cfb", 32, false) => cfb_mode::Decryptor::<Aes256>::new_from_slices(key, iv).unwrap().decrypt(&mut output),
-        ("ofb", 16, _) => Aes128Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
-        ("ofb", 24, _) => Aes192Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
-        ("ofb", 32, _) => Aes256Ofb::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
-        ("ctr", 16, _) => Aes128Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
-        ("ctr", 24, _) => Aes192Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
-        ("ctr", 32, _) => Aes256Ctr::new_from_slices(key, iv).unwrap().apply_keystream(&mut output),
+        ("cfb", 16, true) => cfb_mode::Encryptor::<Aes128>::new_from_slices(key, iv)
+            .unwrap()
+            .encrypt(&mut output),
+        ("cfb", 24, true) => cfb_mode::Encryptor::<Aes192>::new_from_slices(key, iv)
+            .unwrap()
+            .encrypt(&mut output),
+        ("cfb", 32, true) => cfb_mode::Encryptor::<Aes256>::new_from_slices(key, iv)
+            .unwrap()
+            .encrypt(&mut output),
+        ("cfb", 16, false) => cfb_mode::Decryptor::<Aes128>::new_from_slices(key, iv)
+            .unwrap()
+            .decrypt(&mut output),
+        ("cfb", 24, false) => cfb_mode::Decryptor::<Aes192>::new_from_slices(key, iv)
+            .unwrap()
+            .decrypt(&mut output),
+        ("cfb", 32, false) => cfb_mode::Decryptor::<Aes256>::new_from_slices(key, iv)
+            .unwrap()
+            .decrypt(&mut output),
+        ("ofb", 16, _) => Aes128Ofb::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
+        ("ofb", 24, _) => Aes192Ofb::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
+        ("ofb", 32, _) => Aes256Ofb::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
+        ("ctr", 16, _) => Aes128Ctr::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
+        ("ctr", 24, _) => Aes192Ctr::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
+        ("ctr", 32, _) => Aes256Ctr::new_from_slices(key, iv)
+            .unwrap()
+            .apply_keystream(&mut output),
         _ => return Err(bad("Unsupported AES stream mode or key length")),
     }
     Ok(output)
@@ -733,12 +781,21 @@ fn aes_stream_transform(key: &[u8], data: &[u8], mode: &str, encrypting: bool, i
 fn modern_cipher_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
     let algorithm = str_param(&params, "algorithm")?.to_ascii_lowercase();
     let op = str_param(&params, "op")?;
-    let encrypting = match op { "encrypt" => true, "decrypt" => false, _ => return Err(bad("op must be encrypt or decrypt")) };
+    let encrypting = match op {
+        "encrypt" => true,
+        "decrypt" => false,
+        _ => return Err(bad("op must be encrypt or decrypt")),
+    };
     let key = resolve_key(vault, &params, &algorithm)?;
     let text = str_param(&params, "text")?;
-    let input_encoding = opt_str(&params, "inputEncoding").unwrap_or(if encrypting { "utf8" } else { "base64" });
-    let output_encoding = opt_str(&params, "outputEncoding").unwrap_or(if encrypting { "base64" } else { "utf8" });
-    let aad = decode_crypto_bytes(opt_str(&params, "aad").unwrap_or(""), opt_str(&params, "aadEncoding").unwrap_or("utf8"))?;
+    let input_encoding =
+        opt_str(&params, "inputEncoding").unwrap_or(if encrypting { "utf8" } else { "base64" });
+    let output_encoding =
+        opt_str(&params, "outputEncoding").unwrap_or(if encrypting { "base64" } else { "utf8" });
+    let aad = decode_crypto_bytes(
+        opt_str(&params, "aad").unwrap_or(""),
+        opt_str(&params, "aadEncoding").unwrap_or("utf8"),
+    )?;
     let data = decode_crypto_bytes(text, input_encoding)?;
     let (nonce_len, authenticated) = match algorithm.as_str() {
         "chacha20-poly1305" | "aes-256-gcm-siv" => (12, true),
@@ -749,52 +806,82 @@ fn modern_cipher_op(vault: &Vault, params: Value) -> Result<Value, PluginError> 
         _ => return Err(bad("Unsupported modern cipher algorithm")),
     };
     let expected_key_len = if algorithm == "aes-256-siv" { 64 } else { 32 };
-    if key.len() != expected_key_len { return Err(bad(format!("Selected algorithm requires a {expected_key_len}-byte key"))); }
+    if key.len() != expected_key_len {
+        return Err(bad(format!(
+            "Selected algorithm requires a {expected_key_len}-byte key"
+        )));
+    }
     let raw_nonce = opt_str(&params, "nonce").unwrap_or("");
     let nonce_encoding = opt_str(&params, "nonceEncoding").unwrap_or("hex");
     let nonce = if encrypting && raw_nonce.trim().is_empty() {
         let mut value = vec![0u8; nonce_len];
         rand::thread_rng().fill_bytes(&mut value);
         value
-    } else { decode_crypto_bytes(raw_nonce, nonce_encoding)? };
-    if nonce.len() != nonce_len { return Err(bad(format!("Nonce must be {nonce_len} bytes"))); }
-    let payload = Payload { msg: &data, aad: &aad };
+    } else {
+        decode_crypto_bytes(raw_nonce, nonce_encoding)?
+    };
+    if nonce.len() != nonce_len {
+        return Err(bad(format!("Nonce must be {nonce_len} bytes")));
+    }
+    let payload = Payload {
+        msg: &data,
+        aad: &aad,
+    };
     let result = match algorithm.as_str() {
         "chacha20-poly1305" => {
             let cipher = ChaCha20Poly1305::new_from_slice(&key).map_err(|_| bad("Invalid key"))?;
-            if encrypting { cipher.encrypt(chacha20poly1305::Nonce::from_slice(&nonce), payload) }
-            else { cipher.decrypt(chacha20poly1305::Nonce::from_slice(&nonce), payload) }
-                .map_err(|_| err("ChaCha20-Poly1305 authentication failed"))?
+            if encrypting {
+                cipher.encrypt(chacha20poly1305::Nonce::from_slice(&nonce), payload)
+            } else {
+                cipher.decrypt(chacha20poly1305::Nonce::from_slice(&nonce), payload)
+            }
+            .map_err(|_| err("ChaCha20-Poly1305 authentication failed"))?
         }
         "xchacha20-poly1305" => {
             let cipher = XChaCha20Poly1305::new_from_slice(&key).map_err(|_| bad("Invalid key"))?;
-            if encrypting { cipher.encrypt(chacha20poly1305::XNonce::from_slice(&nonce), payload) }
-            else { cipher.decrypt(chacha20poly1305::XNonce::from_slice(&nonce), payload) }
-                .map_err(|_| err("XChaCha20-Poly1305 authentication failed"))?
+            if encrypting {
+                cipher.encrypt(chacha20poly1305::XNonce::from_slice(&nonce), payload)
+            } else {
+                cipher.decrypt(chacha20poly1305::XNonce::from_slice(&nonce), payload)
+            }
+            .map_err(|_| err("XChaCha20-Poly1305 authentication failed"))?
         }
         "aes-256-gcm-siv" => {
             let cipher = Aes256GcmSiv::new_from_slice(&key).map_err(|_| bad("Invalid key"))?;
-            if encrypting { cipher.encrypt(GcmSivNonce::from_slice(&nonce), payload) }
-            else { cipher.decrypt(GcmSivNonce::from_slice(&nonce), payload) }
-                .map_err(|_| err("AES-GCM-SIV authentication failed"))?
+            if encrypting {
+                cipher.encrypt(GcmSivNonce::from_slice(&nonce), payload)
+            } else {
+                cipher.decrypt(GcmSivNonce::from_slice(&nonce), payload)
+            }
+            .map_err(|_| err("AES-GCM-SIV authentication failed"))?
         }
         "aes-256-ccm" => {
             let cipher = Aes256Ccm::new_from_slice(&key).map_err(|_| bad("Invalid key"))?;
-            if encrypting { cipher.encrypt(ccm::Nonce::<U13>::from_slice(&nonce), payload) }
-            else { cipher.decrypt(ccm::Nonce::<U13>::from_slice(&nonce), payload) }
-                .map_err(|_| err("AES-CCM authentication failed"))?
+            if encrypting {
+                cipher.encrypt(ccm::Nonce::<U13>::from_slice(&nonce), payload)
+            } else {
+                cipher.decrypt(ccm::Nonce::<U13>::from_slice(&nonce), payload)
+            }
+            .map_err(|_| err("AES-CCM authentication failed"))?
         }
         "aes-256-ctr" => {
-            if !aad.is_empty() { return Err(bad("AES-CTR does not support AAD")); }
+            if !aad.is_empty() {
+                return Err(bad("AES-CTR does not support AAD"));
+            }
             let mut output = data;
-            Aes256Ctr::new_from_slices(&key, &nonce).map_err(|_| bad("Invalid key or counter"))?.apply_keystream(&mut output);
+            Aes256Ctr::new_from_slices(&key, &nonce)
+                .map_err(|_| bad("Invalid key or counter"))?
+                .apply_keystream(&mut output);
             output
         }
         "aes-256-siv" => {
             let cipher = Aes256SivAead::new_from_slice(&key).map_err(|_| bad("Invalid key"))?;
-            if encrypting { cipher.encrypt(SivNonce::from_slice(&nonce), payload) }
-            else { cipher.decrypt(SivNonce::from_slice(&nonce), payload) }
-                .map_err(|_| err("AES-SIV authentication failed"))?
+            if encrypting {
+                cipher.encrypt(SivNonce::from_slice(&nonce), payload)
+            } else {
+                cipher.decrypt(SivNonce::from_slice(&nonce), payload)
+            }
+            .map_err(|_| err("AES-SIV authentication failed"))?
         }
         _ => unreachable!(),
     };
@@ -815,53 +902,118 @@ fn specialized_crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginEr
 
     if matches!(algorithm.as_str(), "aes-kw" | "aes-kwp") {
         let data = decode_crypto_bytes(text, input_encoding)?;
-        let wrapped = match (algorithm.as_str(), op, key.len()) {
-            ("aes-kw", "encrypt" | "wrap", 16) => KekAes128::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data)),
-            ("aes-kw", "encrypt" | "wrap", 24) => KekAes192::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data)),
-            ("aes-kw", "encrypt" | "wrap", 32) => KekAes256::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data)),
-            ("aes-kw", "decrypt" | "unwrap", 16) => KekAes128::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data)),
-            ("aes-kw", "decrypt" | "unwrap", 24) => KekAes192::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data)),
-            ("aes-kw", "decrypt" | "unwrap", 32) => KekAes256::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data)),
-            ("aes-kwp", "encrypt" | "wrap", 16) => KekAes128::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data)),
-            ("aes-kwp", "encrypt" | "wrap", 24) => KekAes192::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data)),
-            ("aes-kwp", "encrypt" | "wrap", 32) => KekAes256::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data)),
-            ("aes-kwp", "decrypt" | "unwrap", 16) => KekAes128::try_from(key.as_slice()).and_then(|k| k.unwrap_with_padding_vec(&data)),
-            ("aes-kwp", "decrypt" | "unwrap", 24) => KekAes192::try_from(key.as_slice()).and_then(|k| k.unwrap_with_padding_vec(&data)),
-            ("aes-kwp", "decrypt" | "unwrap", 32) => KekAes256::try_from(key.as_slice()).and_then(|k| k.unwrap_with_padding_vec(&data)),
-            _ => return Err(bad("AES-KW/KWP requires a 16, 24, or 32-byte KEK and a wrap/unwrap operation")),
-        }.map_err(|_| err("AES key wrap integrity or input-length check failed"))?;
-        return Ok(json!({ "ok": true, "text": encode_crypto_bytes(&wrapped, output_encoding)?, "algorithm": algorithm }));
+        let wrapped =
+            match (algorithm.as_str(), op, key.len()) {
+                ("aes-kw", "encrypt" | "wrap", 16) => {
+                    KekAes128::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data))
+                }
+                ("aes-kw", "encrypt" | "wrap", 24) => {
+                    KekAes192::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data))
+                }
+                ("aes-kw", "encrypt" | "wrap", 32) => {
+                    KekAes256::try_from(key.as_slice()).and_then(|k| k.wrap_vec(&data))
+                }
+                ("aes-kw", "decrypt" | "unwrap", 16) => {
+                    KekAes128::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data))
+                }
+                ("aes-kw", "decrypt" | "unwrap", 24) => {
+                    KekAes192::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data))
+                }
+                ("aes-kw", "decrypt" | "unwrap", 32) => {
+                    KekAes256::try_from(key.as_slice()).and_then(|k| k.unwrap_vec(&data))
+                }
+                ("aes-kwp", "encrypt" | "wrap", 16) => {
+                    KekAes128::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data))
+                }
+                ("aes-kwp", "encrypt" | "wrap", 24) => {
+                    KekAes192::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data))
+                }
+                ("aes-kwp", "encrypt" | "wrap", 32) => {
+                    KekAes256::try_from(key.as_slice()).and_then(|k| k.wrap_with_padding_vec(&data))
+                }
+                ("aes-kwp", "decrypt" | "unwrap", 16) => KekAes128::try_from(key.as_slice())
+                    .and_then(|k| k.unwrap_with_padding_vec(&data)),
+                ("aes-kwp", "decrypt" | "unwrap", 24) => KekAes192::try_from(key.as_slice())
+                    .and_then(|k| k.unwrap_with_padding_vec(&data)),
+                ("aes-kwp", "decrypt" | "unwrap", 32) => KekAes256::try_from(key.as_slice())
+                    .and_then(|k| k.unwrap_with_padding_vec(&data)),
+                _ => {
+                    return Err(bad(
+                        "AES-KW/KWP requires a 16, 24, or 32-byte KEK and a wrap/unwrap operation",
+                    ))
+                }
+            }
+            .map_err(|_| err("AES key wrap integrity or input-length check failed"))?;
+        return Ok(
+            json!({ "ok": true, "text": encode_crypto_bytes(&wrapped, output_encoding)?, "algorithm": algorithm }),
+        );
     }
 
     if algorithm == "aes-xts" {
         let mut data = decode_crypto_bytes(text, input_encoding)?;
-        if data.len() < 16 { return Err(bad("AES-XTS input must be at least 16 bytes")); }
+        if data.len() < 16 {
+            return Err(bad("AES-XTS input must be at least 16 bytes"));
+        }
         let sector = u32_param(&params, "sector", 0) as u128;
         let tweak = get_tweak_default(sector);
         match key.len() {
             32 => {
-                let first = Aes128::new_from_slice(&key[..16]).map_err(|_| bad("Invalid AES-XTS key"))?;
-                let second = Aes128::new_from_slice(&key[16..]).map_err(|_| bad("Invalid AES-XTS key"))?;
+                let first =
+                    Aes128::new_from_slice(&key[..16]).map_err(|_| bad("Invalid AES-XTS key"))?;
+                let second =
+                    Aes128::new_from_slice(&key[16..]).map_err(|_| bad("Invalid AES-XTS key"))?;
                 let xts = Xts128::new(first, second);
-                if op == "encrypt" { xts.encrypt_sector(&mut data, tweak); } else if op == "decrypt" { xts.decrypt_sector(&mut data, tweak); } else { return Err(bad("op must be encrypt or decrypt")); }
+                if op == "encrypt" {
+                    xts.encrypt_sector(&mut data, tweak);
+                } else if op == "decrypt" {
+                    xts.decrypt_sector(&mut data, tweak);
+                } else {
+                    return Err(bad("op must be encrypt or decrypt"));
+                }
             }
             64 => {
-                let first = Aes256::new_from_slice(&key[..32]).map_err(|_| bad("Invalid AES-XTS key"))?;
-                let second = Aes256::new_from_slice(&key[32..]).map_err(|_| bad("Invalid AES-XTS key"))?;
+                let first =
+                    Aes256::new_from_slice(&key[..32]).map_err(|_| bad("Invalid AES-XTS key"))?;
+                let second =
+                    Aes256::new_from_slice(&key[32..]).map_err(|_| bad("Invalid AES-XTS key"))?;
                 let xts = Xts128::new(first, second);
-                if op == "encrypt" { xts.encrypt_sector(&mut data, tweak); } else if op == "decrypt" { xts.decrypt_sector(&mut data, tweak); } else { return Err(bad("op must be encrypt or decrypt")); }
+                if op == "encrypt" {
+                    xts.encrypt_sector(&mut data, tweak);
+                } else if op == "decrypt" {
+                    xts.decrypt_sector(&mut data, tweak);
+                } else {
+                    return Err(bad("op must be encrypt or decrypt"));
+                }
             }
-            _ => return Err(bad("AES-XTS requires a 32-byte (AES-128-XTS) or 64-byte (AES-256-XTS) key")),
+            _ => {
+                return Err(bad(
+                    "AES-XTS requires a 32-byte (AES-128-XTS) or 64-byte (AES-256-XTS) key",
+                ))
+            }
         }
-        return Ok(json!({ "ok": true, "text": encode_crypto_bytes(&data, output_encoding)?, "algorithm": algorithm, "sector": sector }));
+        return Ok(
+            json!({ "ok": true, "text": encode_crypto_bytes(&data, output_encoding)?, "algorithm": algorithm, "sector": sector }),
+        );
     }
 
     if algorithm == "aes-ff1" {
         let radix = u32_param(&params, "radix", 10);
-        if !matches!(radix, 10 | 36) { return Err(bad("This FF1 tool supports radix 10 or 36")); }
+        if !matches!(radix, 10 | 36) {
+            return Err(bad("This FF1 tool supports radix 10 or 36"));
+        }
         let normalized = text.trim().to_ascii_lowercase();
-        let numerals: Vec<u16> = normalized.chars().map(|ch| ch.to_digit(radix).map(|v| v as u16).ok_or_else(|| bad("Input contains a character outside the selected radix"))).collect::<Result<_, _>>()?;
-        let tweak = decode_crypto_bytes(opt_str(&params, "tweak").unwrap_or(""), opt_str(&params, "tweakEncoding").unwrap_or("hex"))?;
+        let numerals: Vec<u16> = normalized
+            .chars()
+            .map(|ch| {
+                ch.to_digit(radix)
+                    .map(|v| v as u16)
+                    .ok_or_else(|| bad("Input contains a character outside the selected radix"))
+            })
+            .collect::<Result<_, _>>()?;
+        let tweak = decode_crypto_bytes(
+            opt_str(&params, "tweak").unwrap_or(""),
+            opt_str(&params, "tweakEncoding").unwrap_or("hex"),
+        )?;
         let source = FlexibleNumeralString::from(numerals);
         let result = match key.len() {
             16 => ff1_transform::<Aes128>(&key, radix, &tweak, source, op)?,
@@ -869,11 +1021,17 @@ fn specialized_crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginEr
             32 => ff1_transform::<Aes256>(&key, radix, &tweak, source, op)?,
             _ => return Err(bad("AES-FF1 requires a 16, 24, or 32-byte key")),
         };
-        let text: String = result.into_iter().map(|digit| char::from_digit(digit as u32, radix).unwrap()).collect();
+        let text: String = result
+            .into_iter()
+            .map(|digit| char::from_digit(digit as u32, radix).unwrap())
+            .collect();
         return Ok(json!({ "ok": true, "text": text, "algorithm": algorithm, "radix": radix }));
     }
 
-    if matches!(algorithm.as_str(), "aes-cmac" | "aes-128-gmac" | "aes-256-gmac") {
+    if matches!(
+        algorithm.as_str(),
+        "aes-cmac" | "aes-128-gmac" | "aes-256-gmac"
+    ) {
         let data = decode_crypto_bytes(text, input_encoding)?;
         let tag = if algorithm == "aes-cmac" {
             match key.len() {
@@ -883,16 +1041,35 @@ fn specialized_crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginEr
                 _ => return Err(bad("AES-CMAC requires a 16, 24, or 32-byte key")),
             }
         } else {
-            let nonce = decode_crypto_bytes(str_param(&params, "nonce")?, opt_str(&params, "nonceEncoding").unwrap_or("hex"))?;
-            if nonce.len() != 12 { return Err(bad("GMAC nonce must be 12 bytes")); }
-            let payload = Payload { msg: &[], aad: &data };
+            let nonce = decode_crypto_bytes(
+                str_param(&params, "nonce")?,
+                opt_str(&params, "nonceEncoding").unwrap_or("hex"),
+            )?;
+            if nonce.len() != 12 {
+                return Err(bad("GMAC nonce must be 12 bytes"));
+            }
+            let payload = Payload {
+                msg: &[],
+                aad: &data,
+            };
             match algorithm.as_str() {
-                "aes-128-gmac" if key.len() == 16 => Aes128Gcm::new_from_slice(&key).unwrap().encrypt(Nonce::from_slice(&nonce), payload),
-                "aes-256-gmac" if key.len() == 32 => Aes256Gcm::new_from_slice(&key).unwrap().encrypt(Nonce::from_slice(&nonce), payload),
-                _ => return Err(bad("AES-GMAC key length does not match the selected algorithm")),
-            }.map_err(|_| err("AES-GMAC failed"))?
+                "aes-128-gmac" if key.len() == 16 => Aes128Gcm::new_from_slice(&key)
+                    .unwrap()
+                    .encrypt(Nonce::from_slice(&nonce), payload),
+                "aes-256-gmac" if key.len() == 32 => Aes256Gcm::new_from_slice(&key)
+                    .unwrap()
+                    .encrypt(Nonce::from_slice(&nonce), payload),
+                _ => {
+                    return Err(bad(
+                        "AES-GMAC key length does not match the selected algorithm",
+                    ))
+                }
+            }
+            .map_err(|_| err("AES-GMAC failed"))?
         };
-        return Ok(json!({ "ok": true, "text": encode_crypto_bytes(&tag, output_encoding)?, "algorithm": algorithm }));
+        return Ok(
+            json!({ "ok": true, "text": encode_crypto_bytes(&tag, output_encoding)?, "algorithm": algorithm }),
+        );
     }
 
     Err(bad("Unsupported specialized crypto algorithm"))
@@ -901,11 +1078,29 @@ fn specialized_crypto_op(vault: &Vault, params: Value) -> Result<Value, PluginEr
 fn kem_op(vault: &Vault, mut params: Value) -> Result<Value, PluginError> {
     let algorithm = str_param(&params, "algorithm")?.to_ascii_lowercase();
     let op = str_param(&params, "op")?.to_string();
-    let stored = opt_str(&params, "keyId").filter(|id| !id.is_empty()).map(|id| vault.material_for(id, if algorithm.starts_with("hpke") { "hpke" } else { "ml-kem" })).transpose()?;
+    let stored = opt_str(&params, "keyId")
+        .filter(|id| !id.is_empty())
+        .map(|id| {
+            vault.material_for(
+                id,
+                if algorithm.starts_with("hpke") {
+                    "hpke"
+                } else {
+                    "ml-kem"
+                },
+            )
+        })
+        .transpose()?;
     if let Some(key) = stored {
-        let expected = if algorithm.starts_with("hpke") { "hpke-x25519" } else { algorithm.as_str() };
+        let expected = if algorithm.starts_with("hpke") {
+            "hpke-x25519"
+        } else {
+            algorithm.as_str()
+        };
         if key.algorithm != expected {
-            return Err(bad("Stored key type does not match the selected KEM algorithm"));
+            return Err(bad(
+                "Stored key type does not match the selected KEM algorithm",
+            ));
         }
         params["privateKey"] = json!(key.material);
         params["publicKey"] = json!(key.public_material);
@@ -925,26 +1120,52 @@ fn hpke_x25519_op(op: &str, params: &Value) -> Result<Value, PluginError> {
     match op {
         "generate" => {
             let (private, public) = Kem::gen_keypair();
-            Ok(json!({ "ok": true, "privateKey": B64.encode(private.to_bytes()), "publicKey": B64.encode(public.to_bytes()) }))
+            Ok(
+                json!({ "ok": true, "privateKey": B64.encode(private.to_bytes()), "publicKey": B64.encode(public.to_bytes()) }),
+            )
         }
         "encrypt" => {
             let public = hpke_public_key::<Kem>(str_param(params, "publicKey")?)?;
-            let input = decode_crypto_bytes(str_param(params, "text")?, opt_str(params, "inputEncoding").unwrap_or("utf8"))?;
+            let input = decode_crypto_bytes(
+                str_param(params, "text")?,
+                opt_str(params, "inputEncoding").unwrap_or("utf8"),
+            )?;
             let info = opt_str(params, "info").unwrap_or("").as_bytes();
             let aad = opt_str(params, "aad").unwrap_or("").as_bytes();
-            let (encapped, ciphertext) = hpke::single_shot_seal::<Aead, Kdf, Kem>(&hpke::OpModeS::Base, &public, info, &input, aad)
-                .map_err(|_| err("HPKE encryption failed"))?;
-            Ok(json!({ "ok": true, "text": B64.encode(ciphertext), "encapsulatedKey": B64.encode(encapped.to_bytes()) }))
+            let (encapped, ciphertext) = hpke::single_shot_seal::<Aead, Kdf, Kem>(
+                &hpke::OpModeS::Base,
+                &public,
+                info,
+                &input,
+                aad,
+            )
+            .map_err(|_| err("HPKE encryption failed"))?;
+            Ok(
+                json!({ "ok": true, "text": B64.encode(ciphertext), "encapsulatedKey": B64.encode(encapped.to_bytes()) }),
+            )
         }
         "decrypt" => {
             let private = hpke_private_key::<Kem>(str_param(params, "privateKey")?)?;
             let encapped = hpke_encapped_key::<Kem>(str_param(params, "encapsulatedKey")?)?;
-            let ciphertext = decode_base64_limited(str_param(params, "text")?, "HPKE ciphertext", MAX_CRYPTO_INPUT_BYTES)?;
+            let ciphertext = decode_base64_limited(
+                str_param(params, "text")?,
+                "HPKE ciphertext",
+                MAX_CRYPTO_INPUT_BYTES,
+            )?;
             let info = opt_str(params, "info").unwrap_or("").as_bytes();
             let aad = opt_str(params, "aad").unwrap_or("").as_bytes();
-            let plaintext = hpke::single_shot_open::<Aead, Kdf, Kem>(&hpke::OpModeR::Base, &private, &encapped, info, &ciphertext, aad)
-                .map_err(|_| err("HPKE authentication or decryption failed"))?;
-            Ok(json!({ "ok": true, "text": encode_crypto_bytes(&plaintext, opt_str(params, "outputEncoding").unwrap_or("utf8"))? }))
+            let plaintext = hpke::single_shot_open::<Aead, Kdf, Kem>(
+                &hpke::OpModeR::Base,
+                &private,
+                &encapped,
+                info,
+                &ciphertext,
+                aad,
+            )
+            .map_err(|_| err("HPKE authentication or decryption failed"))?;
+            Ok(
+                json!({ "ok": true, "text": encode_crypto_bytes(&plaintext, opt_str(params, "outputEncoding").unwrap_or("utf8"))? }),
+            )
         }
         _ => Err(bad("HPKE operation must be generate, encrypt, or decrypt")),
     }
@@ -954,20 +1175,28 @@ fn ml_kem_op<Kem: HpkeKem>(op: &str, params: &Value) -> Result<Value, PluginErro
     match op {
         "generate" => {
             let (private, public) = Kem::gen_keypair();
-            Ok(json!({ "ok": true, "privateKey": B64.encode(private.to_bytes()), "publicKey": B64.encode(public.to_bytes()) }))
+            Ok(
+                json!({ "ok": true, "privateKey": B64.encode(private.to_bytes()), "publicKey": B64.encode(public.to_bytes()) }),
+            )
         }
         "encapsulate" => {
             let public = hpke_public_key::<Kem>(str_param(params, "publicKey")?)?;
-            let (secret, encapped) = Kem::encap(&public, None).map_err(|_| err("ML-KEM encapsulation failed"))?;
-            Ok(json!({ "ok": true, "sharedSecret": B64.encode(secret.0.as_slice()), "encapsulatedKey": B64.encode(encapped.to_bytes()) }))
+            let (secret, encapped) =
+                Kem::encap(&public, None).map_err(|_| err("ML-KEM encapsulation failed"))?;
+            Ok(
+                json!({ "ok": true, "sharedSecret": B64.encode(secret.0.as_slice()), "encapsulatedKey": B64.encode(encapped.to_bytes()) }),
+            )
         }
         "decapsulate" => {
             let private = hpke_private_key::<Kem>(str_param(params, "privateKey")?)?;
             let encapped = hpke_encapped_key::<Kem>(str_param(params, "encapsulatedKey")?)?;
-            let secret = Kem::decap(&private, None, &encapped).map_err(|_| err("ML-KEM decapsulation failed"))?;
+            let secret = Kem::decap(&private, None, &encapped)
+                .map_err(|_| err("ML-KEM decapsulation failed"))?;
             Ok(json!({ "ok": true, "sharedSecret": B64.encode(secret.0.as_slice()) }))
         }
-        _ => Err(bad("ML-KEM operation must be generate, encapsulate, or decapsulate")),
+        _ => Err(bad(
+            "ML-KEM operation must be generate, encapsulate, or decapsulate",
+        )),
     }
 }
 
@@ -986,10 +1215,24 @@ fn hpke_encapped_key<Kem: HpkeKem>(encoded: &str) -> Result<Kem::EncappedKey, Pl
     Kem::EncappedKey::from_bytes(&bytes).map_err(|_| bad("Invalid encapsulated key"))
 }
 
-fn ff1_transform<C>(key: &[u8], radix: u32, tweak: &[u8], source: FlexibleNumeralString, op: &str) -> Result<Vec<u16>, PluginError>
-where C: cipher::BlockCipher + cipher::BlockEncrypt + cipher::KeyInit + Clone {
+fn ff1_transform<C>(
+    key: &[u8],
+    radix: u32,
+    tweak: &[u8],
+    source: FlexibleNumeralString,
+    op: &str,
+) -> Result<Vec<u16>, PluginError>
+where
+    C: cipher::BlockCipher + cipher::BlockEncrypt + cipher::KeyInit + Clone,
+{
     let ff = FF1::<C>::new(key, radix).map_err(|_| bad("Invalid FF1 key or radix"))?;
-    let result = if op == "encrypt" { ff.encrypt(tweak, &source) } else if op == "decrypt" { ff.decrypt(tweak, &source) } else { return Err(bad("op must be encrypt or decrypt")); };
+    let result = if op == "encrypt" {
+        ff.encrypt(tweak, &source)
+    } else if op == "decrypt" {
+        ff.decrypt(tweak, &source)
+    } else {
+        return Err(bad("op must be encrypt or decrypt"));
+    };
     result.map(Vec::from).map_err(|e| bad(e.to_string()))
 }
 
@@ -1005,7 +1248,10 @@ fn cmac_tag_aes256(key: &[u8], data: &[u8]) -> Result<Vec<u8>, PluginError> {
     cmac_tag_inner::<Cmac<Aes256>>(key, data)
 }
 
-fn cmac_tag_inner<M: HmacMac + HmacKeyInit>(key: &[u8], data: &[u8]) -> Result<Vec<u8>, PluginError> {
+fn cmac_tag_inner<M: HmacMac + HmacKeyInit>(
+    key: &[u8],
+    data: &[u8],
+) -> Result<Vec<u8>, PluginError> {
     let mut mac = <M as HmacMac>::new_from_slice(key).map_err(|_| bad("Invalid AES-CMAC key"))?;
     HmacMac::update(&mut mac, data);
     Ok(mac.finalize().into_bytes().to_vec())
@@ -1015,8 +1261,13 @@ fn kdf_op(params: Value) -> Result<Value, PluginError> {
     let algorithm = str_param(&params, "algorithm")?.to_ascii_lowercase();
     let password = str_param(&params, "text")?;
     ensure_input_size(password, "KDF input", MAX_KEY_INPUT_BYTES)?;
-    let salt = decode_crypto_bytes(str_param(&params, "salt")?, opt_str(&params, "saltEncoding").unwrap_or("hex"))?;
-    if salt.len() < 8 { return Err(bad("KDF salt must be at least 8 bytes")); }
+    let salt = decode_crypto_bytes(
+        str_param(&params, "salt")?,
+        opt_str(&params, "saltEncoding").unwrap_or("hex"),
+    )?;
+    if salt.len() < 8 {
+        return Err(bad("KDF salt must be at least 8 bytes"));
+    }
     let length = u32_param(&params, "length", 32).clamp(16, 1024) as usize;
     let mut output = Zeroizing::new(vec![0u8; length]);
     match algorithm.as_str() {
@@ -1028,24 +1279,32 @@ fn kdf_op(params: Value) -> Result<Value, PluginError> {
             let log_n = u32_param(&params, "logN", 15).clamp(10, 20) as u8;
             let r = u32_param(&params, "r", 8).clamp(1, 32);
             let p = u32_param(&params, "p", 1).clamp(1, 16);
-            let config = ScryptParams::new(log_n, r, p, length).map_err(|_| bad("Invalid scrypt parameters"))?;
-            scrypt(password.as_bytes(), &salt, &config, output.as_mut()).map_err(|_| err("scrypt failed"))?;
+            let config = ScryptParams::new(log_n, r, p, length)
+                .map_err(|_| bad("Invalid scrypt parameters"))?;
+            scrypt(password.as_bytes(), &salt, &config, output.as_mut())
+                .map_err(|_| err("scrypt failed"))?;
         }
         "argon2id" => {
             let memory = u32_param(&params, "memoryKiB", 19_456).clamp(8 * 1024, 256 * 1024);
             let iterations = u32_param(&params, "iterations", 2).clamp(1, 10);
             let parallelism = u32_param(&params, "parallelism", 1).clamp(1, 8);
-            let config = argon2::Params::new(memory, iterations, parallelism, Some(length)).map_err(|_| bad("Invalid Argon2id parameters"))?;
+            let config = argon2::Params::new(memory, iterations, parallelism, Some(length))
+                .map_err(|_| bad("Invalid Argon2id parameters"))?;
             argon2::Argon2::new(argon2::Algorithm::Argon2id, argon2::Version::V0x13, config)
-                .hash_password_into(password.as_bytes(), &salt, output.as_mut()).map_err(|_| err("Argon2id failed"))?;
+                .hash_password_into(password.as_bytes(), &salt, output.as_mut())
+                .map_err(|_| err("Argon2id failed"))?;
         }
         "hkdf-sha256" => {
             let info = opt_str(&params, "info").unwrap_or("").as_bytes();
-            Hkdf::<Sha256>::new(Some(&salt), password.as_bytes()).expand(info, output.as_mut()).map_err(|_| bad("HKDF output length is too large"))?;
+            Hkdf::<Sha256>::new(Some(&salt), password.as_bytes())
+                .expand(info, output.as_mut())
+                .map_err(|_| bad("HKDF output length is too large"))?;
         }
         _ => return Err(bad("Unsupported KDF algorithm")),
     }
-    Ok(json!({ "ok": true, "text": hex::encode(output.as_slice()), "algorithm": algorithm, "bytes": length }))
+    Ok(
+        json!({ "ok": true, "text": hex::encode(output.as_slice()), "algorithm": algorithm, "bytes": length }),
+    )
 }
 
 fn signature_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
@@ -1056,26 +1315,51 @@ fn signature_op(vault: &Vault, params: Value) -> Result<Value, PluginError> {
     match (algorithm.as_str(), op) {
         ("rsa-pss-sha256" | "rsa-pkcs1-sha256", "sign") => {
             let private = decode_rsa_private(&resolve_text_key(vault, &params)?)?;
-            let jwt_algorithm = if algorithm.starts_with("rsa-pss") { "PS256" } else { "RS256" };
-            Ok(json!({ "ok": true, "text": B64.encode(jwt_rsa_sign(jwt_algorithm, &private, message)?) }))
+            let jwt_algorithm = if algorithm.starts_with("rsa-pss") {
+                "PS256"
+            } else {
+                "RS256"
+            };
+            Ok(
+                json!({ "ok": true, "text": B64.encode(jwt_rsa_sign(jwt_algorithm, &private, message)?) }),
+            )
         }
         ("rsa-pss-sha256" | "rsa-pkcs1-sha256", "verify") => {
             let public = decode_rsa_public(&resolve_text_key(vault, &params)?)?;
-            let signature = decode_base64_limited(str_param(&params, "signature")?, "Signature", MAX_KEY_INPUT_BYTES)?;
-            let jwt_algorithm = if algorithm.starts_with("rsa-pss") { "PS256" } else { "RS256" };
-            Ok(json!({ "ok": true, "valid": jwt_rsa_verify(jwt_algorithm, &public, message, &signature)? }))
+            let signature = decode_base64_limited(
+                str_param(&params, "signature")?,
+                "Signature",
+                MAX_KEY_INPUT_BYTES,
+            )?;
+            let jwt_algorithm = if algorithm.starts_with("rsa-pss") {
+                "PS256"
+            } else {
+                "RS256"
+            };
+            Ok(
+                json!({ "ok": true, "valid": jwt_rsa_verify(jwt_algorithm, &public, message, &signature)? }),
+            )
         }
         ("sm2-sm3", "sign") => {
             let key = resolve_text_key(vault, &params)?;
             let private = sm2_private_key(&key)?;
-            let signature = std::panic::catch_unwind(|| smcrypto::sm2::Sign::new(private).sign(message)).map_err(|_| bad("SM2 signing failed"))?;
+            let signature =
+                std::panic::catch_unwind(|| smcrypto::sm2::Sign::new(private).sign(message))
+                    .map_err(|_| bad("SM2 signing failed"))?;
             Ok(json!({ "ok": true, "text": B64.encode(signature) }))
         }
         ("sm2-sm3", "verify") => {
             let key = resolve_text_key(vault, &params)?;
             let public = sm2_public_key(&key)?;
-            let signature = decode_base64_limited(str_param(&params, "signature")?, "Signature", MAX_KEY_INPUT_BYTES)?;
-            let valid = std::panic::catch_unwind(|| smcrypto::sm2::Verify::new(&public).verify(message, &signature)).unwrap_or(false);
+            let signature = decode_base64_limited(
+                str_param(&params, "signature")?,
+                "Signature",
+                MAX_KEY_INPUT_BYTES,
+            )?;
+            let valid = std::panic::catch_unwind(|| {
+                smcrypto::sm2::Verify::new(&public).verify(message, &signature)
+            })
+            .unwrap_or(false);
             Ok(json!({ "ok": true, "valid": valid }))
         }
         _ => Err(bad("Unsupported signature algorithm or operation")),
@@ -1204,7 +1488,9 @@ fn rsa_oaep_hash(params: &Value, padding: &str) -> Result<&'static str, PluginEr
         "sha256" => Ok("sha256"),
         "sha384" => Ok("sha384"),
         "sha512" => Ok("sha512"),
-        _ => Err(bad("RSA OAEP hash must be SHA-1, SHA-256, SHA-384, or SHA-512")),
+        _ => Err(bad(
+            "RSA OAEP hash must be SHA-1, SHA-256, SHA-384, or SHA-512",
+        )),
     }
 }
 
@@ -1646,9 +1932,8 @@ fn stored_key_matches_algorithm(stored: &str, requested: &str) -> bool {
         "aes-256-siv" => stored == "aes-siv-512",
         "aes-xts" => matches!(stored, "aes-xts-256" | "aes-xts-512"),
         "chacha20-poly1305" | "xchacha20-poly1305" => stored == "chacha20-256",
-        "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3" | "sm3" => {
-            stored == "hmac" || stored.starts_with("hmac-")
-        }
+        "hmac" | "hmac-sha1" | "hmac-sha256" | "hmac-sha384" | "hmac-sha512" | "hmac-sm3"
+        | "sm3" => stored == "hmac" || stored.starts_with("hmac-"),
         // XOR is deliberately purpose-gated rather than coupled to a key type.
         "xor" => true,
         _ => true,
@@ -2206,7 +2491,14 @@ mod crypto_tests {
 
     #[test]
     fn modern_ciphers_round_trip_and_authenticate() {
-        for algorithm in ["chacha20-poly1305", "xchacha20-poly1305", "aes-256-gcm-siv", "aes-256-siv", "aes-256-ccm", "aes-256-ctr"] {
+        for algorithm in [
+            "chacha20-poly1305",
+            "xchacha20-poly1305",
+            "aes-256-gcm-siv",
+            "aes-256-siv",
+            "aes-256-ccm",
+            "aes-256-ctr",
+        ] {
             let key_bytes = if algorithm == "aes-256-siv" { 64 } else { 32 };
             let encrypted = modern_cipher_op(&Vault::default(), json!({
                 "algorithm": algorithm, "op": "encrypt", "text": "hello", "aad": if algorithm == "aes-256-ctr" { "" } else { "context" },
@@ -2224,36 +2516,64 @@ mod crypto_tests {
     #[test]
     fn specialized_crypto_round_trips_and_matches_cmac_vector() {
         for algorithm in ["aes-kw", "aes-kwp"] {
-            let input = if algorithm == "aes-kw" { "00112233445566778899aabbccddeeff" } else { "00112233445566" };
-            let wrapped = specialized_crypto_op(&Vault::default(), json!({
-                "algorithm": algorithm, "op": "encrypt", "text": input,
-                "keyMaterial": "00".repeat(32), "keyEncoding": "hex"
-            })).unwrap();
-            let plain = specialized_crypto_op(&Vault::default(), json!({
-                "algorithm": algorithm, "op": "decrypt", "text": wrapped["text"],
-                "keyMaterial": "00".repeat(32), "keyEncoding": "hex"
-            })).unwrap();
+            let input = if algorithm == "aes-kw" {
+                "00112233445566778899aabbccddeeff"
+            } else {
+                "00112233445566"
+            };
+            let wrapped = specialized_crypto_op(
+                &Vault::default(),
+                json!({
+                    "algorithm": algorithm, "op": "encrypt", "text": input,
+                    "keyMaterial": "00".repeat(32), "keyEncoding": "hex"
+                }),
+            )
+            .unwrap();
+            let plain = specialized_crypto_op(
+                &Vault::default(),
+                json!({
+                    "algorithm": algorithm, "op": "decrypt", "text": wrapped["text"],
+                    "keyMaterial": "00".repeat(32), "keyEncoding": "hex"
+                }),
+            )
+            .unwrap();
             assert_eq!(plain["text"], input);
         }
 
-        let xts = specialized_crypto_op(&Vault::default(), json!({
-            "algorithm": "aes-xts", "op": "encrypt", "text": "00112233445566778899aabbccddeeff",
-            "keyMaterial": "11".repeat(32), "keyEncoding": "hex", "sector": 7
-        })).unwrap();
-        let restored = specialized_crypto_op(&Vault::default(), json!({
-            "algorithm": "aes-xts", "op": "decrypt", "text": xts["text"],
-            "keyMaterial": "11".repeat(32), "keyEncoding": "hex", "sector": 7
-        })).unwrap();
+        let xts = specialized_crypto_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "aes-xts", "op": "encrypt", "text": "00112233445566778899aabbccddeeff",
+                "keyMaterial": "11".repeat(32), "keyEncoding": "hex", "sector": 7
+            }),
+        )
+        .unwrap();
+        let restored = specialized_crypto_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "aes-xts", "op": "decrypt", "text": xts["text"],
+                "keyMaterial": "11".repeat(32), "keyEncoding": "hex", "sector": 7
+            }),
+        )
+        .unwrap();
         assert_eq!(restored["text"], "00112233445566778899aabbccddeeff");
 
-        let ff1 = specialized_crypto_op(&Vault::default(), json!({
-            "algorithm": "aes-ff1", "op": "encrypt", "text": "0123456789",
-            "keyMaterial": "22".repeat(16), "keyEncoding": "hex", "radix": 10
-        })).unwrap();
-        let ff1_plain = specialized_crypto_op(&Vault::default(), json!({
-            "algorithm": "aes-ff1", "op": "decrypt", "text": ff1["text"],
-            "keyMaterial": "22".repeat(16), "keyEncoding": "hex", "radix": 10
-        })).unwrap();
+        let ff1 = specialized_crypto_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "aes-ff1", "op": "encrypt", "text": "0123456789",
+                "keyMaterial": "22".repeat(16), "keyEncoding": "hex", "radix": 10
+            }),
+        )
+        .unwrap();
+        let ff1_plain = specialized_crypto_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "aes-ff1", "op": "decrypt", "text": ff1["text"],
+                "keyMaterial": "22".repeat(16), "keyEncoding": "hex", "radix": 10
+            }),
+        )
+        .unwrap();
         assert_eq!(ff1_plain["text"], "0123456789");
 
         let cmac = specialized_crypto_op(&Vault::default(), json!({
@@ -2262,20 +2582,32 @@ mod crypto_tests {
         })).unwrap();
         assert_eq!(cmac["text"], "bb1d6929e95937287fa37d129b756746");
 
-        let gmac = specialized_crypto_op(&Vault::default(), json!({
-            "algorithm": "aes-128-gmac", "text": "authenticated data", "inputEncoding": "utf8",
-            "keyMaterial": "00".repeat(16), "keyEncoding": "hex", "nonce": "00".repeat(12)
-        })).unwrap();
+        let gmac = specialized_crypto_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "aes-128-gmac", "text": "authenticated data", "inputEncoding": "utf8",
+                "keyMaterial": "00".repeat(16), "keyEncoding": "hex", "nonce": "00".repeat(12)
+            }),
+        )
+        .unwrap();
         assert_eq!(gmac["text"].as_str().unwrap().len(), 32);
     }
 
     #[test]
     fn hpke_and_ml_kem_round_trip() {
-        let hpke_keys = kem_op(&Vault::default(), json!({ "algorithm": "hpke-x25519-chacha20", "op": "generate", "text": "" })).unwrap();
-        let encrypted = kem_op(&Vault::default(), json!({
-            "algorithm": "hpke-x25519-chacha20", "op": "encrypt", "text": "hello",
-            "publicKey": hpke_keys["publicKey"], "info": "toolbox", "aad": "context"
-        })).unwrap();
+        let hpke_keys = kem_op(
+            &Vault::default(),
+            json!({ "algorithm": "hpke-x25519-chacha20", "op": "generate", "text": "" }),
+        )
+        .unwrap();
+        let encrypted = kem_op(
+            &Vault::default(),
+            json!({
+                "algorithm": "hpke-x25519-chacha20", "op": "encrypt", "text": "hello",
+                "publicKey": hpke_keys["publicKey"], "info": "toolbox", "aad": "context"
+            }),
+        )
+        .unwrap();
         let decrypted = kem_op(&Vault::default(), json!({
             "algorithm": "hpke-x25519-chacha20", "op": "decrypt", "text": encrypted["text"],
             "privateKey": hpke_keys["privateKey"], "encapsulatedKey": encrypted["encapsulatedKey"],
@@ -2284,7 +2616,11 @@ mod crypto_tests {
         assert_eq!(decrypted["text"], "hello");
 
         for algorithm in ["ml-kem-768", "ml-kem-1024"] {
-            let keys = kem_op(&Vault::default(), json!({ "algorithm": algorithm, "op": "generate", "text": "" })).unwrap();
+            let keys = kem_op(
+                &Vault::default(),
+                json!({ "algorithm": algorithm, "op": "generate", "text": "" }),
+            )
+            .unwrap();
             let encapsulated = kem_op(&Vault::default(), json!({
                 "algorithm": algorithm, "op": "encapsulate", "text": "", "publicKey": keys["publicKey"]
             })).unwrap();
@@ -2315,7 +2651,9 @@ mod crypto_tests {
         use rsa::pkcs8::{EncodePrivateKey, EncodePublicKey, LineEnding};
         let private = RsaPrivateKey::new(&mut rand::thread_rng(), 2048).unwrap();
         let private_pem = private.to_pkcs8_pem(LineEnding::LF).unwrap().to_string();
-        let public_pem = RsaPublicKey::from(&private).to_public_key_pem(LineEnding::LF).unwrap();
+        let public_pem = RsaPublicKey::from(&private)
+            .to_public_key_pem(LineEnding::LF)
+            .unwrap();
         for algorithm in ["rsa-pss-sha256", "rsa-pkcs1-sha256"] {
             let signed = signature_op(&Vault::default(), json!({ "algorithm": algorithm, "op": "sign", "text": "hello", "keyMaterial": private_pem })).unwrap();
             assert_eq!(signature_op(&Vault::default(), json!({ "algorithm": algorithm, "op": "verify", "text": "hello", "signature": signed["text"], "keyMaterial": public_pem })).unwrap()["valid"], true);
