@@ -151,25 +151,6 @@
     return labels.length > 2 ? `${labels.slice(0, 2).join(" · ")} +${labels.length - 2}` : labels.join(" · ") || "—";
   }
 
-  function algHint(algorithm) {
-    if (algorithm === "aes-256" || algorithm === "aes-192" || algorithm === "aes-128") {
-      return t("给「对称加密」选用，也可给 XOR 当字节密钥。", "For Symmetric cipher; XOR can reuse these byte keys.");
-    }
-    if (algorithm === "sm4-128") {
-      return t("给「对称加密」选用，也可给 XOR 当字节密钥。", "For Symmetric cipher; XOR can reuse these byte keys.");
-    }
-    if (algorithm === "hmac-sm3") {
-      return t("给 HMAC 选用，也可给 XOR 当字节密钥。", "For HMAC; XOR can reuse these byte keys.");
-    }
-    if (String(algorithm || "").startsWith("hmac")) {
-      return t("给 HMAC、JWT 选用，也可给 XOR 当字节密钥。", "For HMAC and JWT; XOR can reuse these byte keys.");
-    }
-    if (algorithm === "rsa-pem") {
-      return t("给「非对称加密」的 RSA 选用。随机生成可选位数和 PEM 格式。", "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.");
-    }
-    return t("给「非对称加密」的 SM2 选用。可随机生成或粘贴已有密钥。", "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.");
-  }
-
   async function run(task) {
     if (busy) {
       fail({ message: t("请稍候，正在处理上一步操作", "Wait, another action is still running") });
@@ -577,9 +558,6 @@
   {#if !status.exists}
     {#if error}<div class="banner">{error}</div>{/if}
     <div class="gate">
-      <p class="lead">
-        {t("设置主密码（至少 8 位）后即可保存密钥，供加解密工具选用。", "Set a master password (8+ characters) to store keys for the cipher tools.")}
-      </p>
       <div class="stack">
         <label class="field">
           <span>{t("主密码", "Master password")}</span>
@@ -597,9 +575,6 @@
   {:else if !status.unlocked}
     {#if error}<div class="banner">{error}</div>{/if}
     <div class="gate">
-      <p class="lead">
-        {t("输入主密码解锁。", "Enter the master password to unlock.")}
-      </p>
       <label class="field">
         <span>{t("主密码", "Master password")}</span>
         <div class="unlock-row">
@@ -615,9 +590,6 @@
       <div class="sheet-copy">
         <p class="lead strong">
           {t(`已解锁 · ${keys.length} 把密钥`, `Unlocked · ${keys.length} key${keys.length === 1 ? "" : "s"}`)}
-        </p>
-        <p class="lead">
-          {t("对称加密、HMAC、JWT、XOR、非对称加密都从这里选用密钥。", "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.")}
         </p>
       </div>
       <div class="status-actions">
@@ -635,9 +607,7 @@
     {#if error}<div class="banner">{error}</div>{/if}
     {#if notice}<p class="dbx-hint notice">{notice}</p>{/if}
 
-    {#if keys.length === 0}
-      <p class="dbx-hint">{t("还没有密钥。添加 AES / SM4、HMAC、RSA / SM2，供加密、签名和 XOR 选用。", "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.")}</p>
-    {:else}
+    {#if keys.length > 0}
       <div class="list-toolbar">
         <label class="field list-filter">
           <span>{t("筛选", "Filter")}</span>
@@ -803,7 +773,7 @@
                 options={RSA_BIT_OPTIONS.map((value) => ({
                   value,
                   label: value === "8192"
-                    ? t("8192 位 · 高级选项 · 生成较慢", "8192-bit · Advanced · Slower")
+                    ? t("8192 位（较慢）", "8192-bit (slow)")
                     : t(`${value} 位`, `${value}-bit`),
                 }))}
               />
@@ -841,7 +811,6 @@
             <label class="field material"><span>{t("公钥材料（Base64）", "Public key material (Base64)")}</span><textarea class="dbx-textarea pem" bind:value={createPublicMaterial} spellcheck="false"></textarea></label>
           {/if}
         {/if}
-        <p class="lead">{algHint(createAlg)}</p>
       </div>
     {:else}
       <div class="stack">

@@ -12347,18 +12347,6 @@
     "tr": "Anahtar seç",
     "az": "Açarı seçin"
   },
-  "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.": {
-    "en": "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.",
-    "zh-CN": "支持 JWK 对象和 JWKS（keys 数组）。RSA 密钥可在标准 PKCS#8 / SPKI PEM 间转换；本地处理，不上传内容。",
-    "zh-TW": "接受 JWK 物件或 JWKS（鍵數組）。 RSA 金鑰可以與標準 PKCS#8 / SPKI PEM 相互轉換；處理保持在本地。",
-    "es": "Acepta un objeto JWK o JWKS (matriz de claves). Las claves RSA se pueden convertir hacia y desde el estándar PKCS#8/SPKI PEM; el procesamiento permanece local.",
-    "it": "Accetta un oggetto JWK o JWKS (array di chiavi). Le chiavi RSA possono essere convertite in e da PKCS#8 / SPKI PEM standard; l'elaborazione rimane locale.",
-    "ja": "JWK オブジェクトまたは JWKS (キー配列) を受け入れます。 RSA キーは、標準の PKCS#8 / SPKI PEM との間で変換できます。処理はローカルに留まります。",
-    "pt-BR": "Aceita um objeto JWK ou JWKS (matriz de chaves). As chaves RSA podem ser convertidas de e para PKCS#8/SPKI PEM padrão; o processamento permanece local.",
-    "ko": "JWK 객체 또는 JWKS(키 배열)를 허용합니다. RSA 키는 표준 PKCS#8/SPKI PEM으로 변환될 수 있습니다. 처리는 로컬로 유지됩니다.",
-    "tr": "Bir JWK nesnesini veya JWKS'yi (anahtar dizisi) kabul eder. RSA anahtarları standart PKCS#8 / SPKI PEM'e ve standart PKCS#8'den dönüştürülebilir; işleme yerel kalır.",
-    "az": "JWK obyekti və ya JWKS (açar massivi) qəbul edir. RSA açarları standart PKCS#8 / SPKI PEM-ə çevrilə bilər; emal yerli olaraq qalır."
-  },
   "Input JWK / JWKS": {
     "en": "Input JWK / JWKS",
     "zh-CN": "输入 JWK / JWKS",
@@ -12827,17 +12815,17 @@
     "tr": "Anahtar çifti",
     "az": "Açar cütü"
   },
-  "8192-bit · Advanced · Slower": {
-    "en": "8192-bit · Advanced · Slower",
-    "zh-CN": "8192 位 · 高级选项 · 生成较慢",
-    "zh-TW": "8192-bit · Advanced · Slower",
-    "es": "8192-bit · Advanced · Slower",
-    "it": "8192-bit · Advanced · Slower",
-    "ja": "8192-bit · Advanced · Slower",
-    "pt-BR": "8192-bit · Advanced · Slower",
-    "ko": "8192-bit · Advanced · Slower",
-    "tr": "8192-bit · Advanced · Slower",
-    "az": "8192-bit · Advanced · Slower"
+  "8192-bit (slow)": {
+    "en": "8192-bit (slow)",
+    "zh-CN": "8192 位（较慢）",
+    "zh-TW": "8192-bit (slow)",
+    "es": "8192-bit (slow)",
+    "it": "8192-bit (slow)",
+    "ja": "8192-bit (slow)",
+    "pt-BR": "8192-bit (slow)",
+    "ko": "8192-bit (slow)",
+    "tr": "8192-bit (slow)",
+    "az": "8192-bit (slow)"
   },
   "{0}-bit": {
     "en": "{0}-bit",
@@ -12923,30 +12911,6 @@
     "tr": "Oluşturulan özel anahtar",
     "az": "Yaradılmış şəxsi açar"
   },
-  "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.": {
-    "en": "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
-    "zh-TW": "SM2採用中國國家橢圓曲線；鍵為十六進位。保存的密鑰可用於非對稱密碼。如果保管庫被鎖定，系統將要求您輸入主密碼。",
-    "es": "SM2 utiliza la curva elíptica nacional china; Las llaves son hexagonales. Las claves guardadas se pueden utilizar en cifrado asimétrico. Si la bóveda está bloqueada, se le pedirá la contraseña maestra.",
-    "it": "SM2 utilizza la curva ellittica nazionale cinese; le chiavi sono esadecimali. Le chiavi salvate possono essere utilizzate nella cifratura asimmetrica. Se il caveau è bloccato, ti verrà richiesta la password principale.",
-    "ja": "SM2 は中国の国家楕円曲線を使用します。キーは 16 進数です。保存したキーは非対称暗号で使用できます。ボールトがロックされている場合は、マスター パスワードの入力を求められます。",
-    "pt-BR": "SM2 usa a curva elíptica nacional chinesa; as chaves são hexadecimais. As chaves salvas podem ser usadas na cifra assimétrica. Se o cofre estiver bloqueado, será solicitada a senha mestra.",
-    "ko": "SM2는 중국 국가 타원 곡선을 사용합니다. 키는 16진수입니다. 저장된 키는 비대칭 암호화에 사용될 수 있습니다. 볼트가 잠겨 있으면 마스터 비밀번호를 묻는 메시지가 표시됩니다.",
-    "tr": "SM2, Çin ulusal eliptik eğrisini kullanır; anahtarlar altıgendir. Kaydedilen anahtarlar Asimetrik şifrelemede kullanılabilir. Kasa kilitliyse ana şifre sorulacaktır.",
-    "az": "SM2 Çin milli elliptik əyrisindən istifadə edir; açarlar altıbucaqlıdır. Saxlanılan açarlar Asimmetrik şifrədə istifadə edilə bilər. Kassa kilidlidirsə, sizdən əsas parol tələb olunacaq."
-  },
-  "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.": {
-    "en": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "RSA 可选 2048 / 3072 / 4096 / 8192 位；8192 位生成较慢。PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供 RSA 工具选用；未解锁时会提示输入主密码。",
-    "zh-TW": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "es": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "it": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "ja": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "pt-BR": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "ko": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "tr": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "az": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password."
-  },
   "Key source": {
     "en": "Key source",
     "zh-CN": "密钥来源",
@@ -13018,18 +12982,6 @@
     "ko": "주요 자료(hex/base64/PEM)",
     "tr": "Anahtar malzemesi (hex/base64/PEM)",
     "az": "Əsas material (hex/base64/PEM)"
-  },
-  "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.": {
-    "en": "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。",
-    "zh-TW": "AES、SM4 和 HMAC 是單一金鑰，而不是對。儲存的金鑰可用於對稱密碼、HMAC、JWT 和 XOR。如果保管庫被鎖定，系統將要求您輸入主密碼。",
-    "es": "AES, SM4 y HMAC son claves individuales, no pares. Las claves guardadas se pueden utilizar en cifrado simétrico, HMAC, JWT y XOR. Si la bóveda está bloqueada, se le pedirá la contraseña maestra.",
-    "it": "AES, SM4 e HMAC sono chiavi singole, non coppie. Le chiavi salvate possono essere utilizzate nella crittografia simmetrica, HMAC, JWT e XOR. Se il caveau è bloccato, ti verrà richiesta la password principale.",
-    "ja": "AES、SM4、および HMAC はペアではなく単一のキーです。保存されたキーは、対称暗号、HMAC、JWT、および XOR で使用できます。ボールトがロックされている場合は、マスター パスワードの入力を求められます。",
-    "pt-BR": "AES, SM4 e HMAC são chaves únicas, não pares. As chaves salvas podem ser usadas em cifra simétrica, HMAC, JWT e XOR. Se o cofre estiver bloqueado, será solicitada a senha mestra.",
-    "ko": "AES, SM4 및 HMAC는 쌍이 아닌 단일 키입니다. 저장된 키는 대칭 암호, HMAC, JWT 및 XOR에서 사용할 수 있습니다. 볼트가 잠겨 있으면 마스터 비밀번호를 묻는 메시지가 표시됩니다.",
-    "tr": "AES, SM4 ve HMAC çift değil tek anahtarlardır. Kaydedilen anahtarlar Simetrik şifre, HMAC, JWT ve XOR'da kullanılabilir. Kasa kilitliyse ana şifre sorulacaktır.",
-    "az": "AES, SM4 və HMAC cüt deyil, tək düymələrdir. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. Kassa kilidlidirsə, sizdən əsas parol tələb olunacaq."
   },
   "Key · {0} bytes · Hex ({1} characters)": {
     "en": "Key · {0} bytes · Hex ({1} characters)",
@@ -20027,18 +19979,6 @@
     "tr": "Save chart",
     "az": "Save chart"
   },
-  "Set a master password (8+ characters) to store keys for the cipher tools.": {
-    "en": "Set a master password (8+ characters) to store keys for the cipher tools.",
-    "zh-CN": "设置主密码（至少 8 位）后即可保存密钥，供加解密工具选用。",
-    "zh-TW": "設定主密碼（8 個以上字元）來儲存密碼工具的金鑰。",
-    "es": "Establezca una contraseña maestra (más de 8 caracteres) para almacenar claves para las herramientas de cifrado.",
-    "it": "Imposta una password principale (8+ caratteri) per memorizzare le chiavi per gli strumenti di cifratura.",
-    "ja": "暗号化ツールのキーを保存するためのマスター パスワード (8 文字以上) を設定します。",
-    "pt-BR": "Defina uma senha mestra (mais de 8 caracteres) para armazenar chaves para as ferramentas de criptografia.",
-    "ko": "암호화 도구용 키를 저장하려면 마스터 비밀번호(8자 이상)를 설정하세요.",
-    "tr": "Şifreleme araçlarının anahtarlarını saklamak için bir ana şifre (8+ karakter) belirleyin.",
-    "az": "Şifrə alətləri üçün açarları saxlamaq üçün əsas parol (8+ simvol) təyin edin."
-  },
   "Create vault": {
     "en": "Create vault",
     "zh-CN": "创建密钥库",
@@ -20051,18 +19991,6 @@
     "tr": "Kasa oluştur",
     "az": "Kassa yaradın"
   },
-  "Enter the master password to unlock.": {
-    "en": "Enter the master password to unlock.",
-    "zh-CN": "输入主密码解锁。",
-    "zh-TW": "輸入主密碼進行解鎖。",
-    "es": "Ingrese la contraseña maestra para desbloquear.",
-    "it": "Inserisci la password principale per sbloccare.",
-    "ja": "マスターパスワードを入力してロックを解除します。",
-    "pt-BR": "Digite a senha mestra para desbloquear.",
-    "ko": "잠금을 해제하려면 마스터 비밀번호를 입력하세요.",
-    "tr": "Kilidi açmak için ana şifreyi girin.",
-    "az": "Kilidi açmaq üçün əsas parolu daxil edin."
-  },
   "Unlocked · {0} key{1}": {
     "en": "Unlocked · {0} key{1}",
     "zh-CN": "已解锁 · {0} 把密钥",
@@ -20074,18 +20002,6 @@
     "ko": "잠금 해제됨 · {0} 키{1}",
     "tr": "Kilit açık · {0} tuşu{1}",
     "az": "Kilidi açıldı · {0} açar{1}"
-  },
-  "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.": {
-    "en": "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.",
-    "zh-CN": "对称加密、HMAC、JWT、XOR、非对称加密都从这里选用密钥。",
-    "zh-TW": "對稱、HMAC、JWT、XOR 和非對稱密碼都在這裡選擇金鑰。",
-    "es": "El cifrado simétrico, HMAC, JWT, XOR y asimétrico selecciona claves aquí.",
-    "it": "La crittografia simmetrica, HMAC, JWT, XOR e asimmetrica seleziona tutte le chiavi qui.",
-    "ja": "対称、HMAC、JWT、XOR、および非対称暗号はすべてここでキーを選択します。",
-    "pt-BR": "Simétrica, HMAC, JWT, XOR e cifra assimétrica, todas escolhem chaves aqui.",
-    "ko": "대칭, HMAC, JWT, XOR 및 비대칭 암호화는 모두 여기에서 키를 선택합니다.",
-    "tr": "Simetrik, HMAC, JWT, XOR ve asimetrik şifrelerin tümü burada anahtarları seçer.",
-    "az": "Simmetrik, HMAC, JWT, XOR və asimmetrik şifrə burada açarları seçir."
   },
   "Auto-lock": {
     "en": "Auto-lock",
@@ -20110,18 +20026,6 @@
     "tr": "Kilitle",
     "az": "Kilidlə",
     "pt-BR": "Bloquear"
-  },
-  "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.": {
-    "en": "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.",
-    "zh-CN": "还没有密钥。添加 AES / SM4、HMAC、RSA / SM2，供加密、签名和 XOR 选用。",
-    "zh-TW": "還沒有鑰匙。新增 AES/SM4、HMAC 或 RSA/SM2 以進行加密、簽章和 XOR。",
-    "es": "Aún no hay llaves. Agregue AES/SM4, HMAC o RSA/SM2 para cifrado, firma y XOR.",
-    "it": "Ancora nessuna chiave. Aggiungi AES/SM4, HMAC o RSA/SM2 per crittografia, firma e XOR.",
-    "ja": "まだ鍵がありません。暗号、署名、XOR 用に AES/SM4、HMAC、または RSA/SM2 を追加します。",
-    "pt-BR": "Ainda não há chaves. Adicione AES/SM4, HMAC ou RSA/SM2 para criptografia, assinatura e XOR.",
-    "ko": "아직 열쇠가 없습니다. 암호화, 서명 및 XOR을 위해 AES/SM4, HMAC 또는 RSA/SM2를 추가합니다.",
-    "tr": "Henüz anahtar yok. Şifreleme, imzalama ve XOR için AES/SM4, HMAC veya RSA/SM2 ekleyin.",
-    "az": "Hələ açar yoxdur. Şifrə, imzalama və XOR üçün AES/SM4, HMAC və ya RSA/SM2 əlavə edin."
   },
   "Filter": {
     "en": "Filter",
@@ -20698,66 +20602,6 @@
     "ko": "Legacy · confirmation needed",
     "tr": "Legacy · confirmation needed",
     "az": "Legacy · confirmation needed"
-  },
-  "For Symmetric cipher; XOR can reuse these byte keys.": {
-    "en": "For Symmetric cipher; XOR can reuse these byte keys.",
-    "zh-CN": "给「对称加密」选用，也可给 XOR 当字节密钥。",
-    "zh-TW": "對於對稱密碼； XOR 可以重複使用這些位元組金鑰。",
-    "es": "Para cifrado simétrico; XOR puede reutilizar estas claves de bytes.",
-    "it": "Per cifratura simmetrica; XOR può riutilizzare queste chiavi di byte.",
-    "ja": "対称暗号の場合。 XOR はこれらのバイト キーを再利用できます。",
-    "pt-BR": "Para cifra simétrica; XOR pode reutilizar essas chaves de bytes.",
-    "ko": "대칭 암호의 경우; XOR은 이러한 바이트 키를 재사용할 수 있습니다.",
-    "tr": "Simetrik şifreleme için; XOR bu bayt anahtarlarını yeniden kullanabilir.",
-    "az": "Simmetrik şifrə üçün; XOR bu bayt düymələrindən təkrar istifadə edə bilər."
-  },
-  "For HMAC; XOR can reuse these byte keys.": {
-    "en": "For HMAC; XOR can reuse these byte keys.",
-    "zh-CN": "给 HMAC 选用，也可给 XOR 当字节密钥。",
-    "zh-TW": "對於HMAC； XOR 可以重複使用這些位元組金鑰。",
-    "es": "Para HMAC; XOR puede reutilizar estas claves de bytes.",
-    "it": "Per HMAC; XOR può riutilizzare queste chiavi di byte.",
-    "ja": "HMAC の場合; XOR はこれらのバイト キーを再利用できます。",
-    "pt-BR": "Para HMAC; XOR pode reutilizar essas chaves de bytes.",
-    "ko": "HMAC의 경우; XOR은 이러한 바이트 키를 재사용할 수 있습니다.",
-    "tr": "HMAC için; XOR bu bayt anahtarlarını yeniden kullanabilir.",
-    "az": "HMAC üçün; XOR bu bayt düymələrindən təkrar istifadə edə bilər."
-  },
-  "For HMAC and JWT; XOR can reuse these byte keys.": {
-    "en": "For HMAC and JWT; XOR can reuse these byte keys.",
-    "zh-CN": "给 HMAC、JWT 选用，也可给 XOR 当字节密钥。",
-    "zh-TW": "對於 HMAC 和 JWT； XOR 可以重複使用這些位元組金鑰。",
-    "es": "Para HMAC y JWT; XOR puede reutilizar estas claves de bytes.",
-    "it": "Per HMAC e JWT; XOR può riutilizzare queste chiavi di byte.",
-    "ja": "HMAC および JWT の場合。 XOR はこれらのバイト キーを再利用できます。",
-    "pt-BR": "Para HMAC e JWT; XOR pode reutilizar essas chaves de bytes.",
-    "ko": "HMAC 및 JWT의 경우; XOR은 이러한 바이트 키를 재사용할 수 있습니다.",
-    "tr": "HMAC ve JWT için; XOR bu bayt anahtarlarını yeniden kullanabilir.",
-    "az": "HMAC və JWT üçün; XOR bu bayt düymələrindən təkrar istifadə edə bilər."
-  },
-  "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.": {
-    "en": "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.",
-    "zh-CN": "给「非对称加密」的 RSA 选用。随机生成可选位数和 PEM 格式。",
-    "zh-TW": "對於非對稱密碼中的 RSA。使用選定的位元長度和 PKCS#8 或 PKCS#1 PEM 產生。",
-    "es": "Para RSA en cifrado asimétrico. Generar con una longitud de bits elegida y PKCS#8 o PKCS#1 PEM.",
-    "it": "Per RSA in cifratura asimmetrica. Genera con una lunghezza di bit scelta e PKCS#8 o PKCS#1 PEM.",
-    "ja": "非対称暗号の RSA の場合。選択したビット長と PKCS#8 または PKCS#1 PEM を使用して生成します。",
-    "pt-BR": "Para RSA em cifra assimétrica. Gere com um comprimento de bit escolhido e PKCS#8 ou PKCS#1 PEM.",
-    "ko": "비대칭 암호의 RSA의 경우. 선택한 비트 길이와 PKCS#8 또는 PKCS#1 PEM을 사용하여 생성합니다.",
-    "tr": "Asimetrik şifrelemede RSA için. Seçilen bir bit uzunluğu ve PKCS#8 veya PKCS#1 PEM ile oluşturun.",
-    "az": "Asimmetrik şifrədə RSA üçün. Seçilmiş bit uzunluğu və PKCS#8 və ya PKCS#1 PEM ilə yaradın."
-  },
-  "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.": {
-    "en": "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.",
-    "zh-CN": "给「非对称加密」的 SM2 选用。可随机生成或粘贴已有密钥。",
-    "zh-TW": "對於非對稱密碼中的SM2。產生新密鑰或貼上現有密鑰。",
-    "es": "Para SM2 en cifrado asimétrico. Genere una nueva clave o pegue una existente.",
-    "it": "Per SM2 in cifratura asimmetrica. Genera una nuova chiave o incollane una esistente.",
-    "ja": "非対称暗号の SM2 の場合。新しいキーを生成するか、既存のキーを貼り付けます。",
-    "pt-BR": "Para SM2 em cifra assimétrica. Gere uma nova chave ou cole uma existente.",
-    "ko": "비대칭 암호의 SM2용. 새 키를 생성하거나 기존 키를 붙여넣습니다.",
-    "tr": "Asimetrik şifrelemede SM2 için. Yeni bir anahtar oluşturun veya mevcut olanı yapıştırın.",
-    "az": "Asimmetrik şifrədə SM2 üçün. Yeni açar yaradın və ya mövcud olanı yapışdırın."
   },
   "Wait, another action is still running": {
     "en": "Wait, another action is still running",

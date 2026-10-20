@@ -5774,10 +5774,6 @@
     "en": "Select key",
     "zh-CN": "选择密钥"
   },
-  "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.": {
-    "en": "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.",
-    "zh-CN": "支持 JWK 对象和 JWKS（keys 数组）。RSA 密钥可在标准 PKCS#8 / SPKI PEM 间转换；本地处理，不上传内容。"
-  },
   "Input JWK / JWKS": {
     "en": "Input JWK / JWKS",
     "zh-CN": "输入 JWK / JWKS"
@@ -5949,9 +5945,9 @@
     "en": "Key pair",
     "zh-CN": "密钥对"
   },
-  "8192-bit · Advanced · Slower": {
-    "en": "8192-bit · Advanced · Slower",
-    "zh-CN": "8192 位 · 高级选项 · 生成较慢"
+  "8192-bit (slow)": {
+    "en": "8192-bit (slow)",
+    "zh-CN": "8192 位（较慢）"
   },
   "{0}-bit": {
     "en": "{0}-bit",
@@ -5981,14 +5977,6 @@
     "en": "Generated private key",
     "zh-CN": "生成的私钥"
   },
-  "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.": {
-    "en": "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。"
-  },
-  "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.": {
-    "en": "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "RSA 可选 2048 / 3072 / 4096 / 8192 位；8192 位生成较慢。PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供 RSA 工具选用；未解锁时会提示输入主密码。"
-  },
   "Key source": {
     "en": "Key source",
     "zh-CN": "密钥来源"
@@ -6012,10 +6000,6 @@
   "Key material (hex/base64/PEM)": {
     "en": "Key material (hex/base64/PEM)",
     "zh-CN": "密钥材料（hex/base64/PEM）"
-  },
-  "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.": {
-    "en": "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.",
-    "zh-CN": "AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。"
   },
   "Key · {0} bytes · Hex ({1} characters)": {
     "en": "Key · {0} bytes · Hex ({1} characters)",
@@ -8413,25 +8397,13 @@
     "en": "Save chart",
     "zh-CN": "保存图表"
   },
-  "Set a master password (8+ characters) to store keys for the cipher tools.": {
-    "en": "Set a master password (8+ characters) to store keys for the cipher tools.",
-    "zh-CN": "设置主密码（至少 8 位）后即可保存密钥，供加解密工具选用。"
-  },
   "Create vault": {
     "en": "Create vault",
     "zh-CN": "创建密钥库"
   },
-  "Enter the master password to unlock.": {
-    "en": "Enter the master password to unlock.",
-    "zh-CN": "输入主密码解锁。"
-  },
   "Unlocked · {0} key{1}": {
     "en": "Unlocked · {0} key{1}",
     "zh-CN": "已解锁 · {0} 把密钥"
-  },
-  "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.": {
-    "en": "Symmetric, HMAC, JWT, XOR, and asymmetric cipher all pick keys here.",
-    "zh-CN": "对称加密、HMAC、JWT、XOR、非对称加密都从这里选用密钥。"
   },
   "Auto-lock": {
     "en": "Auto-lock",
@@ -8440,10 +8412,6 @@
   "Lock": {
     "en": "Lock",
     "zh-CN": "锁定"
-  },
-  "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.": {
-    "en": "No keys yet. Add AES/SM4, HMAC, or RSA/SM2 for cipher, signing, and XOR.",
-    "zh-CN": "还没有密钥。添加 AES / SM4、HMAC、RSA / SM2，供加密、签名和 XOR 选用。"
   },
   "Filter": {
     "en": "Filter",
@@ -8636,26 +8604,6 @@
   "Legacy · confirmation needed": {
     "en": "Legacy · confirmation needed",
     "zh-CN": "历史兼容 · 待确认"
-  },
-  "For Symmetric cipher; XOR can reuse these byte keys.": {
-    "en": "For Symmetric cipher; XOR can reuse these byte keys.",
-    "zh-CN": "给「对称加密」选用，也可给 XOR 当字节密钥。"
-  },
-  "For HMAC; XOR can reuse these byte keys.": {
-    "en": "For HMAC; XOR can reuse these byte keys.",
-    "zh-CN": "给 HMAC 选用，也可给 XOR 当字节密钥。"
-  },
-  "For HMAC and JWT; XOR can reuse these byte keys.": {
-    "en": "For HMAC and JWT; XOR can reuse these byte keys.",
-    "zh-CN": "给 HMAC、JWT 选用，也可给 XOR 当字节密钥。"
-  },
-  "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.": {
-    "en": "For RSA in Asymmetric cipher. Generate with a chosen bit length and PKCS#8 or PKCS#1 PEM.",
-    "zh-CN": "给「非对称加密」的 RSA 选用。随机生成可选位数和 PEM 格式。"
-  },
-  "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.": {
-    "en": "For SM2 in Asymmetric cipher. Generate a new key or paste an existing one.",
-    "zh-CN": "给「非对称加密」的 SM2 选用。可随机生成或粘贴已有密钥。"
   },
   "Wait, another action is still running": {
     "en": "Wait, another action is still running",

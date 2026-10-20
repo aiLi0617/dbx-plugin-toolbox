@@ -105,7 +105,6 @@
 
 <div class="page">
   {#if error}<div class="banner">{error}</div>{/if}
-  <p class="dbx-hint">{t("AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。", "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.")}</p>
   <div class="options">
     <label class="field">
       <span>{t("算法", "Algorithm")}</span>

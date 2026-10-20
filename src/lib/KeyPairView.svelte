@@ -20,15 +20,6 @@
   $effect(() => { if (fixedAlgorithm) algorithm = fixedAlgorithm; });
 
   const t = (zh, en) => pick(locale, zh, en);
-  const algoHint = $derived(algorithm === "sm2"
-    ? t(
-      "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
-      "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    )
-    : t(
-      "RSA 可选 2048 / 3072 / 4096 / 8192 位；8192 位生成较慢。PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供 RSA 工具选用；未解锁时会提示输入主密码。",
-      "RSA supports 2048/3072/4096/8192-bit keys; 8192-bit generation is slower. PEM can be PKCS#8 or PKCS#1. Saved keys can be used by RSA tools. If the vault is locked, you will be asked for the master password.",
-    ));
 
   function isLockedError(err) {
     return /key vault is locked/i.test(errorMessage(err));
@@ -130,7 +121,6 @@
 
 <div class="page">
   {#if error}<div class="banner">{error}</div>{/if}
-  <p class="dbx-hint">{algoHint}</p>
   <div class="options options--algo">
     {#if !fixedAlgorithm}<label class="field">
       <span>{t("算法", "Algorithm")}</span>
@@ -151,7 +141,7 @@
           options={RSA_BIT_OPTIONS.map((value) => ({
             value,
             label: value === "8192"
-              ? t("8192 位 · 高级选项 · 生成较慢", "8192-bit · Advanced · Slower")
+              ? t("8192 位（较慢）", "8192-bit (slow)")
               : t(`${value} 位`, `${value}-bit`),
           }))}
         />
@@ -213,10 +203,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--ui-gap, 12px);
-  }
-  .dbx-hint {
-    margin: 0;
-    flex-shrink: 0;
   }
   .options {
     display: flex;
