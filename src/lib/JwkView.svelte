@@ -96,7 +96,6 @@
     {/if}
   </div>
 
-  <p class="hint">{t("支持 JWK 对象和 JWKS（keys 数组）。RSA 密钥可在标准 PKCS#8 / SPKI PEM 间转换；本地处理，不上传内容。", "Accepts a JWK object or JWKS (keys array). RSA keys can be converted to and from standard PKCS#8 / SPKI PEM; processing stays local.")}</p>
   <label class="block">
     <div class="caption-row"><span class="caption">{t("输入 JWK / JWKS", "Input JWK / JWKS")}</span><span class="counter">{new TextEncoder().encode(input).length} / {INPUT_LIMITS.jwk} B</span></div>
     <textarea class="dbx-textarea area mono" maxlength={INPUT_LIMITS.jwk} spellcheck="false" bind:value={input} placeholder={'{"kty":"RSA","n":"…","e":"AQAB"}' }></textarea>

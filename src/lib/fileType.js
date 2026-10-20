@@ -106,3 +106,29 @@ export function extensionMatches(type, name) {
   const extension = fileExtension(name);
   return !extension || !type?.extensions?.length ? null : type.extensions.includes(extension);
 }
+
+const MIME_CATALOG = Object.freeze(Object.entries(TYPES).map(([id, [name, mime, extensions]]) => ({ id, name, mime, extensions })));
+
+/** Query the built-in catalog by MIME, extension, id, or human name. */
+export function lookupFileTypes(query) {
+  const needle = String(query || "").trim().toLowerCase().replace(/^\./, "");
+  if (!needle) return [];
+  return MIME_CATALOG.filter((entry) => entry.id.toLowerCase().includes(needle)
+    || entry.name.toLowerCase().includes(needle)
+    || entry.mime.toLowerCase().includes(needle)
+    || entry.extensions.some((extension) => extension.includes(needle)));
+}
+
+export function fileTypeReport(type, file = {}) {
+  const extension = fileExtension(file.name);
+  const extensionMatch = extensionMatches(type, file.name);
+  return {
+    fileName: String(file.name || ""),
+    size: Number(file.size || 0),
+    browserMime: String(file.type || ""),
+    detected: type,
+    extension,
+    extensionMatch,
+    disguisedExtension: extensionMatch === false,
+  };
+}

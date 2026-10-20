@@ -1,7 +1,7 @@
 import { TOOL_DEFS } from "./toolCatalog.js";
 import { TEXT_ACTIONS } from "./textActions.js";
-import { categories, L, localeValues } from "./i18n.js";
-import { resolveIntent } from "./searchIntent.js";
+import { categories, L, localeValues, pick } from "./i18n.js";
+import { intentLabelForTool, normalizeIntentQuery, resolveIntent } from "./searchIntent.js";
 
 export const CATEGORY_ORDER = ["data", "encode", "text", "calculate", "network", "developer", "security", "generate", "image"];
 
@@ -20,9 +20,7 @@ export const LEGACY_TOOL_IDS = {
   base32: "base64",
   base58: "base64",
   unicode: "html-entities",
-  sm4: "aes",
   "hmac-sm3": "hmac-sha256",
-  sm2: "rsa",
   "ssh-fingerprint": "cert",
   sql: "code-format",
   xml: "code-format",
@@ -318,15 +316,34 @@ const SUMMARIES = {
     "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3",
     "HMAC with SHA-1, SHA-256, SHA-384, SHA-512, or SM3",
   ),
-  rsa: L(
-    "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-    "RSA（OAEP / PKCS#1）或 SM2 加解密",
-    "RSA（OAEP / PKCS#1）或 SM2 加解密",
-    "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-    "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-    "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-    "RSA OAEP/PKCS#1 or SM2 encrypt and decrypt",
-  ),
+  rsa: {
+    ...L(
+    "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    "RSA 加解密，支持 OAEP 与 PKCS#1 v1.5",
+    "RSA 加解密，支援 OAEP 與 PKCS#1 v1.5",
+    "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    "RSA encryption and decryption with OAEP or PKCS#1 v1.5",
+    ),
+    az: "OAEP və ya PKCS#1 v1.5 ilə RSA şifrələmə və deşifrələmə",
+    ko: "OAEP 또는 PKCS#1 v1.5를 사용하는 RSA 암호화 및 복호화",
+    tr: "OAEP veya PKCS#1 v1.5 ile RSA şifreleme ve şifre çözme",
+  },
+  sm2: {
+    ...L(
+    "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    "SM2 国密加解密，使用十六进制公私钥",
+    "SM2 國密加解密，使用十六進位公私鑰",
+    "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    "SM2 encryption and decryption with Chinese commercial cryptography keys",
+    ),
+    az: "SM2 açıq və şəxsi açarları ilə şifrələmə və deşifrələmə",
+    ko: "SM2 공개 키와 개인 키를 사용한 암호화 및 복호화",
+    tr: "SM2 açık ve özel anahtarlarıyla şifreleme ve şifre çözme",
+  },
   totp: L(
     "Generate the current TOTP code from a secret",
     "根据密钥生成当前 TOTP 动态口令",
@@ -494,7 +511,8 @@ const JAPANESE_SUMMARIES = {
   jwt: "HS / RS / PS を使って JWT をデコード、署名、検証",
   aes: "AES / SM4 の暗号化・復号（GCM、CBC、ECB）",
   "hmac-sha256": "SHA-1、SHA-256、SHA-384、SHA-512、SM3 による HMAC",
-  rsa: "RSA OAEP / PKCS#1 または SM2 の暗号化・復号",
+  rsa: "RSA OAEP / PKCS#1 v1.5 の暗号化・復号",
+  sm2: "SM2 公開鍵・秘密鍵による暗号化・復号",
   totp: "秘密鍵から現在の TOTP コードを生成",
   cert: "証明書の有効期限、SAN、フィンガープリント、SSH 公開鍵を確認",
   jwk: "JWK / JWKS を検証し、RSA JWK と PEM を相互変換",
@@ -541,7 +559,8 @@ const ROMANCE_SUMMARIES = {
   jwt: ["Decodifica, firma o verifica JWT con HS / RS / PS", "Decodifica, firma o verifica JWT con HS / RS / PS", "Decodifique, assine ou verifique JWTs com HS / RS / PS"],
   aes: ["Cifra o descifra con AES / SM4 (GCM, CBC, ECB)", "Cifra o decifra con AES / SM4 (GCM, CBC, ECB)", "Criptografe ou descriptografe com AES / SM4 (GCM, CBC, ECB)"],
   "hmac-sha256": ["HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3", "HMAC con SHA-1, SHA-256, SHA-384, SHA-512 o SM3", "HMAC com SHA-1, SHA-256, SHA-384, SHA-512 ou SM3"],
-  rsa: ["Cifra y descifra con RSA OAEP / PKCS#1 o SM2", "Cifra e decifra con RSA OAEP / PKCS#1 o SM2", "Criptografe e descriptografe com RSA OAEP / PKCS#1 ou SM2"],
+  rsa: ["Cifra y descifra con RSA OAEP o PKCS#1 v1.5", "Cifra e decifra con RSA OAEP o PKCS#1 v1.5", "Criptografe e descriptografe com RSA OAEP ou PKCS#1 v1.5"],
+  sm2: ["Cifra y descifra con claves públicas y privadas SM2", "Cifra e decifra con chiavi pubbliche e private SM2", "Criptografe e descriptografe com chaves públicas e privadas SM2"],
   totp: ["Genera el código TOTP actual a partir de un secreto", "Genera il codice TOTP corrente da un segreto", "Gere o código TOTP atual a partir de um segredo"],
   cert: ["Inspecciona validez, SAN, huellas y claves públicas SSH", "Analizza validità, SAN, impronte e chiavi pubbliche SSH", "Inspecione validade, SANs, impressões digitais e chaves públicas SSH"],
   jwk: ["Valida JWK / JWKS y convierte RSA JWK ↔ PEM", "Convalida JWK / JWKS e converte RSA JWK ↔ PEM", "Valide JWK / JWKS e converta RSA JWK ↔ PEM"],
@@ -642,31 +661,59 @@ export function toolsByCategory(pool = tools) {
   return map;
 }
 
-export function searchTools(query, locale, pool = tools) {
+export function searchToolMatches(query, locale, pool = tools) {
+  const searchable = pool.filter((tool) => tool.catalogVisible !== false);
   const q = query.trim().toLowerCase();
-  if (!q) return pool;
+  if (!q) return searchable.map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
+  const normalizedQuery = normalizeIntentQuery(q);
+  const exactCategoryId = CATEGORY_ORDER.find((id) => [id, ...localeValues(categories[id])].some((value) => [q, normalizedQuery].includes(value.toLowerCase())));
+  const candidates = exactCategoryId ? searchable.filter((tool) => tool.category === exactCategoryId) : searchable;
   const tokens = q.split(/\s+/).filter(Boolean);
-  const intentBoost = new Map();
+  const intentMatches = new Map();
   for (const [index, intent] of resolveIntent(q).entries()) {
-    const boost = 5 + (Object.keys(intent.options || {}).length ? 1 : 0) - index * 0.01;
-    const prev = intentBoost.get(intent.toolId);
-    if (prev == null || boost > prev) intentBoost.set(intent.toolId, boost);
+    const score = (Object.keys(intent.options || {}).length ? 700 : 650) - index * 0.001;
+    const previous = intentMatches.get(intent.toolId);
+    if (!previous || score > previous.score) intentMatches.set(intent.toolId, { intent, score });
   }
-  return pool.map((tool) => {
+  return candidates.map((tool, catalogIndex) => {
     const names = [tool.id, ...localeValues(tool.name)].map((value) => value.toLowerCase());
     const aliases = (tool.aliases || []).map((value) => value.toLowerCase());
     const category = categories[tool.category];
-    const haystack = [
-      ...names,
-      ...aliases,
-      ...localeValues(tool.summary),
-      tool.category,
-      ...localeValues(category),
-    ].filter(Boolean).join(" ").toLowerCase();
-    const matched = tokens.every((token) => haystack.includes(token));
-    let score = matched ? (names.includes(q) ? 4 : aliases.includes(q) ? 3 : names.some((name) => name.includes(q)) ? 2 : 1) : 0;
-    const boost = intentBoost.get(tool.id);
-    if (boost != null) score = Math.max(score, boost);
-    return { tool, score };
-  }).filter((item) => item.score).sort((a, b) => b.score - a.score).map((item) => item.tool);
+    const summaries = localeValues(tool.summary).map((value) => value.toLowerCase());
+    const categoryValues = [tool.category, ...localeValues(category)].map((value) => value.toLowerCase());
+    const haystack = [...names, ...aliases, ...summaries, ...categoryValues].filter(Boolean).join(" ");
+    const allTokensMatch = tokens.every((token) => haystack.includes(token));
+    let score = 0;
+    let matchKind = "";
+    let matchLabel = "";
+
+    const intentMatch = intentMatches.get(tool.id);
+    if (intentMatch) {
+      score = intentMatch.score;
+      matchKind = "intent";
+      matchLabel = intentLabelForTool(tool.id, query, locale) || pick(locale, tool.name);
+    } else if (names.includes(q)) {
+      score = tool.id === q ? 600 : 590;
+      matchKind = "name";
+    } else if (aliases.includes(q)) {
+      score = 550;
+      matchKind = "alias";
+    } else if (names.some((name) => name.startsWith(q)) || aliases.some((alias) => alias.startsWith(q))) {
+      score = 500;
+      matchKind = "prefix";
+    } else if (exactCategoryId || allTokensMatch) {
+      if (exactCategoryId || categoryValues.some((value) => value.includes(q))) {
+        score = 300;
+        matchKind = "category";
+      } else {
+        score = 250;
+        matchKind = "summary";
+      }
+    }
+    return { tool, score, matchKind, matchLabel, catalogIndex };
+  }).filter((item) => item.score).sort((a, b) => b.score - a.score || a.catalogIndex - b.catalogIndex).map(({ catalogIndex, ...item }) => item);
+}
+
+export function searchTools(query, locale, pool = tools) {
+  return searchToolMatches(query, locale, pool).map((item) => item.tool);
 }

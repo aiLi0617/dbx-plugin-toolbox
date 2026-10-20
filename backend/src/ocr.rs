@@ -11,6 +11,8 @@ use rten_imageproc::RotatedRect;
 use serde::Deserialize;
 use serde_json::{json, Value};
 
+use crate::ocr_models::{ModelTier, OcrModelManager};
+
 const CHANNEL_PREFIX: &str = "toolbox/ocr/";
 const MAX_IMAGE_BYTES: usize = 20_000_000;
 const MAX_CHUNK_BYTES: usize = 8 * 1024 * 1024;
@@ -18,15 +20,12 @@ const OCR_UPLOAD_CHUNK_BYTES: usize = 4 * 1024 * 1024;
 const MAX_IMAGE_SIDE: u32 = 16_384;
 const MAX_IMAGE_PIXELS: u64 = 60_000_000;
 const SESSION_TTL: Duration = Duration::from_secs(10 * 60);
-const DETECTION_MODEL: &[u8] = include_bytes!("../models/detection-ppocrv5.rten");
-const RECOGNITION_FAST_MODEL: &[u8] = include_bytes!("../models/recognition-mobile-opset13.rten");
-const RECOGNITION_ACCURATE_MODEL: &[u8] =
-    include_bytes!("../models/recognition-server-opset13.rten");
 
 #[derive(Default)]
 pub struct OcrService {
     uploads: Mutex<HashMap<String, Upload>>,
     engines: Mutex<EngineCache>,
+    models: OcrModelManager,
 }
 
 #[derive(Default)]
@@ -36,14 +35,18 @@ struct EngineCache {
 }
 
 impl EngineCache {
-    fn get(&mut self, quality: OcrQuality) -> Result<&OcrEngine, PluginError> {
+    fn get(
+        &mut self,
+        quality: OcrQuality,
+        models: &OcrModelManager,
+    ) -> Result<&OcrEngine, PluginError> {
         let slot = match quality {
             OcrQuality::Fast => &mut self.fast,
             OcrQuality::Accurate => &mut self.accurate,
             OcrQuality::Auto => &mut self.fast,
         };
         if slot.is_none() {
-            *slot = Some(load_engine(quality)?);
+            *slot = Some(load_engine(quality, models)?);
         }
         Ok(slot.as_ref().expect("OCR engine was initialized"))
     }
@@ -121,12 +124,39 @@ impl OcrService {
         emitter: &PluginEmitter,
     ) -> Result<Value, PluginError> {
         match method {
+            "toolbox/ocr/models/status" => self.models.status(),
+            "toolbox/ocr/models/install" => self.models.install(params, emitter),
+            "toolbox/ocr/models/cancel" => self.models.cancel(params),
+            "toolbox/ocr/models/remove" => self.remove_models(params),
             "toolbox/ocr/begin" => self.begin(params),
             "toolbox/ocr/status" => self.status(params),
             "toolbox/ocr/recognize" => self.recognize(params, emitter),
             "toolbox/ocr/cancel" => self.cancel(params),
             _ => Err(PluginError::method_not_found(method)),
         }
+    }
+
+    fn remove_models(&self, params: Value) -> Result<Value, PluginError> {
+        if self
+            .uploads
+            .lock()
+            .map_err(|_| internal("OCR upload lock is poisoned"))?
+            .values()
+            .any(|upload| upload.processing)
+        {
+            return Err(PluginError::new(
+                -32022,
+                "Cannot remove OCR models while recognition is active",
+            ));
+        }
+        let result = self.models.remove(params)?;
+        let mut engines = self
+            .engines
+            .lock()
+            .map_err(|_| internal("OCR engine lock is poisoned"))?;
+        engines.fast = None;
+        engines.accurate = None;
+        Ok(result)
     }
 
     pub fn handle_binary(&self, channel: &str, data: Vec<u8>) -> Result<(), PluginError> {
@@ -338,7 +368,7 @@ impl OcrService {
         let ocr_image = enhanced_image.as_ref().unwrap_or(&original_image);
         let pass = match quality {
             OcrQuality::Fast | OcrQuality::Accurate => {
-                let engine = engines.get(quality)?;
+                let engine = engines.get(quality, &self.models)?;
                 progress(emitter, session_id, "detect", 0.30)?;
                 check_cancelled(cancelled)?;
                 let (input, line_regions) =
@@ -354,7 +384,7 @@ impl OcrService {
                 }
             }
             OcrQuality::Auto => {
-                let fast_engine = engines.get(OcrQuality::Fast)?;
+                let fast_engine = engines.get(OcrQuality::Fast, &self.models)?;
                 progress(emitter, session_id, "detect", 0.30)?;
                 check_cancelled(cancelled)?;
                 let (fast_input, line_regions) =
@@ -371,10 +401,10 @@ impl OcrService {
                             .then_some(index)
                     })
                     .collect::<Vec<_>>();
-                if !weak_indices.is_empty() {
+                if !weak_indices.is_empty() && self.models.is_installed(ModelTier::Accurate) {
                     progress(emitter, session_id, "refine", 0.72)?;
                     check_cancelled(cancelled)?;
-                    let accurate_engine = engines.get(OcrQuality::Accurate)?;
+                    let accurate_engine = engines.get(OcrQuality::Accurate, &self.models)?;
                     let source =
                         ImageSource::from_bytes(ocr_image.as_raw(), ocr_image.dimensions())
                             .map_err(|error| {
@@ -453,21 +483,21 @@ impl OcrService {
     }
 }
 
-fn load_engine(quality: OcrQuality) -> Result<OcrEngine, PluginError> {
+fn load_engine(quality: OcrQuality, models: &OcrModelManager) -> Result<OcrEngine, PluginError> {
     let mut model_options = rten::ModelOptions::with_all_ops();
     model_options
         .prepack_weights(true)
         .enable_shape_inference(true);
-    let detection = model_options
-        .load_static_slice(DETECTION_MODEL)
-        .map_err(|error| asset_error(format!("Could not load OCR detection model: {error}")))?;
-    let recognition_bytes = match quality {
-        OcrQuality::Fast => RECOGNITION_FAST_MODEL,
-        OcrQuality::Accurate => RECOGNITION_ACCURATE_MODEL,
-        OcrQuality::Auto => RECOGNITION_FAST_MODEL,
+    let tier = match quality {
+        OcrQuality::Fast | OcrQuality::Auto => ModelTier::Base,
+        OcrQuality::Accurate => ModelTier::Accurate,
     };
+    let (detection_path, recognition_path) = models.model_paths(tier)?;
+    let detection = model_options
+        .load_file(&detection_path)
+        .map_err(|error| asset_error(format!("Could not load OCR detection model: {error}")))?;
     let recognition = model_options
-        .load_static_slice(recognition_bytes)
+        .load_file(&recognition_path)
         .map_err(|error| asset_error(format!("Could not load OCR recognition model: {error}")))?;
     OcrEngine::new(OcrEngineParams {
         detection_model: Some(detection),
@@ -860,14 +890,13 @@ fn asset_error(message: impl Into<String>) -> PluginError {
 #[cfg(test)]
 mod tests {
     use super::{
-        bounds_overlap_ratio, confidence_metrics, enhance_document, finalize_recognized_text,
-        format_recognized_lines, load_engine, resize_for_ocr, scale_region, validate_dimensions,
-        LineBounds, OcrQuality, OcrService, RecognizedLine, Region, MAX_IMAGE_BYTES,
-        MAX_IMAGE_PIXELS, OCR_UPLOAD_CHUNK_BYTES, RECOGNITION_ACCURATE_MODEL,
-        RECOGNITION_FAST_MODEL,
+        bounds_overlap_ratio, confidence_metrics, detect_line_regions, enhance_document,
+        finalize_recognized_text, format_recognized_lines, load_engine, recognize_line_regions,
+        resize_for_ocr, scale_region, validate_dimensions, LineBounds, OcrQuality, OcrService,
+        RecognizedLine, Region, MAX_IMAGE_BYTES, MAX_IMAGE_PIXELS, OCR_UPLOAD_CHUNK_BYTES,
     };
+    use crate::ocr_models::OcrModelManager;
     use image::GenericImageView;
-    use rten_imageproc::{PointF, RotatedRect, Vec2};
     use serde_json::json;
 
     #[test]
@@ -880,6 +909,27 @@ mod tests {
         assert!(service
             .begin(json!({ "byteLength": MAX_IMAGE_BYTES, "chunkCount": chunks + 1 }))
             .is_err());
+    }
+
+    #[test]
+    #[ignore = "downloads are prepared by the dedicated Linux OCR model integration job"]
+    fn official_fast_and_accurate_models_load_and_run_inference() {
+        let models = OcrModelManager::default();
+        let image = image::open("vendor/ocrs-cjk/examples/rust-book.jpg")
+            .expect("OCR fixture should decode")
+            .to_rgb8();
+        for quality in [OcrQuality::Fast, OcrQuality::Accurate] {
+            let engine = load_engine(quality, &models).expect("official model should load");
+            let (input, regions) =
+                detect_line_regions(&engine, &image, None).expect("detection should run");
+            assert!(!regions.is_empty(), "official detector should find text");
+            let lines =
+                recognize_line_regions(&engine, &input, &regions).expect("recognition should run");
+            assert!(
+                lines.iter().any(Option::is_some),
+                "official recognizer should return text"
+            );
+        }
     }
 
     #[test]
@@ -896,33 +946,6 @@ mod tests {
         assert_eq!(resized.dimensions(), (2_048, 1_024));
         let unchanged = resize_for_ocr(image::DynamicImage::new_rgb8(800, 600), 2_048);
         assert_eq!(unchanged.dimensions(), (800, 600));
-    }
-
-    #[test]
-    fn packaged_models_initialize_the_native_engine() {
-        assert_eq!(&RECOGNITION_FAST_MODEL[..4], b"RTEN");
-        assert_eq!(&RECOGNITION_ACCURATE_MODEL[..4], b"RTEN");
-        for quality in [OcrQuality::Fast, OcrQuality::Accurate] {
-            let engine = load_engine(quality).expect("packaged OCR models should load");
-            assert!(engine.alphabet().len() > 10_000);
-            let pixels = vec![255u8; 128 * 128 * 3];
-            let source = ocrs_cjk::ImageSource::from_bytes(&pixels, (128, 128)).unwrap();
-            let input = engine.prepare_input(source).unwrap();
-            assert_eq!(engine.get_text(&input).unwrap(), "");
-
-            // Force a recognition-model run even though the blank image has
-            // no detected words. This catches converted models that load but
-            // have missing dynamic inputs at inference time.
-            let line = vec![RotatedRect::new(
-                PointF::from_yx(64.0, 64.0),
-                Vec2::from_yx(1.0, 0.0),
-                96.0,
-                48.0,
-            )];
-            engine
-                .recognize_text(&input, &[line])
-                .expect("packaged recognition model should execute");
-        }
     }
 
     #[test]

@@ -1,7 +1,12 @@
-import messages from './uiMessages.json' with { type: 'json' };
+import compactMessages from './uiMessages.compact.json' with { type: 'json' };
 
+const locales = ['en', 'zh-CN', 'zh-TW', 'es', 'it', 'ja', 'pt-BR', 'ko', 'tr', 'az'];
+const localeIndex = Object.fromEntries(locales.map((locale, index) => [locale, index]));
+// The source-of-truth JSON remains object-shaped for translators and tests.
+// Runtime uses arrays so locale field names are not repeated ~20,000 times in
+// the DBX inline entry bundle.
 const escapeRegex = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const templates = Object.entries(messages)
+const templates = Object.entries(compactMessages)
   .filter(([source]) => /\{\d+\}/.test(source))
   .map(([source, translations]) => {
     const slots = [...source.matchAll(/\{(\d+)\}/g)].map(match => match[1]);
@@ -19,10 +24,10 @@ const templates = Object.entries(messages)
 export function translateMessage(locale, source) {
   if (typeof source !== 'string') return null;
   if (locale === 'en') return source;
-  const exact = messages[source]?.[locale];
+  const exact = compactMessages[source]?.[localeIndex[locale]];
   if (exact) return exact;
   for (const { pattern, slots, translations } of templates) {
-    const translated = translations[locale];
+    const translated = translations[localeIndex[locale]];
     if (!translated) continue;
     const match = pattern.exec(source);
     if (!match) continue;
@@ -32,4 +37,7 @@ export function translateMessage(locale, source) {
   return null;
 }
 
-export { messages as UI_MESSAGES };
+export const UI_MESSAGES = Object.fromEntries(Object.entries(compactMessages).map(([source, values]) => [
+  source,
+  Object.fromEntries(locales.map((locale, index) => [locale, values[index] || ''])),
+]));

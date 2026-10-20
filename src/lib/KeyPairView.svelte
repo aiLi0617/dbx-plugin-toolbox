@@ -6,7 +6,7 @@
   import { errorMessage, localizeError, pick } from "./i18n.js";
   import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem } from "./tools/generate.js";
 
-  let { locale = "zh-CN", onVaultChange = () => {} } = $props();
+  let { locale = "zh-CN", fixedAlgorithm = "", onVaultChange = () => {} } = $props();
   let algorithm = $state("rsa");
   let bits = $state("2048");
   let pemFormat = $state("pkcs8");
@@ -17,17 +17,9 @@
   let error = $state("");
   let busy = $state(false);
   let unlockOpen = $state(false);
+  $effect(() => { if (fixedAlgorithm) algorithm = fixedAlgorithm; });
 
   const t = (zh, en) => pick(locale, zh, en);
-  const algoHint = $derived(algorithm === "sm2"
-    ? t(
-      "SM2 使用国密椭圆曲线，公私钥为 hex。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
-      "SM2 uses the Chinese national elliptic curve; keys are hex. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    )
-    : t(
-      "RSA 可选 2048 / 3072 / 4096 位，PEM 为 PKCS#8 或 PKCS#1。写入密钥库后可供「非对称加密」选用；未解锁时会提示输入主密码。",
-      "RSA supports 2048/3072/4096-bit PKCS#8 or PKCS#1 PEM. Saved keys can be used in Asymmetric cipher. If the vault is locked, you will be asked for the master password.",
-    ));
 
   function isLockedError(err) {
     return /key vault is locked/i.test(errorMessage(err));
@@ -129,9 +121,8 @@
 
 <div class="page">
   {#if error}<div class="banner">{error}</div>{/if}
-  <p class="dbx-hint">{algoHint}</p>
   <div class="options options--algo">
-    <label class="field">
+    {#if !fixedAlgorithm}<label class="field">
       <span>{t("算法", "Algorithm")}</span>
       <Select
         bind:value={algorithm}
@@ -141,13 +132,18 @@
         ]}
         onchange={onAlgorithmChange}
       />
-    </label>
+    </label>{/if}
     {#if algorithm === "rsa"}
       <label class="field">
         <span>{t("位数", "Bits")}</span>
         <Select
           bind:value={bits}
-          options={RSA_BIT_OPTIONS.map((value) => ({ value, label: t(`${value} 位`, `${value}-bit`) }))}
+          options={RSA_BIT_OPTIONS.map((value) => ({
+            value,
+            label: value === "8192"
+              ? t("8192 位（较慢）", "8192-bit (slow)")
+              : t(`${value} 位`, `${value}-bit`),
+          }))}
         />
       </label>
       <label class="field">
@@ -207,10 +203,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--ui-gap, 12px);
-  }
-  .dbx-hint {
-    margin: 0;
-    flex-shrink: 0;
   }
   .options {
     display: flex;

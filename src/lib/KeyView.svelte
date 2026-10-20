@@ -18,6 +18,7 @@
 
   const t = (zh, en) => pick(locale, zh, en);
   const selected = $derived(SYMMETRIC_KEY_ALGORITHMS.find((item) => item.id === algorithm) || SYMMETRIC_KEY_ALGORITHMS[0]);
+  const hexCharacters = $derived(selected.bytes * 2);
 
   function isLockedError(err) {
     return /key vault is locked/i.test(errorMessage(err));
@@ -104,7 +105,6 @@
 
 <div class="page">
   {#if error}<div class="banner">{error}</div>{/if}
-  <p class="dbx-hint">{t("AES / SM4 / HMAC 是单钥，不是密钥对。写入密钥库后，对称加密、HMAC、JWT、XOR 可以直接选用；未解锁时会提示输入主密码。", "AES, SM4, and HMAC are single keys, not pairs. Saved keys can be used in Symmetric cipher, HMAC, JWT, and XOR. If the vault is locked, you will be asked for the master password.")}</p>
   <div class="options">
     <label class="field">
       <span>{t("算法", "Algorithm")}</span>
@@ -137,7 +137,7 @@
   {#if notice}<p class="dbx-hint">{notice}</p>{/if}
   <label class="block">
     <div class="caption-row">
-      <span class="caption">{t(`密钥 · ${selected.bytes} 字节 hex`, `Key · ${selected.bytes}-byte hex`)}</span>
+      <span class="caption">{t(`密钥 · ${selected.bytes} 字节 · Hex（${hexCharacters} 字符）`, `Key · ${selected.bytes} bytes · Hex (${hexCharacters} characters)`)}</span>
       {#if material}
         <button class="dbx-btn dbx-btn--ghost clear-btn" onclick={() => (material = "")} type="button">{t("清除", "Clear")}</button>
       {/if}

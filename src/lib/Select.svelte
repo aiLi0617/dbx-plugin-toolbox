@@ -61,7 +61,7 @@
       i = (i + step + options.length) % options.length;
       if (!options[i]?.disabled) return i;
     }
-    return from;
+    return -1;
   }
 
   function place() {
@@ -298,6 +298,12 @@
             {/if}
           </span>
           <span class="item-label">{row.label}</span>
+          {#if row.disabled}
+            <svg class="disabled-mark" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m5.6 5.6 12.8 12.8"></path>
+            </svg>
+          {/if}
         </div>
       {/if}
     {/each}
@@ -375,7 +381,7 @@
     background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
     color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
     /* Shadows remain dark in both color schemes; CanvasText becomes white. */
-    box-shadow: 0 4px 12px rgb(0 0 0 / 16%);
+    box-shadow: var(--dbx-shadow-sm);
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .group {
@@ -414,14 +420,16 @@
     cursor: pointer;
     font-size: 13px;
   }
-  .item.active,
-  .item:hover {
+  .item.active:not([aria-disabled="true"]),
+  .item:hover:not([aria-disabled="true"]) {
     background: var(--color-accent, var(--color-muted, color-mix(in srgb, var(--color-foreground, CanvasText) 6%, transparent)));
     color: var(--color-accent-foreground, var(--color-foreground, CanvasText));
   }
   .item[aria-disabled="true"] {
-    opacity: 0.5;
-    pointer-events: none;
+    background: color-mix(in srgb, var(--color-muted, CanvasText) 42%, transparent);
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 45%, transparent));
+    cursor: not-allowed;
+    opacity: 0.72;
   }
   .check {
     display: inline-flex;
@@ -435,6 +443,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .disabled-mark {
+    flex: 0 0 13px;
+    margin-left: auto;
+    opacity: 0.8;
   }
   @keyframes dbx-select-in {
     from { opacity: 0; }

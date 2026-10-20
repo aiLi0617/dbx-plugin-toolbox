@@ -93,3 +93,12 @@ test("crypto input limit messages are bilingual", async () => {
   );
   assert.equal(inputLimitError("ok", INPUT_LIMITS.crypto, { locale: "zh-CN", zh: "明文", en: "Plaintext" }), "");
 });
+
+test("unknown failures never expose an English-only primary message in non-English locales", () => {
+  const raw = "An implementation-specific backend failure";
+  assert.equal(localizeError("en", raw), raw);
+  for (const locale of ["zh-CN", "zh-TW", "es", "it", "ja", "pt-BR", "ko", "tr", "az"]) {
+    assert.notEqual(localizeError(locale, raw), raw, locale);
+    assert.ok(localizeError(locale, raw).length > 8, locale);
+  }
+});

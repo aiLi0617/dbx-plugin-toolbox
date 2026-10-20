@@ -28,6 +28,42 @@ async function transformBytes(bytes, StreamType, outputLimit) {
   return output;
 }
 
+async function transformBlob(blob, StreamType, outputLimit) {
+  if (typeof StreamType !== "function") throw new Error("Gzip streams are not supported by this runtime");
+  const reader = blob.stream().pipeThrough(new StreamType("gzip")).getReader();
+  const chunks = [];
+  let size = 0;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > outputLimit) { await reader.cancel(); throw new Error("Gzip output exceeds the size limit"); }
+    chunks.push(value);
+  }
+  return new Blob(chunks, { type: "application/gzip" });
+}
+
+export function inspectGzipHeader(input) {
+  const bytes = input instanceof Uint8Array ? input : new Uint8Array(input || []);
+  if (bytes.length < 10 || bytes[0] !== 0x1f || bytes[1] !== 0x8b || bytes[2] !== 8) throw new Error("Invalid Gzip header");
+  const flags = bytes[3];
+  const modifiedAt = bytes[4] | (bytes[5] << 8) | (bytes[6] << 16) | (bytes[7] << 24);
+  return { method: "DEFLATE", flags, modifiedAt: modifiedAt >>> 0, extraFlags: bytes[8], operatingSystem: bytes[9] };
+}
+
+export async function gzipCompressFile(file) {
+  if (!(file instanceof Blob)) throw new Error("Choose a file to compress");
+  const output = await transformBlob(file, globalThis.CompressionStream, 512 * 1024 * 1024);
+  return { blob: output, inputBytes: file.size, outputBytes: output.size, ratio: file.size ? output.size / file.size : 0, header: inspectGzipHeader(new Uint8Array(await output.slice(0, 10).arrayBuffer())) };
+}
+
+export async function gzipDecompressFile(file) {
+  if (!(file instanceof Blob)) throw new Error("Choose a Gzip file to decompress");
+  const header = inspectGzipHeader(new Uint8Array(await file.slice(0, 10).arrayBuffer()));
+  const output = await transformBlob(file, globalThis.DecompressionStream, 512 * 1024 * 1024);
+  return { blob: output, inputBytes: file.size, outputBytes: output.size, ratio: file.size ? output.size / file.size : 0, header };
+}
+
 export async function gzipCompressText(text) {
   const bytes = textToBytes(String(text ?? ""));
   if (bytes.length > MAX_INPUT_BYTES) throw new Error("Text input exceeds 5 MB");

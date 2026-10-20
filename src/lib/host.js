@@ -38,7 +38,8 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
   }
   let lastErr;
   const waits = [0, 200, 400, 800, 1600, 2500];
-  const timeout = Number.isFinite(Number(timeoutMs)) ? Math.max(1, Math.min(Number(timeoutMs), 10 * 60 * 1000)) : 30000;
+  // DBX Host API 1.x clamps explicit invoke timeouts to 1–120,000 ms.
+  const timeout = Number.isFinite(Number(timeoutMs)) ? Math.max(1, Math.min(Number(timeoutMs), 120_000)) : 30000;
   for (const wait of waits) {
     if (wait) await sleep(wait);
     try {
@@ -49,6 +50,17 @@ export async function invoke(method, params = {}, timeoutMs = 30000) {
     }
   }
   throw normalizeError(lastErr, method);
+}
+
+/** Return the current JSON-safe workbench context after the bridge is ready. */
+export function context() {
+  return window.dbxPlugin?.context ?? null;
+}
+
+/** Subscribe to workbench context changes. The returned function is always safe to call. */
+export function observeContext(callback) {
+  const off = window.dbxPlugin?.onContext?.((next) => callback(next ?? null));
+  return typeof off === "function" ? off : () => {};
 }
 
 export async function sendBinary(channel, data) {

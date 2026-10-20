@@ -5,6 +5,7 @@ mod helpers;
 mod keystore;
 mod ocr;
 mod ocr_alphabet;
+mod ocr_models;
 mod ports;
 mod prefs;
 

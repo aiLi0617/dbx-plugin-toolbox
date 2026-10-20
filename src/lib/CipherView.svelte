@@ -6,9 +6,11 @@
   import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
-  import { runAsymmetric, runSymmetricDetailed, runXor, RSA_PADDINGS } from "./tools/encode.js";
+  import { AES_ALGORITHMS, AES_MODES, SM4_MODES, asymmetricCipherProfile, symmetricCipherProfile } from "./cipherProfile.js";
+  import { parameterSupportLevel } from "./cryptoCapabilities.js";
+  import { runAsymmetric, runSymmetricDetailed, runXor, RSA_OAEP_HASHES, RSA_PADDINGS } from "./tools/encode.js";
 
-  let { locale = "zh-CN", kind = "aes", initialOptions = {} } = $props();
+  let { locale = "zh-CN", kind = "aes", toolId = "", initialOptions = {}, onSupportLevelChange } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -17,6 +19,7 @@
   let mode = $state("gcm");
   let sm4Mode = $state("cbc");
   let padding = $state("oaep");
+  let oaepHash = $state("sha256");
   let outputEncoding = $state("utf8");
   let inputHex = $state("text");
   let input = $state("");
@@ -37,15 +40,24 @@
   let tag = $state("");
   let resultMeta = $state(null);
   let busy = $state(false);
+  const sm4Tool = $derived(kind === "aes" && toolId === "sm4");
+  const fixedRsaPadding = $derived(toolId === "rsa-oaep" ? "oaep" : toolId === "rsa-pkcs1" ? "pkcs1" : "");
+  const requiredPurpose = $derived(kind === "aes" ? (sm4Tool ? "sm4-cipher" : "aes-cipher") : kind === "rsa" ? (algorithm === "sm2" ? "sm2-encrypt" : "rsa-encrypt") : kind === "xor" ? "debug-xor" : "");
+  const allowedKeyAlgorithms = $derived(kind === "aes" ? [algorithm] : kind === "rsa" ? [algorithm === "sm2" ? "sm2" : "rsa-pem"] : []);
 
   $effect(() => {
     const options = initialOptions;
-    const algorithms = kind === "rsa" ? ["rsa", "sm2"] : ["aes-128", "aes-256", "sm4-128"];
-    algorithm = algorithms.includes(options.algorithm) ? options.algorithm : kind === "rsa" ? "rsa" : "aes-256";
-    mode = options.mode === "cbc" ? "cbc" : "gcm";
-    sm4Mode = options.mode === "ecb" ? "ecb" : "cbc";
+    if (kind === "rsa") {
+      algorithm = asymmetricCipherProfile(toolId);
+    } else if (kind === "aes") {
+      const profile = symmetricCipherProfile(toolId, options);
+      algorithm = profile.algorithm;
+      mode = profile.mode;
+      sm4Mode = profile.sm4Mode;
+    }
     op = options.op === "decrypt" ? "decrypt" : "encrypt";
-    padding = options.padding === "pkcs1" ? "pkcs1" : "oaep";
+    padding = fixedRsaPadding || (options.padding === "pkcs1" ? "pkcs1" : "oaep");
+    oaepHash = RSA_OAEP_HASHES.includes(options.oaepHash) ? options.oaepHash : "sha256";
     outputEncoding = ["utf8", "hex", "base64"].includes(options.outputEncoding) ? options.outputEncoding : "utf8";
   });
 
@@ -61,10 +73,13 @@
   const advanced = $derived(payloadFormat === "separate");
   const encodings = [ { value: "hex", label: "Hex" }, { value: "base64", label: "Base64" } ];
   const textEncodings = [ { value: "utf8", label: "UTF-8" }, ...encodings ];
+  const oaepHashOptions = RSA_OAEP_HASHES.map((value) => ({ value, label: value.replace(/^sha/i, "SHA-") }));
   const packedHint = $derived(activeMode === "gcm"
     ? t("Base64(nonce 12 字节 + 密文 + tag 16 字节)，无 AAD。加密时自动生成 nonce。", "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.")
     : activeMode === "cbc"
       ? t("Base64(IV 16 字节 + 密文)，PKCS#7 填充。加密时自动生成 IV。", "Base64(16-byte IV + ciphertext), PKCS#7 padding. A fresh IV is generated for encryption.")
+      : ["cfb", "ofb", "ctr"].includes(activeMode)
+        ? t("Base64(IV 16 字节 + 密文)，流模式不填充。加密时自动生成 IV。", "Base64(16-byte IV + ciphertext); stream mode without padding. A fresh IV is generated for encryption.")
       : t("Base64(密文)，PKCS#7 填充，ECB 不使用 IV。", "Base64(ciphertext), PKCS#7 padding; ECB has no IV."));
   const leftLabel = $derived(
     kind === "xor"
@@ -87,6 +102,16 @@
       ? t("例如 68656c6c6f（hello 的 Hex）", "e.g. 68656c6c6f (hex for hello)")
       : t("例如 hello", "e.g. hello"),
   );
+
+  $effect(() => {
+    let level = "";
+    if (kind === "aes") {
+      level = parameterSupportLevel(sm4Tool ? "sm4" : "aes", "mode", activeMode) || "";
+    } else if (kind === "rsa" && algorithm === "rsa") {
+      level = padding === "pkcs1" ? "compatibility" : parameterSupportLevel("rsa-oaep", "hash", oaepHash) || "";
+    }
+    if (level) onSupportLevelChange?.(level);
+  });
 
   function useXorHexAsInput() {
     if (!output) return;
@@ -115,7 +140,7 @@
   $effect(() => {
     const text = input;
     const next = ctx;
-    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, keyEncoding, iv, aad, aadEncoding, tag };
+    const options = { op, algorithm, mode, sm4Mode, inputHex, padding, oaepHash, outputEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, keyEncoding, iv, aad, aadEncoding, tag, requiredPurpose };
     const nextKind = kind;
     output = "";
     extra = "";
@@ -181,41 +206,27 @@
         </div>
       </div>
     {/if}
-    {#if kind === "aes"}
+    {#if kind === "aes" && !sm4Tool}
       <label class="field">
         <span class="dbx-label">{t("算法", "Algorithm")}</span>
-        <Select
-          bind:value={algorithm}
-          options={[
-            { value: "aes-256", label: "AES-256" },
-            { value: "aes-128", label: "AES-128" },
-            { value: "sm4-128", label: "SM4" },
-          ]}
-        />
+        <Select bind:value={algorithm} options={AES_ALGORITHMS} />
       </label>
-      {#if algorithm === "sm4-128"}
-        <label class="field">
-          <span class="dbx-label">{t("SM4 模式", "SM4 mode")}</span>
-          <Select
-            bind:value={sm4Mode}
-            options={[
-              { value: "cbc", label: "CBC" },
-              { value: "ecb", label: "ECB" },
-            ]}
-          />
-        </label>
-      {:else}
-        <label class="field">
-          <span class="dbx-label">{t("模式", "Mode")}</span>
-          <Select
-            bind:value={mode}
-            options={[
-              { value: "gcm", label: "GCM" },
-              { value: "cbc", label: "CBC" },
-            ]}
-          />
-        </label>
-      {/if}
+      <label class="field">
+        <span class="dbx-label">{t("模式", "Mode")}</span>
+        <Select bind:value={mode} options={AES_MODES} />
+      </label>
+      <label class="field" title={advanced ? undefined : packedHint}>
+        <span class="dbx-label">{t("密文格式", "Ciphertext format")}</span>
+        <Select bind:value={payloadFormat} options={[
+          { value: "packed", label: t("简单封装", "Packed") },
+          { value: "separate", label: t("高级互操作", "Separate parameters") },
+        ]} />
+      </label>
+    {:else if sm4Tool}
+      <label class="field">
+        <span class="dbx-label">{t("SM4 模式", "SM4 mode")}</span>
+        <Select bind:value={sm4Mode} options={SM4_MODES} />
+      </label>
       <label class="field" title={advanced ? undefined : packedHint}>
         <span class="dbx-label">{t("密文格式", "Ciphertext format")}</span>
         <Select bind:value={payloadFormat} options={[
@@ -224,24 +235,31 @@
         ]} />
       </label>
     {:else if kind === "rsa"}
-      <label class="field">
-        <span class="dbx-label">{t("算法", "Algorithm")}</span>
-        <Select
-          bind:value={algorithm}
-          options={[
-            { value: "rsa", label: "RSA" },
-            { value: "sm2", label: "SM2" },
-          ]}
-        />
-      </label>
       {#if algorithm === "rsa"}
-        <label class="field">
+        {#if !fixedRsaPadding}<label class="field">
           <span class="dbx-label">{t("填充", "Padding")}</span>
           <Select
             bind:value={padding}
             options={RSA_PADDINGS.map((item) => ({ value: item.value, label: pick(locale, item.zh, item.en) }))}
           />
-        </label>
+        </label>{/if}
+        {#if padding === "oaep"}
+          <label class="field">
+            <span class="dbx-label">OAEP Hash</span>
+            <Select bind:value={oaepHash} options={oaepHashOptions} />
+          </label>
+        {/if}
+        {#if encrypting}
+          <label class="field">
+            <span class="dbx-label">{t("明文编码", "Plaintext encoding")}</span>
+            <Select bind:value={plainEncoding} options={textEncodings} />
+          </label>
+        {:else}
+          <label class="field">
+            <span class="dbx-label">{t("密文编码", "Ciphertext encoding")}</span>
+            <Select bind:value={cipherEncoding} options={encodings} />
+          </label>
+        {/if}
       {/if}
       {#if !encrypting}
         <label class="field">
@@ -311,15 +329,11 @@
         : t("密文不包含 IV；使用 PKCS#7 填充。", "Ciphertext excludes the IV; uses PKCS#7 padding.")}</p>
   {/if}
 
-  {#if kind === "aes" && ((algorithm === "sm4-128" && sm4Mode !== "gcm") || (algorithm !== "sm4-128" && mode === "cbc"))}
-    <p class="security-warning">{t("兼容模式不提供密文完整性保护；新数据优先使用 AES-GCM。", "Compatibility mode does not authenticate ciphertext; prefer AES-GCM for new data.")}</p>
-  {:else if kind === "rsa" && algorithm === "rsa" && padding === "pkcs1"}
-    <p class="security-warning">{t("PKCS#1 v1.5 仅用于兼容旧系统；新数据优先使用 OAEP-SHA256。", "PKCS#1 v1.5 is for legacy compatibility; prefer OAEP-SHA256.")}</p>
-  {/if}
-
   <KeySourceBar
     {locale}
     {picker}
+    {requiredPurpose}
+    allowedAlgorithms={allowedKeyAlgorithms}
     multiline={kind === "rsa"}
     materialLabel={kind === "aes" ? t("密钥", "Key") : kind === "xor" ? t("密钥材料（hex/base64）", "Key material (hex/base64)") : ""}
     materialPlaceholder={kind === "xor" ? t("例如 00 或 deadbeef", "e.g. 00 or deadbeef") : ""}
@@ -557,14 +571,6 @@
   .advanced-fields .dbx-input { width: 100%; }
   .mono { font-family: var(--font-mono); }
   @media (max-width: 560px) { .advanced-fields { grid-template-columns: 1fr; } }
-  .security-warning {
-    margin: 0;
-    padding: 7px 10px;
-    border-left: 3px solid var(--color-warning);
-    background: var(--color-warning-bg);
-    color: var(--color-foreground);
-    font-size: 12px;
-  }
   .dbx-hint {
     margin: 0;
   }

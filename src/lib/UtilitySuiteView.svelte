@@ -2,7 +2,7 @@
   import { onMount, tick } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { GIT_REFERENCE, GIT_UI, filterGitReference, gitGroupCommands, gitText } from "./gitReference.js";
   import { saveBlobThroughHost } from "./fileSave.js";
   import {
@@ -109,7 +109,7 @@
 
   const transferResult = $derived.by(() => {
     try { return { value: calculateTransfer({ size, sizeUnit, speed, speedUnit, overhead, count: fileCount }), error: "" }; }
-    catch (cause) { return { value: null, error: cause?.message || String(cause) }; }
+    catch (cause) { return { value: null, error: localizeError(locale, cause) }; }
   });
 
   function formatBytes(bytes) {
@@ -235,7 +235,7 @@
       else if (toolId === "web-meta") { const result = metaTags({ title, description, image: imageUrl, url: pageUrl, siteName, locale: metaLocale, robots, type: metaType, card: twitterCard }); output = result.html; diagnostics = result.warnings; }
       else if (toolId === "fake-data") { const fields = auxiliary || "name,email,company,date,uuid"; const rows = generateFakeRows(count, fields, { seed: fakeSeed }); output = format === "csv" ? rowsToDelimited(rows) : format === "tsv" ? rowsToDelimited(rows, "\t") : format === "ndjson" ? rows.map((row) => JSON.stringify(row)).join("\n") : JSON.stringify(rows, null, 2); }
       else if (toolId === "chart") { chartSaved = ""; clearChartHover(); chartRows = parseChartData(input); chartMarkup = chartSvg(chartRows, chartType, 900, 520, { title: chartTitle, color: chartColor, donut: chartDonut, smooth: chartSmooth, showValues: chartShowValues, showPoints: chartShowPoints, showLabels: chartShowLabels, showLegend: chartShowLegend, showGrid: chartShowGrid, transparent: chartTransparent, pieLabel: chartPieLabel }); output = chartMarkup; if (chartPointer) tick().then(refreshChartHoverAtPointer); }
-    } catch (cause) { error = cause?.message || String(cause); output = ""; if (toolId === "phone") phoneResult = null; if (toolId === "user-agent") userAgentResult = null; }
+    } catch (cause) { error = localizeError(locale, cause); output = ""; if (toolId === "phone") phoneResult = null; if (toolId === "user-agent") userAgentResult = null; }
   }
 
   function transferText(result) {
@@ -344,7 +344,7 @@
         if (!saved?.cancelled) chartSaved = "PNG";
       } finally { URL.revokeObjectURL(url); }
     }
-    catch (cause) { error = cause?.message || String(cause); }
+    catch (cause) { error = localizeError(locale, cause); }
     finally { chartSaving = ""; }
   }
 </script>

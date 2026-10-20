@@ -191,7 +191,7 @@
 
   {#if mode === "decode" || mode === "verify"}
     {#if mode === "verify"}
-      <KeySourceBar {locale} picker={keyPicker} multiline={asymmetric} bind:source bind:material bind:keyId />
+      <KeySourceBar {locale} picker={keyPicker} requiredPurpose={asymmetric ? "jwt-rsa" : "jwt-hmac"} allowedAlgorithms={asymmetric ? ["rsa-pem"] : []} multiline={asymmetric} bind:source bind:material bind:keyId />
       {#if !ctx}
         <p class="dbx-hint key-hint">{verifyKeyHint}</p>
       {/if}
@@ -252,7 +252,7 @@
       <p class="dbx-hint">{t("粘贴 JWT 后会拆出 Header 与 Payload。", "Paste a JWT to split header and payload.")}</p>
     {/if}
   {:else}
-    <KeySourceBar {locale} picker={keyPicker} multiline={asymmetric} bind:source bind:material bind:keyId />
+    <KeySourceBar {locale} picker={keyPicker} requiredPurpose={asymmetric ? "jwt-rsa" : "jwt-hmac"} allowedAlgorithms={asymmetric ? ["rsa-pem"] : []} multiline={asymmetric} bind:source bind:material bind:keyId />
     {#if !ctx}
       <p class="dbx-hint key-hint">{keyHint}</p>
     {/if}

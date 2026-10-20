@@ -19,7 +19,7 @@ test('asset bridge waits for host, deduplicates loads and releases blob URLs', a
   start();
   assert.equal(await first, module);
   assert.equal(await load('excel'), module);
-  assert.deepEqual(reads, ['assets/lazy/excel.js']);
+  assert.deepEqual(reads, ['assets/lazy-excel.js']);
   assert.deepEqual(revoked, ['blob:test']);
   await assert.rejects(load('../secret'), /Unknown asset module/);
 });

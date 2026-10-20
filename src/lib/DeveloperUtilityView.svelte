@@ -3,7 +3,7 @@
   import ChmodView from "./ChmodView.svelte";
   import SemverView from "./SemverView.svelte";
   import { compareDotEnv, dotenvExample, parseDotEnv, stringifyDotEnv, syncDotEnvTemplate } from "./developerUtilities.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
 
   let { locale = "zh-CN", toolId = "json-schema", initialOptions = {}, demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -60,7 +60,7 @@
         else if (dotenvMode === "sync") { const result = syncDotEnvTemplate(input, secondary); diagnostics = result.diagnostics; output = result.output; }
         else { const result = parseDotEnv(input); diagnostics = result.diagnostics; output = diagnostics.some((item) => item.level === "error") ? t("发现配置错误", "Configuration errors found") : t(`✓ ${Object.keys(result.value).length} 个变量有效`, `✓ ${Object.keys(result.value).length} valid variables`); }
       }
-    } catch (cause) { error = String(cause?.message || cause); output = ""; }
+    } catch (cause) { error = localizeError(locale, cause); output = ""; }
     finally { busy = false; }
   }
 

@@ -1,7 +1,7 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import IoSplit from "./IoSplit.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { decodeUrl, encodeUrl, parseQuery } from "./tools/encode.js";
 
   let { locale = "zh-CN" } = $props();
@@ -23,7 +23,7 @@
       if (mode === "query") return { text: "", error: "", query: parseQuery(input) };
       return { text: input ? encodeUrl(input) : "", error: "", query: null };
     } catch (err) {
-      return { text: "", error: err?.message || String(err), query: null };
+      return { text: "", error: localizeError(locale, err), query: null };
     }
   });
 

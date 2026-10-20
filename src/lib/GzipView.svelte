@@ -1,7 +1,8 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
-  import { gzipCompressText, gzipDecompressText } from "./gzip.js";
-  import { pick } from "./i18n.js";
+  import { gzipCompressFile, gzipCompressText, gzipDecompressFile, gzipDecompressText } from "./gzip.js";
+  import { saveBlobThroughHost } from "./fileSave.js";
+  import { localizeError, pick } from "./i18n.js";
 
   let { locale = "zh-CN", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -14,6 +15,9 @@
   let stats = $state(null);
   let conversionRevision = 0;
   let appliedDemoRequest = 0;
+  let fileResult = $state(null); let fileName=$state(""); let fileBusy=$state(false);
+  async function onFile(event){const file=event.currentTarget.files?.[0];event.currentTarget.value="";if(!file)return;fileBusy=true;error="";try{const result=mode==="compress"?await gzipCompressFile(file):await gzipDecompressFile(file);fileResult=result;fileName=mode==="compress"?`${file.name}.gz`:file.name.replace(/\.gz$/i,"")||"decompressed.bin";}catch(cause){error=localizeError(locale,cause);fileResult=null;}finally{fileBusy=false;}}
+  async function saveFile(){if(!fileResult)return;await saveBlobThroughHost(fileResult.blob,{fileName,mimeType:mode==="compress"?"application/gzip":"application/octet-stream",title:t("保存 Gzip 结果","Save Gzip result"),binary:true});}
 
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest || demo?.input == null) return;
@@ -56,7 +60,7 @@
         if (revision !== conversionRevision) return;
         output = "";
         stats = null;
-        error = cause?.message || String(cause);
+        error = localizeError(locale, cause);
       } finally {
         if (revision === conversionRevision) busy = false;
       }
@@ -93,6 +97,7 @@
   </div>
 
   {#if stats}<span class="stats">{humanSize(stats.inputBytes)} → {humanSize(stats.outputBytes)}</span>{/if}
+  <div class="file-flow"><label class="dbx-btn file-button">{fileBusy?t("处理中…","Working…"):mode==="compress"?t("选择文件流式压缩","Choose file to compress"):t("选择 .gz 流式解压","Choose .gz to decompress")}<input type="file" accept={mode==="decompress"?".gz,application/gzip":""} onchange={onFile}/></label>{#if fileResult}<span>{humanSize(fileResult.inputBytes)} → {humanSize(fileResult.outputBytes)} · {(fileResult.ratio*100).toFixed(1)}% · {fileResult.header.method}</span><button class="dbx-btn dbx-btn--primary" type="button" onclick={saveFile}>{t("保存文件","Save file")}</button>{/if}</div>
 </div>
 
 <style>
@@ -113,5 +118,6 @@
   .mono { font-family: var(--font-mono); }
   .error { margin: 0; padding: 9px; color: var(--color-destructive); background: color-mix(in srgb, var(--color-destructive) 8%, transparent); border-radius: 8px; }
   .stats { align-self: flex-end; }
+  .file-flow{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--color-border);border-radius:8px}.file-flow span{flex:1;color:var(--color-muted-foreground);font-size:12px}.file-button{position:relative;overflow:hidden}.file-button input{position:absolute;inset:0;opacity:0}
   @media (max-width: 720px) { .editors { grid-template-columns: 1fr; } .editors textarea { min-height: 220px; } }
 </style>

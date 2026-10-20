@@ -1,6 +1,6 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { HASH_ALGORITHMS, hashFileBytes, hashText } from "./tools/generate.js";
 
@@ -49,7 +49,7 @@
               next[alg.id] = await hashText(alg.id, text);
             } catch (err) {
               next[alg.id] = "";
-              nextErrors[alg.id] = err?.message || String(err);
+              nextErrors[alg.id] = localizeError(locale, err);
             }
           }),
         );

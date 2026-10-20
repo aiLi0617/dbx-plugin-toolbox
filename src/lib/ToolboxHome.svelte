@@ -1,7 +1,7 @@
 <script>
-  import { CATEGORY_ORDER, searchTools } from "./catalog.js";
+  import { CATEGORY_ORDER, searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
-  import { intentLabelForTool } from "./navigation.js";
+  import { HOME_INTENT_EXAMPLES, HOME_SEARCH_TEXT } from "./searchIntent.js";
   import ClipTip from "./ClipTip.svelte";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], categoryCounts = {}, onCatalog, onTool, onToggleFavorite, onMoveFavorite } = $props();
@@ -14,23 +14,30 @@
   let searchActive = $state(false);
   let searchSelected = $state(0);
   let searchInput = $state(null);
+  let reorderAnnouncement = $state("");
+  const visibleTools = $derived(tools.filter((item) => item.catalogVisible !== false));
   const draggingTool = $derived(pointerDrag ? favorites.find((item) => item.id === pointerDrag.sourceId) : null);
   const visibleFavorites = $derived(showAllFavorites ? favorites : favorites.slice(0, FAVORITE_PREVIEW_LIMIT));
-  const defaultSearchTools = $derived.by(() => {
+  const defaultSearchMatches = $derived.by(() => {
     const seen = new Set();
-    return [...favorites, ...recents, ...tools].filter((item) => !seen.has(item.id) && seen.add(item.id)).slice(0, 8);
+    return [...favorites, ...recents, ...visibleTools]
+      .filter((item) => !seen.has(item.id) && seen.add(item.id))
+      .slice(0, 8)
+      .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const searchResults = $derived(searchQuery.trim() ? searchTools(searchQuery, locale, tools).slice(0, 8) : defaultSearchTools);
+  const searchResults = $derived(searchQuery.trim() ? searchToolMatches(searchQuery, locale, visibleTools).slice(0, 8) : defaultSearchMatches);
 
   $effect(() => { searchQuery; searchSelected = 0; });
 
-  function searchDestination(item) {
-    return intentLabelForTool(item.id, searchQuery, locale);
-  }
-  function chooseSearchResult(item) {
-    if (!item) return;
+  function chooseSearchResult(match) {
+    if (!match?.tool) return;
     searchActive = false;
-    onTool?.(item, searchQuery);
+    onTool?.(match.tool, searchQuery);
+  }
+  function applyExample(query) {
+    searchQuery = pick(locale, query);
+    searchActive = true;
+    requestAnimationFrame(() => searchInput?.focus());
   }
   function searchKeydown(event) {
     if (event.key === "ArrowDown") {
@@ -122,10 +129,12 @@
     if (!target) return;
     event.preventDefault();
     onMoveFavorite?.(item.id, target.id, !backwards);
+    reorderAnnouncement = t(chrome.reorderedItem(pick(locale, item.name)));
   }
 </script>
 
 <div class="home-page">
+  <span class="sr-only" aria-live="polite">{reorderAnnouncement}</span>
   <section class="hero">
     <div class="hero-copy"><h2>{t(chrome.homeTitle)}</h2><p>{t(chrome.homeSubtitle)}</p></div>
     <div class="home-search" onfocusout={searchFocusOut}>
@@ -155,7 +164,7 @@
       {#if searchActive}
         <div class="home-search-results" id="home-search-results" role="listbox" aria-label={t(chrome.searchResultsLabel)}>
           <div class="search-result-label">{searchQuery.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
-          {#each searchResults as item, index (item.id)}
+          {#each searchResults as match, index (match.tool.id)}
             <button
               id={`home-search-result-${index}`}
               class:selected={index === searchSelected}
@@ -165,19 +174,37 @@
               onfocus={() => (searchSelected = index)}
               onmouseenter={() => (searchSelected = index)}
               onmousedown={(event) => event.preventDefault()}
-              onclick={() => chooseSearchResult(item)}
+              onclick={() => chooseSearchResult(match)}
             >
-              <span><strong>{pick(locale, item.name)}{#if searchDestination(item)} · {searchDestination(item)}{/if}</strong><small>{pick(locale, item.summary)}</small></span>
-              <em>{pick(locale, categories[item.category])}</em>
+              <span><strong>{pick(locale, match.tool.name)}</strong><small>{pick(locale, match.tool.summary)}</small></span>
+              <em>{pick(locale, categories[match.tool.category])}</em>
             </button>
           {:else}
             <p class="search-empty">{t(chrome.empty)}</p>
           {/each}
         </div>
       {/if}
+      <div class="intent-examples" aria-label={t(HOME_SEARCH_TEXT.tryQueries)}>
+        <span>{t(HOME_SEARCH_TEXT.tryQueries)}</span>
+        {#each HOME_INTENT_EXAMPLES as query}
+          <button type="button" onclick={() => applyExample(query)}>{pick(locale, query)}</button>
+        {/each}
+      </div>
     </div>
   </section>
 
+  {#if recents.length}
+    <section class="home-section">
+      <div class="section-head"><div><h3>{t(chrome.recent)}</h3><p>{t(chrome.recentHint)}</p></div></div>
+      <div class="recent-grid">
+        {#each recents.slice(0, 8) as item (item.id)}
+          <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
+        {/each}
+      </div>
+    </section>
+  {/if}
+
+  {#if favorites.length}
   <section class="home-section">
     <div class="section-head">
       <div><h3>{t(chrome.pinned)}</h3><p>{t(chrome.pinnedHint)}</p></div>
@@ -190,8 +217,7 @@
         <button class="text-btn" type="button" onclick={() => onCatalog?.("all")}>{t(chrome.library)}</button>
       </div>
     </div>
-    {#if favorites.length}
-      <div class="tool-grid">
+    <div class="tool-grid">
         {#each visibleFavorites as item (item.id)}
           <article
             class="tool-card"
@@ -215,21 +241,8 @@
             <button class="star active" type="button" onclick={() => onToggleFavorite?.(item.id)} aria-label={t(chrome.removeFavorite)} title={t(chrome.removeFavorite)}>★</button>
           </article>
         {/each}
-      </div>
-    {:else}
-      <div class="empty"><p>{t(chrome.emptyFavorites)}</p><button class="dbx-btn dbx-btn--primary" type="button" onclick={() => onCatalog?.("all")}>{t(chrome.addFromLibrary)}</button></div>
-    {/if}
+    </div>
   </section>
-
-  {#if recents.length}
-    <section class="home-section">
-      <div class="section-head"><div><h3>{t(chrome.recent)}</h3><p>{t(chrome.recentHint)}</p></div></div>
-      <div class="recent-grid">
-        {#each recents.slice(0, 8) as item (item.id)}
-          <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
-        {/each}
-      </div>
-    </section>
   {/if}
 
   <section class="home-section categories">
@@ -271,7 +284,7 @@
   .home-search-box kbd { flex:0 0 auto; padding:2px 6px; border:1px solid var(--color-border); border-radius:4px; font-size:10px; }
   .search-clear { display:inline-flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; padding:0; border:0; border-radius:5px; background:transparent; color:var(--color-muted-foreground); font-size:18px; line-height:1; }
   .search-clear:hover { background:var(--color-muted); color:var(--color-foreground); }
-  .home-search-results { position:absolute; z-index:50; top:calc(100% + 6px); right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:0 14px 36px rgba(0,0,0,.18); }
+  .home-search-results { position:absolute; z-index:50; top:48px; right:0; left:0; max-height:min(52vh,360px); padding:6px; overflow:auto; border:1px solid var(--color-border); border-radius:9px; background:var(--color-popover,var(--color-background)); box-shadow:var(--dbx-shadow-md); }
   .search-result-label { padding:4px 8px 6px; color:var(--color-muted-foreground); font-size:10px; font-weight:600; }
   .home-search-results button { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:48px; padding:7px 9px; border:0; border-radius:7px; background:transparent; text-align:left; }
   .home-search-results button.selected { background:var(--color-accent,var(--color-muted)); }
@@ -280,6 +293,10 @@
   .home-search-results small { overflow:hidden; color:var(--color-muted-foreground); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
   .home-search-results em { flex:0 0 auto; color:var(--color-muted-foreground); font-size:10px; font-style:normal; }
   .search-empty { padding:24px 10px; color:var(--color-muted-foreground); text-align:center; font-size:12px; }
+  .intent-examples { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:9px; }
+  .intent-examples > span { color:var(--color-muted-foreground); font-size:10px; }
+  .intent-examples button { min-height:26px; padding:3px 8px; border:1px solid var(--color-border); border-radius:999px; background:color-mix(in srgb,var(--color-card) 88%,transparent); color:var(--color-muted-foreground); font-size:10px; }
+  .intent-examples button:hover { border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); color:var(--color-foreground); }
   .home-section { display:flex; flex-direction:column; gap:11px; }
   .section-head { display:flex; align-items:end; justify-content:space-between; gap:12px; }
   .section-actions { display:flex; align-items:center; gap:12px; }
@@ -289,7 +306,7 @@
   .tool-card:hover,.tool-card:focus-within { z-index:2; border-color:color-mix(in srgb,var(--color-primary) 45%,var(--color-border)); }
   .tool-card.dragging { opacity:.5; cursor:grabbing; transform:scale(.985); }
   .tool-card.drop-target { border-color:var(--color-primary); box-shadow:0 0 0 2px color-mix(in srgb,var(--color-primary) 18%,transparent); }
-  .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:0 14px 34px rgba(0,0,0,.22); transform:scale(1.02); }
+  .drag-ghost { position:fixed; z-index:120; display:grid; grid-template-columns:24px minmax(0,1fr) 28px; align-items:center; pointer-events:none; border:1px solid var(--color-primary); border-radius:9px; background:var(--color-card); box-shadow:var(--dbx-shadow-md); transform:scale(1.02); }
   .ghost-handle { color:var(--color-muted-foreground); text-align:center; }
   .ghost-copy { display:flex; min-width:0; flex-direction:column; gap:4px; padding:10px 5px; }
   .ghost-copy strong { font-size:13px; }
@@ -303,7 +320,7 @@
   .recent-grid button,.category-grid button { display:flex; align-items:center; justify-content:space-between; gap:8px; height:42px; padding:0 12px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-card); text-align:left; }
   .recent-grid button:hover,.category-grid button:hover { background:var(--color-muted); }.recent-grid strong{font-size:12px}.recent-grid span,.category-grid small{color:var(--color-muted-foreground);font-size:10px}
   .category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:7px; }
-  .empty { padding:24px; border:1px dashed var(--color-border); border-radius:9px; text-align:center; }.empty p{margin-bottom:12px;color:var(--color-muted-foreground);font-size:12px}
   @container(max-width:600px){.hero{grid-template-columns:1fr;gap:18px}.hero-copy{max-width:420px}.tool-grid{grid-template-columns:1fr}}
+  @container(max-width:380px){.intent-examples>span{width:100%}.home-page{gap:22px}.hero{padding:16px}}
   @media(max-width:760px){.home-page{padding:16px}}
 </style>

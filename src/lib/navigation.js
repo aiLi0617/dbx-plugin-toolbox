@@ -20,7 +20,6 @@ export function sanitizeToolIds(ids, limit = Infinity) {
   }
   return out;
 }
-
 export function pushRecent(ids, id, limit = 10) {
   return sanitizeToolIds([id, ...(ids || [])], limit);
 }
@@ -45,4 +44,29 @@ export function moveToolId(ids, sourceId, targetId, after = false) {
 // Only navigation options are recorded here; input text and keys are never persisted.
 export function toolOptionsForQuery(toolId, query = "") {
   return optionsForTool(toolId, query);
+}
+
+const PRIVATE_CONTEXT_KEY = /(?:password|passphrase|secret|token|key|material|input|text|content|payload)/i;
+
+/** Convert a DBX workbench context snapshot into safe navigation state. */
+export function navigationTargetFromContext(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const page = ["home", "catalog", "vault"].includes(value.page) ? value.page : "";
+  const toolId = sanitizeToolIds([value.toolId], 1)[0] || "";
+  if (!page && !toolId) return null;
+  const action = typeof value.action === "string" ? value.action.trim().slice(0, 80) : "";
+  const explicit = value.options && typeof value.options === "object" && !Array.isArray(value.options)
+    ? Object.fromEntries(Object.entries(value.options).filter(([key, option]) => {
+        if (PRIVATE_CONTEXT_KEY.test(key)) return false;
+        return typeof option === "boolean"
+          || (typeof option === "number" && Number.isFinite(option))
+          || (typeof option === "string" && option.length <= 200);
+      }))
+    : {};
+  const safePage = toolId ? "tool" : page;
+  return {
+    page: safePage,
+    toolId,
+    options: toolId ? { ...toolOptionsForQuery(toolId, action), ...explicit } : {},
+  };
 }

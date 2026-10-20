@@ -49,6 +49,14 @@ function scan(dir) {
 }
 scan(sourceDir);
 if (!positional[0]) {
+  // Bootstrap the generated runtime dictionary before catalog.js imports the
+  // locale module. This also makes a clean checkout self-healing.
+  const compactPath = 'src/lib/uiMessages.compact.json';
+  if (!fs.existsSync(compactPath) && fs.existsSync('src/lib/uiMessages.json')) {
+    const registered = JSON.parse(fs.readFileSync('src/lib/uiMessages.json', 'utf8'));
+    const compact = Object.fromEntries(Object.entries(registered).map(([key, entry]) => [key, langs.map(locale => entry[locale] || '')]));
+    fs.writeFileSync(compactPath, JSON.stringify(compact) + '\n');
+  }
   const { tools } = await import('../src/lib/catalog.js');
   const { TEXT_ACTIONS } = await import('../src/lib/textActions.js');
   for (const tool of tools) for (const map of [tool.name, tool.summary]) {
@@ -58,16 +66,29 @@ if (!positional[0]) {
 }
 const inventoryPath = positional[1] || 'scripts/ui-message-inventory.json';
 const uiPath = 'src/lib/uiMessages.json';
+const compactPath = 'src/lib/uiMessages.compact.json';
+function compactMessages(source) {
+  return Object.fromEntries(Object.entries(source).map(([key, entry]) => [key, langs.map(locale => entry[locale] || '')]));
+}
 if (process.argv.includes('--check')) {
   const registered = JSON.parse(fs.readFileSync(uiPath, 'utf8'));
   const missing = Object.keys(messages).filter(key => !registered[key]);
   if (missing.length) {
     console.error(`Missing ${missing.length} offline UI messages:\n${missing.map(key => `- ${key}`).join('\n')}`);
     process.exitCode = 1;
-  } else console.log(`${Object.keys(messages).length} source messages are registered`);
+  } else {
+    const expectedCompact = JSON.stringify(compactMessages(registered));
+    const actualCompact = fs.existsSync(compactPath) ? fs.readFileSync(compactPath, 'utf8').trim() : '';
+    if (actualCompact !== expectedCompact) {
+      console.error('Compact UI message bundle is stale; run npm run i18n:sync');
+      process.exitCode = 1;
+    } else console.log(`${Object.keys(messages).length} source messages are registered`);
+  }
 } else {
   const registered = fs.existsSync(uiPath) ? JSON.parse(fs.readFileSync(uiPath, 'utf8')) : {};
-  const synced = { ...registered };
+  // Remove messages that no longer have a source call site. Keeping stale
+  // translations indefinitely bloats DBX's required inline entry bundle.
+  const synced = {};
   for (const [key, extracted] of Object.entries(messages)) {
     const current = registered[key] || {};
     const entry = { ...extracted, ...current, en: key, 'zh-CN': extracted['zh-CN'] || current['zh-CN'] || key };
@@ -75,6 +96,9 @@ if (process.argv.includes('--check')) {
     synced[key] = entry;
   }
   fs.writeFileSync(inventoryPath, JSON.stringify(messages, null, 2) + '\n');
-  if (!positional[0]) fs.writeFileSync(uiPath, JSON.stringify(synced, null, 2) + '\n');
+  if (!positional[0]) {
+    fs.writeFileSync(uiPath, JSON.stringify(synced, null, 2) + '\n');
+    fs.writeFileSync(compactPath, JSON.stringify(compactMessages(synced)) + '\n');
+  }
   console.log(`${Object.keys(messages).length} messages; ${Object.keys(messages).filter(key => !registered[key]).length} newly registered with offline fallback`);
 }

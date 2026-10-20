@@ -1,4 +1,4 @@
-import { diffChars, diffLines, diffWordsWithSpace } from "diff";
+import { createTwoFilesPatch, diffChars, diffLines, diffWordsWithSpace, structuredPatch } from "diff";
 import { marked } from "marked";
 export { slugify, stripHtml } from "../simpleTransforms.js";
 
@@ -138,15 +138,63 @@ export function punct(text, mode) {
   });
 }
 
+function unicodeScript(ch) {
+  const scripts = ["Latin", "Cyrillic", "Greek", "Han", "Hiragana", "Katakana", "Hangul", "Arabic", "Hebrew", "Devanagari", "Thai"];
+  return scripts.find((script) => new RegExp(`\\p{Script=${script}}`, "u").test(ch)) || (/\p{Number}/u.test(ch) ? "Number" : /\p{Mark}/u.test(ch) ? "Mark" : "Common");
+}
+
+function unicodeRisk(ch, cp) {
+  if (/^[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]$/u.test(ch)) return "invisible-or-bidi";
+  if (/\p{Cc}|\p{Cf}/u.test(ch)) return "control";
+  if (cp >= 0xe000 && cp <= 0xf8ff) return "private-use";
+  return "";
+}
+
 export function inspectUnicodeRows(text) {
-  return [...String(text ?? "")].map((ch) => {
+  const value = String(text ?? "");
+  const encoder = new TextEncoder();
+  const segments = typeof Intl?.Segmenter === "function"
+    ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(value)]
+    : [...value].map((segment, index) => ({ segment, index }));
+  const clusterByOffset = new Map();
+  segments.forEach((entry, cluster) => {
+    for (let offset = entry.index; offset < entry.index + entry.segment.length; offset += 1) clusterByOffset.set(offset, cluster + 1);
+  });
+  let offset = 0;
+  return [...value].map((ch) => {
     const cp = ch.codePointAt(0);
-    return {
+    const row = {
       char: ch,
       hex: `U+${cp.toString(16).toUpperCase().padStart(4, "0")}`,
       dec: cp,
+      utf8: [...encoder.encode(ch)].map((byte) => byte.toString(16).toUpperCase().padStart(2, "0")).join(" "),
+      utf16: [...ch].flatMap((unit) => {
+        const first = unit.charCodeAt(0);
+        return unit.length === 2 ? [first, unit.charCodeAt(1)] : [first];
+      }).map((unit) => unit.toString(16).toUpperCase().padStart(4, "0")).join(" "),
+      script: unicodeScript(ch),
+      cluster: clusterByOffset.get(offset) || 1,
+      risk: unicodeRisk(ch, cp),
     };
+    offset += ch.length;
+    return row;
   });
+}
+
+export function analyzeUnicode(text) {
+  const value = String(text ?? "");
+  const rows = inspectUnicodeRows(value);
+  const scripts = [...new Set(rows.map((row) => row.script).filter((script) => !["Common", "Number", "Mark"].includes(script)))];
+  const risks = rows.filter((row) => row.risk);
+  return {
+    codePoints: rows.length,
+    utf8Bytes: new TextEncoder().encode(value).length,
+    graphemes: rows.length ? Math.max(...rows.map((row) => row.cluster)) : 0,
+    normalization: Object.fromEntries(["NFC", "NFD", "NFKC", "NFKD"].map((form) => [form, value.normalize(form)])),
+    scripts,
+    mixedScripts: scripts.length > 1,
+    risks,
+  };
 }
 
 export function maskSensitiveText(text) {
@@ -567,6 +615,23 @@ export function lineDiffParts(left, right) {
     const lines = part.value.replace(/\n$/, "").split("\n");
     return lines.map((line) => ({ mark: part.mark, line }));
   });
+}
+
+export function createUnifiedDiff(left, right, options = {}) {
+  const context = Math.max(0, Math.min(100, Number(options.context ?? 3)));
+  return createTwoFilesPatch(options.leftName || "before", options.rightName || "after", String(left ?? ""), String(right ?? ""), "", "", { context });
+}
+
+export function structuredDiff(left, right, options = {}) {
+  const context = Math.max(0, Math.min(100, Number(options.context ?? 3)));
+  const patch = structuredPatch(options.leftName || "before", options.rightName || "after", String(left ?? ""), String(right ?? ""), "", "", { context });
+  let additions = 0;
+  let deletions = 0;
+  for (const hunk of patch.hunks) for (const line of hunk.lines) {
+    if (line.startsWith("+")) additions += 1;
+    else if (line.startsWith("-")) deletions += 1;
+  }
+  return { ...patch, stats: { additions, deletions, hunks: patch.hunks.length } };
 }
 
 function inlineSegments(value, mark) {

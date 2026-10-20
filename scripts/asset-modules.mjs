@@ -23,7 +23,10 @@ export function assetModules() {
         if (outputs.length !== 1 || outputs[0].type !== "chunk" || outputs[0].imports.length || outputs[0].dynamicImports.length) {
           this.error(`Asset module ${name} must be one self-contained JavaScript module`);
         }
-        this.emitFile({ type: "asset", fileName: `assets/lazy/${name}.js`, source: outputs[0].code });
+        // Keep emitted files flat. Rollup may write assets concurrently and on
+        // Windows multiple recursive mkdir calls for the same nested folder can
+        // intermittently fail with EPERM.
+        this.emitFile({ type: "asset", fileName: `assets/lazy-${name}.js`, source: outputs[0].code });
       }
     },
   };

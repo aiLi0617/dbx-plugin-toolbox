@@ -1,7 +1,7 @@
 <script>
   import { loadAssetModule } from "./assetModules.js";
   import CopyButton from "./CopyButton.svelte";
-  import { chrome, pick } from "./i18n.js";
+  import { chrome, localizeError, pick } from "./i18n.js";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
   import {
@@ -158,7 +158,7 @@
           : t("数据超出当前码版本容量，请改成「自动」或降低容错率。", "Data exceeds this version. Switch version to Auto or lower error correction.")
         : t("数据太长，请降低容错率或缩短内容。", "Data is too long. Lower error correction or shorten the text.");
     }
-    return msg;
+    return localizeError(locale, err);
   }
 
   function flash(next) {
@@ -375,7 +375,7 @@
       const message = err?.message || String(err);
       scanError = /notfound|no multiformat readers|no barcode/i.test(message)
         ? t("图片中未识别到 QR、Data Matrix 或 PDF417。汉信码暂不支持图片识别；请使用清晰、完整且边缘留白的图片。", "No QR, Data Matrix, or PDF417 code was found. Han Xin image decoding is not yet supported; use a clear, complete image with a quiet zone.")
-        : message;
+        : localizeError(locale, err);
     } finally {
       if (seq === scanSeq) scanning = false;
     }

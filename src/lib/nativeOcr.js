@@ -3,7 +3,10 @@ import { invoke, ready, sendBinary } from "./host.js";
 export const OCR_CHUNK_BYTES = 4 * 1024 * 1024;
 
 function abortError() {
-  return Object.assign(new DOMException("OCR recognition was cancelled", "AbortError"), { code: "OCR_CANCELLED" });
+  const error = new Error("OCR recognition was cancelled");
+  error.name = "AbortError";
+  error.code = "OCR_CANCELLED";
+  return error;
 }
 
 function throwIfAborted(signal) {
@@ -30,6 +33,62 @@ function eventPayload(event) {
   if (event?.method === "toolbox/ocr/progress") return event.params || {};
   if (event?.type === "toolbox/ocr/progress") return event.detail || event.params || {};
   return null;
+}
+
+function modelEventPayload(event) {
+  if (event?.method === "toolbox/ocr/models/progress") return event.params || {};
+  if (event?.type === "toolbox/ocr/models/progress") return event.detail || event.params || {};
+  return null;
+}
+
+export async function getOcrModelStatus() {
+  await ready();
+  return invoke("toolbox/ocr/models/status");
+}
+
+export async function installOcrModels(tier, options = {}) {
+  const { onProgress = () => {}, signal } = options;
+  throwIfAborted(signal);
+  await ready();
+  throwIfAborted(signal);
+  let sessionId = "";
+  let settle;
+  const completion = new Promise((resolve, reject) => { settle = { resolve, reject }; });
+  const abort = () => settle.reject(abortError());
+  const offEvent = window.dbxPlugin?.onEvent?.((event) => {
+    const payload = modelEventPayload(event);
+    if (!payload || !sessionId || payload.sessionId !== sessionId) return;
+    onProgress(payload);
+    if (payload.stage === "complete") settle.resolve(payload);
+    if (payload.stage === "cancelled") settle.reject(abortError());
+    if (payload.stage === "error") settle.reject(new Error(payload.error || "OCR model download failed"));
+  });
+  try {
+    const started = await invoke("toolbox/ocr/models/install", { tier });
+    if (started.installed) return started;
+    sessionId = started.sessionId;
+    throwIfAborted(signal);
+    signal?.addEventListener("abort", abort, { once: true });
+    onProgress({ sessionId, tier, stage: "starting", progress: 0 });
+    const status = await Promise.race([getOcrModelStatus(), completion]);
+    if (status?.stage === "complete") return status;
+    if ((tier === "base" && status.base?.installed) || (tier === "accurate" && status.accurate?.installed)) {
+      return { sessionId, tier, stage: "complete" };
+    }
+    return await completion;
+  } finally {
+    signal?.removeEventListener("abort", abort);
+    if (typeof offEvent === "function") offEvent();
+  }
+}
+
+export async function cancelOcrModelInstall(sessionId) {
+  if (!sessionId) return;
+  return invoke("toolbox/ocr/models/cancel", { sessionId });
+}
+
+export async function removeOcrModels(tier) {
+  return invoke("toolbox/ocr/models/remove", { tier });
 }
 
 async function waitForChunks(sessionId, expected, signal) {

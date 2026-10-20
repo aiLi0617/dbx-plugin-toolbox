@@ -1,15 +1,49 @@
 import { invoke } from "./host.js";
+import { CRYPTO_KEY_TYPES } from "./cryptoCapabilities.js";
 
-export function matchKey(key, picker) {
+const FORMAT_LABELS = Object.freeze({
+  hex: "Hex",
+  pem: "PEM",
+  "hex-keypair": "Hex key pair",
+  "base64-keypair": "Base64 key pair",
+  base32: "Base32",
+});
+
+export function normalizeVaultKey(key) {
+  const profile = CRYPTO_KEY_TYPES[key.algorithm] || {};
+  const capabilities = key.capabilities || profile.capabilities || [];
+  const allowedPurposes = Object.hasOwn(key, "allowedPurposes") ? key.allowedPurposes : null;
+  return {
+    ...key,
+    displayType: key.displayType || String(key.algorithm || key.kind || "—").toUpperCase(),
+    bits: key.bits ?? profile.bits ?? null,
+    format: key.format || FORMAT_LABELS[profile.format] || profile.format || "—",
+    capabilities,
+    allowedPurposes,
+    effectivePurposes: allowedPurposes ?? capabilities.filter((purpose) => purpose !== "debug-xor"),
+    supportLevel: key.supportLevel || profile.supportLevel || "supported",
+    legacyPurposeState: key.legacyPurposeState || (Object.hasOwn(key, "allowedPurposes") ? allowedPurposes === null ? "pending" : "confirmed" : "unknown"),
+    hasPublic: key.hasPublic ?? key.kind === "asymmetric",
+  };
+}
+
+export function matchKey(key, picker, requiredPurpose = "", allowedAlgorithms = []) {
+  if (requiredPurpose) {
+    const purposes = key.effectivePurposes || key.capabilities || [];
+    if (!purposes.includes(requiredPurpose)) return false;
+  }
+  if (allowedAlgorithms.length && !allowedAlgorithms.includes(key.algorithm)) return false;
   if (!picker) return true;
-  if (picker === "aes") return key.algorithm === "aes-128" || key.algorithm === "aes-256";
+  if (picker === "aes") return key.algorithm === "aes-128" || key.algorithm === "aes-192" || key.algorithm === "aes-256";
   if (picker === "hmac") {
     return ["hmac", "hmac-sha1", "hmac-sha256", "hmac-sha384", "hmac-sha512", "hmac-sm3"].includes(key.algorithm);
   }
-  if (picker === "xor") {
-    return key.algorithm !== "rsa-pem" && key.algorithm !== "sm2";
-  }
+  if (picker === "xor") return (key.effectivePurposes || key.capabilities || []).includes("debug-xor");
   return key.algorithm === picker || key.kind === picker;
+}
+
+export function compatibleKeys(keys, picker, requiredPurpose = "", allowedAlgorithms = []) {
+  return keys.filter((key) => matchKey(key, picker, requiredPurpose, allowedAlgorithms));
 }
 
 export async function loadVaultKeys() {
@@ -17,7 +51,7 @@ export async function loadVaultKeys() {
     const status = await invoke("toolbox/keys/status");
     if (!status.unlocked) return { unlocked: false, keys: [] };
     const listed = await invoke("toolbox/keys/list");
-    return { unlocked: true, keys: listed.keys || [] };
+    return { unlocked: true, keys: (listed.keys || []).map(normalizeVaultKey) };
   } catch {
     return { unlocked: false, keys: [] };
   }

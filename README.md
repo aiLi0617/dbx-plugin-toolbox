@@ -9,7 +9,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 当前版本 | `0.1.4` |
+| 当前版本 | `0.1.5` |
 | 运行要求 | DBX `>= 0.5.68`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |
@@ -102,7 +102,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 图片处理 | 裁剪、缩放、旋转、翻转和水印；输出 PNG、JPEG、WebP；最多可处理 20 张本地图片 |
 | 图片实用工具 | 压缩与格式转换、宫格切图、像素化、图片与 Base64 互转 |
 | 图片拼接与 GIF | 横向或纵向拼接多张图片；将本地图片序列生成为 GIF 动画 |
-| 图片 OCR | 由 Rust Sidecar 和随包模型执行中英文离线文字识别，图片内容不会发送到网络 |
+| 图片 OCR | OCR 代码随插件安装；快速/高精度模型由用户在 OCR 页面明确点击后从固定 GitHub Release 下载并校验，安装后识别完全离线，图片内容不会发送到网络 |
 | 占位图 | 按像素尺寸和目标文件体积生成占位图 |
 
 ### 安全与加密
@@ -111,8 +111,11 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | --- | --- |
 | 哈希与 HMAC | MD5、SHA、SM3、CRC32；HMAC-SHA-1 / SHA-256 / SHA-384 / SHA-512 / SM3，支持文本或文件 |
 | JWT | 解码、签发与验签，覆盖 HS、RS、PS 算法族 |
-| 对称加密 | AES / SM4，支持 GCM、CBC、ECB 模式 |
-| 非对称加密 | RSA（OAEP / PKCS#1）与 SM2；解密结果可按 UTF-8、Hex、Base64 显示 |
+| 对称加密 | AES-128 / 192 / 256（GCM、CBC、ECB）与 SM4（CBC、ECB）；支持分离式 IV / nonce / tag、AAD 及 UTF-8 / Hex / Base64 互操作 |
+| 非对称加密 | RSA（OAEP-SHA1 / 256 / 384 / 512、PKCS#1 v1.5）与 SM2；RSA 明文、密文及解密结果支持 UTF-8 / Hex / Base64 |
+| 现代认证加密 | ChaCha20-Poly1305、XChaCha20-Poly1305、AES-256-GCM-SIV、AES-256-CCM，以及兼容用 AES-256-CTR |
+| 密钥派生 | Argon2id、scrypt、PBKDF2-HMAC-SHA256、HKDF-SHA256，支持盐值与成本参数 |
+| 数字签名 | RSA-PSS-SHA256、RSA-PKCS#1-SHA256、SM2-SM3 签名与验签 |
 | 密钥与证书 | AES / SM4 / HMAC 对称密钥、RSA / SM2 密钥对生成；X.509、SSH 公钥、JWK / JWKS 检查与转换 |
 | 其他 | TOTP 动态口令与仅用于调试对照的 XOR |
 
@@ -153,7 +156,7 @@ plugin-data/
 
 这只是存储路径约定，不是操作系统沙箱；用户主动导出的文件仍保存到用户选择的位置。
 
-AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。选择密钥库条目时，前端仅传递 `keyId`，由 Sidecar 完成密钥读取与运算。
+AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。选择密钥库条目时，前端仅传递 `keyId`，由 Sidecar 完成密钥读取与运算。AES 密钥库支持 128、192 和 256 位密钥。
 
 ## 隐私与安全
 

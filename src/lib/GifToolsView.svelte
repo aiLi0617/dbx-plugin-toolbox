@@ -3,7 +3,7 @@
   import Select from "./Select.svelte";
   import { loadAssetModule } from "./assetModules.js";
   import { createTaskGate, imageDrawRect, imageInputError, validateCanvasSize, validateImageFiles } from "./imageBatch.js";
-  import { pick } from "./i18n.js";
+  import { localizeError, pick } from "./i18n.js";
   import { saveBlobThroughHost } from "./fileSave.js";
 
   let { locale = "zh-CN" } = $props(); const t = (zh, en) => pick(locale, zh, en);
@@ -45,7 +45,7 @@
       if (outputUrl) URL.revokeObjectURL(outputUrl); outputBlob = blob; outputUrl = URL.createObjectURL(blob); progress = `${frames.length} ${t("帧", "frames")} · ${(blob.size/1024).toFixed(1)} KB`;
     } catch (cause) { if (tasks.isCurrent(token)) { error = imageInputError(cause, t); progress = ""; } } finally { if (tasks.isCurrent(token)) busy = false; }
   }
-  async function save() { if (!outputBlob) return; try { await saveBlobThroughHost(outputBlob,{fileName:"animation.gif",mimeType:"image/gif",title:t("保存 GIF","Save GIF"),binary:true}); } catch(cause){error=cause?.message||String(cause);} }
+  async function save() { if (!outputBlob) return; try { await saveBlobThroughHost(outputBlob,{fileName:"animation.gif",mimeType:"image/gif",title:t("保存 GIF","Save GIF"),binary:true}); } catch(cause){error=localizeError(locale,cause);} }
 </script>
 
 <div class="page"><div class="toolbar"><label class="dbx-btn file">{frames.length?t("更换帧","Replace frames"):t("选择图片序列","Choose image sequence")}<input type="file" accept="image/*" multiple onchange={onFiles}/></label><div>{#if outputBlob}<button class="dbx-btn" type="button" onclick={save}>{t("保存 GIF","Save GIF")}</button>{/if}{#if busy}<button class="dbx-btn" type="button" onclick={cancel}>{t("取消","Cancel")}</button>{/if}<button class="dbx-btn dbx-btn--primary" type="button" onclick={generate} disabled={busy||frames.length<2}>{busy?t("处理中…","Working…"):t("生成 GIF","Generate GIF")}</button></div></div>

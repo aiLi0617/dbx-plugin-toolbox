@@ -11,7 +11,6 @@
   let digits = $state("6");
   let step = $state("30");
   let algorithm = $state("SHA-1");
-  let revealSecret = $state(false);
   let windows = $state([]);
   let effectiveConfig = $state(null);
   let error = $state("");
@@ -88,41 +87,7 @@
 </script>
 
 <div class="page">
-  <label class="block">
-    <span class="label">{t("密钥（Base32）", "Secret (Base32)")}</span>
-    <span class="secret-input-wrap">
-      <input
-        class="dbx-input mono secret-input"
-        type={revealSecret ? "text" : "password"}
-        spellcheck="false"
-        autocomplete="off"
-        placeholder="JBSWY3DPEHPK3PXP / otpauth://..."
-        bind:value={secret}
-      />
-      <button
-        class="secret-toggle"
-        type="button"
-        aria-pressed={revealSecret}
-        aria-label={revealSecret ? t("隐藏密钥", "Hide secret") : t("显示密钥", "Show secret")}
-        title={revealSecret ? t("隐藏密钥", "Hide secret") : t("显示密钥", "Show secret")}
-        onclick={() => revealSecret = !revealSecret}
-      >
-        {#if revealSecret}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m3 3 18 18"></path>
-            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path>
-            <path d="M9.9 4.2A10.5 10.5 0 0 1 12 4c5 0 9 4.1 10 8a10.8 10.8 0 0 1-2.2 4.1"></path>
-            <path d="M6.6 6.6A11.1 11.1 0 0 0 2 12c1 3.9 5 8 10 8 1.6 0 3-.4 4.3-1"></path>
-          </svg>
-        {:else}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        {/if}
-      </button>
-    </span>
-  </label>
+  <label class="block"><span class="label">{t("密钥（Base32 / otpauth URI）", "Secret (Base32 / otpauth URI)")}</span><input class="dbx-input" type="password" bind:value={secret} autocomplete="off" spellcheck="false" placeholder="JBSWY3DPEHPK3PXP / otpauth://..." /></label>
   <div class="totp-options">
     <label class="block"><span class="label">{t("位数", "Digits")}</span><Select value={shownDigits} onchange={(value) => digits = value} disabled={isUri} options={[{ value: "6", label: "6" }, { value: "8", label: "8" }]} /></label>
     <label class="block"><span class="label">{t("周期", "Period")}</span><Select value={shownStep} onchange={(value) => step = value} disabled={isUri} options={stepOptions} /></label>
@@ -195,25 +160,6 @@
     flex-direction: column;
     gap: 6px;
   }
-  .secret-input-wrap { position: relative; display: block; }
-  .secret-input { width: 100%; padding-right: 42px; }
-  .secret-toggle {
-    position: absolute;
-    top: 50%;
-    right: 5px;
-    display: grid;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    place-items: center;
-    transform: translateY(-50%);
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
-  }
-  .secret-toggle:hover { background: var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent)); }
-  .secret-toggle:focus-visible { outline: none; box-shadow: var(--dbx-focus-ring); }
   .totp-options { display: flex; flex-wrap: wrap; gap: 8px; }
   .totp-options :global(.dbx-custom-select) { width: auto; min-width: 100px; }
   .config-hint { margin: -4px 0 0; }

@@ -2,12 +2,15 @@
   import Select from "./Select.svelte";
   import UnlockVaultDialog from "./UnlockVaultDialog.svelte";
   import { pick } from "./i18n.js";
-  import { loadVaultKeys, matchKey } from "./keySource.js";
+  import { compatibleKeys, loadVaultKeys, matchKey } from "./keySource.js";
 
   let {
     locale = "zh-CN",
     picker = "hmac",
+    requiredPurpose = "",
+    allowedAlgorithms = [],
     multiline = false,
+    hideMaterial = false,
     materialLabel = "",
     materialPlaceholder = "",
     encodingLabel = "",
@@ -27,12 +30,13 @@
   let vaultKeys = $state([]);
   let vaultUnlocked = $state(false);
   let unlockOpen = $state(false);
+  const selectableKeys = $derived(compatibleKeys(vaultKeys, picker, requiredPurpose, allowedAlgorithms));
 
   async function refresh() {
     const next = await loadVaultKeys();
     vaultUnlocked = next.unlocked;
     vaultKeys = next.keys;
-    if (keyId && !vaultKeys.some((key) => key.id === keyId && matchKey(key, picker))) keyId = "";
+    if (keyId && !vaultKeys.some((key) => key.id === keyId && matchKey(key, picker, requiredPurpose, allowedAlgorithms))) keyId = "";
     return next;
   }
 
@@ -49,6 +53,8 @@
 
   $effect(() => {
     void picker;
+    void requiredPurpose;
+    void allowedAlgorithms;
     refresh();
   });
 
@@ -78,8 +84,8 @@
         <Select
           bind:value={keyId}
           options={[
-            { value: "", label: t("选择已保存密钥", "Choose a saved key") },
-            ...vaultKeys.filter((k) => matchKey(k, picker)).map((key) => ({
+            { value: "", label: vaultUnlocked && !selectableKeys.length ? t("没有匹配的密钥", "No matching keys") : t("选择已保存密钥", "Choose a saved key") },
+            ...selectableKeys.map((key) => ({
               value: key.id,
               label: `${key.name} · ${key.algorithm} · ${key.fingerprint}`,
             })),
@@ -91,7 +97,7 @@
           {t("解锁密钥库", "Unlock key vault")}
         </button>
       {/if}
-    {:else if !multiline}
+    {:else if !multiline && !hideMaterial}
       {#if encodingOptions.length}
         <label class="field">
           <span class="dbx-label">{encodingLabel}</span>
@@ -104,7 +110,7 @@
       </label>
     {/if}
   </div>
-  {#if source === "once" && multiline}
+  {#if source === "once" && multiline && !hideMaterial}
     <label class="field material">
       <span class="dbx-label">{keyLabel}</span>
       <textarea class="dbx-textarea key-material" rows="3" spellcheck="false" autocomplete="off" placeholder={materialPlaceholder} bind:value={material}></textarea>

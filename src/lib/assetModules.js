@@ -1,4 +1,4 @@
-export const ASSET_MODULE_NAMES = Object.freeze(["excel", "barcode", "scanner", "sql", "beautify", "script", "schema", "semver", "gif"]);
+export const ASSET_MODULE_NAMES = Object.freeze(["excel", "barcode", "scanner", "sql", "beautify", "script", "schema", "semver", "gif", "codemirror"]);
 
 // Each asset is a self-contained ESM bundle: blob URLs cannot resolve relative
 // imports. Cache the promise as well as the module to coalesce concurrent calls.
@@ -11,7 +11,7 @@ export function createAssetModuleLoader({ getHost, importModule, revokeUrl }) {
       const host = getHost();
       if (!host?.readAssetUrl) throw new Error("DBX resource bridge is unavailable");
       await host.ready;
-      const url = await host.readAssetUrl(`assets/lazy/${name}.js`);
+      const url = await host.readAssetUrl(`assets/lazy-${name}.js`);
       try {
         return await importModule(url);
       } finally {

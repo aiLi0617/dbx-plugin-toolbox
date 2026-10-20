@@ -1,6 +1,6 @@
 [package]
 name = "dbx-plugin-toolbox"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 rust-version = "1.89"
 license = "Apache-2.0"
@@ -10,28 +10,37 @@ license = "Apache-2.0"
 [dependencies]
 aes = "0.8"
 aes-gcm = "0.10"
+aes-gcm-siv = "0.11"
 argon2 = "0.5"
 base64 = "0.22"
 cbc = "0.1"
+ccm = "0.5"
+chacha20poly1305 = "0.10"
 cipher = { version = "0.4", features = ["alloc", "block-padding"] }
 crc32fast = "1"
+ctr = "0.9"
 dbx-plugin-sdk = "0.1.0"
 dirs = "5"
 ecb = "0.1"
 hex = "0.4"
 hmac = "0.12"
+hkdf = "0.12"
 image = { version = "0.25", default-features = false, features = ["bmp", "jpeg", "png", "webp"] }
 md-5 = "0.10"
 ocrs-cjk = { path = "vendor/ocrs-cjk", default-features = false, features = ["rten"] }
 pem = "3"
 rand = "0.8"
+pbkdf2 = "0.12"
 raw-window-handle = "0.6"
 rsa = { version = "0.9", features = ["pem"] }
+scrypt = "0.11"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha1 = "0.10"
 sha2 = { version = "0.10", features = ["oid"] }
 sha3 = "0.10"
+ureq = { version = "2.12", default-features = false, features = ["tls"] }
+url = "2"
 sm3 = "0.4"
 sm4 = "0.5"
 smcrypto = "0.3.1"
@@ -43,6 +52,14 @@ uuid = { version = "1", features = ["v4"] }
 rfd = "0.15"
 x509-parser = "0.16"
 zeroize = { version = "1", features = ["derive"] }
+aes-kw = { version = "0.2", features = ["alloc"] }
+aes-siv = "0.7"
+cfb-mode = "0.8"
+ofb = "0.6"
+cmac = "0.7"
+xts-mode = "0.5"
+fpe = "0.6"
+hpke = "0.14"
 
 # `dbx-plugin-sdk` is not published to crates.io. Local builds use the
 # repository copy; the DBX Plugin CLI overrides this patch with its bundled,
