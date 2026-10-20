@@ -115,7 +115,7 @@
   .page { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
   .options { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
   .field { display: flex; flex-direction: column; gap: 6px; min-width: 180px; font-size: 12px; }
-  .hint, .error, .status { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-muted-foreground); }
+  .error, .status { margin: 0; font-size: 12px; line-height: 1.5; color: var(--color-muted-foreground); }
   .error { color: var(--color-destructive); }
   .block { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
   .output-block { flex: 1; }

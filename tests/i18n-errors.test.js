@@ -2,6 +2,65 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { localizeError } from "../src/lib/i18n.js";
 import { precisionErrorMessage, UnsafeNumberError } from "../src/lib/jsonPrecision.js";
+import { SIDECAR_ERRORS } from "../src/lib/i18nErrors.js";
+import { SUPPORTED_LOCALES } from "../src/lib/locale.js";
+import { UI_MESSAGES } from "../src/lib/uiMessages.js";
+import { readFileSync, readdirSync } from "node:fs";
+
+test("already localized validation messages are not replaced by the generic error", () => {
+  for (const source of ["Passwords do not match", "Provide a key"]) {
+    for (const locale of SUPPORTED_LOCALES) {
+      const message = UI_MESSAGES[source]?.[locale];
+      assert.ok(message, `${source}: ${locale}`);
+      assert.equal(localizeError(locale, new Error(message)), message, `${source}: ${locale}`);
+    }
+  }
+  assert.equal(localizeError("zh-CN", "主密码至少 8 位"), "主密码至少 8 位");
+  const secret = "内部错误：password=never-display-this";
+  assert.doesNotMatch(localizeError("zh-CN", secret), /never-display-this/);
+  assert.doesNotMatch(localizeError("zh-CN", secret), /技术详情/);
+});
+
+test("literal backend validation errors have specific UI messages, not a generic fallback", () => {
+  const directory = new URL("../backend/src/", import.meta.url);
+  const missing = [];
+  // Port errors have a dedicated code-to-message handler in PortProcessesView.
+  for (const file of readdirSync(directory).filter((name) => name.endsWith(".rs") && !name.startsWith("ports"))) {
+    const source = readFileSync(new URL(file, directory), "utf8");
+    for (const [, message] of source.matchAll(/\b(?:err|bad|internal|asset_error)\(\s*"([^"\n]+)"\s*[,)]/g)) {
+      for (const locale of SUPPORTED_LOCALES.filter((item) => item !== "en")) {
+        if (localizeError(locale, message) === localizeError(locale, "__unknown_error__")) missing.push(`${file}: ${locale}: ${message}`);
+      }
+    }
+  }
+  assert.deepEqual(missing, []);
+});
+
+test("OCR model failures are categorized without leaking paths or network details", () => {
+  for (const locale of SUPPORTED_LOCALES) {
+    for (const [raw, key] of [
+      ["OCR model recognition-server-opset13.rten is not installed", "OCR_MODEL_MISSING"],
+      ["OCR model detection-ppocrv5.rten failed SHA-256 verification", "OCR_MODEL_INTEGRITY"],
+      ["Could not download OCR model: secret-network-details", "OCR_MODEL_NETWORK"],
+      ["OCR model server returned HTTP 403", "OCR_MODEL_NETWORK"],
+      ["Could not write the OCR model: secret-path-details", "OCR_MODEL_IO"],
+    ]) {
+      const result = localizeError(locale, raw);
+      assert.equal(result, SIDECAR_ERRORS[key][locale]);
+      assert.doesNotMatch(result, /secret-network-details|secret-path-details/);
+    }
+  }
+});
+
+test("vault authentication failures have an actionable translation in every locale", () => {
+  const raw = "Wrong master password or vault data is corrupt";
+  for (const locale of SUPPORTED_LOCALES) {
+    const expected = SIDECAR_ERRORS[raw][locale];
+    assert.ok(expected, `missing vault authentication translation for ${locale}`);
+    assert.equal(localizeError(locale, new Error(raw)), expected);
+  }
+  assert.match(localizeError("zh-CN", { message: raw }), /主密码不正确.*数据已损坏/);
+});
 
 test("JSON control-character SyntaxError is localized for zh and kept clear for en", () => {
   const raw = 'Bad control character in string literal in JSON at position 14 (line 1 column 15)';

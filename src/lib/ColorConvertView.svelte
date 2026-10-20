@@ -1174,7 +1174,7 @@
   }
   .contrast-action:focus-visible {
     outline: 1px solid var(--color-ring, var(--color-primary));
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
   .contrast-action:disabled {
     cursor: default;

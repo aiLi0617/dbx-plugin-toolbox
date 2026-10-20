@@ -1,20 +1,15 @@
 import { normalizeLocale } from "./locale.js";
+import { errorMessage as errorText } from "./errorMessage.js";
 
 export async function ready() {
   if (window.dbxPlugin?.ready) await window.dbxPlugin.ready;
-}
-
-function errorText(err) {
-  if (err == null) return "";
-  if (typeof err === "string") return err;
-  return String(err.message || err.msg || err.data?.message || "");
 }
 
 function normalizeError(err, method) {
   if (err instanceof Error && err.code && err.method === method) return err;
   const message = errorText(err) || "Request failed";
   const normalized = err instanceof Error ? err : new Error(message);
-  if (!normalized.message) normalized.message = message;
+  normalized.message = message;
   const rawCode = err?.code ?? err?.data?.code;
   normalized.code = rawCode === undefined || rawCode === null
     ? /timeout|timed out/i.test(message) ? "TIMEOUT" : "HOST_ERROR"

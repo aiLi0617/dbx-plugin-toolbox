@@ -82,7 +82,10 @@
     let disposed = false;
     let offInit;
     let offContext;
-    sidebarCollapsed = window.innerWidth < 960;
+    const compactSidebar = window.matchMedia("(max-width: 959px)");
+    const onSidebarResize = () => { if (compactSidebar.matches) sidebarCollapsed = true; };
+    sidebarCollapsed = compactSidebar.matches;
+    compactSidebar.addEventListener("change", onSidebarResize);
     const onEnv = (environment) => {
       locale = hostLocale(environment);
       document.documentElement.lang = locale;
@@ -116,13 +119,14 @@
       favoriteIds = savedFavorites;
       vaultAutoLockMinutes = savedAutoLock;
       recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, 10);
-      sidebarCollapsed = workspacePrefs.sidebarCollapsed;
+      sidebarCollapsed = workspacePrefs.sidebarCollapsed || compactSidebar.matches;
       applyWorkbenchContext(hostContext());
       await refreshKeys();
     };
     void initialize();
     return () => {
       disposed = true;
+      compactSidebar.removeEventListener("change", onSidebarResize);
       window.removeEventListener("keydown", onShortcut);
       window.removeEventListener("keydown", onActivity);
       window.removeEventListener("pointerdown", onActivity);

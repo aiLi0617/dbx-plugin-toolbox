@@ -345,7 +345,7 @@
   .trigger.keyboard-focus {
     border-color: var(--color-ring, var(--color-primary));
     outline: 1px solid var(--color-ring, var(--color-primary));
-    outline-offset: 2px;
+    outline-offset: -2px;
     box-shadow: none;
   }
   .trigger:disabled {

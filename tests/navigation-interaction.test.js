@@ -5,6 +5,19 @@ import { indentSelection } from "../src/lib/editorIndent.js";
 import { tools, searchTools } from "../src/lib/catalog.js";
 import { toolOptionsForQuery, EPHEMERAL_TOOL_IDS, navigationTargetFromContext, resolveIntent } from "../src/lib/navigation.js";
 
+test("narrow sidebar state stays in sync with saved preferences and viewport changes", () => {
+  const app = readFileSync(new URL("../src/App.svelte", import.meta.url), "utf8");
+  const css = readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
+  assert.match(app, /window\.matchMedia\("\(max-width: 959px\)"\)/);
+  assert.match(app, /sidebarCollapsed = workspacePrefs\.sidebarCollapsed \|\| compactSidebar\.matches/);
+  assert.match(app, /if \(compactSidebar\.matches\) sidebarCollapsed = true/);
+  assert.match(app, /compactSidebar\.addEventListener\("change", onSidebarResize\)/);
+  assert.match(app, /compactSidebar\.removeEventListener\("change", onSidebarResize\)/);
+  const compact = css.match(/@media \(max-width: 959px\) \{([\s\S]*?)\n\}/)?.[1];
+  assert.ok(compact);
+  assert.doesNotMatch(compact, /\.sidebar|grid-template-columns:\s*52px/);
+});
+
 test("merged tool searches open the requested operation", () => {
   assert.deepEqual(toolOptionsForQuery("uuid", "ULID"), { kind: "ulid" });
   assert.deepEqual(toolOptionsForQuery("uuid", "UUID v7"), { kind: "uuid-v7" });
