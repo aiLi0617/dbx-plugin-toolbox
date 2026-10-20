@@ -3,9 +3,8 @@
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
   import { invoke, ready } from "./host.js";
-  import { localizeError, pick } from "./i18n.js";
+  import { L, localizeError, pick } from "./i18n.js";
   import { normalizeVaultKey } from "./keySource.js";
-  import { supportLabel } from "./cryptoCapabilities.js";
   import { moveId } from "./navigation.js";
   import { VAULT_AUTO_LOCK_MINUTES } from "./prefs.js";
   import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem, generateSymmetricKeyMaterial } from "./tools/generate.js";
@@ -20,6 +19,7 @@
   let status = $state({ exists: false, unlocked: false });
   let keys = $state([]);
   let listQuery = $state("");
+  let keyType = $state("all");
   let pointerDrag = $state(null);
   let password = $state("");
   let confirmPassword = $state("");
@@ -37,12 +37,27 @@
   let createMaterial = $state("");
   let createPublicMaterial = $state("");
   let purposeEdit = $state(null);
+  let purposeError = $state("");
   let reveal = $state(null);
   let pendingDelete = $state(null);
   let renameId = $state("");
   let renameName = $state("");
   let renameInput = $state(null);
-  let panel = $state("create");
+  let panel = $state("");
+  let formError = $state("");
+  let fieldErrors = $state({});
+  let discardPending = $state(false);
+  let highlightedKeyId = $state("");
+  let managementDialog = $state(null);
+  let managementTrigger;
+  let highlightTimer;
+  const formCopy = {
+    keyType: L("Filter by key type", "密钥类型", "金鑰類型", "Filtrar por tipo de clave", "Filtra per tipo di chiave", "鍵の種類で絞り込み", "Filtrar por tipo de chave", "키 유형별 필터", "Anahtar türüne göre filtrele", "Açar növünə görə süzgəc"),
+    password: L("Change master password", "修改主密码", "修改主密碼", "Cambiar contraseña maestra", "Modifica password principale", "マスターパスワードを変更", "Alterar senha mestra", "마스터 비밀번호 변경", "Ana şifreyi değiştir", "Əsas parolu dəyiş"),
+    unsaved: L("Discard unsaved changes?", "放弃未保存的更改？", "放棄未儲存的變更？", "¿Descartar los cambios sin guardar?", "Scartare le modifiche non salvate?", "未保存の変更を破棄しますか？", "Descartar alterações não salvas?", "저장하지 않은 변경 사항을 삭제할까요?", "Kaydedilmemiş değişiklikler silinsin mi?", "Saxlanmamış dəyişikliklər ləğv edilsin?"),
+    discard: L("Discard changes", "放弃更改", "放棄變更", "Descartar cambios", "Scarta modifiche", "変更を破棄", "Descartar alterações", "변경 사항 삭제", "Değişiklikleri sil", "Dəyişiklikləri ləğv et"),
+    keep: L("Keep editing", "继续编辑", "繼續編輯", "Seguir editando", "Continua a modificare", "編集を続ける", "Continuar editando", "계속 편집", "Düzenlemeye devam et", "Redaktəyə davam et"),
+  };
 
   const t = (zh, en) => pick(locale, zh, en);
   const autoLockOptions = $derived(VAULT_AUTO_LOCK_MINUTES.map((minutes) => ({
@@ -51,15 +66,21 @@
   })));
   const pasteExisting = $derived(createMode === "paste");
   const generatingAsym = $derived(!pasteExisting && (createAlg === "rsa-pem" || createAlg === "sm2"));
+  const keyTypeOptions = $derived.by(() => {
+    const types = new Map(keys.map((key) => [key.algorithm, key.displayType || key.algorithm]));
+    if (keyType !== "all" && !types.has(keyType)) types.set(keyType, keyType.toUpperCase());
+    return [{ value:"all", label:t("全部", "All") }, ...[...types].sort((a, b) => a[1].localeCompare(b[1])).map(([value, label]) => ({ value, label }))];
+  });
   const filteredKeys = $derived((() => {
     const query = listQuery.trim().toLowerCase();
-    if (!query) return keys;
     return keys.filter((key) => {
+      if (keyType !== "all" && key.algorithm !== keyType) return false;
+      if (!query) return true;
       const hay = `${key.name} ${key.algorithm} ${key.displayType || ""} ${(key.effectivePurposes || []).join(" ")} ${key.supportLevel || ""} ${key.fingerprint || ""}`.toLowerCase();
       return hay.includes(query);
     });
   })());
-  const filtering = $derived(Boolean(listQuery.trim()));
+  const filtering = $derived(Boolean(listQuery.trim()) || keyType !== "all");
   const canReorder = $derived(!filtering && !busy && !renameId && keys.length > 1);
   const draggingKey = $derived(pointerDrag ? keys.find((key) => key.id === pointerDrag.sourceId) : null);
 
@@ -93,11 +114,15 @@
   }
 
   function resetSensitive() {
+    clearManagement();
+    highlightedKeyId = "";
+    window.clearTimeout(highlightTimer);
     reveal = null;
     pendingDelete = null;
     cancelRename();
     pointerDrag = null;
     listQuery = "";
+    keyType = "all";
     password = "";
     confirmPassword = "";
     currentPassword = "";
@@ -109,9 +134,54 @@
   }
 
   function closeDialogs() {
+    if (panel) { requestCloseManagement(); return; }
     reveal = null;
     pendingDelete = null;
     purposeEdit = null;
+  }
+
+  function clearManagement() {
+    panel = "";
+    createName = "";
+    createAlg = "aes-256";
+    createMode = "generate";
+    createBits = "2048";
+    createFormat = "pkcs8";
+    createMaterial = "";
+    createPublicMaterial = "";
+    currentPassword = "";
+    newPassword = "";
+    confirmNewPassword = "";
+    formError = "";
+    fieldErrors = {};
+    discardPending = false;
+  }
+
+  async function openManagement(next, event) {
+    if (busy) return;
+    const trigger = panel ? managementTrigger : event?.currentTarget;
+    closeDialogs();
+    clearManagement();
+    managementTrigger = trigger;
+    error = "";
+    panel = next;
+    await tick();
+    (managementDialog?.querySelector("input") || managementDialog?.querySelector("[role='combobox'], button:not(.management-close)"))?.focus();
+  }
+
+  function closeManagement() {
+    if (busy) return;
+    clearManagement();
+    managementTrigger?.focus();
+  }
+
+  function requestCloseManagement() {
+    if (busy) return;
+    const dirty = panel === "create"
+      ? Boolean(createName || createMaterial || createPublicMaterial || createAlg !== "aes-256" || createMode !== "generate" || createBits !== "2048" || createFormat !== "pkcs8")
+      : panel === "password" && Boolean(currentPassword || newPassword || confirmNewPassword);
+    if (dirty) discardPending = true;
+    else closeManagement();
   }
 
   function formatCreated(value) {
@@ -151,7 +221,7 @@
     return labels.length > 2 ? `${labels.slice(0, 2).join(" · ")} +${labels.length - 2}` : labels.join(" · ") || "—";
   }
 
-  async function run(task) {
+  async function run(task, onError = fail) {
     if (busy) {
       fail({ message: t("请稍候，正在处理上一步操作", "Wait, another action is still running") });
       return;
@@ -161,7 +231,7 @@
     try {
       await task();
     } catch (err) {
-      fail(err);
+      onError(err);
     } finally {
       busy = false;
     }
@@ -174,6 +244,7 @@
       keys = (listed.keys || []).map(normalizeVaultKey);
     } else {
       keys = [];
+      clearManagement();
     }
     if (announce) notify();
   }
@@ -218,33 +289,39 @@
   }
 
   async function changePassword() {
-    if (passwordTooShort(currentPassword) || passwordTooShort(newPassword)) {
-      fail({ message: t("主密码至少 8 位", "Master password must be at least 8 characters") });
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      fail({ message: t("两次输入的新密码不一致", "New passwords do not match") });
-      return;
-    }
+    if (busy || discardPending) return;
+    fieldErrors = {};
+    formError = "";
+    if (passwordTooShort(currentPassword)) fieldErrors.currentPassword = t("主密码至少 8 位", "Master password must be at least 8 characters");
+    if (passwordTooShort(newPassword)) fieldErrors.newPassword = t("主密码至少 8 位", "Master password must be at least 8 characters");
+    if (newPassword !== confirmNewPassword) fieldErrors.confirmNewPassword = t("两次输入的新密码不一致", "New passwords do not match");
+    if (Object.keys(fieldErrors).length) return;
     await run(async () => {
       await invoke("toolbox/keys/change-password", { currentPassword, newPassword }, 60000);
       currentPassword = "";
       newPassword = "";
       confirmNewPassword = "";
+      clearManagement();
       ok(t("主密码已更新", "Master password updated"));
-    });
+    }, (err) => { if (panel) formError = errorText(err); else fail(err); });
+    if (!panel) { await tick(); managementTrigger?.focus(); }
   }
 
   async function createKey() {
+    if (busy || discardPending) return;
     const name = createName.trim();
+    fieldErrors = {};
+    formError = "";
     if (!name) {
-      fail({ message: t("请填写名称", "Enter a name") });
-      return;
+      fieldErrors.createName = t("请填写名称", "Enter a name");
     }
     if (pasteExisting && !createMaterial.trim()) {
-      fail({ message: t("请粘贴密钥材料", "Paste the key material") });
-      return;
+      fieldErrors.createMaterial = t("请粘贴密钥材料", "Paste the key material");
     }
+    if (pasteExisting && ["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(createAlg) && !createPublicMaterial.trim()) {
+      fieldErrors.createPublicMaterial = t("请粘贴密钥材料", "Paste the key material");
+    }
+    if (Object.keys(fieldErrors).length) return;
     await run(async () => {
       let material = createMaterial;
       let generate = !pasteExisting;
@@ -258,12 +335,12 @@
         material = generateSymmetricKeyMaterial(createAlg).material;
         generate = false;
       }
-      await invoke("toolbox/keys/create", {
+      const result = await invoke("toolbox/keys/create", {
         name,
         algorithm: createAlg,
         generate,
         material,
-        publicMaterial: createPublicMaterial,
+        publicMaterial: pasteExisting ? createPublicMaterial : "",
         bits: createAlg === "rsa-pem" ? Number(createBits) : undefined,
         format: createAlg === "rsa-pem" ? createFormat : undefined,
       }, 30000);
@@ -271,9 +348,18 @@
       createMaterial = "";
       createPublicMaterial = "";
       createMode = "generate";
+      clearManagement();
       ok(t("密钥已保存", "Key saved"));
       await refresh();
-    });
+      listQuery = "";
+      keyType = "all";
+      highlightedKeyId = result.key?.id || "";
+      await tick();
+      document.querySelector(`[data-key-id="${CSS.escape(highlightedKeyId)}"]`)?.scrollIntoView({ block: "nearest" });
+      window.clearTimeout(highlightTimer);
+      highlightTimer = window.setTimeout(() => { highlightedKeyId = ""; }, 3000);
+    }, (err) => { if (panel) formError = errorText(err); else fail(err); });
+    if (!panel) { await tick(); managementTrigger?.focus(); }
   }
 
   async function startRename(key) {
@@ -350,7 +436,7 @@
 
   function pointerDown(event, key) {
     if (!canReorder || event.button !== 0) return;
-    const row = event.currentTarget.closest("tr");
+    const row = event.currentTarget.closest("[data-key-id]");
     const rect = (row || event.currentTarget).getBoundingClientRect();
     pointerDrag = {
       pointerId: event.pointerId,
@@ -488,12 +574,14 @@
       await invoke("toolbox/keys/delete", { id: key.id, confirm: true });
       if (reveal?.key?.id === key.id) reveal = null;
       pendingDelete = null;
-      ok(t("已删除", "Deleted"));
+      notice = "";
       await refresh();
     });
   }
 
   function editPurposes(key) {
+    error = "";
+    purposeError = "";
     purposeEdit = { key, selected: [...(key.allowedPurposes ?? key.effectivePurposes ?? [])] };
   }
 
@@ -507,11 +595,16 @@
   async function savePurposes() {
     const current = purposeEdit;
     if (!current) return;
+    purposeError = "";
     await run(async () => {
-      await invoke("toolbox/keys/update-purposes", { id: current.key.id, allowedPurposes: current.selected });
+      // The host uses structured cloning; Svelte's state array is a Proxy.
+      await invoke("toolbox/keys/update-purposes", { id: current.key.id, allowedPurposes: [...current.selected] });
       purposeEdit = null;
       ok(t("用途已更新", "Purposes updated"));
       await refresh();
+    }, (err) => {
+      const unsupported = String(err?.code) === "-32601" || /method.*not found|unknown method/i.test(err?.message || "");
+      purposeError = localizeError(locale, unsupported ? "Key purpose updates require a newer backend. Restart or update the plugin." : err);
     });
   }
 
@@ -520,11 +613,18 @@
   }
 
   $effect(() => {
-    if (!reveal && !pendingDelete && !purposeEdit) return;
+    if (!reveal && !pendingDelete && !purposeEdit && !panel) return;
     function onKey(event) {
       if (event.key === "Escape") {
         event.preventDefault();
         closeDialogs();
+      }
+      if (event.key === "Tab" && managementDialog) {
+        const controls = [...managementDialog.querySelectorAll("button:not(:disabled), input:not(:disabled), textarea:not(:disabled), [tabindex='0']")].filter((element) => element.getClientRects().length);
+        const first = controls[0];
+        const last = controls.at(-1);
+        if (event.shiftKey && (document.activeElement === first || !managementDialog.contains(document.activeElement))) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && (document.activeElement === last || !managementDialog.contains(document.activeElement))) { event.preventDefault(); first?.focus(); }
       }
     }
     window.addEventListener("keydown", onKey);
@@ -549,6 +649,7 @@
     })();
     return () => {
       cancelled = true;
+      window.clearTimeout(highlightTimer);
       window.removeEventListener("toolbox-vault-change", onVaultChange);
     };
   });
@@ -593,14 +694,9 @@
         </p>
       </div>
       <div class="status-actions">
-        <label class="field auto-lock">
-          <span>{t("自动锁定", "Auto-lock")}</span>
-          <Select
-            value={autoLockMinutes}
-            options={autoLockOptions}
-            onchange={(value) => onAutoLockChange(Number(value))}
-          />
-        </label>
+        {#if !keys.length}<button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={(event) => openManagement("create", event)} type="button">{t("添加密钥", "Add key")}</button>{/if}
+        <label class="field auto-lock"><span>{t("自动锁定", "Auto-lock")}</span><Select value={autoLockMinutes} options={autoLockOptions} onchange={(value) => onAutoLockChange(Number(value))} /></label>
+        <button class="dbx-btn" disabled={busy} onclick={(event) => openManagement("password", event)} type="button">{pick(locale, formCopy.password)}</button>
         <button class="dbx-btn" disabled={busy} onclick={lock} type="button">{t("锁定", "Lock")}</button>
       </div>
     </div>
@@ -609,6 +705,7 @@
 
     {#if keys.length > 0}
       <div class="list-toolbar">
+        <div class="list-filters">
         <label class="field list-filter">
           <span>{t("筛选", "Filter")}</span>
           <input
@@ -618,114 +715,116 @@
             aria-label={t("筛选密钥", "Filter keys")}
           />
         </label>
-        <p class="dbx-hint list-meta">
-          {#if filtering}
-            {t(`显示 ${filteredKeys.length} / ${keys.length}`, `Showing ${filteredKeys.length} / ${keys.length}`)}
-          {:else if canReorder}
-            {t("拖动手柄或用 ↑↓ 调整顺序", "Drag the handle or use ↑↓ to reorder")}
-          {:else}
-            {t(`${keys.length} 把密钥`, `${keys.length} key${keys.length === 1 ? "" : "s"}`)}
-          {/if}
-        </p>
+        <label class="field type-filter"><span>{pick(locale, formCopy.keyType)}</span><Select bind:value={keyType} options={keyTypeOptions} ariaLabel={pick(locale, formCopy.keyType)} /></label>
+        </div>
+        <div class="list-toolbar-actions">{#if filtering}<p class="dbx-hint list-meta">{t(`显示 ${filteredKeys.length} / ${keys.length}`, `Showing ${filteredKeys.length} / ${keys.length}`)}</p>{/if}<button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={(event) => openManagement("create", event)} type="button">{t("添加密钥", "Add key")}</button></div>
       </div>
       {#if filteredKeys.length === 0}
         <p class="dbx-hint">{t("没有匹配的密钥", "No matching keys")}</p>
       {:else}
-        <div class="table-wrap" class:dragging={pointerDrag?.active}>
-          <table class="dbx-table">
-            <thead>
-              <tr>
-                <th class="drag-col" aria-hidden="true"></th>
-                <th>{t("名称", "Name")}</th>
-                <th>{t("密钥类型", "Key type")}</th>
-                <th>{t("大小 / 格式", "Size / format")}</th>
-                <th>{t("用途", "Used by")}</th>
-                <th>{t("支持状态", "Support")}</th>
-                <th>{t("指纹", "Fingerprint")}</th>
-                <th>{t("创建时间", "Created")}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each filteredKeys as key (key.id)}
-                <tr
-                  data-key-id={key.id}
-                  class:dragging={pointerDrag?.active && pointerDrag.sourceId === key.id}
-                  class:drop-target={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id}
-                  class:drop-after={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && pointerDrag.after}
-                  class:drop-before={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && !pointerDrag.after}
-                >
-                  <td class="drag-col">
-                    <button
-                      class="drag"
-                      type="button"
-                      disabled={!canReorder}
-                      onpointerdown={(event) => pointerDown(event, key)}
-                      onpointermove={pointerMove}
-                      onpointerup={pointerEnd}
-                      onpointercancel={pointerCancel}
-                      onpointerleave={pointerLeave}
-                      onkeydown={(event) => keyMove(event, key)}
-                      aria-label={t(`调整「${key.name}」顺序`, `Reorder “${key.name}”`)}
-                      title={filtering
-                        ? t("筛选时不能排序", "Clear the filter to reorder")
-                        : t("拖动或使用上下方向键排序", "Drag or use Up/Down to reorder")}
-                    >⠿</button>
-                  </td>
-                  <td>
-                    {#if renameId === key.id}
-                      <input
-                        class="dbx-input rename-input"
-                        bind:this={renameInput}
-                        bind:value={renameName}
-                        aria-label={t("密钥名称", "Key name")}
-                        onkeydown={onRenameKeydown}
-                      />
-                    {:else}
-                      {key.name}
-                    {/if}
-                  </td>
-                  <td>{key.displayType || key.algorithm}</td>
-                  <td>{key.bits ? `${key.bits} bit · ${key.format}` : key.format || "—"}</td>
-                  <td class="uses" title={(key.effectivePurposes || []).map(purposeLabel).join(" · ")}>{usesFor(key)}</td>
-                  <td>{key.legacyPurposeState === "pending" ? t("历史兼容 · 待确认", "Legacy · pending") : supportLabel(key.supportLevel, locale)}</td>
-                  <td class="mono" title={key.fingerprint}>{key.fingerprint}</td>
-                  <td class="muted">{formatCreated(key.createdAt)}</td>
-                  <td class="actions">
-                    {#if renameId === key.id}
-                      <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">
-                        {busy ? t("保存中…", "Saving…") : t("保存", "Save")}
-                      </button>
-                      <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={cancelRename} type="button">{t("取消", "Cancel")}</button>
-                    {:else}
-                      {#if key.kind === "asymmetric" || key.algorithm === "rsa-pem" || key.algorithm === "sm2"}
-                        <button class="dbx-btn" disabled={busy} onclick={() => showPublic(key)} type="button">{t("公钥", "Public")}</button>
-                      {/if}
-                      <button class="dbx-btn" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
-                      <button class="dbx-btn" disabled={busy} onclick={() => editPurposes(key)} type="button">{t("用途", "Purposes")}</button>
-                      <button class="dbx-btn" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
-                      <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
-                    {/if}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
+        <div class="key-list" class:dragging={pointerDrag?.active} role="table" aria-label={t("密钥库", "Vault")}>
+          <div class="key-header" role="row">
+            <span role="columnheader"></span>
+            <span role="columnheader">{t("密钥名称", "Key name")}</span>
+            <span role="columnheader">{t("大小 / 格式", "Size / format")}</span>
+            <span role="columnheader">{t("用途", "Used by")}</span>
+            <span role="columnheader">{t("创建时间", "Created")}</span>
+            <span role="columnheader">{t("指纹", "Fingerprint")}</span>
+            <span class="actions-heading" role="columnheader">{t("操作", "Actions")}</span>
+          </div>
+          {#each filteredKeys as key (key.id)}
+            <div
+              class="key-card"
+              class:highlighted={highlightedKeyId === key.id}
+              role="row"
+              data-key-id={key.id}
+              class:dragging={pointerDrag?.active && pointerDrag.sourceId === key.id}
+              class:drop-target={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id}
+              class:drop-after={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && pointerDrag.after}
+              class:drop-before={pointerDrag?.active && pointerDrag.targetId === key.id && pointerDrag.sourceId !== key.id && !pointerDrag.after}
+            >
+              <button
+                class="drag"
+                type="button"
+                disabled={!canReorder}
+                onpointerdown={(event) => pointerDown(event, key)}
+                onpointermove={pointerMove}
+                onpointerup={pointerEnd}
+                onpointercancel={pointerCancel}
+                onpointerleave={pointerLeave}
+                onkeydown={(event) => keyMove(event, key)}
+                aria-label={t(`调整「${key.name}」顺序`, `Reorder “${key.name}”`)}
+                title={filtering
+                  ? t("筛选时不能排序", "Clear the filter to reorder")
+                  : t("拖动或使用上下方向键排序", "Drag or use Up/Down to reorder")}
+              >⠿</button>
+
+              <div class="key-content">
+                <div class="key-title" role="cell">
+                  {#if renameId === key.id}
+                    <input
+                      class="dbx-input rename-input"
+                      bind:this={renameInput}
+                      bind:value={renameName}
+                      aria-label={t("密钥名称", "Key name")}
+                      onkeydown={onRenameKeydown}
+                    />
+                  {:else}
+                    <strong>{key.name}</strong>
+                  {/if}
+                  <span class="key-type">{key.displayType || key.algorithm}</span>
+                  {#if key.supportLevel === "compatibility"}<span class="key-compatibility">{t("兼容模式", "Compatibility")}</span>{/if}
+                </div>
+                <div class="key-details">
+                  <span role="cell" title={t("大小 / 格式", "Size / format")}><small>{t("大小 / 格式", "Size / format")}</small><b>{key.bits ? `${key.bits} bit · ${key.format}` : key.format || "—"}</b></span>
+                  <span role="cell" class="key-purpose" title={`${t("用途", "Used by")}: ${(key.effectivePurposes || []).map(purposeLabel).join(" · ")}`}><small>{t("用途", "Used by")}</small><b>{usesFor(key)}</b></span>
+                  <span role="cell" title={t("创建时间", "Created")}><small>{t("创建时间", "Created")}</small><b>{formatCreated(key.createdAt)}</b></span>
+                  <span role="cell" class="fingerprint" title={`${t("指纹", "Fingerprint")}: ${key.fingerprint}`}><small>{t("指纹", "Fingerprint")}</small><code>{key.fingerprint}</code></span>
+                </div>
+              </div>
+
+              <div class="actions" role="cell">
+                {#if renameId === key.id}
+                  <button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={renameKey} type="button">
+                    {busy ? t("保存中…", "Saving…") : t("保存", "Save")}
+                  </button>
+                  <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={cancelRename} type="button">{t("取消", "Cancel")}</button>
+                {:else}
+                  {#if key.kind === "asymmetric" || key.algorithm === "rsa-pem" || key.algorithm === "sm2"}
+                    <button class="dbx-btn" disabled={busy} onclick={() => showPublic(key)} type="button">{t("公钥", "Public")}</button>
+                  {/if}
+                  <button class="dbx-btn" disabled={busy} onclick={() => askExport(key)} type="button">{t("原文", "Reveal")}</button>
+                  {#if key.algorithm !== "totp-base32"}<button class="dbx-btn" disabled={busy} onclick={() => editPurposes(key)} type="button">{t("用途", "Purposes")}</button>{/if}
+                  <button class="dbx-btn" disabled={busy} onclick={() => startRename(key)} type="button">{t("重命名", "Rename")}</button>
+                  <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={() => askDelete(key)} type="button">{t("删除", "Delete")}</button>
+                {/if}
+              </div>
+            </div>
+          {/each}
         </div>
       {/if}
     {/if}
 
-    <div class="dbx-tabs" role="tablist" aria-label={t("密钥库", "Vault")}>
-      <button class:active={panel === "create"} aria-selected={panel === "create"} onclick={() => (panel = "create")} role="tab" type="button">{t("添加密钥", "Add key")}</button>
-      <button class:active={panel === "password"} aria-selected={panel === "password"} onclick={() => (panel = "password")} role="tab" type="button">{t("主密码", "Master password")}</button>
-    </div>
-
+    {#if panel}
+    <div class="overlay" onclick={onOverlayClick} role="presentation">
+    <div class="dialog management-dialog" bind:this={managementDialog} role="dialog" aria-modal="true" aria-labelledby="vault-management-title" aria-busy={busy}>
+      <div class="management-head"><strong id="vault-management-title">{panel === "create" ? t("添加密钥", "Add key") : pick(locale, formCopy.password)}</strong><button class="dbx-btn management-close" disabled={busy} type="button" onclick={requestCloseManagement}>{t("关闭", "Close")}</button></div>
+      {#if discardPending}
+        <div class="discard-notice" role="alert"><p>{pick(locale, formCopy.unsaved)}</p><div class="purpose-actions"><button class="dbx-btn" type="button" onclick={() => (discardPending = false)}>{pick(locale, formCopy.keep)}</button><button class="dbx-btn dbx-btn--danger" type="button" onclick={closeManagement}>{pick(locale, formCopy.discard)}</button></div></div>
+      {/if}
+      {#if formError}<div class="banner" role="alert">{formError}</div>{/if}
     {#if panel === "create"}
       <div class="stack add-form">
+        <div class="dbx-tabs" role="tablist" aria-label={t("方式", "How")}>
+          <button type="button" disabled={busy} role="tab" aria-selected={!pasteExisting} class:active={!pasteExisting} onclick={() => { createMode = "generate"; if (["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(createAlg)) createAlg = "aes-256"; }}>{t("随机生成", "Generate")}</button>
+          <button type="button" disabled={busy} role="tab" aria-selected={pasteExisting} class:active={pasteExisting} onclick={() => (createMode = "paste")}>{t("粘贴已有密钥", "Paste existing")}</button>
+        </div>
+        <fieldset disabled={busy} class="management-fields">
         <div class="options">
           <label class="field">
             <span>{t("名称", "Name")}</span>
-            <input class="dbx-input" bind:value={createName} placeholder={t("例如：测试密钥", "e.g. test-key")} onkeydown={(event) => onEnter(event, createKey)} />
+            <input class="dbx-input" bind:value={createName} maxlength="128" aria-invalid={Boolean(fieldErrors.createName)} aria-describedby={fieldErrors.createName ? "create-name-error" : undefined} placeholder={t("例如：测试密钥", "e.g. test-key")} onkeydown={(event) => onEnter(event, createKey)} />
+            {#if fieldErrors.createName}<small id="create-name-error" class="field-error">{fieldErrors.createName}</small>{/if}
           </label>
           <label class="field">
             <span>{t("算法", "Algorithm")}</span>
@@ -751,19 +850,8 @@
                 { value: "hpke-x25519", label: "HPKE-X25519", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
                 { value: "ml-kem-768", label: "ML-KEM-768", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
                 { value: "ml-kem-1024", label: "ML-KEM-1024", group: t("公钥 / KEM（导入）", "Public key / KEM (import)") },
-                { value: "totp-base32", label: "TOTP Base32 Secret", group: "TOTP" },
-              ]}
+              ].filter((item) => pasteExisting || !["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(item.value))}
             />
-          </label>
-          <label class="field">
-            <span>{t("方式", "How")}</span>
-              <Select
-                bind:value={createMode}
-                options={[
-                  { value: "generate", label: t("随机生成", "Generate") },
-                  { value: "paste", label: t("粘贴已有密钥", "Paste existing") },
-                ]}
-              />
           </label>
           {#if createAlg === "rsa-pem" && !pasteExisting}
             <label class="field">
@@ -786,13 +874,6 @@
               />
             </label>
           {/if}
-          <button class="dbx-btn dbx-btn--primary save" disabled={busy} onclick={createKey} type="button">
-            {#if busy}
-              {generatingAsym ? t("生成中…", "Generating…") : t("保存中…", "Saving…")}
-            {:else}
-              {t("保存", "Save")}
-            {/if}
-          </button>
         </div>
         {#if pasteExisting}
           <label class="field material">
@@ -805,33 +886,43 @@
                 {t("材料（hex / base64）", "Material (hex / base64)")}
               {/if}
             </span>
-            <textarea class="dbx-textarea pem" bind:value={createMaterial} spellcheck="false" autocomplete="off" placeholder={createAlg === "rsa-pem" ? "-----BEGIN ... KEY-----" : ""}></textarea>
+            <textarea class="dbx-textarea pem" bind:value={createMaterial} aria-invalid={Boolean(fieldErrors.createMaterial)} aria-describedby={fieldErrors.createMaterial ? "create-material-error" : undefined} spellcheck="false" autocomplete="off" placeholder={createAlg === "rsa-pem" ? "-----BEGIN ... KEY-----" : ""}></textarea>
+            {#if fieldErrors.createMaterial}<small id="create-material-error" class="field-error">{fieldErrors.createMaterial}</small>{/if}
           </label>
           {#if ["hpke-x25519", "ml-kem-768", "ml-kem-1024"].includes(createAlg)}
-            <label class="field material"><span>{t("公钥材料（Base64）", "Public key material (Base64)")}</span><textarea class="dbx-textarea pem" bind:value={createPublicMaterial} spellcheck="false"></textarea></label>
+            <label class="field material"><span>{t("公钥材料（Base64）", "Public key material (Base64)")}</span><textarea class="dbx-textarea pem" bind:value={createPublicMaterial} aria-invalid={Boolean(fieldErrors.createPublicMaterial)} aria-describedby={fieldErrors.createPublicMaterial ? "create-public-error" : undefined} spellcheck="false"></textarea>{#if fieldErrors.createPublicMaterial}<small id="create-public-error" class="field-error">{fieldErrors.createPublicMaterial}</small>{/if}</label>
           {/if}
         {/if}
+        </fieldset>
+        <div class="management-footer"><button class="dbx-btn" disabled={busy} onclick={requestCloseManagement} type="button">{t("取消", "Cancel")}</button><button class="dbx-btn dbx-btn--primary" disabled={busy || discardPending} onclick={createKey} type="button">{busy ? generatingAsym ? t("生成中…", "Generating…") : t("保存中…", "Saving…") : t("保存", "Save")}</button></div>
       </div>
     {:else}
       <div class="stack">
-        <div class="options">
+        <fieldset disabled={busy} class="management-fields password-fields">
           <label class="field">
             <span>{t("当前主密码", "Current password")}</span>
-            <input class="dbx-input" type="password" bind:value={currentPassword} autocomplete="current-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            <input class="dbx-input" type="password" bind:value={currentPassword} aria-invalid={Boolean(fieldErrors.currentPassword)} aria-describedby={fieldErrors.currentPassword ? "current-password-error" : undefined} autocomplete="current-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            {#if fieldErrors.currentPassword}<small id="current-password-error" class="field-error">{fieldErrors.currentPassword}</small>{/if}
           </label>
           <label class="field">
             <span>{t("新主密码", "New password")}</span>
-            <input class="dbx-input" type="password" bind:value={newPassword} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            <input class="dbx-input" type="password" bind:value={newPassword} aria-invalid={Boolean(fieldErrors.newPassword)} aria-describedby={fieldErrors.newPassword ? "new-password-error" : undefined} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            {#if fieldErrors.newPassword}<small id="new-password-error" class="field-error">{fieldErrors.newPassword}</small>{/if}
           </label>
           <label class="field">
             <span>{t("再输入一次", "Confirm new")}</span>
-            <input class="dbx-input" type="password" bind:value={confirmNewPassword} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            <input class="dbx-input" type="password" bind:value={confirmNewPassword} aria-invalid={Boolean(fieldErrors.confirmNewPassword)} aria-describedby={fieldErrors.confirmNewPassword ? "confirm-new-password-error" : undefined} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
+            {#if fieldErrors.confirmNewPassword}<small id="confirm-new-password-error" class="field-error">{fieldErrors.confirmNewPassword}</small>{/if}
           </label>
-          <button class="dbx-btn dbx-btn--primary save" disabled={busy} onclick={changePassword} type="button">
+        </fieldset>
+        <div class="management-footer"><button class="dbx-btn" disabled={busy} onclick={requestCloseManagement} type="button">{t("取消", "Cancel")}</button><button class="dbx-btn dbx-btn--primary" disabled={busy || discardPending} onclick={changePassword} type="button">
             {busy ? t("更新中…", "Updating…") : t("更新", "Update")}
           </button>
         </div>
       </div>
+    {/if}
+    </div>
+    </div>
     {/if}
   {/if}
 
@@ -891,12 +982,13 @@
         <div class="dialog" role="dialog" aria-modal="true">
           <strong>{t(`用途 · ${purposeEdit.key.name}`, `Purposes · ${purposeEdit.key.name}`)}</strong>
           <p>{t("只能在自动推导的能力范围内限制用途；XOR 调试默认不启用。", "Restrict purposes only within derived capabilities; XOR debug is disabled by default.")}</p>
+          {#if purposeError}<div class="banner" role="alert">{purposeError}</div>{/if}
           <div class="purpose-list">
             {#each purposeEdit.key.capabilities || [] as purpose}
               <label><input type="checkbox" checked={purposeEdit.selected.includes(purpose)} onchange={() => togglePurpose(purpose)} /> {purposeLabel(purpose)}</label>
             {/each}
           </div>
-          <div class="inline"><button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={savePurposes}>{t("保存", "Save")}</button><button class="dbx-btn" onclick={() => (purposeEdit = null)}>{t("取消", "Cancel")}</button></div>
+          <div class="purpose-actions"><button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={savePurposes}>{t("保存", "Save")}</button><button class="dbx-btn" onclick={() => (purposeEdit = null)}>{t("取消", "Cancel")}</button></div>
         </div>
       {:else if pendingDelete}
         <div class="dialog danger" role="dialog" aria-modal="true" aria-labelledby="vault-delete-title">
@@ -906,11 +998,11 @@
               {t(`确定删除「${pendingDelete.name}」？删除后不能恢复。`, `Delete “${pendingDelete.name}”? This cannot be undone.`)}
             </p>
           </div>
-          <div class="inline">
+          <div class="purpose-actions">
             <button class="dbx-btn dbx-btn--danger" disabled={busy} onclick={confirmDelete} type="button">
               {busy ? t("删除中…", "Deleting…") : t("删除", "Delete")}
             </button>
-            <button class="dbx-btn dbx-btn--ghost" onclick={closeDialogs} type="button">{t("取消", "Cancel")}</button>
+            <button class="dbx-btn dbx-btn--ghost" disabled={busy} onclick={closeDialogs} type="button">{t("取消", "Cancel")}</button>
           </div>
         </div>
       {/if}
@@ -934,6 +1026,7 @@
 
 <style>
   .vault {
+    container-type: inline-size;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -941,12 +1034,10 @@
     min-width: 0;
     min-height: 0;
     flex: 1;
-    width: calc(100% + 6px);
-    max-width: 960px;
-    margin-inline: -3px;
-    padding-inline: 3px;
+    width: 100%;
     overflow: auto;
   }
+  .vault > :global(*) { flex-shrink: 0; }
   .lead, .dialog p {
     margin: 0;
     font-size: 12px;
@@ -987,6 +1078,7 @@
     width: 100%;
   }
   .purpose-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.purpose-list label{font-size:12px}
+  .purpose-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px}
   .options, .inline, .status, .export-head, .actions {
     display: flex;
     flex-wrap: wrap;
@@ -997,8 +1089,15 @@
     justify-content: space-between;
     align-items: flex-start;
   }
+  .status {
+    padding: 12px 14px;
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+    border-radius: var(--radius-md, 8px);
+    background: color-mix(in srgb, var(--color-card, Canvas) 92%, var(--color-primary, Highlight) 8%);
+  }
   .status-actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-end;
     gap: 8px;
   }
@@ -1021,7 +1120,6 @@
     font-weight: 500;
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .save { flex-shrink: 0; }
   .material { width: 100%; }
   .caption-row {
     display: flex;
@@ -1029,20 +1127,61 @@
     gap: 8px;
     justify-content: space-between;
   }
-  .table-wrap {
+  .key-list {
+    --key-columns:24px minmax(110px,1.2fr) minmax(90px,.8fr) minmax(100px,1.3fr) minmax(120px,1fr) minmax(120px,1.1fr) 300px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 160px;
+    min-height: 160px;
     overflow: auto;
-    max-height: min(52vh, 480px);
     border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
     border-radius: var(--radius-md, 8px);
-  }
-  .table-wrap.dragging { cursor: grabbing; user-select: none; }
-  .table-wrap :global(.dbx-table) { margin: 0; }
-  .table-wrap :global(thead th) {
-    position: sticky;
-    top: 0;
-    z-index: 1;
     background: var(--color-card, var(--color-background, Canvas));
-    box-shadow: 0 1px 0 var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+  }
+  .key-list.dragging { cursor: grabbing; user-select: none; }
+  .key-header { position:sticky; top:0; z-index:3; display:grid; grid-template-columns:var(--key-columns); align-items:center; gap:10px; flex-shrink:0; min-height:36px; padding:6px 12px 6px 6px; border-bottom:1px solid var(--color-border); background:var(--color-card); color:var(--color-muted-foreground); font-size:11px; }
+  .actions-heading { text-align:right; }
+  .key-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--key-columns);
+    gap: 10px;
+    align-items: center;
+    min-height: 60px;
+    flex-shrink: 0;
+    padding: 10px 12px 10px 6px;
+    border-bottom: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+  }
+  .key-card:last-child { border-bottom: 0; }
+  .key-card:hover, .key-card:focus-within { z-index: 1; background:var(--color-muted, color-mix(in srgb, CanvasText 5%, transparent)); }
+  .key-card.dragging { opacity: 0.4; }
+  .key-card.highlighted { background:color-mix(in srgb,var(--color-primary) 6%,var(--color-card)); box-shadow:inset 2px 0 color-mix(in srgb,var(--color-primary) 40%,var(--color-border)); }
+  .key-card.drop-before { box-shadow: inset 0 2px 0 var(--color-primary, Highlight); }
+  .key-card.drop-after { box-shadow: inset 0 -2px 0 var(--color-primary, Highlight); }
+  .key-card > .drag { grid-column:1; grid-row:1; align-self:center; }
+  .key-content { display:contents; }
+  .key-title { grid-column:2; grid-row:1; display:flex; min-width:0; align-items:flex-start; flex-direction:column; gap:4px; }
+  .key-title strong { max-width:100%; overflow:hidden; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+  .key-title .rename-input { width:100%; min-width:0; }
+  .key-type { flex:0 0 auto; padding:2px 7px; border-radius:999px; background:var(--color-muted, color-mix(in srgb, CanvasText 8%, transparent)); color:var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent)); font-size:10px; }
+  .key-compatibility { flex:0 0 auto; padding:2px 7px; border-radius:999px; background:var(--color-warning-bg); color:var(--color-warning); font-size:10px; }
+  .key-details { display:contents; }
+  .key-details > span { grid-row:1; display:flex; min-width:0; align-items:center; gap:4px; }
+  .key-details > span:nth-child(1) { grid-column:3; }
+  .key-details > span:nth-child(2) { grid-column:4; }
+  .key-details > span:nth-child(3) { grid-column:5; }
+  .key-details > span:nth-child(4) { grid-column:6; }
+  .key-details small { display:none; }
+  .key-details small, .fingerprint small { color:var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent)); font-size:10px; }
+  .key-details b { overflow:hidden; color:var(--color-muted-foreground); font-size:11px; font-weight:400; line-height:1.5; text-overflow:ellipsis; white-space:nowrap; }
+  .key-purpose b { color:var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent)); }
+  .fingerprint { display:flex; min-width:0; align-items:center; gap:8px; }
+  .fingerprint code { overflow:hidden; color:var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent)); font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+  .add-form {
+    padding: 14px;
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-card, var(--color-background, Canvas));
   }
   .list-toolbar {
     display: flex;
@@ -1055,15 +1194,28 @@
     flex: 1 1 240px;
     max-width: 360px;
   }
+  .list-filters { display:flex; flex:1 1 420px; flex-wrap:wrap; align-items:flex-end; gap:12px; }
+  .type-filter { flex:0 1 180px; min-width:140px; }
+  .type-filter :global(.dbx-custom-select) { width:100%; min-width:0; }
   .list-meta {
     margin: 0;
     flex: 0 0 auto;
   }
-  .drag-col {
-    width: 28px;
-    padding-left: 4px !important;
-    padding-right: 0 !important;
-  }
+  .list-toolbar-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:12px; }
+  .management-dialog { width:min(620px,100%); max-height:min(90dvh,760px); }
+  .management-dialog > :global(*) { flex-shrink:0; }
+  .management-head { display:flex; flex:0 0 auto; align-items:center; justify-content:space-between; gap:12px; }
+  .management-head strong { font-size:14px; }
+  .management-dialog .add-form { padding:0; border:0; background:transparent; }
+  .management-fields { display:flex; min-width:0; flex-direction:column; gap:12px; margin:0; padding:0; border:0; }
+  .management-fields .options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+  .management-fields .field { min-width:0; }
+  .management-fields .field :global(.dbx-custom-select) { width:100%; min-width:0; }
+  .password-fields { width:100%; }
+  .management-footer { display:flex; flex:0 0 auto; justify-content:flex-end; align-items:center; gap:8px; margin-top:4px; padding-top:12px; border-top:1px solid var(--color-border); }
+  .field-error { color:var(--color-destructive); font-size:11px; line-height:1.5; }
+  .discard-notice { padding:12px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-muted); }
+  .discard-notice p { margin:0 0 10px; font-size:12px; }
   .drag {
     display: inline-flex;
     align-items: center;
@@ -1089,9 +1241,6 @@
     opacity: 0.25;
   }
   .drag:active:not(:disabled) { cursor: grabbing; }
-  tr.dragging { opacity: 0.4; }
-  tr.drop-before td { box-shadow: inset 0 2px 0 var(--color-primary, Highlight); }
-  tr.drop-after td { box-shadow: inset 0 -2px 0 var(--color-primary, Highlight); }
   .drag-ghost {
     position: fixed;
     z-index: 40;
@@ -1114,15 +1263,7 @@
   .drag-ghost small {
     color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
   }
-  .mono {
-    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-    white-space: nowrap;
-  }
-  .uses, .muted {
-    white-space: nowrap;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
-  }
-  .actions { justify-content: flex-end; flex-wrap: nowrap; white-space: nowrap; }
+  .actions { grid-column:7; grid-row:1; min-width:0; align-self:center; justify-content:flex-end; align-items:center; align-content:center; flex-wrap:wrap; white-space:nowrap; }
   .actions :global(.dbx-btn) {
     height: 26px;
     padding: 0 10px;
@@ -1168,4 +1309,38 @@
     flex: 1;
   }
   .sheet-copy strong { font-size: 13px; }
+  @container (max-width: 1100px) {
+    .key-header { display:none; }
+    .key-card { grid-template-columns:24px minmax(0,1fr); }
+    .key-content { grid-column:2; grid-row:1; display:flex; min-width:0; flex-direction:column; gap:8px; }
+    .key-title { flex-direction:row; align-items:center; flex-wrap:wrap; }
+    .key-card > .actions { grid-column:2; grid-row:2; }
+    .key-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 16px; }
+    .key-details > span:nth-child(n) { grid-column:auto; grid-row:auto; align-items:flex-start; flex-direction:column; }
+    .key-details small { display:block; }
+  }
+  @container (max-width: 560px) {
+    .status, .status-actions { align-items:stretch; }
+    .status { flex-direction:column; }
+    .status-actions { flex-wrap:wrap; }
+    .auto-lock { flex:1 1 160px; }
+    .auto-lock :global(.dbx-custom-select) { width:100%; }
+    .list-filter { max-width:none; }
+    .key-card { gap:8px; padding:11px 10px 11px 4px; }
+    .key-details { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .key-details b { white-space:normal; }
+    .actions { gap:6px; }
+    .actions :global(.dbx-btn) { flex:1 1 auto; }
+    .options > .field { flex:1 1 100%; }
+  }
+  @media (max-width: 900px), (max-height: 640px) {
+    .key-list { flex:0 0 auto; min-height:0; overflow:visible; }
+  }
+  @media (max-width:560px) {
+    .overlay:has(.management-dialog) { padding:0; }
+    .management-dialog { width:100%; height:100dvh; max-height:100dvh; border-radius:0; }
+    .management-fields .options { grid-template-columns:1fr; }
+    .management-dialog > .stack { flex:1 0 auto; }
+    .management-footer { margin-top:auto; }
+  }
 </style>

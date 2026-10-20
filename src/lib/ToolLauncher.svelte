@@ -1,8 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import { searchTools } from "./catalog.js";
+  import { searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
-  import { intentLabelForTool } from "./navigation.js";
 
   let { locale = "zh-CN", tools = [], favorites = [], recents = [], onClose, onTool } = $props();
   const t = (dict) => pick(locale, dict);
@@ -11,11 +10,14 @@
   let inputEl = $state(null);
   let dialogEl = $state(null);
   const visibleTools = $derived(tools.filter((item) => item.catalogVisible !== false));
-  const defaultTools = $derived.by(() => {
+  const defaultMatches = $derived.by(() => {
     const seen = new Set();
-    return [...favorites, ...recents, ...visibleTools].filter((item) => item.catalogVisible !== false && !seen.has(item.id) && seen.add(item.id)).slice(0, 14);
+    return [...favorites, ...recents, ...visibleTools]
+      .filter((item) => item.catalogVisible !== false && !seen.has(item.id) && seen.add(item.id))
+      .slice(0, 14)
+      .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const results = $derived(query.trim() ? searchTools(query, locale, visibleTools).slice(0, 30) : defaultTools);
+  const results = $derived(query.trim() ? searchToolMatches(query, locale, visibleTools).slice(0, 30) : defaultMatches);
 
   $effect(() => { query; selected = 0; });
   onMount(() => {
@@ -27,15 +29,12 @@
     const index = selected;
     dialogEl?.querySelectorAll('[role="option"]')[index]?.scrollIntoView({ block: "nearest" });
   });
-  function destination(item) {
-    return intentLabelForTool(item.id, query, locale);
-  }
   function moveSelection(delta) {
     selected = Math.max(0, Math.min(results.length - 1, selected + delta));
     if (document.activeElement !== inputEl) dialogEl?.querySelectorAll('[role="option"]')[selected]?.focus();
   }
 
-  function choose(item) { if (item) onTool?.(item, query); }
+  function choose(match) { if (match?.tool) onTool?.(match.tool, query); }
   function onKeydown(event) {
     if (event.key === "Escape") { event.preventDefault(); onClose?.(); return; }
     if (event.key === "ArrowDown") { event.preventDefault(); moveSelection(1); return; }
@@ -60,10 +59,10 @@
     </div>
     <div class="results" role="listbox" id="tool-launcher-results" aria-label={t(chrome.searchResultsLabel)}>
       <div class="result-label">{query.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
-      {#each results as item, index (item.id)}
-        <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmouseenter={() => (selected = index)} onclick={() => choose(item)}>
-              <span><strong>{pick(locale,item.name)}{#if destination(item)} · {destination(item)}{/if}</strong><small>{pick(locale,item.summary)}</small></span>
-          <em>{pick(locale,categories[item.category])}</em>
+      {#each results as match, index (match.tool.id)}
+        <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmouseenter={() => (selected = index)} onclick={() => choose(match)}>
+          <span><strong>{pick(locale,match.tool.name)}</strong><small>{pick(locale,match.tool.summary)}</small></span>
+          <em>{pick(locale,categories[match.tool.category])}</em>
         </button>
       {:else}<p class="empty">{t(chrome.empty)}</p>{/each}
     </div>

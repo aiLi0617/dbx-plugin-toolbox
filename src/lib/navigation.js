@@ -63,5 +63,10 @@ export function navigationTargetFromContext(value) {
           || (typeof option === "string" && option.length <= 200);
       }))
     : {};
-  return { page: toolId ? "tool" : page, toolId, options: toolId ? { ...toolOptionsForQuery(toolId, action), ...explicit } : {} };
+  const safePage = toolId ? "tool" : page;
+  return {
+    page: safePage,
+    toolId,
+    options: toolId ? { ...toolOptionsForQuery(toolId, action), ...explicit } : {},
+  };
 }

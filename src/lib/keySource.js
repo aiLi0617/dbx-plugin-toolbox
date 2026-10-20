@@ -20,9 +20,9 @@ export function normalizeVaultKey(key) {
     format: key.format || FORMAT_LABELS[profile.format] || profile.format || "—",
     capabilities,
     allowedPurposes,
-    effectivePurposes: key.effectivePurposes || allowedPurposes || capabilities,
+    effectivePurposes: allowedPurposes ?? capabilities.filter((purpose) => purpose !== "debug-xor"),
     supportLevel: key.supportLevel || profile.supportLevel || "supported",
-    legacyPurposeState: key.legacyPurposeState || (allowedPurposes === null ? "pending" : "confirmed"),
+    legacyPurposeState: key.legacyPurposeState || (Object.hasOwn(key, "allowedPurposes") ? allowedPurposes === null ? "pending" : "confirmed" : "unknown"),
     hasPublic: key.hasPublic ?? key.kind === "asymmetric",
   };
 }

@@ -27,9 +27,9 @@ test("legacy vault metadata is derived from the shared key type manifest", () =>
   assert.equal(key.displayType, "AES-256");
   assert.equal(key.bits, 256);
   assert.equal(key.format, "Hex");
-  assert.deepEqual(key.effectivePurposes, ["aes-cipher", "aes-aead", "aes-key-wrap", "aes-ff1", "aes-mac", "debug-xor"]);
+  assert.deepEqual(key.effectivePurposes, ["aes-cipher", "aes-aead", "aes-key-wrap", "aes-ff1", "aes-mac"]);
   assert.equal(key.supportLevel, "supported");
-  assert.equal(key.legacyPurposeState, "pending");
+  assert.equal(key.legacyPurposeState, "unknown");
 });
 
 test("vault key matching requires both type and allowed purpose", () => {

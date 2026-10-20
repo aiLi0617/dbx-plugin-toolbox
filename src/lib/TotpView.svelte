@@ -1,8 +1,6 @@
 <script>
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
-  import KeySourceBar from "./KeySourceBar.svelte";
-  import { invoke } from "./host.js";
   import { parseTotpConfig, totpWindows } from "./codec.js";
   import { pick } from "./i18n.js";
 
@@ -18,12 +16,10 @@
   let error = $state("");
   let remaining = $state(30);
   let activeStep = $state(30);
-  let source = $state("once");
-  let keyId = $state("");
 
   $effect(() => {
     const raw = secret.trim();
-    if (source === "once" && !raw || source === "vault" && !keyId) {
+    if (!raw) {
       windows = [];
       effectiveConfig = null;
       error = "";
@@ -34,18 +30,6 @@
     let cancelled = false;
     let lastCounter = -1;
     const refresh = async () => {
-      if (source === "vault") {
-        try {
-          const result = await invoke("toolbox/keys/totp", { id: keyId, digits: Number(digits), step: Number(step), algorithm });
-          if (cancelled) return;
-          windows = result.windows || [];
-          effectiveConfig = { digits: result.digits, step: result.step, algorithm: result.algorithm };
-          remaining = result.remaining;
-          activeStep = result.step;
-          error = "";
-        } catch { windows = []; effectiveConfig = null; error = t("无法使用所选 TOTP 密钥", "Cannot use the selected TOTP key"); }
-        return;
-      }
       let config;
       try {
         config = parseTotpConfig(raw, { digits, step, algorithm });
@@ -82,7 +66,7 @@
     };
   });
 
-  const isUri = $derived(source === "once" && /^otpauth:\/\//i.test(secret.trim()));
+  const isUri = $derived(/^otpauth:\/\//i.test(secret.trim()));
   const previousWindow = $derived(windows.find((item) => item.offset === -1));
   const currentWindow = $derived(windows.find((item) => item.offset === 0));
   const nextWindow = $derived(windows.find((item) => item.offset === 1));
@@ -103,7 +87,7 @@
 </script>
 
 <div class="page">
-  <KeySourceBar {locale} picker="totp-base32" allowedAlgorithms={["totp-base32"]} requiredPurpose="totp" materialLabel={t("密钥（Base32 / otpauth URI）", "Secret (Base32 / otpauth URI)")} materialPlaceholder="JBSWY3DPEHPK3PXP / otpauth://..." bind:source bind:material={secret} bind:keyId />
+  <label class="block"><span class="label">{t("密钥（Base32 / otpauth URI）", "Secret (Base32 / otpauth URI)")}</span><input class="dbx-input" type="password" bind:value={secret} autocomplete="off" spellcheck="false" placeholder="JBSWY3DPEHPK3PXP / otpauth://..." /></label>
   <div class="totp-options">
     <label class="block"><span class="label">{t("位数", "Digits")}</span><Select value={shownDigits} onchange={(value) => digits = value} disabled={isUri} options={[{ value: "6", label: "6" }, { value: "8", label: "8" }]} /></label>
     <label class="block"><span class="label">{t("周期", "Period")}</span><Select value={shownStep} onchange={(value) => step = value} disabled={isUri} options={stepOptions} /></label>

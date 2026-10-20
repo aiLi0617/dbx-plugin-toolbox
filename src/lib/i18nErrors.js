@@ -1,6 +1,16 @@
 import { L } from "./locale.js";
 
 export const SIDECAR_ERRORS = {
+  "Key purpose updates require a newer backend. Restart or update the plugin.": {
+    ...L("Key purpose updates require a newer backend. Restart or update the plugin.", "当前后端版本不支持保存用途，请重启开发宿主或更新插件后重试。", "目前後端版本不支援儲存用途，請重新啟動開發宿主或更新外掛後重試。", "El backend no admite guardar usos. Reinicia el host de desarrollo o actualiza el complemento.", "Il backend non supporta il salvataggio degli usi. Riavvia l'host di sviluppo o aggiorna il plugin.", "現在のバックエンドは用途の保存に対応していません。開発ホストを再起動するか、プラグインを更新してください。", "O backend não permite salvar finalidades. Reinicie o host de desenvolvimento ou atualize o plugin."),
+    ko: "현재 백엔드는 용도 저장을 지원하지 않습니다. 개발 호스트를 다시 시작하거나 플러그인을 업데이트하세요.",
+    tr: "Mevcut arka uç kullanım amaçlarını kaydetmeyi desteklemiyor. Geliştirme sunucusunu yeniden başlatın veya eklentiyi güncelleyin.",
+    az: "Cari arxa sistem təyinatları saxlamağı dəstəkləmir. Tərtibat hostunu yenidən başladın və ya plaqini yeniləyin.",
+  },
+  "Purpose is not supported by this key": {
+    ...L("Purpose is not supported by this key", "这把密钥不支持所选用途，请重新选择。", "這把金鑰不支援所選用途，請重新選擇。", "La clave no admite el uso seleccionado.", "La chiave non supporta l'uso selezionato.", "この鍵は選択した用途に対応していません。", "A chave não suporta a finalidade selecionada."),
+    ko: "이 키는 선택한 용도를 지원하지 않습니다.", tr: "Bu anahtar seçilen kullanım amacını desteklemiyor.", az: "Bu açar seçilmiş təyinatı dəstəkləmir.",
+  },
   "Master password must be at least 8 characters": L(
     "Master password must be at least 8 characters",
     "主密码至少 8 位",

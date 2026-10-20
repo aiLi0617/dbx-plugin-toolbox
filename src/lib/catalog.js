@@ -1,7 +1,7 @@
 import { TOOL_DEFS } from "./toolCatalog.js";
 import { TEXT_ACTIONS } from "./textActions.js";
-import { categories, L, localeValues } from "./i18n.js";
-import { resolveIntent } from "./searchIntent.js";
+import { categories, L, localeValues, pick } from "./i18n.js";
+import { intentLabelForTool, normalizeIntentQuery, resolveIntent } from "./searchIntent.js";
 
 export const CATEGORY_ORDER = ["data", "encode", "text", "calculate", "network", "developer", "security", "generate", "image"];
 
@@ -661,32 +661,59 @@ export function toolsByCategory(pool = tools) {
   return map;
 }
 
-export function searchTools(query, locale, pool = tools) {
+export function searchToolMatches(query, locale, pool = tools) {
   const searchable = pool.filter((tool) => tool.catalogVisible !== false);
   const q = query.trim().toLowerCase();
-  if (!q) return searchable;
+  if (!q) return searchable.map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
+  const normalizedQuery = normalizeIntentQuery(q);
+  const exactCategoryId = CATEGORY_ORDER.find((id) => [id, ...localeValues(categories[id])].some((value) => [q, normalizedQuery].includes(value.toLowerCase())));
+  const candidates = exactCategoryId ? searchable.filter((tool) => tool.category === exactCategoryId) : searchable;
   const tokens = q.split(/\s+/).filter(Boolean);
-  const intentBoost = new Map();
+  const intentMatches = new Map();
   for (const [index, intent] of resolveIntent(q).entries()) {
-    const boost = 5 + (Object.keys(intent.options || {}).length ? 1 : 0) - index * 0.01;
-    const prev = intentBoost.get(intent.toolId);
-    if (prev == null || boost > prev) intentBoost.set(intent.toolId, boost);
+    const score = (Object.keys(intent.options || {}).length ? 700 : 650) - index * 0.001;
+    const previous = intentMatches.get(intent.toolId);
+    if (!previous || score > previous.score) intentMatches.set(intent.toolId, { intent, score });
   }
-  return searchable.map((tool) => {
+  return candidates.map((tool, catalogIndex) => {
     const names = [tool.id, ...localeValues(tool.name)].map((value) => value.toLowerCase());
     const aliases = (tool.aliases || []).map((value) => value.toLowerCase());
     const category = categories[tool.category];
-    const haystack = [
-      ...names,
-      ...aliases,
-      ...localeValues(tool.summary),
-      tool.category,
-      ...localeValues(category),
-    ].filter(Boolean).join(" ").toLowerCase();
-    const matched = tokens.every((token) => haystack.includes(token));
-    let score = matched ? (names.includes(q) ? 4 : aliases.includes(q) ? 3 : names.some((name) => name.includes(q)) ? 2 : 1) : 0;
-    const boost = intentBoost.get(tool.id);
-    if (boost != null) score = Math.max(score, boost);
-    return { tool, score };
-  }).filter((item) => item.score).sort((a, b) => b.score - a.score).map((item) => item.tool);
+    const summaries = localeValues(tool.summary).map((value) => value.toLowerCase());
+    const categoryValues = [tool.category, ...localeValues(category)].map((value) => value.toLowerCase());
+    const haystack = [...names, ...aliases, ...summaries, ...categoryValues].filter(Boolean).join(" ");
+    const allTokensMatch = tokens.every((token) => haystack.includes(token));
+    let score = 0;
+    let matchKind = "";
+    let matchLabel = "";
+
+    const intentMatch = intentMatches.get(tool.id);
+    if (intentMatch) {
+      score = intentMatch.score;
+      matchKind = "intent";
+      matchLabel = intentLabelForTool(tool.id, query, locale) || pick(locale, tool.name);
+    } else if (names.includes(q)) {
+      score = tool.id === q ? 600 : 590;
+      matchKind = "name";
+    } else if (aliases.includes(q)) {
+      score = 550;
+      matchKind = "alias";
+    } else if (names.some((name) => name.startsWith(q)) || aliases.some((alias) => alias.startsWith(q))) {
+      score = 500;
+      matchKind = "prefix";
+    } else if (exactCategoryId || allTokensMatch) {
+      if (exactCategoryId || categoryValues.some((value) => value.includes(q))) {
+        score = 300;
+        matchKind = "category";
+      } else {
+        score = 250;
+        matchKind = "summary";
+      }
+    }
+    return { tool, score, matchKind, matchLabel, catalogIndex };
+  }).filter((item) => item.score).sort((a, b) => b.score - a.score || a.catalogIndex - b.catalogIndex).map(({ catalogIndex, ...item }) => item);
+}
+
+export function searchTools(query, locale, pool = tools) {
+  return searchToolMatches(query, locale, pool).map((item) => item.tool);
 }

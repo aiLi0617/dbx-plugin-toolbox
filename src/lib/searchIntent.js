@@ -1,10 +1,43 @@
 import { TEXT_ACTIONS, textActionForQuery } from "./textActions.js";
 import { L, localize } from "./locale.js";
 
+const M = (en, zhCN, zhTW, es, it, ja, ptBR, ko, tr, az) => ({
+  ...L(en, zhCN, zhTW, es, it, ja, ptBR),
+  ko,
+  tr,
+  az,
+});
+
+// Broad examples reveal available tools; clicking still opens search results.
+export const HOME_INTENT_EXAMPLES = [
+  M("Images", "图片", "圖片", "Imágenes", "Immagini", "画像", "Imagens", "이미지", "Görüntüler", "Şəkillər"),
+  M("JSON", "JSON", "JSON", "JSON", "JSON", "JSON", "JSON", "JSON", "JSON", "JSON"),
+  M("Encryption", "加密", "加密", "Cifrado", "Crittografia", "暗号化", "Criptografia", "암호화", "Şifreleme", "Şifrələmə"),
+  M("Calculations", "计算", "計算", "Cálculos", "Calcoli", "計算", "Cálculos", "계산", "Hesaplama", "Hesablamalar"),
+];
+const HOME_EXAMPLE_INTENTS = new Map(HOME_INTENT_EXAMPLES.flatMap((query, index) =>
+  Object.values(query).map((value) => [value.toLowerCase(), ["图片处理", "json", "encrypt", "calculate"][index]])));
+
+export const HOME_SEARCH_TEXT = {
+  tryQueries: M("Try", "试试这些", "試試這些", "Prueba", "Prova", "試してみる", "Experimente", "추천 검색", "Şunları deneyin", "Bunları sınayın"),
+};
+
 // Normalize common intent phrases from every locale exposed by the DBX host.
 // Search indexing already handles localized catalog strings; this layer makes
 // action-oriented queries (for example "URLをデコード") open the right mode.
 const INTENT_REPLACEMENTS = [
+  // Localized action phrases remain supported alongside tool-name queries.
+  ["json 转 yaml", "json to yaml"], ["json 轉 yaml", "json to yaml"],
+  ["json a yaml", "json to yaml"], ["json in yaml", "json to yaml"],
+  ["json を yaml に変換", "json to yaml"], ["json을 yaml로 변환", "json to yaml"],
+  ["json'u yaml'a dönüştür", "json to yaml"], ["json-u yaml-a çevir", "json to yaml"],
+  ["url 디코딩", "url decode"], ["url kodunu çöz", "url decode"], ["url-ni dekodlaşdır", "url decode"],
+  ["图片压缩", "image compress"], ["圖片壓縮", "image compress"],
+  ["comprimir imagen", "image compress"], ["comprimi immagine", "image compress"],
+  ["画像を圧縮", "image compress"], ["comprimir imagem", "image compress"],
+  ["이미지 압축", "image compress"], ["görüntüyü sıkıştır", "image compress"], ["şəkli sıx", "image compress"],
+  ["임의 비밀번호 생성", "password generator"], ["rastgele parola oluştur", "password generator"], ["təsadüfi parol yarat", "password generator"],
+  ["generate a random password", "password generator"],
   // Traditional Chinese
   ["正規表示式", "regex"], ["正則表達式", "regex"], ["時間戳記", "时间戳"],
   ["驗證簽章", "验签"], ["驗簽", "验签"], ["解碼", "解码"], ["編碼", "编码"],
@@ -70,11 +103,19 @@ const INTENT_REPLACEMENTS = [
   ["sub-rede", "子网"], ["conversão de bases", "进制转换"], ["remover duplicados", "去重"],
 ];
 
-function normalizeIntentQuery(query) {
+export function normalizeIntentQuery(query) {
   let normalized = String(query).trim().toLowerCase();
+  normalized = HOME_EXAMPLE_INTENTS.get(normalized) || normalized;
   for (const [source, target] of INTENT_REPLACEMENTS) normalized = normalized.split(source).join(target);
   return normalized.replace(/[を]/g, " ").replace(/\s+/g, " ").trim();
 }
+
+const I = (en, zhCN, zhTW, es, it, ja, ptBR, ko, tr, az) => ({
+  ...L(en, zhCN, zhTW, es, it, ja, ptBR),
+  ko,
+  tr,
+  az,
+});
 
 const INTENT_LABELS = {
   encode: L("Encode", "编码", "編碼", "Codificar", "Codifica", "エンコード", "Codificar"),
@@ -94,6 +135,14 @@ const INTENT_LABELS = {
   watermark: L("Watermark", "水印", "浮水印", "Marca de agua", "Filigrana", "透かし", "Marca d'água"),
   compress: L("Compress", "压缩", "壓縮", "Comprimir", "Comprimi", "圧縮", "Comprimir"),
   unique: L("Dedupe", "去重", "去重", "Quitar duplicados", "Rimuovi duplicati", "重複削除", "Remover duplicados"),
+  symmetric: I("Symmetric encryption", "对称加密", "對稱加密", "Cifrado simétrico", "Cifratura simmetrica", "対称暗号", "Criptografia simétrica", "대칭 암호화", "Simetrik şifreleme", "Simmetrik şifrələmə"),
+  asymmetric: I("Asymmetric encryption", "非对称加密", "非對稱加密", "Cifrado asimétrico", "Cifratura asimmetrica", "非対称暗号", "Criptografia assimétrica", "비대칭 암호화", "Asimetrik şifreleme", "Asimmetrik şifrələmə"),
+  url: I("URL coding", "URL 编解码", "URL 編解碼", "Codificación URL", "Codifica URL", "URL エンコード", "Codificação URL", "URL 인코딩", "URL kodlama", "URL kodlaşdırma"),
+  dataUri: I("Data URI", "Data URI", "Data URI", "Data URI", "Data URI", "Data URI", "Data URI", "Data URI", "Data URI", "Data URI"),
+  editor: I("Image editor", "图片编辑", "圖片編輯", "Editor de imágenes", "Editor immagini", "画像編集", "Editor de imagens", "이미지 편집기", "Görüntü düzenleyici", "Şəkil redaktoru"),
+  ocr: I("Image OCR", "图片 OCR", "圖片 OCR", "OCR de imágenes", "OCR immagini", "画像 OCR", "OCR de imagens", "이미지 OCR", "Görüntü OCR", "Şəkil OCR"),
+  generator: I("Generator", "生成器", "產生器", "Generador", "Generatore", "ジェネレーター", "Gerador", "생성기", "Oluşturucu", "Generator"),
+  sampleData: I("Sample data", "模拟数据", "模擬資料", "Datos de ejemplo", "Dati di esempio", "サンプルデータ", "Dados de exemplo", "샘플 데이터", "Örnek veri", "Nümunə məlumatları"),
 };
 
 function localizeIntentLabel(label, locale) {
@@ -310,7 +359,10 @@ export function resolveIntent(query = "") {
   if (aes.algorithm || aes.mode || /sm4|aes|对称加密|对称加解密/.test(q)) {
     push(out, aes.algorithm === "sm4-128" ? "sm4" : "aes", aes, labelFrom(aes), 12);
   } else if (/^(?:加密|解密|encrypt|decrypt)$/.test(q)) {
-    push(out, "aes", /解密|decrypt/.test(q) ? { op: "decrypt" } : {}, labelFrom({ op: /解密|decrypt/.test(q) ? "decrypt" : "" }), 9);
+    const op = /解密|decrypt/.test(q) ? "decrypt" : "encrypt";
+    push(out, "aes", { op }, `symmetric → ${op}`, 9);
+    push(out, "sm4", { op }, `symmetric → ${op}`, 8.9);
+    push(out, "rsa-oaep", { op }, `asymmetric → ${op}`, 8.8);
   }
 
   const rsa = optionsRsa(q);
@@ -368,8 +420,11 @@ export function resolveIntent(query = "") {
 
   const base = optionsBase64(q);
   if (Object.keys(base).length) push(out, "base64", base, labelFrom(base), 11);
-  else if (/^编码$|^解码$|base\s*编码|hex\s*编码/.test(q)) {
-    push(out, "base64", {}, "", 7);
+  else if (/^(?:编码|解码|encode|decode)$|base\s*编码|hex\s*编码/.test(q)) {
+    const op = /解码|decode/.test(q) ? "decode" : "encode";
+    push(out, "base64", { op }, `base64 → ${op}`, 7);
+    push(out, "url", { mode: op }, `url → ${op}`, 6.9);
+    push(out, "data-uri", {}, `dataUri → ${op}`, 6.8);
   }
 
   const jwt = optionsJwt(q);
@@ -409,7 +464,9 @@ export function resolveIntent(query = "") {
   const image = optionsImage(q);
   if (Object.keys(image).length) push(out, "image-process", image, labelFrom(image), 11);
   else if (/图片处理|图片编辑|image\s*edit|图片格式/.test(q)) {
-    push(out, "image-process", {}, "", 9);
+    push(out, "image-process", {}, "editor", 9);
+    push(out, "image-compress", {}, "compress", 8.9);
+    push(out, "image-ocr", {}, "ocr", 8.8);
   }
   if (/占位图|placeholder\s*image|dummy\s*image|假图/.test(q)) {
     push(out, "image-generate", {}, "", 10);
@@ -481,6 +538,12 @@ export function resolveIntent(query = "") {
 
   if (/重复文本|lorem|占位文本|ipsum/.test(q) && !/占位图|image|图片/.test(q)) {
     push(out, "lorem", {}, "", 9);
+  }
+
+  if (/^(?:生成内容|内容生成|generate content|generator)$/.test(q)) {
+    push(out, "uuid", {}, "generator", 7);
+    push(out, "password", {}, "generator", 6.9);
+    push(out, "fake-data", {}, "sampleData", 6.8);
   }
 
   if (/\bxor\b|异或/.test(q)) {

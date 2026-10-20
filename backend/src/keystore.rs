@@ -17,9 +17,6 @@ use rsa::traits::PublicKeyParts;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use sha1::Sha1;
-use sha2::Sha512;
-use hmac::{Hmac, Mac};
 use uuid::Uuid;
 use zeroize::{Zeroize, Zeroizing};
 
@@ -101,7 +98,6 @@ impl Vault {
             "toolbox/keys/create" => self.create(params),
             "toolbox/keys/rename" => self.rename(params),
             "toolbox/keys/update-purposes" => self.update_purposes(params),
-            "toolbox/keys/totp" => self.totp(params),
             "toolbox/keys/reorder" => self.reorder(params),
             "toolbox/keys/delete" => self.delete(params),
             "toolbox/keys/import" => self.import_pem(params),
@@ -129,7 +125,7 @@ impl Vault {
     pub fn material_for(&self, key_id: &str, purpose: &str) -> Result<&StoredKey, PluginError> {
         let key = self.material(key_id)?;
         if purpose.is_empty() { return Ok(key); }
-        let effective = key.allowed_purposes.clone().unwrap_or_else(|| capabilities_for(&key.algorithm));
+        let effective = key.allowed_purposes.clone().unwrap_or_else(|| default_allowed_purposes(&key.algorithm));
         if !effective.iter().any(|item| item == purpose) { return Err(bad("Key is not allowed for this purpose")); }
         Ok(key)
     }
@@ -193,6 +189,7 @@ impl Vault {
         validate_name(name)?;
         ensure_key_capacity(unlocked.keys.len())?;
         let algorithm = canonical_algorithm(str_param(&params, "algorithm")?)?;
+        if algorithm == "totp-base32" { return Err(bad("Unsupported algorithm")); }
         let generate = bool_param(&params, "generate", true);
         let (material, public_material) = if generate {
             pair_material(algorithm, &params)?
@@ -255,23 +252,6 @@ impl Vault {
         persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
-    }
-
-    fn totp(&self, params: Value) -> Result<Value, PluginError> {
-        let id = str_param(&params, "id")?;
-        let key = self.material_for(id, "totp")?;
-        let secret = base32_decode(&key.material)?;
-        let digits = params.get("digits").and_then(Value::as_u64).unwrap_or(6) as u32;
-        let step = params.get("step").and_then(Value::as_u64).unwrap_or(30);
-        let algorithm = opt_str(&params, "algorithm").unwrap_or("SHA-1");
-        if !matches!(digits, 6 | 8) || !matches!(step, 15 | 30 | 60) { return Err(bad("Invalid TOTP configuration")); }
-        let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|_| err("System clock is invalid"))?.as_secs();
-        let counter = now / step;
-        let windows = [-1_i64, 0, 1].into_iter().map(|offset| {
-            let value = if offset < 0 { counter.saturating_sub(offset.unsigned_abs()) } else { counter.saturating_add(offset as u64) };
-            Ok(json!({ "offset": offset, "code": totp_code(&secret, value, digits, algorithm)? }))
-        }).collect::<Result<Vec<_>, PluginError>>()?;
-        Ok(json!({ "windows": windows, "digits": digits, "step": step, "algorithm": algorithm, "remaining": step - (now % step) }))
     }
 
     fn reorder(&mut self, params: Value) -> Result<Value, PluginError> {
@@ -429,6 +409,7 @@ impl Vault {
 
     fn generate_key(&mut self, params: Value) -> Result<Value, PluginError> {
         let algorithm = canonical_algorithm(str_param(&params, "algorithm")?)?;
+        if algorithm == "totp-base32" { return Err(bad("Unsupported algorithm")); }
         if matches!(algorithm, "rsa-pem" | "sm2") {
             return Err(bad("Use generate-keypair for RSA and SM2"));
         }
@@ -867,6 +848,7 @@ fn canonical_algorithm(algorithm: &str) -> Result<&'static str, PluginError> {
         "hpke-x25519" => "hpke-x25519",
         "ml-kem-768" => "ml-kem-768",
         "ml-kem-1024" => "ml-kem-1024",
+        // Retained only so existing encrypted vaults remain readable.
         "totp" | "totp-base32" => "totp-base32",
         _ => return Err(bad("Unsupported algorithm")),
     })
@@ -1064,7 +1046,7 @@ fn kind_for(algorithm: &str) -> &'static str {
 
 fn metadata(key: &StoredKey) -> Value {
     let capabilities = capabilities_for(&key.algorithm);
-    let effective = key.allowed_purposes.clone().unwrap_or_else(|| capabilities.clone());
+    let effective = key.allowed_purposes.clone().unwrap_or_else(|| default_allowed_purposes(&key.algorithm));
     let (display_type, bits, format) = key_display(&key.algorithm, &key.material);
     let mut meta = json!({
         "id": key.id,
@@ -1182,34 +1164,6 @@ fn base32_encode(bytes: &[u8]) -> String {
     for byte in bytes { buffer = (buffer << 8) | u32::from(*byte); bits += 8; while bits >= 5 { bits -= 5; output.push(ALPHABET[((buffer >> bits) & 31) as usize] as char); } }
     if bits > 0 { output.push(ALPHABET[((buffer << (5 - bits)) & 31) as usize] as char); }
     output
-}
-
-fn base32_decode(value: &str) -> Result<Vec<u8>, PluginError> {
-    let mut output = Vec::new();
-    let mut buffer = 0u32;
-    let mut bits = 0u8;
-    for byte in value.bytes().filter(|byte| !byte.is_ascii_whitespace() && *byte != b'-') {
-        let upper = byte.to_ascii_uppercase();
-        let digit = match upper { b'A'..=b'Z' => upper - b'A', b'2'..=b'7' => upper - b'2' + 26, b'=' => continue, _ => return Err(bad("TOTP secret must be Base32")) };
-        buffer = (buffer << 5) | u32::from(digit);
-        bits += 5;
-        if bits >= 8 { bits -= 8; output.push((buffer >> bits) as u8); buffer &= (1u32 << bits).saturating_sub(1); }
-    }
-    if output.is_empty() { return Err(bad("TOTP secret must be Base32")); }
-    Ok(output)
-}
-
-fn totp_code(secret: &[u8], counter: u64, digits: u32, algorithm: &str) -> Result<String, PluginError> {
-    let message = counter.to_be_bytes();
-    let digest = match algorithm.to_ascii_uppercase().as_str() {
-        "SHA-1" | "SHA1" => { let mut mac = <Hmac<Sha1> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
-        "SHA-256" | "SHA256" => { let mut mac = <Hmac<Sha256> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
-        "SHA-512" | "SHA512" => { let mut mac = <Hmac<Sha512> as Mac>::new_from_slice(secret).map_err(|_| bad("Invalid TOTP secret"))?; mac.update(&message); mac.finalize().into_bytes().to_vec() }
-        _ => return Err(bad("Unsupported TOTP algorithm")),
-    };
-    let offset = usize::from(digest[digest.len() - 1] & 0x0f);
-    let binary = (u32::from(digest[offset] & 0x7f) << 24) | (u32::from(digest[offset + 1]) << 16) | (u32::from(digest[offset + 2]) << 8) | u32::from(digest[offset + 3]);
-    Ok(format!("{:0width$}", binary % 10u32.pow(digits), width = digits as usize))
 }
 
 fn backfill_public_material(keys: &mut [StoredKey]) -> bool {
@@ -1406,11 +1360,48 @@ mod tests {
     }
 
     #[test]
-    fn shared_manifest_drives_key_capabilities_and_totp_matches_rfc() {
+    fn totp_entries_are_readable_for_recovery_but_cannot_be_created() {
+        assert_eq!(canonical_algorithm("totp-base32").unwrap(), "totp-base32");
+        let mut vault = Vault { unlocked: Some(Unlocked {
+            kek: [0; 32], salt: [0; 16], keys: vec![], needs_migration: false,
+        }) };
+        assert!(vault.create(json!({"name": "test", "algorithm": "totp-base32", "generate": true})).is_err());
+        assert!(vault.generate_key(json!({"algorithm": "totp-base32", "save": true, "name": "test"})).is_err());
+        assert!(vault.unlocked.as_ref().unwrap().keys.is_empty());
+    }
+
+    #[test]
+    fn legacy_key_xor_requires_explicit_opt_in() {
+        let key = StoredKey {
+            id: "legacy".into(), name: "legacy".into(), kind: "symmetric".into(),
+            algorithm: "sm4-128".into(), material: "00".repeat(16),
+            public_material: String::new(), allowed_purposes: None, created_at: now_iso(),
+        };
+        assert_eq!(metadata(&key)["effectivePurposes"], json!(["sm4-cipher"]));
+        let mut vault = Vault { unlocked: Some(Unlocked {
+            kek: [0; 32], salt: [0; 16], keys: vec![key], needs_migration: false,
+        }) };
+        assert!(vault.material_for("legacy", "sm4-cipher").is_ok());
+        assert!(vault.material_for("legacy", "debug-xor").is_err());
+        vault.unlocked.as_mut().unwrap().keys[0].allowed_purposes = Some(vec!["debug-xor".into()]);
+        assert!(vault.material_for("legacy", "debug-xor").is_ok());
+        assert_eq!(metadata(&vault.unlocked.as_ref().unwrap().keys[0])["effectivePurposes"], json!(["debug-xor"]));
+    }
+
+    #[test]
+    fn shared_manifest_drives_key_capabilities() {
         assert!(capabilities_for("aes-256").contains(&"aes-aead".to_string()));
         assert!(capabilities_for("aes-256").contains(&"debug-xor".to_string()));
         assert!(!default_allowed_purposes("aes-256").contains(&"debug-xor".to_string()));
-        assert_eq!(totp_code(b"12345678901234567890", 1, 8, "SHA-1").unwrap(), "94287082");
+        for algorithm in ["aes-128", "aes-192", "aes-256", "sm4-128", "hmac-sha256", "chacha20-256"] {
+            let key = StoredKey {
+                id: "new".into(), name: "new".into(), kind: "symmetric".into(),
+                algorithm: algorithm.into(), material: String::new(), public_material: String::new(),
+                allowed_purposes: Some(default_allowed_purposes(algorithm)), created_at: now_iso(),
+            };
+            assert!(!metadata(&key)["allowedPurposes"].as_array().unwrap().contains(&json!("debug-xor")));
+            assert!(!metadata(&key)["effectivePurposes"].as_array().unwrap().contains(&json!("debug-xor")));
+        }
     }
 
     #[test]

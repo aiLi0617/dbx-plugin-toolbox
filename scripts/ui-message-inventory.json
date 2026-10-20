@@ -3718,6 +3718,24 @@
     "ja": "記号",
     "pt-BR": "Símbolos"
   },
+  "Key purpose updates require a newer backend. Restart or update the plugin.": {
+    "en": "Key purpose updates require a newer backend. Restart or update the plugin.",
+    "zh-CN": "当前后端版本不支持保存用途，请重启开发宿主或更新插件后重试。",
+    "zh-TW": "目前後端版本不支援儲存用途，請重新啟動開發宿主或更新外掛後重試。",
+    "es": "El backend no admite guardar usos. Reinicia el host de desarrollo o actualiza el complemento.",
+    "it": "Il backend non supporta il salvataggio degli usi. Riavvia l'host di sviluppo o aggiorna il plugin.",
+    "ja": "現在のバックエンドは用途の保存に対応していません。開発ホストを再起動するか、プラグインを更新してください。",
+    "pt-BR": "O backend não permite salvar finalidades. Reinicie o host de desenvolvimento ou atualize o plugin."
+  },
+  "Purpose is not supported by this key": {
+    "en": "Purpose is not supported by this key",
+    "zh-CN": "这把密钥不支持所选用途，请重新选择。",
+    "zh-TW": "這把金鑰不支援所選用途，請重新選擇。",
+    "es": "La clave no admite el uso seleccionado.",
+    "it": "La chiave non supporta l'uso selezionato.",
+    "ja": "この鍵は選択した用途に対応していません。",
+    "pt-BR": "A chave não suporta a finalidade selecionada."
+  },
   "Master password must be at least 8 characters": {
     "en": "Master password must be at least 8 characters",
     "zh-CN": "主密码至少 8 位",
@@ -7713,10 +7731,6 @@
     "en": "Paste an authenticator secret to see the current code.",
     "zh-CN": "粘贴身份验证器密钥后会显示当前口令。"
   },
-  "Cannot use the selected TOTP key": {
-    "en": "Cannot use the selected TOTP key",
-    "zh-CN": "无法使用所选 TOTP 密钥"
-  },
   "Not a valid TOTP secret or URI": {
     "en": "Not a valid TOTP secret or URI",
     "zh-CN": "不是有效的 TOTP 密钥或 URI"
@@ -8405,6 +8419,10 @@
     "en": "Unlocked · {0} key{1}",
     "zh-CN": "已解锁 · {0} 把密钥"
   },
+  "Add key": {
+    "en": "Add key",
+    "zh-CN": "添加密钥"
+  },
   "Auto-lock": {
     "en": "Auto-lock",
     "zh-CN": "自动锁定"
@@ -8429,14 +8447,6 @@
     "en": "Showing {0} / {1}",
     "zh-CN": "显示 {0} / {1}"
   },
-  "Drag the handle or use ↑↓ to reorder": {
-    "en": "Drag the handle or use ↑↓ to reorder",
-    "zh-CN": "拖动手柄或用 ↑↓ 调整顺序"
-  },
-  "{0} key{1}": {
-    "en": "{0} key{1}",
-    "zh-CN": "{0} 把密钥"
-  },
   "Size / format": {
     "en": "Size / format",
     "zh-CN": "大小 / 格式"
@@ -8445,17 +8455,13 @@
     "en": "Used by",
     "zh-CN": "用途"
   },
-  "Support": {
-    "en": "Support",
-    "zh-CN": "支持状态"
+  "Created": {
+    "en": "Created",
+    "zh-CN": "创建时间"
   },
   "Fingerprint": {
     "en": "Fingerprint",
     "zh-CN": "指纹"
-  },
-  "Created": {
-    "en": "Created",
-    "zh-CN": "创建时间"
   },
   "Reorder “{0}”": {
     "en": "Reorder “{0}”",
@@ -8464,10 +8470,6 @@
   "Clear the filter to reorder": {
     "en": "Clear the filter to reorder",
     "zh-CN": "筛选时不能排序"
-  },
-  "Legacy · pending": {
-    "en": "Legacy · pending",
-    "zh-CN": "历史兼容 · 待确认"
   },
   "Save": {
     "en": "Save",
@@ -8485,9 +8487,13 @@
     "en": "Purposes",
     "zh-CN": "用途"
   },
-  "Add key": {
-    "en": "Add key",
-    "zh-CN": "添加密钥"
+  "How": {
+    "en": "How",
+    "zh-CN": "方式"
+  },
+  "Paste existing": {
+    "en": "Paste existing",
+    "zh-CN": "粘贴已有密钥"
   },
   "e.g. test-key": {
     "en": "e.g. test-key",
@@ -8508,14 +8514,6 @@
   "Public key / KEM (import)": {
     "en": "Public key / KEM (import)",
     "zh-CN": "公钥 / KEM（导入）"
-  },
-  "How": {
-    "en": "How",
-    "zh-CN": "方式"
-  },
-  "Paste existing": {
-    "en": "Paste existing",
-    "zh-CN": "粘贴已有密钥"
   },
   "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)": {
     "en": "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)",
@@ -8593,6 +8591,66 @@
     "en": "Deleting…",
     "zh-CN": "删除中…"
   },
+  "Filter by key type": {
+    "en": "Filter by key type",
+    "zh-CN": "密钥类型",
+    "zh-TW": "金鑰類型",
+    "es": "Filtrar por tipo de clave",
+    "it": "Filtra per tipo di chiave",
+    "ja": "鍵の種類で絞り込み",
+    "pt-BR": "Filtrar por tipo de chave",
+    "ko": "키 유형별 필터",
+    "tr": "Anahtar türüne göre filtrele",
+    "az": "Açar növünə görə süzgəc"
+  },
+  "Change master password": {
+    "en": "Change master password",
+    "zh-CN": "修改主密码",
+    "zh-TW": "修改主密碼",
+    "es": "Cambiar contraseña maestra",
+    "it": "Modifica password principale",
+    "ja": "マスターパスワードを変更",
+    "pt-BR": "Alterar senha mestra",
+    "ko": "마스터 비밀번호 변경",
+    "tr": "Ana şifreyi değiştir",
+    "az": "Əsas parolu dəyiş"
+  },
+  "Discard unsaved changes?": {
+    "en": "Discard unsaved changes?",
+    "zh-CN": "放弃未保存的更改？",
+    "zh-TW": "放棄未儲存的變更？",
+    "es": "¿Descartar los cambios sin guardar?",
+    "it": "Scartare le modifiche non salvate?",
+    "ja": "未保存の変更を破棄しますか？",
+    "pt-BR": "Descartar alterações não salvas?",
+    "ko": "저장하지 않은 변경 사항을 삭제할까요?",
+    "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
+    "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
+  },
+  "Discard changes": {
+    "en": "Discard changes",
+    "zh-CN": "放弃更改",
+    "zh-TW": "放棄變更",
+    "es": "Descartar cambios",
+    "it": "Scarta modifiche",
+    "ja": "変更を破棄",
+    "pt-BR": "Descartar alterações",
+    "ko": "변경 사항 삭제",
+    "tr": "Değişiklikleri sil",
+    "az": "Dəyişiklikləri ləğv et"
+  },
+  "Keep editing": {
+    "en": "Keep editing",
+    "zh-CN": "继续编辑",
+    "zh-TW": "繼續編輯",
+    "es": "Seguir editando",
+    "it": "Continua a modificare",
+    "ja": "編集を続ける",
+    "pt-BR": "Continuar editando",
+    "ko": "계속 편집",
+    "tr": "Düzenlemeye devam et",
+    "az": "Redaktəyə davam et"
+  },
   "Never": {
     "en": "Never",
     "zh-CN": "从不"
@@ -8644,10 +8702,6 @@
   "Enter the current master password": {
     "en": "Enter the current master password",
     "zh-CN": "请输入当前主密码"
-  },
-  "Deleted": {
-    "en": "Deleted",
-    "zh-CN": "已删除"
   },
   "Purposes updated": {
     "en": "Purposes updated",

@@ -147,6 +147,7 @@
   function openLauncher() { closeOverlays(); launcherOpen = true; }
   function openHome() { closeOverlays(); page = "home"; launcherOpen = false; }
   function openCatalog(category = "all") { closeOverlays(); catalogCategory = category; page = "catalog"; launcherOpen = false; }
+  function selectCatalogCategory(category) { catalogCategory = category; }
   function openTool(item, query = "", explicitOptions = {}) {
     if (!item) return;
     closeOverlays();
@@ -360,7 +361,7 @@
       {#if page === "home"}
         <ToolboxHome {locale} {tools} favorites={favoriteTools} recents={recentTools} {categoryCounts} onCatalog={openCatalog} onTool={openTool} onToggleFavorite={toggleFavorite} onMoveFavorite={moveFavorite} />
       {:else if page === "catalog"}
-        <ToolCatalog {locale} tools={catalogTools} favorites={favoriteIds} category={catalogCategory} onCategory={(id) => (catalogCategory = id)} onTool={openTool} onToggleFavorite={toggleFavorite} />
+        <ToolCatalog {locale} tools={catalogTools} favorites={favoriteIds} category={catalogCategory} onCategory={selectCatalogCategory} onTool={openTool} onToggleFavorite={toggleFavorite} />
       {:else if page === "vault"}
         <VaultView {locale} autoLockMinutes={vaultAutoLockMinutes} onAutoLockChange={updateVaultAutoLockMinutes} onKeysChange={refreshKeys} />
       {:else if tool && (EPHEMERAL_TOOL_IDS.has(tool.id) || EPHEMERAL_TOOL_IDS.has(tool.parentId))}

@@ -336,7 +336,7 @@ const DEMO_VIEWS = new Set(["json-workbench", "whitespace", "gzip", "base64", "c
 const DEMO_IDS = new Set(["docker-convert"]);
 const NO_DEMO_IDS = new Set(["uuid", "color", "cron", "timestamp", "chmod", "http-status"]);
 
-export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
+const BASE_TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
   const [es = en, it = en, ja = en, ptBR = en] = LOCALIZED_NAMES[id] || [];
   const supportsDemo = (DEMO_VIEWS.has(view) || DEMO_IDS.has(id)) && !NO_DEMO_IDS.has(id);
   return {
@@ -356,3 +356,5 @@ export const TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhT
     actions: supportsDemo ? ["demo", "reset", "copy", "save", "drop"] : ["reset", "copy", "save", "drop"],
   };
 });
+
+export const TOOL_DEFS = BASE_TOOL_DEFS;

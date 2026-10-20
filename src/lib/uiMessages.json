@@ -7799,6 +7799,30 @@
     "tr": "Semboller",
     "az": "Simvollar"
   },
+  "Key purpose updates require a newer backend. Restart or update the plugin.": {
+    "en": "Key purpose updates require a newer backend. Restart or update the plugin.",
+    "zh-CN": "当前后端版本不支持保存用途，请重启开发宿主或更新插件后重试。",
+    "zh-TW": "目前後端版本不支援儲存用途，請重新啟動開發宿主或更新外掛後重試。",
+    "es": "El backend no admite guardar usos. Reinicia el host de desarrollo o actualiza el complemento.",
+    "it": "Il backend non supporta il salvataggio degli usi. Riavvia l'host di sviluppo o aggiorna il plugin.",
+    "ja": "現在のバックエンドは用途の保存に対応していません。開発ホストを再起動するか、プラグインを更新してください。",
+    "pt-BR": "O backend não permite salvar finalidades. Reinicie o host de desenvolvimento ou atualize o plugin.",
+    "ko": "현재 백엔드는 용도 저장을 지원하지 않습니다. 개발 호스트를 다시 시작하거나 플러그인을 업데이트하세요.",
+    "tr": "Mevcut arka uç kullanım amaçlarını kaydetmeyi desteklemiyor. Geliştirme sunucusunu yeniden başlatın veya eklentiyi güncelleyin.",
+    "az": "Cari arxa sistem təyinatları saxlamağı dəstəkləmir. Tərtibat hostunu yenidən başladın və ya plaqini yeniləyin."
+  },
+  "Purpose is not supported by this key": {
+    "en": "Purpose is not supported by this key",
+    "zh-CN": "这把密钥不支持所选用途，请重新选择。",
+    "zh-TW": "這把金鑰不支援所選用途，請重新選擇。",
+    "es": "La clave no admite el uso seleccionado.",
+    "it": "La chiave non supporta l'uso selezionato.",
+    "ja": "この鍵は選択した用途に対応していません。",
+    "pt-BR": "A chave não suporta a finalidade selecionada.",
+    "ko": "이 키는 선택한 용도를 지원하지 않습니다.",
+    "tr": "Bu anahtar seçilen kullanım amacını desteklemiyor.",
+    "az": "Bu açar seçilmiş təyinatı dəstəkləmir."
+  },
   "Master password must be at least 8 characters": {
     "en": "Master password must be at least 8 characters",
     "zh-CN": "主密码至少 8 位",
@@ -17975,18 +17999,6 @@
     "tr": "Geçerli kodu görmek için bir kimlik doğrulayıcı sırrı yapıştırın.",
     "az": "Cari kodu görmək üçün autentifikator sirrini daxil edin."
   },
-  "Cannot use the selected TOTP key": {
-    "en": "Cannot use the selected TOTP key",
-    "zh-CN": "无法使用所选 TOTP 密钥",
-    "zh-TW": "Cannot use the selected TOTP key",
-    "es": "Cannot use the selected TOTP key",
-    "it": "Cannot use the selected TOTP key",
-    "ja": "Cannot use the selected TOTP key",
-    "pt-BR": "Cannot use the selected TOTP key",
-    "ko": "Cannot use the selected TOTP key",
-    "tr": "Cannot use the selected TOTP key",
-    "az": "Cannot use the selected TOTP key"
-  },
   "Not a valid TOTP secret or URI": {
     "en": "Not a valid TOTP secret or URI",
     "zh-CN": "不是有效的 TOTP 密钥或 URI",
@@ -20003,6 +20015,18 @@
     "tr": "Kilit açık · {0} tuşu{1}",
     "az": "Kilidi açıldı · {0} açar{1}"
   },
+  "Add key": {
+    "en": "Add key",
+    "zh-CN": "添加密钥",
+    "zh-TW": "新增密鑰",
+    "es": "Agregar clave",
+    "it": "Aggiungi chiave",
+    "ja": "キーを追加",
+    "pt-BR": "Adicionar chave",
+    "ko": "키 추가",
+    "tr": "Anahtar ekle",
+    "az": "Açar əlavə edin"
+  },
   "Auto-lock": {
     "en": "Auto-lock",
     "zh-CN": "自动锁定",
@@ -20075,30 +20099,6 @@
     "tr": "{0} / {1} gösteriliyor",
     "az": "{0} / {1} göstərilir"
   },
-  "Drag the handle or use ↑↓ to reorder": {
-    "en": "Drag the handle or use ↑↓ to reorder",
-    "zh-CN": "拖动手柄或用 ↑↓ 调整顺序",
-    "zh-TW": "拖曳手把或使用 ↑↓ 重新排序",
-    "es": "Arrastre el controlador o use ↑↓ para reordenar",
-    "it": "Trascina la maniglia o usa ↑↓ per riordinare",
-    "ja": "ハンドルをドラッグするか、↑↓を使用して順序を変更します",
-    "pt-BR": "Arraste a alça ou use ↑↓ para reordenar",
-    "ko": "핸들을 드래그하거나 ↑↓를 사용하여 재정렬하세요.",
-    "tr": "Yeniden sıralamak için tutamacı sürükleyin veya ↑↓ tuşlarını kullanın",
-    "az": "Dəstəyi dartın və ya yenidən sıralamaq üçün ↑↓ istifadə edin"
-  },
-  "{0} key{1}": {
-    "en": "{0} key{1}",
-    "zh-CN": "{0} 把密钥",
-    "zh-TW": "{0}鍵{1}",
-    "es": "{0} clave{1}",
-    "it": "{0} chiave{1}",
-    "ja": "{0} キー{1}",
-    "pt-BR": "{0} chave{1}",
-    "ko": "{0} 키{1}",
-    "tr": "{0} tuşu{1}",
-    "az": "{0} açar{1}"
-  },
   "Size / format": {
     "en": "Size / format",
     "zh-CN": "大小 / 格式",
@@ -20123,17 +20123,17 @@
     "az": "İstifadə edənlər",
     "pt-BR": "Usado por"
   },
-  "Support": {
-    "en": "Support",
-    "zh-CN": "支持状态",
-    "zh-TW": "Support",
-    "es": "Support",
-    "it": "Support",
-    "ja": "Support",
-    "pt-BR": "Support",
-    "ko": "Support",
-    "tr": "Support",
-    "az": "Support"
+  "Created": {
+    "en": "Created",
+    "zh-CN": "创建时间",
+    "zh-TW": "已創建",
+    "es": "Creado",
+    "it": "Creato",
+    "ja": "作成されました",
+    "ko": "생성 시간",
+    "tr": "Oluşturuldu",
+    "az": "Yaradılıb",
+    "pt-BR": "Criado em"
   },
   "Fingerprint": {
     "en": "Fingerprint",
@@ -20146,18 +20146,6 @@
     "tr": "Parmak izi",
     "az": "Barmaq izi",
     "pt-BR": "Impressão digital"
-  },
-  "Created": {
-    "en": "Created",
-    "zh-CN": "创建时间",
-    "zh-TW": "已創建",
-    "es": "Creado",
-    "it": "Creato",
-    "ja": "作成されました",
-    "ko": "생성 시간",
-    "tr": "Oluşturuldu",
-    "az": "Yaradılıb",
-    "pt-BR": "Criado em"
   },
   "Reorder “{0}”": {
     "en": "Reorder “{0}”",
@@ -20182,18 +20170,6 @@
     "ko": "재정렬하려면 필터를 삭제하세요.",
     "tr": "Yeniden sıralamak için filtreyi temizleyin",
     "az": "Yenidən sıralamaq üçün filtri təmizləyin"
-  },
-  "Legacy · pending": {
-    "en": "Legacy · pending",
-    "zh-CN": "历史兼容 · 待确认",
-    "zh-TW": "Legacy · pending",
-    "es": "Legacy · pending",
-    "it": "Legacy · pending",
-    "ja": "Legacy · pending",
-    "pt-BR": "Legacy · pending",
-    "ko": "Legacy · pending",
-    "tr": "Legacy · pending",
-    "az": "Legacy · pending"
   },
   "Save": {
     "en": "Save",
@@ -20243,17 +20219,29 @@
     "tr": "Purposes",
     "az": "Purposes"
   },
-  "Add key": {
-    "en": "Add key",
-    "zh-CN": "添加密钥",
-    "zh-TW": "新增密鑰",
-    "es": "Agregar clave",
-    "it": "Aggiungi chiave",
-    "ja": "キーを追加",
-    "pt-BR": "Adicionar chave",
-    "ko": "키 추가",
-    "tr": "Anahtar ekle",
-    "az": "Açar əlavə edin"
+  "How": {
+    "en": "How",
+    "zh-CN": "方式",
+    "zh-TW": "如何",
+    "es": "Cómo",
+    "it": "Come",
+    "ja": "どうやって",
+    "pt-BR": "Como",
+    "ko": "어떻게",
+    "tr": "Nasıl",
+    "az": "Necə"
+  },
+  "Paste existing": {
+    "en": "Paste existing",
+    "zh-CN": "粘贴已有密钥",
+    "zh-TW": "貼上現有的",
+    "es": "Pegar existente",
+    "it": "Incolla esistente",
+    "ja": "既存のものを貼り付ける",
+    "pt-BR": "Colar existente",
+    "ko": "기존 붙여넣기",
+    "tr": "Mevcut olanı yapıştır",
+    "az": "Mövcud olanı yapışdırın"
   },
   "e.g. test-key": {
     "en": "e.g. test-key",
@@ -20314,30 +20302,6 @@
     "ko": "Public key / KEM (import)",
     "tr": "Public key / KEM (import)",
     "az": "Public key / KEM (import)"
-  },
-  "How": {
-    "en": "How",
-    "zh-CN": "方式",
-    "zh-TW": "如何",
-    "es": "Cómo",
-    "it": "Come",
-    "ja": "どうやって",
-    "pt-BR": "Como",
-    "ko": "어떻게",
-    "tr": "Nasıl",
-    "az": "Necə"
-  },
-  "Paste existing": {
-    "en": "Paste existing",
-    "zh-CN": "粘贴已有密钥",
-    "zh-TW": "貼上現有的",
-    "es": "Pegar existente",
-    "it": "Incolla esistente",
-    "ja": "既存のものを貼り付ける",
-    "pt-BR": "Colar existente",
-    "ko": "기존 붙여넣기",
-    "tr": "Mevcut olanı yapıştır",
-    "az": "Mövcud olanı yapışdırın"
   },
   "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)": {
     "en": "RSA PEM, PKCS#8 or PKCS#1 (public encrypt / private decrypt)",
@@ -20567,6 +20531,66 @@
     "tr": "Siliniyor…",
     "az": "Silinir..."
   },
+  "Filter by key type": {
+    "en": "Filter by key type",
+    "zh-CN": "密钥类型",
+    "zh-TW": "金鑰類型",
+    "es": "Filtrar por tipo de clave",
+    "it": "Filtra per tipo di chiave",
+    "ja": "鍵の種類で絞り込み",
+    "pt-BR": "Filtrar por tipo de chave",
+    "ko": "키 유형별 필터",
+    "tr": "Anahtar türüne göre filtrele",
+    "az": "Açar növünə görə süzgəc"
+  },
+  "Change master password": {
+    "en": "Change master password",
+    "zh-CN": "修改主密码",
+    "zh-TW": "修改主密碼",
+    "es": "Cambiar contraseña maestra",
+    "it": "Modifica password principale",
+    "ja": "マスターパスワードを変更",
+    "pt-BR": "Alterar senha mestra",
+    "ko": "마스터 비밀번호 변경",
+    "tr": "Ana şifreyi değiştir",
+    "az": "Əsas parolu dəyiş"
+  },
+  "Discard unsaved changes?": {
+    "en": "Discard unsaved changes?",
+    "zh-CN": "放弃未保存的更改？",
+    "zh-TW": "放棄未儲存的變更？",
+    "es": "¿Descartar los cambios sin guardar?",
+    "it": "Scartare le modifiche non salvate?",
+    "ja": "未保存の変更を破棄しますか？",
+    "pt-BR": "Descartar alterações não salvas?",
+    "ko": "저장하지 않은 변경 사항을 삭제할까요?",
+    "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
+    "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
+  },
+  "Discard changes": {
+    "en": "Discard changes",
+    "zh-CN": "放弃更改",
+    "zh-TW": "放棄變更",
+    "es": "Descartar cambios",
+    "it": "Scarta modifiche",
+    "ja": "変更を破棄",
+    "pt-BR": "Descartar alterações",
+    "ko": "변경 사항 삭제",
+    "tr": "Değişiklikleri sil",
+    "az": "Dəyişiklikləri ləğv et"
+  },
+  "Keep editing": {
+    "en": "Keep editing",
+    "zh-CN": "继续编辑",
+    "zh-TW": "繼續編輯",
+    "es": "Seguir editando",
+    "it": "Continua a modificare",
+    "ja": "編集を続ける",
+    "pt-BR": "Continuar editando",
+    "ko": "계속 편집",
+    "tr": "Düzenlemeye devam et",
+    "az": "Redaktəyə davam et"
+  },
   "Never": {
     "en": "Never",
     "zh-CN": "从不",
@@ -20722,18 +20746,6 @@
     "ko": "현재 마스터 비밀번호를 입력하세요",
     "tr": "Mevcut ana şifreyi girin",
     "az": "Cari əsas parolu daxil edin"
-  },
-  "Deleted": {
-    "en": "Deleted",
-    "zh-CN": "已删除",
-    "zh-TW": "已刪除",
-    "es": "Eliminado",
-    "it": "Eliminato",
-    "ja": "削除されました",
-    "pt-BR": "Excluído",
-    "ko": "삭제됨",
-    "tr": "Silindi",
-    "az": "Silindi"
   },
   "Purposes updated": {
     "en": "Purposes updated",
