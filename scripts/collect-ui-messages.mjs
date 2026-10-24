@@ -59,7 +59,11 @@ if (!positional[0]) {
   }
   const { tools } = await import('../src/lib/catalog.js');
   const { TEXT_ACTIONS } = await import('../src/lib/textActions.js');
-  for (const tool of tools) for (const map of [tool.name, tool.summary]) {
+  const { CATEGORY_NAMES } = await import('../src/lib/toolPresentation.js');
+  for (const map of Object.values(CATEGORY_NAMES)) {
+    add(map.en, map['zh-CN'], Object.fromEntries(langs.slice(2).map(l => [l, map[l]])));
+  }
+  for (const tool of tools) for (const map of [tool.name, tool.legacyName, tool.summary]) {
     add(map.en, map['zh-CN'], Object.fromEntries(langs.slice(2).map(l => [l, map[l]])));
   }
   for (const action of TEXT_ACTIONS) add(action.en, action.zh);

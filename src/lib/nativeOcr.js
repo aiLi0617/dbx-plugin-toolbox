@@ -77,6 +77,7 @@ export async function installOcrModels(tier, options = {}) {
     }
     return await completion;
   } finally {
+    if (signal?.aborted && sessionId) void cancelOcrModelInstall(sessionId).catch(() => {});
     signal?.removeEventListener("abort", abort);
     if (typeof offEvent === "function") offEvent();
   }
@@ -130,6 +131,7 @@ export async function recognizeNativeOcr(file, options = {}) {
     }
     throwIfAborted(signal);
     const result = await invoke("toolbox/ocr/recognize", { sessionId, region, quality, enhance, layout, smartCorrection }, 120_000);
+    throwIfAborted(signal);
     completed = true;
     return result;
   } finally {

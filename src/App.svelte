@@ -1,22 +1,23 @@
 <script>
   import { onMount } from "svelte";
   import { CATEGORY_ORDER, DEFAULT_ENABLED_IDS, tools, toolsByCategory, toolsByIds } from "./lib/catalog.js";
-  import { chrome, localizeError, pick } from "./lib/i18n.js";
+  import { chrome, L, localizeError, pick } from "./lib/i18n.js";
   import { applyTheme, context as hostContext, invoke, locale as hostLocale, observeContext, observeEnvironment, ready } from "./lib/host.js";
   import {
     DEFAULT_VAULT_AUTO_LOCK_MINUTES,
     getFavoriteToolIds,
     getWorkspacePreferences,
     getVaultAutoLockMinutes,
-    sanitizeVaultAutoLockMinutes,
     setFavoriteToolIds,
     setRecentToolIds,
+    setSettingsPreferences,
+    sanitizeRecentToolLimit,
+    DEFAULT_RECENT_TOOL_LIMIT,
     setSidebarCollapsed,
-    setVaultAutoLockMinutes,
   } from "./lib/prefs.js";
   import { moveToolId, navigationTargetFromContext, pushRecent, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
   import { createSidebarState } from "./lib/sidebarState.js";
-  import { EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
+  import { SIMPLE_TOOL_IDS, BACKGROUND_TOOL_IDS, EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
   import { loadVaultKeys } from "./lib/keySource.js";
   import ToolboxSidebar from "./lib/ToolboxSidebar.svelte";
   import ToolboxHome from "./lib/ToolboxHome.svelte";
@@ -25,6 +26,13 @@
   import VaultView from "./lib/VaultView.svelte";
   import { createToolDemo } from "./lib/demoCatalog.js";
   import { hasParameterSupportLevels, supportLabel } from "./lib/cryptoCapabilities.js";
+  import { DEFAULT_SHORTCUTS, isEditableTarget, shortcutLabel, shortcutMatches, toolIdFromShortcutAction } from "./lib/shortcuts.js";
+  import SettingsDialog from "./lib/SettingsDialog.svelte";
+  import ToolSession from "./lib/ToolSession.svelte";
+  import SessionConfirm from "./lib/SessionConfirm.svelte";
+  import { sessionState, sessionVictim } from "./lib/sessionState.js";
+  import { taskManager } from "./lib/taskManager.js";
+  import TaskCenter from "./lib/TaskCenter.svelte";
 
   // Keep demo payloads referentially stable. Tool views use the payload in an
   // effect keyed by demoRequest; recreating it during normal renders can make
@@ -41,6 +49,12 @@
   let catalogCategory = $state("all");
   let launcherOpen = $state(false);
   let sidebarCollapsed = $state(false);
+  let shortcuts = $state({ ...DEFAULT_SHORTCUTS });
+  let preferredSidebarCollapsed = $state(false);
+  let settingsOpen = $state(false);
+  let settingsInitialTab = $state("general");
+  let settingsVersion = $state(null);
+  let recentToolLimit = $state(DEFAULT_RECENT_TOOL_LIMIT);
   const sidebarState = createSidebarState();
   let mobileSidebarOpen = $state(false);
   let savingPrefs = $state(false);
@@ -53,15 +67,28 @@
   let reportedSupportLevels = $state({});
   const pendingViewLoads = new Map();
   const supportLevelReporters = new Map();
+  let sessionMetadata = $state({});
+  let confirmRequest = $state(null);
+  let confirmationResolve;
+  function askSession(id, ids = null) {
+    if (confirmationResolve) return Promise.resolve({ action: 'cancel' });
+    confirmRequest = { id, ids, busy: sessionState.get(id).busy, name: id => pick(locale, tools.find(t => t.id === id)?.name || {en:id}), canExport: id => sessionState.get(id).canExport, save: id => sessionState.export(id) };
+    return new Promise(resolve => confirmationResolve = resolve);
+  }
+  function answerSession(answer) { const done = confirmationResolve; confirmationResolve = null; confirmRequest = null; done?.(answer); }
+  async function beforeReplace(id) {
+    if (!sessionState.protected(id)) return true;
+    if (sessionState.get(id).busy) return false;
+    return (await askSession(id)).action === 'discard';
+  }
   let persistSeq = 0;
-  let autoLockPersistSeq = 0;
   let vaultLockTimer;
   let vaultLastActivityAt = 0;
 
   const favoriteSet = $derived(new Set(favoriteIds));
   const catalogTools = $derived(tools.filter((item) => item.catalogVisible !== false));
   const favoriteTools = $derived(toolsByIds(favoriteIds));
-  const recentTools = $derived(toolsByIds(sanitizeToolIds(recentIds, 8)));
+  const recentTools = $derived(toolsByIds(sanitizeToolIds(recentIds, recentToolLimit)));
   const launcherRecentTools = $derived(toolsByIds(recentIds));
   const grouped = $derived(toolsByCategory(catalogTools));
   const categoryCounts = $derived(Object.fromEntries(CATEGORY_ORDER.map((id) => [id, grouped[id].length])));
@@ -72,6 +99,7 @@
     return tool.supportLevel && !hasParameterSupportLevels(tool.capabilityId) ? tool.supportLevel : "";
   });
   const sessionTools = $derived(toolsByIds(sessionToolIds));
+  const settingsLabel = $derived(pick(locale, chrome.settings));
   const fillPane = $derived(page === "vault" || (page === "tool" && FILL_VIEWS.has(tool?.view)));
   const title = $derived.by(() => {
     if (page === "home") return pick(locale, chrome.home);
@@ -81,6 +109,11 @@
   });
 
   onMount(() => {
+    const offSessions = sessionState.subscribe(value => sessionMetadata = value);
+    const beforeUnload = (event) => { if (Object.keys(sessionMetadata).some(id => sessionState.protected(id))) { event.preventDefault(); event.returnValue = ""; } };
+    window.addEventListener("beforeunload", beforeUnload);
+    const releaseWorkbench = () => { taskManager.cancelAll(); sessionState.releaseAll(); };
+    window.addEventListener("pagehide", releaseWorkbench);
     let disposed = false;
     let offInit;
     let offContext;
@@ -95,10 +128,18 @@
       applyTheme();
     };
     const onVaultChange = () => { void refreshKeys(); };
+    const lockTotp = () => { void invoke("toolbox/totp/lock").catch(() => {}); };
+    window.addEventListener("pagehide", lockTotp);
+    window.addEventListener("toolbox-workbench-lock", lockTotp);
     const onActivity = () => recordVaultActivity();
     const onResume = () => { if (!document.hidden) void enforceVaultAutoLock(); };
     const onShortcut = (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") { event.preventDefault(); openLauncher(); }
+      if (event.defaultPrevented || event.repeat || event.isComposing || settingsOpen) return;
+      const action = Object.keys(shortcuts).find((name) => shortcutMatches(event, shortcuts[name]));
+      const editorSafe = action === "search" || action === "settings" || action?.startsWith("tool:");
+      if (!action || (isEditableTarget(event.target) && !editorSafe)) return;
+      event.preventDefault();
+      runShortcutAction(action);
     };
     window.addEventListener("keydown", onShortcut);
     window.addEventListener("keydown", onActivity);
@@ -120,14 +161,22 @@
       if (disposed) return;
       favoriteIds = savedFavorites;
       vaultAutoLockMinutes = savedAutoLock;
-      recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, 10);
+      recentToolLimit = sanitizeRecentToolLimit(workspacePrefs.recentToolLimit);
+      recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, recentToolLimit);
       sidebarCollapsed = sidebarState.restore(workspacePrefs.sidebarCollapsed);
+      preferredSidebarCollapsed = workspacePrefs.sidebarCollapsed;
+      shortcuts = workspacePrefs.shortcuts;
       applyWorkbenchContext(hostContext());
       await refreshKeys();
     };
     void initialize();
     return () => {
+      offSessions(); window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("pagehide", releaseWorkbench); releaseWorkbench();
       disposed = true;
+      lockTotp();
+      window.removeEventListener("pagehide", lockTotp);
+      window.removeEventListener("toolbox-workbench-lock", lockTotp);
       compactSidebar.removeEventListener("change", onSidebarResize);
       window.removeEventListener("keydown", onShortcut);
       window.removeEventListener("keydown", onActivity);
@@ -142,20 +191,53 @@
   });
 
   function persistRecent(next) {
-    recentIds = sanitizeToolIds(next, 10);
+    recentIds = sanitizeToolIds(next, recentToolLimit);
     void setRecentToolIds(recentIds).catch(() => {});
   }
   function setCollapsed(next) {
     sidebarCollapsed = sidebarState.select(next);
+    preferredSidebarCollapsed = next;
     void setSidebarCollapsed(next).catch(() => {});
   }
   function closeOverlays() { mobileSidebarOpen = false; window.dispatchEvent(new Event("toolbox-close-overlays")); }
   function openLauncher() { closeOverlays(); launcherOpen = true; }
+  function cycleSession(delta) {
+    if (!sessionToolIds.length) return;
+    const at = sessionToolIds.indexOf(activeToolId);
+    const base = at < 0 ? (delta > 0 ? -1 : 0) : at;
+    const nextId = sessionToolIds[(base + delta + sessionToolIds.length) % sessionToolIds.length];
+    openTool(tools.find((item) => item.id === nextId));
+  }
+  function runShortcutAction(action) {
+    const directToolId = toolIdFromShortcutAction(action);
+    if (directToolId) { openTool(tools.find((item) => item.id === directToolId)); return; }
+    if (action === "search") openLauncher();
+    else if (action === "home") openHome();
+    else if (action === "catalog") openCatalog("all");
+    else if (action === "vault") openVault();
+    else if (action === "toggleSidebar") setCollapsed(!sidebarCollapsed);
+    else if (action === "previousTool") cycleSession(-1);
+    else if (action === "nextTool") cycleSession(1);
+    else if (action === "closeTool" && page === "tool" && tool) closeSession(tool.id);
+    else if (action === "toggleFavorite" && page === "tool" && tool) toggleFavorite(tool.id);
+    else if (action === "loadDemo" && page === "tool" && tool?.actions?.includes("demo")) loadDemo();
+    else if (action === "settings") { settingsInitialTab = "general"; closeOverlays(); launcherOpen = false; settingsOpen = true; }
+  }
   function openHome() { closeOverlays(); page = "home"; launcherOpen = false; }
   function openCatalog(category = "all") { closeOverlays(); catalogCategory = category; page = "catalog"; launcherOpen = false; }
   function selectCatalogCategory(category) { catalogCategory = category; }
-  function openTool(item, query = "", explicitOptions = {}) {
+  async function openTool(item, query = "", explicitOptions = {}) {
     if (!item) return;
+    if (!EPHEMERAL_TOOL_IDS.has(item.id) && !EPHEMERAL_TOOL_IDS.has(item.parentId) && !sessionToolIds.includes(item.id) && !BACKGROUND_TOOL_IDS.has(item.id)) {
+      const victim = sessionVictim(sessionToolIds, sessionState, BACKGROUND_TOOL_IDS);
+      if (victim === false) {
+        const ids = sessionToolIds.filter(id => !BACKGROUND_TOOL_IDS.has(id) && !sessionState.get(id).busy);
+        if (!ids.length) return false;
+        const answer = await askSession(ids[0], ids);
+        if (answer.action !== 'discard') return false;
+        sessionToolIds = sessionToolIds.filter(id => id !== answer.id);
+      } else if (victim) sessionToolIds = sessionToolIds.filter(id => id !== victim);
+    }
     closeOverlays();
     void ensureViewLoaded(item.view);
     activeToolId = sanitizeToolIds([item.id])[0] || item.id;
@@ -164,10 +246,11 @@
     if (!EPHEMERAL_TOOL_IDS.has(activeToolId) && !EPHEMERAL_TOOL_IDS.has(item.parentId)) {
       // Keep a bounded working set. Tool views can own workers, timers, and
       // large editor buffers, so a long session must not retain every view.
-      sessionToolIds = [...sessionToolIds.filter((id) => id !== activeToolId), activeToolId];
+      sessionToolIds = [...sessionToolIds.filter(id => id !== activeToolId), activeToolId];
     }
     page = "tool"; launcherOpen = false;
-    persistRecent(pushRecent(recentIds, item.id, 10));
+    persistRecent(pushRecent(recentIds, item.id, recentToolLimit));
+    return true;
   }
   function applyWorkbenchContext(value) {
     const target = navigationTargetFromContext(value);
@@ -177,7 +260,13 @@
     else if (target.page === "vault") openVault();
     else openHome();
   }
-  function closeSession(id) {
+  async function closeSession(id) {
+    if (sessionState.protected(id)) {
+      const answer = await askSession(id);
+      if (answer.action === "cancel") return;
+      if (answer.action === "hide") { openHome(); return; }
+      taskManager.cancelTool(id);
+    }
     const remaining = sessionToolIds.filter((item) => item !== id);
     sessionToolIds = remaining;
     if (page === "tool" && activeToolId === id) {
@@ -197,7 +286,8 @@
     }
     return supportLevelReporters.get(toolId);
   }
-  function loadDemo() {
+  async function loadDemo() {
+    if (tool && !await beforeReplace(tool.id)) return;
     if (!tool) return;
     const demo = demoByToolId.get(tool.id);
     toolOptions[tool.id] = { ...(tool.defaultOptions || {}), ...(demo?.options || {}), demo: true };
@@ -275,32 +365,23 @@
       await invoke("toolbox/keys/lock");
       vaultUnlocked = false;
       vaultLastActivityAt = 0;
-      window.dispatchEvent(new Event("toolbox-vault-change"));
+      window.dispatchEvent(new CustomEvent("toolbox-vault-change", { detail: { unlocked: false } }));
     } catch {
       await refreshKeys();
     }
   }
-  async function updateVaultAutoLockMinutes(value) {
-    const seq = ++autoLockPersistSeq;
-    const previous = vaultAutoLockMinutes;
-    const next = sanitizeVaultAutoLockMinutes(value);
-    vaultAutoLockMinutes = next;
-    prefsError = "";
-    if (vaultUnlocked) recordVaultActivity();
-    else scheduleVaultAutoLock();
-    try {
-      const saved = await setVaultAutoLockMinutes(next);
-      if (seq === autoLockPersistSeq) {
-        vaultAutoLockMinutes = saved;
-        scheduleVaultAutoLock();
-      }
-    } catch (err) {
-      if (seq === autoLockPersistSeq) {
-        vaultAutoLockMinutes = previous;
-        scheduleVaultAutoLock();
-        prefsError = localizeError(locale, err);
-      }
-    }
+  async function applySettings(value, options) {
+    const saved = await setSettingsPreferences(value, options);
+    shortcuts = saved.shortcuts;
+    favoriteIds = saved.favoriteToolIds;
+    recentToolLimit = saved.recentToolLimit;
+    recentIds = options?.clearRecent ? [] : sanitizeToolIds(recentIds, recentToolLimit);
+    sidebarCollapsed = sidebarState.select(saved.sidebarCollapsed);
+    preferredSidebarCollapsed = saved.sidebarCollapsed;
+    vaultAutoLockMinutes = saved.vaultAutoLockMinutes;
+    settingsVersion = saved.version;
+    scheduleVaultAutoLock();
+    await enforceVaultAutoLock();
   }
   async function refreshKeys() {
     const wasUnlocked = vaultUnlocked;
@@ -312,6 +393,7 @@
     } else {
       vaultLastActivityAt = 0;
       clearVaultLockTimer();
+      if (wasUnlocked) window.dispatchEvent(new CustomEvent("toolbox-vault-change", { detail: { unlocked: false } }));
     }
   }
 </script>
@@ -321,7 +403,7 @@
   {@const initialOptions = toolOptions[item.id] || {}}
   {@const demo = demoByToolId.get(item.id)}
   {@const shortcut = false}
-  {@const activeProps = viewPropsForTool(item, { locale, initialOptions, shortcut, demo, demoRequest: demoRevisions[item.id] || 0, onVaultChange: refreshKeys, onSupportLevelChange: supportLevelReporter(item.id) })}
+  {@const activeProps = viewPropsForTool(item, { locale, initialOptions, shortcut, demo, demoRequest: demoRevisions[item.id] || 0, visible: page === "tool" && activeToolId === item.id, onStateChange: value => sessionState.update(item.id, value), onBeforeReplace: () => beforeReplace(item.id), onVaultChange: refreshKeys, onSupportLevelChange: supportLevelReporter(item.id), onOpenTool: (id, options) => openTool(tools.find(tool => tool.id === id), '', options) })}
   {#if ActiveView}
     <ActiveView {...activeProps} />
   {:else if viewLoadErrors[item.view]}
@@ -329,25 +411,14 @@
       <span>{pick(locale, chrome.toolLoadFailed)}: {viewLoadErrors[item.view]}</span>
       <button class="dbx-btn" type="button" onclick={() => ensureViewLoaded(item.view)}>{pick(locale, chrome.retry)}</button>
     </div>
-    {#if sessionTools.length}
-      <nav class="session-tabs" aria-label={pick(locale, chrome.openTools)}>
-        <button class="session-home" class:active={page === "home"} type="button" onclick={openHome}>{pick(locale, chrome.home)}</button>
-        {#each sessionTools as item (item.id)}
-          <span class="session-tab" class:active={page === "tool" && activeToolId === item.id}>
-            <button type="button" onclick={() => openTool(item)}>{pick(locale, item.name)}</button>
-            <button class="session-close" type="button" aria-label={`${pick(locale, chrome.close)} ${pick(locale, item.name)}`} title={pick(locale, chrome.close)} onclick={() => closeSession(item.id)}>×</button>
-          </span>
-        {/each}
-      </nav>
-    {/if}
   {:else}
     <div class="view-load-state" role="status">{pick(locale, chrome.loadingTool)}</div>
   {/if}
 {/snippet}
 
-<div class="app" class:sidebar-collapsed={sidebarCollapsed} class:mobile-sidebar-open={mobileSidebarOpen}>
+<div class="app" class:sidebar-collapsed={sidebarCollapsed} class:mobile-sidebar-open={mobileSidebarOpen} inert={settingsOpen}>
   {#if mobileSidebarOpen}<button class="sidebar-scrim" type="button" aria-label={pick(locale, chrome.collapseSidebar)} onclick={() => mobileSidebarOpen = false}></button>{/if}
-  <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {vaultUnlocked}
+  <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {vaultUnlocked} searchShortcut={shortcutLabel(shortcuts.search)}
     onHome={openHome} onCatalog={() => openCatalog("all")} onSearch={openLauncher} onTool={openTool} onVault={openVault}
     onToggleCollapse={() => setCollapsed(!sidebarCollapsed)} onMoveFavorite={moveFavorite} />
   <section class="main">
@@ -360,8 +431,13 @@
           {#if tool.actions?.includes("demo")}<button class="dbx-btn" onclick={loadDemo} type="button">{pick(locale, chrome.loadDemo)}</button>{/if}
           <button class="dbx-btn dbx-btn--ghost icon-btn favorite-action" class:active={favoriteSet.has(tool.id)} disabled={savingPrefs} onclick={() => toggleFavorite(tool.id)} type="button" aria-label={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)} title={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)}>{favoriteSet.has(tool.id) ? "★" : "☆"}</button>
         {/if}
+        <button class="dbx-btn dbx-btn--ghost icon-btn shortcut-settings-action" type="button" aria-label={settingsLabel} title={`${settingsLabel} (${shortcutLabel(shortcuts.settings)})`} onclick={() => runShortcutAction("settings")}>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9 3-.5 2a8 8 0 0 0-2 1L4.5 5.5 2.5 9l1.5 1.5a8 8 0 0 0 0 3L2.5 15l2 3.5L6.5 18a8 8 0 0 0 2 1l.5 2h6l.5-2a8 8 0 0 0 2-1l2 .5 2-3.5-1.5-1.5a8 8 0 0 0 0-3L21.5 9l-2-3.5-2 .5a8 8 0 0 0-2-1L15 3Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
     </div>
+
+
     {#if prefsError}<div class="banner app-banner">{prefsError}</div>{/if}
     <div class="pane" class:pane-fill={fillPane} class:shell-page={page === "home" || page === "catalog"}>
       {#if page === "home"}
@@ -369,7 +445,7 @@
       {:else if page === "catalog"}
         <ToolCatalog {locale} tools={catalogTools} favorites={favoriteIds} category={catalogCategory} onCategory={selectCatalogCategory} onTool={openTool} onToggleFavorite={toggleFavorite} />
       {:else if page === "vault"}
-        <VaultView {locale} autoLockMinutes={vaultAutoLockMinutes} onAutoLockChange={updateVaultAutoLockMinutes} onKeysChange={refreshKeys} />
+        <VaultView {locale} onKeysChange={refreshKeys} />
       {:else if tool && (EPHEMERAL_TOOL_IDS.has(tool.id) || EPHEMERAL_TOOL_IDS.has(tool.parentId))}
         {#key tool.id}
           {@render renderTool(tool)}
@@ -377,7 +453,11 @@
       {/if}
       {#each sessionTools as item (item.id)}
         <div class="tool-session" class:fill={FILL_VIEWS.has(item.view)} hidden={page !== "tool" || activeToolId !== item.id}>
-          {@render renderTool(item)}
+          {#if SIMPLE_TOOL_IDS.has(item.id) || SIMPLE_TOOL_IDS.has(item.parentId)}
+            {@render renderTool(item)}
+          {:else}
+            <ToolSession toolId={item.id} beforeReplace={beforeReplace}>{@render renderTool(item)}</ToolSession>
+          {/if}
         </div>
       {/each}
     </div>
@@ -385,18 +465,19 @@
 </div>
 
 {#if launcherOpen}<ToolLauncher {locale} {tools} favorites={favoriteTools} recents={launcherRecentTools} onClose={() => (launcherOpen = false)} onTool={openTool} />{/if}
+{#if settingsOpen}<SettingsDialog {locale} initialTab={settingsInitialTab} {shortcuts} tools={catalogTools} favorites={favoriteIds} sidebarCollapsed={preferredSidebarCollapsed} {recentToolLimit} {vaultAutoLockMinutes} preferencesVersion={settingsVersion}
+  onClose={() => (settingsOpen = false)} onSave={applySettings}
+  onOpenVault={() => { settingsOpen = false; openVault(); }} />{/if}
+
+<TaskCenter {locale} sessions={sessionMetadata} onTool={(id) => openTool(tools.find(item => item.id === id))} />
+{#if confirmRequest}<SessionConfirm {locale} request={confirmRequest} onAnswer={answerSession} />{/if}
 
 <style>
+  .tool-session:not([hidden]){display:flex;flex-direction:column;min-width:0;min-height:0}
+
   .tool-session { min-width: 0; min-height: 0; }
   .tool-session.fill { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; overflow: hidden; }
   .tool-session[hidden] { display: none; }
   .view-load-state { display: flex; align-items: center; gap: 10px; color: var(--color-muted-foreground); }
   .support-level{padding:2px 7px;border-radius:999px;background:var(--dbx-selection-background);color:var(--dbx-selection-foreground);font-size:10px}.support-level.compatibility{background:var(--color-warning-bg);color:var(--color-warning)}
-  .session-tabs{display:flex;flex:0 0 auto;gap:3px;min-width:0;padding:5px 8px;overflow-x:auto;border-bottom:1px solid var(--color-border);background:var(--color-card)}
-  .session-tabs button{height:28px;border:0;background:transparent;color:inherit;font:inherit;white-space:nowrap}
-  .session-home,.session-tab{border-radius:6px;color:var(--color-muted-foreground)}
-  .session-home{padding:0 9px}.session-home.active,.session-tab.active{background:var(--dbx-selection-background);color:var(--dbx-selection-foreground)}
-  .session-tab{display:inline-flex;align-items:center;flex:0 0 auto;padding-left:5px;background:var(--color-muted)}
-  .session-tab>button:first-child{max-width:180px;overflow:hidden;text-overflow:ellipsis}
-  .session-tab .session-close{width:26px;padding:0;font-size:16px;opacity:.7}.session-tab .session-close:hover{opacity:1}
 </style>

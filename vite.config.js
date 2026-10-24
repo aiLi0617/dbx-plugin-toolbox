@@ -2,12 +2,14 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { assetModules } from "./scripts/asset-modules.mjs";
+import { sandboxEntry } from "./scripts/sandbox-entry.mjs";
 
 export default defineConfig({
   base: "./",
   plugins: [
     svelte(),
     assetModules(),
+    sandboxEntry(),
     {
       name: "dbx-build-signal",
       closeBundle() {
@@ -21,16 +23,21 @@ export default defineConfig({
       },
     },
   ],
-  // DBX inlines the entry module and its CSP only permits inline/blob scripts.
-  // Keep UI code/CSS inline; heavy libraries are separate self-contained assets
-  // loaded through readAssetUrl, never through relative module URLs.
+  // DBX inlines the entry into an opaque-origin srcdoc with script-src limited
+  // to inline/blob scripts. Relative view chunks cannot load there. Keep the
+  // UI graph together; heavy standalone assets still load via readAssetUrl.
   build: {
     outDir: "ui",
     emptyOutDir: true,
     cssCodeSplit: false,
-    // DBX requires the application entry to remain a single inline bundle.
-    // Heavy third-party libraries are emitted by assetModules instead.
     chunkSizeWarningLimit: 2500,
-    rollupOptions: { output: { inlineDynamicImports: true } },
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
+      },
+    },
   },
 });

@@ -1,5 +1,7 @@
 # DBX Toolbox
 
+PDF, GIF, and OCR jobs support progress, per-resource queues, and cancellation in the task manager. The workspace retains at most eight recently visited non-sensitive tool views; evicted views release their buffers and reset their input when reopened. See the [task management notes](docs/任务管理与可靠性修复.md).
+
 [简体中文](README.md) | [English](README.en.md)
 
 > A privacy-focused collection of local developer utilities with an encrypted key vault. Data conversion, text and image processing, encoding, and cryptographic operations all run locally.
@@ -28,7 +30,7 @@ DBX Toolbox is a Workbench plugin for [DBX](https://github.com/t8y2/dbx). It bri
 ## Highlights
 
 - **Local first:** the Workbench declares no network permission. Data conversion, image processing, and cryptographic operations run locally.
-- **Broad everyday coverage:** 64 tool entries across 9 categories, with search, favorites, recently used tools, and category filters.
+- **Broad everyday coverage:** 141 visible entries across 8 categories (117 tools and 24 shortcuts), with search, favorites, recently used tools, and category filters.
 - **Multilingual UI:** English, Simplified Chinese, Traditional Chinese, Spanish, Italian, Japanese, Portuguese, Korean, Turkish, and Azerbaijani, with live synchronization to the DBX host language.
 - **Explicit limits and precision rules:** data conversion has a 5 MB input limit. Operations that may lose structure or numeric precision warn the user or refuse to run.
 - **Keys stay in the sidecar:** the UI refers to vault entries by `keyId`, keeping plaintext keys out of UI persistence and Workbench context.
@@ -49,11 +51,21 @@ After packaging the project, open **Plugin Center → Settings → Third-party a
 ### Usage notes
 
 - Search on the home page can open a matching tool or sub-operation directly.
+- The toolbar gear (default Ctrl/Cmd+,) opens Settings for shortcuts, sidebar state, recent tool count and vault auto-lock. Language and theme follow DBX. Settings support per-group resets, preference JSON export/import previews and preference clearing; changes apply on save. Exports exclude key material and tool inputs. The shortcut editor supports direct tool bindings and checks conflicts before saving.
+- Vault auto-lock and master password changes are managed in Settings → Key vault. Unlock the vault, enter the current password and confirm the new one, then click Update to apply immediately. Passwords are never stored or exported with preferences.
 - Editors support Tab indentation and Shift+Tab outdent. Press Esc before Tab to move focus out of an editor.
 - Ordinary tool inputs last only for the current Workbench session. Encryption, JWT, TOTP, password, and key-generation views clear sensitive inputs when you leave them.
 - After saving a QR code, **Open containing folder** asks the system file manager to reveal the file.
 
 ## Feature overview
+
+Every entry belongs to one of eight categories: **Development, Text, Calculations, Network, System, Security, Images, Documents**. Encoding and escaping belong to Development; time utilities to Calculations; PDF, spreadsheets, Markdown, rich text and charts to Documents; colors and QR codes to Images. Tool IDs, algorithm defaults, favorites and recent history remain compatible. Previous tool and category names remain searchable.
+
+Names describe the operation, including Base encoding / decoding, Timestamp conversion, Markdown editor and preview, HTML live preview, Semantic version comparison, Image text recognition, and PDF handwritten and image signatures. Encryption, key derivation and message authentication entries retain their algorithm names and add the operation in every supported language.
+
+### Expanded tools
+
+Includes JSON structure diff, YAML trees, Basic Auth, a standalone Wi-Fi QR page, SafeLink decoding, regex references, network generators, ten calculators, and security and content tools including Figlet and lunar dates. Spreadsheets can export HTML and delimited plain text. GIF generation remains separate from GIF compression, cropping and frame editing. PDF operations have individual entries backed by shared libraries. OCR scope is unchanged. See the [implementation notes](docs/工具箱功能扩展-实施说明.md) for names and limits.
 
 ### Data and code
 
@@ -120,6 +132,12 @@ After packaging the project, open **Plugin Center → Settings → Third-party a
 
 The sidecar stores the vault in the plugin-specific data directory. Key material is protected with **Argon2id + AES-GCM**. The UI displays only names, algorithms, and fingerprints. AES (128/192/256-bit), SM4, and HMAC operations can use either a vault entry or one-time key input; when a vault entry is selected, the UI sends only its `keyId` to the sidecar.
 
+TOTP accounts use a separate AES-256-GCM encrypted file (`totp-store`, with `totp-store.bak` as recovery copy) and open without an application password. A random encryption key is held in the current system account's native credential store: Windows Credential Manager, macOS Keychain, or Linux Secret Service. Names, issuer/account labels, notes, settings and TOTP secrets are encrypted. Saved secrets remain in the Sidecar; the UI receives only metadata and codes. Save and edit dialogs accept a name and an optional multiline note of up to 500 characters. Existing entries without notes remain compatible. Accounts support search (including notes), editing, ordering and confirmed deletion. The account list appears on the right on desktop and below the codes in narrow windows. Previous and next period codes are always visible when codes are available.
+
+Existing password-protected lists require the original password once to migrate; migration updates both data copies. Missing or inaccessible system credentials produce an error without resetting data or falling back to plaintext. Linux requires a running, unlocked Secret Service. Other applications running as the same system user may be able to access the credential; this mode does not provide a separate application password boundary. Copying data files alone to a different computer or system account usually cannot restore accounts. Keep the service's recovery codes or original authenticator details.
+
+Manual input remains available without saving. Leaving the page clears UI inputs and codes. Locking or closing the workbench clears the Sidecar's unlocked state; system-protected accounts reopen automatically on next access. `totp-store.lock` coordinates processes and system-protected lists reload concurrent changes before editing. Existing TOTP entries in the toolbox key vault are not imported automatically.
+
 The official host supplies a `DBX_PLUGIN_DATA_DIR` ending in `plugin-data/<id>`. Custom environments are namespaced with `io.github.aili0617.toolbox`:
 
 ```text
@@ -128,7 +146,9 @@ plugin-data/
     ├── prefs.json
     ├── prefs.json.bak
     ├── keystore
-    └── keystore.bak
+    ├── keystore.bak
+    ├── totp-store
+    └── totp-store.bak
 ```
 
 - Preference and vault files are backed up separately.
@@ -235,3 +255,8 @@ Do not open a public issue for a potential vulnerability involving keys, credent
 ## License
 
 Released under the [Apache License 2.0](LICENSE).
+
+
+## Product reliability update
+
+The toolbox now protects unsaved session content, keeps PDF/GIF/OCR jobs running across tool navigation, and supports encrypted vault backup previews with append-only restore. Session content is not restored after closing the workbench. OCR models download only at the user’s request; processed content stays local. The TOTP page is undergoing separate debugging and its integration acceptance is deferred. See [delivery and acceptance notes](docs/产品完善实施与验收.md) and [host capability mapping](docs/DBX宿主能力映射.md).

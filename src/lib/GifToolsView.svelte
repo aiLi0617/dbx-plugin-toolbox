@@ -1,15 +1,19 @@
 <script>
+  import GifWorker from "./gifGenerateWorker.js?worker&inline";
+  import { createTaskScope, taskAbortError } from "./taskManager.js";
   import { onDestroy } from "svelte";
   import Select from "./Select.svelte";
-  import { loadAssetModule } from "./assetModules.js";
   import { createTaskGate, imageDrawRect, imageInputError, validateCanvasSize, validateImageFiles } from "./imageBatch.js";
   import { localizeError, pick } from "./i18n.js";
   import { saveBlobThroughHost } from "./fileSave.js";
 
-  let { locale = "zh-CN" } = $props(); const t = (zh, en) => pick(locale, zh, en);
+  let { locale = "zh-CN", onStateChange } = $props(); const t = (zh, en) => pick(locale, zh, en);
   let frames = $state([]); let width = $state(480); let height = $state(320); let delay = $state(300); let repeat = $state(0); let colors = $state(128); let fit = $state("contain"); let background = $state("#ffffff"); let outputUrl = $state(""); let outputBlob = $state(null); let busy = $state(false); let progress = $state(""); let error = $state("");
+  const scope = createTaskScope("gif-tools", "gif");
+  let savedBlob = $state(null);
+  $effect(() => { onStateChange?.({busy, dirty: frames.length > 0 && (!outputBlob || outputBlob !== savedBlob), hasUnsavedResult: !!outputBlob && outputBlob !== savedBlob, export: outputBlob ? save : null, retry: frames.length > 1 ? generate : null}); });
   const tasks = createTaskGate(); const fitOptions = ["contain", "cover", "stretch"].map((value) => ({ value, label: t({ contain: "完整显示", cover: "填满裁切", stretch: "拉伸" }[value], value) }));
-  onDestroy(() => { tasks.cancel(); frames.forEach((frame) => URL.revokeObjectURL(frame.url)); if (outputUrl) URL.revokeObjectURL(outputUrl); });
+  onDestroy(() => { scope.dispose(); tasks.cancel(); frames.forEach((frame) => URL.revokeObjectURL(frame.url)); if (outputUrl) URL.revokeObjectURL(outputUrl); });
   async function onFiles(event) {
     tasks.cancel(); busy = false;
     error = "";
@@ -32,20 +36,41 @@
   function loadImage(file) { return new Promise((resolve, reject) => { const image = new Image(); const url = URL.createObjectURL(file); image.onload = () => { URL.revokeObjectURL(url); resolve(image); }; image.onerror = () => { URL.revokeObjectURL(url); reject(new Error(t("无法解码其中一张图片", "Could not decode one of the images"))); }; image.src = url; }); }
   function move(index, delta) { const target = index + delta; if (target < 0 || target >= frames.length) return; const next = [...frames]; [next[index], next[target]] = [next[target], next[index]]; frames = next; }
   function remove(index) { if (frames.length <= 2) { error = t("GIF 至少需要两帧", "A GIF requires at least two frames"); return; } const frame = frames[index]; URL.revokeObjectURL(frame.url); frames = frames.filter((_, item) => item !== index); if (outputUrl) URL.revokeObjectURL(outputUrl); outputUrl = ""; outputBlob = null; }
-  function cancel() { tasks.cancel(); busy = false; progress = t("已取消", "Cancelled"); }
+  function cancel() { scope.cancel(); tasks.cancel(); busy = false; progress = t("已取消", "Cancelled"); }
   async function generate() {
-    if (frames.length < 2 || busy) return; const token = tasks.begin(); busy = true; error = ""; progress = t("准备帧…", "Preparing frames…");
+    if (frames.length < 2 || busy) return;
+    busy = true; error = ''; progress = t('准备帧…','Preparing frames…');
     try {
-      const { width: w, height: h } = validateCanvasSize(width, height, { maxSide: 1200, maxPixels: 1_440_000 });
-      if (w * h * frames.length > 80_000_000) throw new Error(t("帧像素总量超过 8000 万", "Total frame pixels exceed 80 million"));
-      const canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; const context = canvas.getContext("2d", { willReadFrequently: true }); const prepared = [];
-      for (let i = 0; i < frames.length; i += 1) { if (!tasks.isCurrent(token)) return; progress = t(`准备第 ${i + 1}/${frames.length} 帧`, `Preparing frame ${i + 1}/${frames.length}`); context.fillStyle = background; context.fillRect(0,0,w,h); const rect = imageDrawRect(frames[i].image.naturalWidth, frames[i].image.naturalHeight, w, h, fit); context.drawImage(frames[i].image, rect.sx, rect.sy, rect.sw, rect.sh, rect.dx, rect.dy, rect.dw, rect.dh); prepared.push({ ...context.getImageData(0,0,w,h), delay: Math.max(20, Math.min(10_000, Number(frames[i].delay ?? delay) || 100)) }); await new Promise((resolve) => setTimeout(resolve)); }
-      if (!tasks.isCurrent(token)) return; progress = t("编码 GIF…", "Encoding GIF…"); const module = await loadAssetModule("gif"); const blob = module.encodeGif(prepared,w,h,{delay:Number(delay)||100,repeat:Number(repeat)||0,colors:Number(colors)||128});
-      if (!tasks.isCurrent(token)) return;
-      if (outputUrl) URL.revokeObjectURL(outputUrl); outputBlob = blob; outputUrl = URL.createObjectURL(blob); progress = `${frames.length} ${t("帧", "frames")} · ${(blob.size/1024).toFixed(1)} KB`;
-    } catch (cause) { if (tasks.isCurrent(token)) { error = imageInputError(cause, t); progress = ""; } } finally { if (tasks.isCurrent(token)) busy = false; }
+      await scope.run(async task => {
+        const {width:w,height:h} = validateCanvasSize(width,height,{maxSide:1200,maxPixels:1_440_000});
+        if (w*h*frames.length > 80_000_000) throw new Error(t('帧像素总量超过 8000 万','Total frame pixels exceed 80 million'));
+        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        const context=canvas.getContext('2d',{willReadFrequently:true}), prepared=[];
+        for(let i=0;i<frames.length;i++) {
+          task.check(); task.update({stage:'transform',progress:i/frames.length});
+          context.fillStyle=background;context.fillRect(0,0,w,h);
+          const rect=imageDrawRect(frames[i].image.naturalWidth,frames[i].image.naturalHeight,w,h,fit);
+          context.drawImage(frames[i].image,rect.sx,rect.sy,rect.sw,rect.sh,rect.dx,rect.dy,rect.dw,rect.dh);
+          prepared.push({data:context.getImageData(0,0,w,h).data,delay:Math.max(20,Math.min(10_000,Number(frames[i].delay ?? delay)||100))});
+          await new Promise(resolve=>setTimeout(resolve));
+        }
+        task.check();task.update({stage:'encode'}); progress=t('编码 GIF…','Encoding GIF…');
+        const blob=await new Promise((resolve,reject)=>{
+          const worker=new GifWorker();
+          const cleanup=()=>{worker.terminate();task.signal.removeEventListener('abort',abort);};
+          const abort=()=>{cleanup();reject(taskAbortError());};
+          task.signal.addEventListener('abort',abort,{once:true});
+          worker.onmessage=({data})=>{cleanup();data.error?reject(new Error(data.error)):resolve(data.blob);};
+          worker.onerror=()=>{cleanup();reject(new Error('GIF worker failed'));};
+          worker.postMessage({frames:prepared,width:w,height:h,options:{delay:Number(delay)||100,repeat:Number(repeat)||0,colors:Number(colors)||128}},prepared.map(frame=>frame.data.buffer));
+        });
+        task.check();if(outputUrl)URL.revokeObjectURL(outputUrl);outputBlob=blob;outputUrl=URL.createObjectURL(blob);
+        progress=(blob.size/1024).toFixed(1)+' KB';
+      });
+    } catch(cause) { error=cause?.name==='AbortError'?'':imageInputError(cause,t); }
+    finally { busy=false; }
   }
-  async function save() { if (!outputBlob) return; try { await saveBlobThroughHost(outputBlob,{fileName:"animation.gif",mimeType:"image/gif",title:t("保存 GIF","Save GIF"),binary:true}); } catch(cause){error=localizeError(locale,cause);} }
+  async function save() { if(!outputBlob)return false;try{const value=outputBlob;const result=await saveBlobThroughHost(value,{fileName:'animation.gif',mimeType:'image/gif',binary:true});if(result?.cancelled)return false;savedBlob=value;onStateChange?.({dirty:false,hasUnsavedResult:false});return true;}catch(cause){error=localizeError(locale,cause);return false;} }
 </script>
 
 <div class="page"><div class="toolbar"><label class="dbx-btn file">{frames.length?t("更换帧","Replace frames"):t("选择图片序列","Choose image sequence")}<input type="file" accept="image/*" multiple onchange={onFiles}/></label><div>{#if outputBlob}<button class="dbx-btn" type="button" onclick={save}>{t("保存 GIF","Save GIF")}</button>{/if}{#if busy}<button class="dbx-btn" type="button" onclick={cancel}>{t("取消","Cancel")}</button>{/if}<button class="dbx-btn dbx-btn--primary" type="button" onclick={generate} disabled={busy||frames.length<2}>{busy?t("处理中…","Working…"):t("生成 GIF","Generate GIF")}</button></div></div>

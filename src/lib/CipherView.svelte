@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from "svelte";
   import CopyButton from "./CopyButton.svelte";
   import IoSplit from "./IoSplit.svelte";
   import KeySourceBar from "./KeySourceBar.svelte";
@@ -6,7 +7,8 @@
   import { localizeError, pick } from "./i18n.js";
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
-  import { AES_ALGORITHMS, AES_MODES, SM4_MODES, asymmetricCipherProfile, symmetricCipherProfile } from "./cipherProfile.js";
+  import { AES_ALGORITHMS, AES_MODES, SM4_MODES } from "./cipherProfile.js";
+  import { readCipherDefaults, saveCipherDefaults, clearCipherDefaults, resolveCipherDefaults } from "./cipherDefaults.js";
   import { parameterSupportLevel } from "./cryptoCapabilities.js";
   import { runAsymmetric, runSymmetricDetailed, runXor, RSA_OAEP_HASHES, RSA_PADDINGS } from "./tools/encode.js";
 
@@ -40,26 +42,55 @@
   let tag = $state("");
   let resultMeta = $state(null);
   let busy = $state(false);
+  let configStatus = $state("");
+  let configError = $state(false);
   const sm4Tool = $derived(kind === "aes" && toolId === "sm4");
   const fixedRsaPadding = $derived(toolId === "rsa-oaep" ? "oaep" : toolId === "rsa-pkcs1" ? "pkcs1" : "");
   const requiredPurpose = $derived(kind === "aes" ? (sm4Tool ? "sm4-cipher" : "aes-cipher") : kind === "rsa" ? (algorithm === "sm2" ? "sm2-encrypt" : "rsa-encrypt") : kind === "xor" ? "debug-xor" : "");
   const allowedKeyAlgorithms = $derived(kind === "aes" ? [algorithm] : kind === "rsa" ? [algorithm === "sm2" ? "sm2" : "rsa-pem"] : []);
 
   $effect(() => {
+    const nextKind = kind;
+    const nextToolId = toolId;
     const options = initialOptions;
-    if (kind === "rsa") {
-      algorithm = asymmetricCipherProfile(toolId);
-    } else if (kind === "aes") {
-      const profile = symmetricCipherProfile(toolId, options);
-      algorithm = profile.algorithm;
-      mode = profile.mode;
-      sm4Mode = profile.sm4Mode;
-    }
-    op = options.op === "decrypt" ? "decrypt" : "encrypt";
-    padding = fixedRsaPadding || (options.padding === "pkcs1" ? "pkcs1" : "oaep");
-    oaepHash = RSA_OAEP_HASHES.includes(options.oaepHash) ? options.oaepHash : "sha256";
-    outputEncoding = ["utf8", "hex", "base64"].includes(options.outputEncoding) ? options.outputEncoding : "utf8";
+    untrack(() => {
+      applyConfiguration(resolveCipherDefaults(nextKind, nextToolId, readCipherDefaults(nextKind, nextToolId), options));
+      configStatus = "";
+    });
   });
+
+  function applyConfiguration(options) {
+    ({ op, algorithm, mode, sm4Mode, padding, oaepHash, outputEncoding, inputHex,
+      source, keyEncoding, payloadFormat, cipherEncoding, parameterEncoding, plainEncoding, aadEncoding } = options);
+    iv = "";
+    tag = "";
+    aad = "";
+  }
+
+  function saveConfiguration() {
+    try {
+      saveCipherDefaults(kind, toolId, { op, algorithm, mode, sm4Mode, padding, oaepHash,
+        outputEncoding, inputHex, source, keyEncoding, payloadFormat, cipherEncoding,
+        parameterEncoding, plainEncoding, aadEncoding });
+      configError = false;
+      configStatus = t("已保存，下次打开此工具时生效。", "Saved for the next time you open this tool.");
+    } catch {
+      configError = true;
+      configStatus = t("无法保存配置，请检查本地存储是否可用。", "Could not save configuration. Check that local storage is available.");
+    }
+  }
+
+  function resetConfiguration() {
+    try {
+      clearCipherDefaults(kind, toolId);
+      applyConfiguration(resolveCipherDefaults(kind, toolId));
+      configError = false;
+      configStatus = t("已恢复初始配置，并清除已保存的默认配置。", "Restored initial settings and removed saved defaults.");
+    } catch {
+      configError = true;
+      configStatus = t("无法恢复配置，请检查本地存储是否可用。", "Could not reset configuration. Check that local storage is available.");
+    }
+  }
 
   const picker = $derived.by(() => {
     if (kind === "aes") return algorithm === "sm4-128" ? "sm4-128" : "aes";
@@ -186,6 +217,14 @@
 </script>
 
 <div class="page">
+  <div class="config-toolbar">
+    <span class="dbx-hint">{t("默认配置仅保存选项，不保存密钥或输入内容。", "Defaults save options only, without keys or input content.")}</span>
+    <div class="config-actions">
+      <button class="dbx-btn" type="button" onclick={saveConfiguration}>{t("保存为默认配置", "Save as default")}</button>
+      <button class="dbx-btn" type="button" onclick={resetConfiguration}>{t("恢复初始配置", "Restore initial settings")}</button>
+    </div>
+  </div>
+  {#if configStatus}<p class:error={configError} class="dbx-hint" role="status">{configStatus}</p>{/if}
   <div class="options">
     {#if kind !== "xor"}
       <div class="field">
@@ -433,6 +472,14 @@
 </div>
 
 <style>
+  .config-toolbar, .config-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .config-toolbar { justify-content: space-between; }
+  .config-toolbar .dbx-hint { margin: 0; }
   .page {
     flex: 1;
     min-height: 0;

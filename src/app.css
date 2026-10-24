@@ -108,6 +108,14 @@ html.dark {
 }
 
 * { box-sizing: border-box; }
+.expansion-page { display:flex; flex-direction:column; gap:12px; width:100%; max-width:1000px; margin:0 auto; padding:16px; overflow:auto; }
+.expansion-page > label { display:flex; flex-direction:column; gap:6px; font-size:13px; }
+.expansion-page input[type="checkbox"] { margin-right:6px; }
+.expansion-page textarea { width:100%; min-height:90px; }
+.expansion-page p { font-size:12px; color:var(--color-muted-foreground); overflow-wrap:anywhere; }
+.expansion-page [role="alert"] { color:var(--color-destructive); }
+.expansion-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.expansion-page article { padding:12px; border:1px solid var(--color-border); border-radius:var(--radius-md); }
 
 .sr-only {
   position: absolute;
@@ -198,7 +206,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background: transparent;
   cursor: pointer;
 }
-:where(input[type="range"]::-webkit-slider-runnable-track) {
+:where(input[type="range"])::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
   background: linear-gradient(
@@ -207,7 +215,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     var(--dbx-range-track) var(--dbx-range-progress) 100%
   );
 }
-:where(input[type="range"]::-webkit-slider-thumb) {
+:where(input[type="range"])::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   margin-top: -5px;
@@ -218,7 +226,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-border);
 }
-:where(input[type="range"]::-moz-range-track) {
+:where(input[type="range"])::-moz-range-track {
   height: 4px;
   border: 0;
   border-radius: 999px;
@@ -228,7 +236,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     var(--dbx-range-track) var(--dbx-range-progress) 100%
   );
 }
-:where(input[type="range"]::-moz-range-thumb) {
+:where(input[type="range"])::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border: 2px solid var(--color-background, Canvas);
@@ -244,12 +252,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   outline: none;
   box-shadow: none;
 }
-:where(input[type="range"]:focus-visible::-webkit-slider-thumb) {
+:where(input[type="range"]:focus-visible)::-webkit-slider-thumb {
   box-shadow:
     0 0 0 1px var(--color-border),
     inset 0 0 0 1px var(--color-ring, var(--color-primary));
 }
-:where(input[type="range"]:focus-visible::-moz-range-thumb) {
+:where(input[type="range"]:focus-visible)::-moz-range-thumb {
   box-shadow:
     0 0 0 1px var(--color-border),
     inset 0 0 0 1px var(--color-ring, var(--color-primary));

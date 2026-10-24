@@ -1,4 +1,7 @@
 <script>
+  import SearchObjectFilter from "./SearchObjectFilter.svelte";
+  import { matchesObject } from "./searchObjects.js";
+  let searchObject = $state("all");
   import { onMount } from "svelte";
   import { searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
@@ -14,12 +17,12 @@
     const seen = new Set();
     return [...favorites, ...recents, ...visibleTools]
       .filter((item) => item.catalogVisible !== false && !seen.has(item.id) && seen.add(item.id))
-      .slice(0, 14)
+      .slice(0, Math.max(14, favorites.length + recents.length))
       .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const results = $derived(query.trim() ? searchToolMatches(query, locale, visibleTools).slice(0, 30) : defaultMatches);
+  const results = $derived(query.trim() ? searchToolMatches(query, locale, visibleTools).filter(match => matchesObject(match.tool, searchObject)).slice(0, 30) : defaultMatches);
 
-  $effect(() => { query; selected = 0; });
+  $effect(() => { query; searchObject; selected = 0; });
   onMount(() => {
     const previous = document.activeElement;
     inputEl?.focus();
@@ -57,6 +60,7 @@
       <input bind:this={inputEl} bind:value={query} name="toolbox-launcher-query" autocomplete="off" aria-label={t(chrome.search)} aria-controls="tool-launcher-results" aria-activedescendant={results.length ? `tool-result-${selected}` : undefined} placeholder={t(chrome.searchPlaceholderEllipsis)} />
       <kbd>Esc</kbd>
     </div>
+    {#if query.trim()}<SearchObjectFilter {locale} value={searchObject} onChange={value => searchObject = value}/>{/if}
     <div class="results" role="listbox" id="tool-launcher-results" aria-label={t(chrome.searchResultsLabel)}>
       <div class="result-label">{query.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
       {#each results as match, index (match.tool.id)}

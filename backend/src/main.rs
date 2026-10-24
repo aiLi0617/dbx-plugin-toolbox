@@ -6,8 +6,10 @@ mod keystore;
 mod ocr;
 mod ocr_alphabet;
 mod ocr_models;
+mod pdf;
 mod ports;
 mod prefs;
+mod totp_store;
 
 use std::sync::Mutex;
 
@@ -25,6 +27,7 @@ struct Plugin {
     hash_sessions: Mutex<crypto::HashSessions>,
     save_sessions: Mutex<fsutil::SaveSessions>,
     ocr: ocr::OcrService,
+    pdf: pdf::PdfService,
 }
 
 impl PluginHandler for Plugin {
@@ -35,7 +38,7 @@ impl PluginHandler for Plugin {
         params: Value,
         emitter: &PluginEmitter,
     ) -> Result<Value, PluginError> {
-        if method.starts_with("toolbox/keys/") {
+        if method.starts_with("toolbox/keys/") || method.starts_with("toolbox/totp/") {
             let mut vault = self
                 .vault
                 .lock()
@@ -54,6 +57,9 @@ impl PluginHandler for Plugin {
         }
         if method.starts_with("toolbox/ocr/") {
             return self.ocr.handle(method, params, emitter);
+        }
+        if method.starts_with("toolbox/pdf/") {
+            return self.pdf.handle(method, params);
         }
         if method == "toolbox/save-file"
             || method.starts_with("toolbox/save-file-stream/")
@@ -90,7 +96,11 @@ impl PluginHandler for Plugin {
         data: Vec<u8>,
         _emitter: &PluginEmitter,
     ) -> Result<(), PluginError> {
-        self.ocr.handle_binary(channel, data)
+        if channel.starts_with("toolbox/pdf/") {
+            self.pdf.handle_binary(channel, data)
+        } else {
+            self.ocr.handle_binary(channel, data)
+        }
     }
 }
 

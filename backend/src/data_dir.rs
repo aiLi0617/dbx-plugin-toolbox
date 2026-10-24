@@ -2,15 +2,18 @@ use std::ffi::OsString;
 use std::fs::{self, OpenOptions};
 use std::io;
 use std::path::{Path, PathBuf};
+use std::thread;
+use std::time::{Duration, SystemTime};
 
 use dbx_plugin_sdk::PluginError;
 
 use crate::helpers::err;
 
 const PLUGIN_ID: &str = "io.github.aili0617.toolbox";
-const GROUPS: [[&str; 2]; 2] = [
+const GROUPS: [[&str; 2]; 3] = [
     ["prefs.json", "prefs.json.bak"],
     ["keystore", "keystore.bak"],
+    ["totp-store", "totp-store.bak"],
 ];
 const MIGRATED: &str = ".legacy-migration-v1.done";
 const PENDING: &str = ".legacy-migration-v1.pending";
@@ -49,15 +52,10 @@ fn regular_file_exists(path: &Path) -> io::Result<bool> {
 
 fn migrate_legacy(target: &Path, legacy: &Path) -> io::Result<()> {
     fs::create_dir_all(target)?;
-    // OS-backed lock is released even if a Sidecar crashes. Keep the lock file
-    // so concurrent Sidecars cannot accidentally lock different file objects.
-    let lock = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(target.join(".legacy-migration-v1.lock"))?;
-    lock.lock()?;
+    // `File::lock` maps to LockFileEx on Windows, which can return ERROR_ACCESS_DENIED
+    // for files created in some redirected/temp directories. An atomically-created
+    // lock file is portable and also makes the ownership lifetime explicit.
+    let _lock = MigrationLock::acquire(target)?;
     if regular_file_exists(&target.join(MIGRATED))? {
         return Ok(());
     }
@@ -121,6 +119,47 @@ fn migrate_legacy(target: &Path, legacy: &Path) -> io::Result<()> {
         .sync_all()?;
     cleanup_snapshot(&pending);
     Ok(())
+}
+
+struct MigrationLock {
+    path: PathBuf,
+}
+
+impl MigrationLock {
+    fn acquire(target: &Path) -> io::Result<Self> {
+        let path = target.join(".legacy-migration-v1.lock");
+        for _ in 0..300 {
+            match OpenOptions::new().write(true).create_new(true).open(&path) {
+                Ok(file) => {
+                    file.sync_all()?;
+                    return Ok(Self { path });
+                }
+                Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+                    let stale = fs::metadata(&path)
+                        .and_then(|meta| meta.modified())
+                        .ok()
+                        .and_then(|modified| SystemTime::now().duration_since(modified).ok())
+                        .is_some_and(|age| age > Duration::from_secs(30));
+                    if stale {
+                        let _ = fs::remove_file(&path);
+                    } else {
+                        thread::sleep(Duration::from_millis(10));
+                    }
+                }
+                Err(error) => return Err(error),
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::TimedOut,
+            "Timed out waiting for migration lock",
+        ))
+    }
+}
+
+impl Drop for MigrationLock {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.path);
+    }
 }
 
 fn cleanup_snapshot(directory: &Path) {

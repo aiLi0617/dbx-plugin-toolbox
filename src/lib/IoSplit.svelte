@@ -40,7 +40,7 @@
       <div class="caption-row">
         <span class="dbx-label caption">{left}</span>
         {#if inputActions}<span class="caption-actions">{@render inputActions()}</span>{/if}
-        <button class="dbx-btn dbx-btn--ghost small-action" type="button" disabled={clearIsDisabled} onclick={clearInput}>{t("清空", "Clear")}</button>
+        <button class="dbx-btn dbx-btn--ghost small-action" type="button" disabled={clearIsDisabled} data-replaces-content onclick={clearInput}>{t("清空", "Clear")}</button>
       </div>
       {#if language}
         <CodeEditor bind:value={input} {locale} {language} placeholder={inputPlaceholder} label={left} />

@@ -1,4 +1,7 @@
 <script>
+  import SearchObjectFilter from "./SearchObjectFilter.svelte";
+  import { matchesObject } from "./searchObjects.js";
+  let searchObject = $state("all");
   import { CATEGORY_ORDER, searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
   import { HOME_INTENT_EXAMPLES, HOME_SEARCH_TEXT } from "./searchIntent.js";
@@ -25,7 +28,7 @@
       .slice(0, 8)
       .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const searchResults = $derived(searchQuery.trim() ? searchToolMatches(searchQuery, locale, visibleTools).slice(0, 8) : defaultSearchMatches);
+  const searchResults = $derived(searchQuery.trim() ? searchToolMatches(searchQuery, locale, visibleTools).filter(match => matchesObject(match.tool, searchObject)).slice(0, 8) : defaultSearchMatches);
 
   $effect(() => { searchQuery; searchSelected = 0; });
 
@@ -161,6 +164,7 @@
           <kbd>Ctrl K</kbd>
         {/if}
       </div>
+      {#if searchQuery.trim()}<SearchObjectFilter {locale} value={searchObject} onChange={value => { searchObject = value; searchActive = true; }}/>{/if}
       {#if searchActive}
         <div class="home-search-results" id="home-search-results" role="listbox" aria-label={t(chrome.searchResultsLabel)}>
           <div class="search-result-label">{searchQuery.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
@@ -180,7 +184,7 @@
               <em>{pick(locale, categories[match.tool.category])}</em>
             </button>
           {:else}
-            <p class="search-empty">{t(chrome.empty)}</p>
+            <p class="search-empty">{t(chrome.empty)}</p><button type="button" onclick={() => { searchObject = "all"; searchQuery = "JSON → CSV"; }}>{pick(locale, "试试 JSON → CSV", "Try JSON → CSV")}</button>
           {/each}
         </div>
       {/if}
@@ -197,7 +201,7 @@
     <section class="home-section">
       <div class="section-head"><div><h3>{t(chrome.recent)}</h3><p>{t(chrome.recentHint)}</p></div></div>
       <div class="recent-grid">
-        {#each recents.slice(0, 8) as item (item.id)}
+        {#each recents as item (item.id)}
           <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
         {/each}
       </div>
@@ -315,7 +319,7 @@
   .ghost-star { color:var(--color-warning); font-size:16px; text-align:center; }
   .drag,.star { position:relative; z-index:2; height:32px; padding:0; border:0; background:transparent; color:var(--color-muted-foreground); }
   .drag { grid-column:1; cursor:grab; opacity:.45; }.tool-card:hover .drag,.drag:focus-visible{opacity:1}.star{grid-column:3}.star.active{color:var(--color-warning);font-size:16px}
-  .card-open { position:absolute; z-index:1; inset:0; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; padding:11px 36px 11px 30px; border:0; border-radius:inherit; background:transparent; text-align:left; }
+  .card-open { grid-column:2; grid-row:1; z-index:1; display:flex; flex-direction:column; justify-content:center; gap:4px; min-width:0; padding:11px 5px; border:0; border-radius:inherit; background:transparent; text-align:left; }
   .card-open strong { font-size:13px; }.card-open .summary { min-width:0; color:var(--color-muted-foreground); font-size:11px; }
   .recent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:7px; }
   .recent-grid button,.category-grid button { display:flex; align-items:center; justify-content:space-between; gap:8px; height:42px; padding:0 12px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-card); text-align:left; }
@@ -324,4 +328,8 @@
   @container(max-width:600px){.hero{grid-template-columns:1fr;gap:18px}.hero-copy{max-width:420px}.tool-grid{grid-template-columns:1fr}}
   @container(max-width:380px){.intent-examples>span{width:100%}.home-page{gap:22px}.hero{padding:16px}}
   @media(max-width:760px){.home-page{padding:16px}}
+  .drag,.star { grid-row:1; }
+  .card-open strong,.ghost-copy strong,.recent-grid strong { min-width:0; overflow-wrap:anywhere; line-height:1.45; }
+  .recent-grid button { min-height:42px; height:auto; padding-top:8px; padding-bottom:8px; }
+  .recent-grid span { flex-shrink:0; }
 </style>

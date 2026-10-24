@@ -6,13 +6,11 @@
   import { L, localizeError, pick } from "./i18n.js";
   import { normalizeVaultKey } from "./keySource.js";
   import { moveId } from "./navigation.js";
-  import { VAULT_AUTO_LOCK_MINUTES } from "./prefs.js";
   import { RSA_BIT_OPTIONS, RSA_PEM_FORMATS, generateRsaKeyPairPem, generateSymmetricKeyMaterial } from "./tools/generate.js";
 
   let {
     locale = "zh-CN",
-    autoLockMinutes = 15,
-    onAutoLockChange = () => {},
+
     onKeysChange = () => {},
   } = $props();
 
@@ -23,9 +21,6 @@
   let pointerDrag = $state(null);
   let password = $state("");
   let confirmPassword = $state("");
-  let newPassword = $state("");
-  let confirmNewPassword = $state("");
-  let currentPassword = $state("");
   let error = $state("");
   let notice = $state("");
   let busy = $state(false);
@@ -53,17 +48,12 @@
   let highlightTimer;
   const formCopy = {
     keyType: L("Filter by key type", "密钥类型", "金鑰類型", "Filtrar por tipo de clave", "Filtra per tipo di chiave", "鍵の種類で絞り込み", "Filtrar por tipo de chave", "키 유형별 필터", "Anahtar türüne göre filtrele", "Açar növünə görə süzgəc"),
-    password: L("Change master password", "修改主密码", "修改主密碼", "Cambiar contraseña maestra", "Modifica password principale", "マスターパスワードを変更", "Alterar senha mestra", "마스터 비밀번호 변경", "Ana şifreyi değiştir", "Əsas parolu dəyiş"),
     unsaved: L("Discard unsaved changes?", "放弃未保存的更改？", "放棄未儲存的變更？", "¿Descartar los cambios sin guardar?", "Scartare le modifiche non salvate?", "未保存の変更を破棄しますか？", "Descartar alterações não salvas?", "저장하지 않은 변경 사항을 삭제할까요?", "Kaydedilmemiş değişiklikler silinsin mi?", "Saxlanmamış dəyişikliklər ləğv edilsin?"),
     discard: L("Discard changes", "放弃更改", "放棄變更", "Descartar cambios", "Scarta modifiche", "変更を破棄", "Descartar alterações", "변경 사항 삭제", "Değişiklikleri sil", "Dəyişiklikləri ləğv et"),
     keep: L("Keep editing", "继续编辑", "繼續編輯", "Seguir editando", "Continua a modificare", "編集を続ける", "Continuar editando", "계속 편집", "Düzenlemeye devam et", "Redaktəyə davam et"),
   };
 
   const t = (zh, en) => pick(locale, zh, en);
-  const autoLockOptions = $derived(VAULT_AUTO_LOCK_MINUTES.map((minutes) => ({
-    value: minutes,
-    label: minutes === 0 ? t("从不", "Never") : t(`${minutes} 分钟`, `${minutes} min`),
-  })));
   const pasteExisting = $derived(createMode === "paste");
   const generatingAsym = $derived(!pasteExisting && (createAlg === "rsa-pem" || createAlg === "sm2"));
   const keyTypeOptions = $derived.by(() => {
@@ -125,9 +115,6 @@
     keyType = "all";
     password = "";
     confirmPassword = "";
-    currentPassword = "";
-    newPassword = "";
-    confirmNewPassword = "";
     createMaterial = "";
     createPublicMaterial = "";
     purposeEdit = null;
@@ -149,9 +136,6 @@
     createFormat = "pkcs8";
     createMaterial = "";
     createPublicMaterial = "";
-    currentPassword = "";
-    newPassword = "";
-    confirmNewPassword = "";
     formError = "";
     fieldErrors = {};
     discardPending = false;
@@ -177,9 +161,7 @@
 
   function requestCloseManagement() {
     if (busy) return;
-    const dirty = panel === "create"
-      ? Boolean(createName || createMaterial || createPublicMaterial || createAlg !== "aes-256" || createMode !== "generate" || createBits !== "2048" || createFormat !== "pkcs8")
-      : panel === "password" && Boolean(currentPassword || newPassword || confirmNewPassword);
+    const dirty = panel === "create" && Boolean(createName || createMaterial || createPublicMaterial || createAlg !== "aes-256" || createMode !== "generate" || createBits !== "2048" || createFormat !== "pkcs8");
     if (dirty) discardPending = true;
     else closeManagement();
   }
@@ -286,25 +268,6 @@
       notice = "";
       await refresh();
     });
-  }
-
-  async function changePassword() {
-    if (busy || discardPending) return;
-    fieldErrors = {};
-    formError = "";
-    if (passwordTooShort(currentPassword)) fieldErrors.currentPassword = t("主密码至少 8 位", "Master password must be at least 8 characters");
-    if (passwordTooShort(newPassword)) fieldErrors.newPassword = t("主密码至少 8 位", "Master password must be at least 8 characters");
-    if (newPassword !== confirmNewPassword) fieldErrors.confirmNewPassword = t("两次输入的新密码不一致", "New passwords do not match");
-    if (Object.keys(fieldErrors).length) return;
-    await run(async () => {
-      await invoke("toolbox/keys/change-password", { currentPassword, newPassword }, 60000);
-      currentPassword = "";
-      newPassword = "";
-      confirmNewPassword = "";
-      clearManagement();
-      ok(t("主密码已更新", "Master password updated"));
-    }, (err) => { if (panel) formError = errorText(err); else fail(err); });
-    if (!panel) { await tick(); managementTrigger?.focus(); }
   }
 
   async function createKey() {
@@ -655,6 +618,8 @@
   });
 </script>
 
+
+
 <div class="vault">
   {#if !status.exists}
     {#if error}<div class="banner">{error}</div>{/if}
@@ -695,8 +660,6 @@
       </div>
       <div class="status-actions">
         {#if !keys.length}<button class="dbx-btn dbx-btn--primary" disabled={busy} onclick={(event) => openManagement("create", event)} type="button">{t("添加密钥", "Add key")}</button>{/if}
-        <label class="field auto-lock"><span>{t("自动锁定", "Auto-lock")}</span><Select value={autoLockMinutes} options={autoLockOptions} onchange={(value) => onAutoLockChange(Number(value))} /></label>
-        <button class="dbx-btn" disabled={busy} onclick={(event) => openManagement("password", event)} type="button">{pick(locale, formCopy.password)}</button>
         <button class="dbx-btn" disabled={busy} onclick={lock} type="button">{t("锁定", "Lock")}</button>
       </div>
     </div>
@@ -808,7 +771,7 @@
     {#if panel}
     <div class="overlay" onclick={onOverlayClick} role="presentation">
     <div class="dialog management-dialog" bind:this={managementDialog} role="dialog" aria-modal="true" aria-labelledby="vault-management-title" aria-busy={busy}>
-      <div class="management-head"><strong id="vault-management-title">{panel === "create" ? t("添加密钥", "Add key") : pick(locale, formCopy.password)}</strong><button class="dbx-btn management-close" disabled={busy} type="button" onclick={requestCloseManagement}>{t("关闭", "Close")}</button></div>
+      <div class="management-head"><strong id="vault-management-title">{t("添加密钥", "Add key")}</strong><button class="dbx-btn management-close" disabled={busy} type="button" onclick={requestCloseManagement}>{t("关闭", "Close")}</button></div>
       {#if discardPending}
         <div class="discard-notice" role="alert"><p>{pick(locale, formCopy.unsaved)}</p><div class="purpose-actions"><button class="dbx-btn" type="button" onclick={() => (discardPending = false)}>{pick(locale, formCopy.keep)}</button><button class="dbx-btn dbx-btn--danger" type="button" onclick={closeManagement}>{pick(locale, formCopy.discard)}</button></div></div>
       {/if}
@@ -895,30 +858,6 @@
         {/if}
         </fieldset>
         <div class="management-footer"><button class="dbx-btn" disabled={busy} onclick={requestCloseManagement} type="button">{t("取消", "Cancel")}</button><button class="dbx-btn dbx-btn--primary" disabled={busy || discardPending} onclick={createKey} type="button">{busy ? generatingAsym ? t("生成中…", "Generating…") : t("保存中…", "Saving…") : t("保存", "Save")}</button></div>
-      </div>
-    {:else}
-      <div class="stack">
-        <fieldset disabled={busy} class="management-fields password-fields">
-          <label class="field">
-            <span>{t("当前主密码", "Current password")}</span>
-            <input class="dbx-input" type="password" bind:value={currentPassword} aria-invalid={Boolean(fieldErrors.currentPassword)} aria-describedby={fieldErrors.currentPassword ? "current-password-error" : undefined} autocomplete="current-password" onkeydown={(event) => onEnter(event, changePassword)} />
-            {#if fieldErrors.currentPassword}<small id="current-password-error" class="field-error">{fieldErrors.currentPassword}</small>{/if}
-          </label>
-          <label class="field">
-            <span>{t("新主密码", "New password")}</span>
-            <input class="dbx-input" type="password" bind:value={newPassword} aria-invalid={Boolean(fieldErrors.newPassword)} aria-describedby={fieldErrors.newPassword ? "new-password-error" : undefined} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
-            {#if fieldErrors.newPassword}<small id="new-password-error" class="field-error">{fieldErrors.newPassword}</small>{/if}
-          </label>
-          <label class="field">
-            <span>{t("再输入一次", "Confirm new")}</span>
-            <input class="dbx-input" type="password" bind:value={confirmNewPassword} aria-invalid={Boolean(fieldErrors.confirmNewPassword)} aria-describedby={fieldErrors.confirmNewPassword ? "confirm-new-password-error" : undefined} autocomplete="new-password" onkeydown={(event) => onEnter(event, changePassword)} />
-            {#if fieldErrors.confirmNewPassword}<small id="confirm-new-password-error" class="field-error">{fieldErrors.confirmNewPassword}</small>{/if}
-          </label>
-        </fieldset>
-        <div class="management-footer"><button class="dbx-btn" disabled={busy} onclick={requestCloseManagement} type="button">{t("取消", "Cancel")}</button><button class="dbx-btn dbx-btn--primary" disabled={busy || discardPending} onclick={changePassword} type="button">
-            {busy ? t("更新中…", "Updating…") : t("更新", "Update")}
-          </button>
-        </div>
       </div>
     {/if}
     </div>
@@ -1101,9 +1040,6 @@
     align-items: flex-end;
     gap: 8px;
   }
-  .auto-lock :global(.dbx-custom-select) {
-    min-width: 112px;
-  }
   .export-head { align-items: center; }
   .field {
     display: flex;
@@ -1211,7 +1147,6 @@
   .management-fields .options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
   .management-fields .field { min-width:0; }
   .management-fields .field :global(.dbx-custom-select) { width:100%; min-width:0; }
-  .password-fields { width:100%; }
   .management-footer { display:flex; flex:0 0 auto; justify-content:flex-end; align-items:center; gap:8px; margin-top:4px; padding-top:12px; border-top:1px solid var(--color-border); }
   .field-error { color:var(--color-destructive); font-size:11px; line-height:1.5; }
   .discard-notice { padding:12px; border:1px solid var(--color-border); border-radius:8px; background:var(--color-muted); }
@@ -1323,8 +1258,6 @@
     .status, .status-actions { align-items:stretch; }
     .status { flex-direction:column; }
     .status-actions { flex-wrap:wrap; }
-    .auto-lock { flex:1 1 160px; }
-    .auto-lock :global(.dbx-custom-select) { width:100%; }
     .list-filter { max-width:none; }
     .key-card { gap:8px; padding:11px 10px 11px 4px; }
     .key-details { grid-template-columns:repeat(2,minmax(0,1fr)); }

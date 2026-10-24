@@ -467,6 +467,8 @@ mod windows_tests {
     use std::io::{BufRead, BufReader};
     use std::os::windows::process::CommandExt;
     use std::process::{Child, Command, Stdio};
+    use std::sync::mpsc;
+    use std::time::Duration;
 
     struct Fixture(Child);
     impl Drop for Fixture {
@@ -484,10 +486,17 @@ mod windows_tests {
                 "$tcp = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0); $tcp.Start(); $udp = [System.Net.Sockets.UdpClient]::new(0); Write-Output \"$($tcp.LocalEndpoint.Port),$($udp.Client.LocalEndPoint.Port)\"; while ($true) { Start-Sleep -Seconds 1 }"])
             .creation_flags(0x08000000)
             .stdout(Stdio::piped()).stderr(Stdio::null()).spawn().unwrap());
-        let mut line = String::new();
-        BufReader::new(fixture.0.stdout.take().unwrap())
-            .read_line(&mut line)
-            .unwrap();
+        let stdout = fixture.0.stdout.take().unwrap();
+        let (sender, receiver) = mpsc::channel();
+        std::thread::spawn(move || {
+            let mut line = String::new();
+            let result = BufReader::new(stdout).read_line(&mut line).map(|_| line);
+            let _ = sender.send(result);
+        });
+        let line = receiver
+            .recv_timeout(Duration::from_secs(10))
+            .expect("port fixture did not start within 10 seconds")
+            .expect("port fixture failed to write its ports");
         let ports: Vec<u16> = line.trim().split(',').map(|v| v.parse().unwrap()).collect();
         assert_eq!(ports.len(), 2);
         let owner = fixture.0.id();

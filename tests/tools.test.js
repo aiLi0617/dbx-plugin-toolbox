@@ -82,14 +82,14 @@ test("binary bytes and NATO phonetics round trip", () => {
 
 test("catalog cards can only be reordered inside their category", () => {
   const original = catalog.tools.map((tool) => tool.id);
-  const formatIds = catalog.tools.filter((tool) => tool.category === "data").map((tool) => tool.id);
+  const formatIds = catalog.tools.filter((tool) => tool.category === "developer").map((tool) => tool.id);
   assert.ok(formatIds.length > 1);
 
   const moved = catalog.moveToolWithinCategory(original, formatIds[0], formatIds[1], true);
-  const movedFormatIds = moved.filter((id) => catalog.tools.find((tool) => tool.id === id)?.category === "data");
+  const movedFormatIds = moved.filter((id) => catalog.tools.find((tool) => tool.id === id)?.category === "developer");
   assert.deepEqual(movedFormatIds.slice(0, 2), [formatIds[1], formatIds[0]]);
 
-  const otherCategoryId = catalog.tools.find((tool) => tool.category !== "data").id;
+  const otherCategoryId = catalog.tools.find((tool) => tool.category !== "developer").id;
   assert.deepEqual(catalog.moveToolWithinCategory(original, formatIds[0], otherCategoryId, true), original);
 });
 

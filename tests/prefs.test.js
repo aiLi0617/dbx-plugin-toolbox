@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { DEFAULT_SHORTCUTS } from "../src/lib/shortcuts.js";
 import {
   DEFAULT_VAULT_AUTO_LOCK_MINUTES,
   getFavoriteToolIds,
@@ -10,6 +11,7 @@ import {
   setVaultAutoLockMinutes,
   setRecentToolIds,
   setSidebarCollapsed,
+  setShortcuts,
   VAULT_AUTO_LOCK_MINUTES,
 } from "../src/lib/prefs.js";
 
@@ -50,11 +52,46 @@ test("workspace navigation preferences migrate to and persist through the sideca
     globalThis.localStorage = originalStorage;
   });
 
-  assert.deepEqual(await getWorkspacePreferences(true), { recentToolIds: ["uuid"], sidebarCollapsed: false });
+  assert.deepEqual(await getWorkspacePreferences(true), {
+    recentToolIds: ["uuid"],
+    sidebarCollapsed: false,
+    shortcuts: DEFAULT_SHORTCUTS,
+    recentToolLimit: 10,
+  });
   assert.deepEqual(await setRecentToolIds(["hash", "json"]), ["hash", "json"]);
   assert.equal(await setSidebarCollapsed(true), true);
   assert.deepEqual(calls.at(-2), { method: "toolbox/prefs/set", params: { recentToolIds: ["hash", "json"] } });
   assert.deepEqual(calls.at(-1), { method: "toolbox/prefs/set", params: { sidebarCollapsed: true } });
+});
+
+test("shortcut preferences persist through the sidecar with a local fallback", async (t) => {
+  const values = new Map();
+  const calls = [];
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  globalThis.localStorage = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+  globalThis.window = {
+    dbxPlugin: {
+      invoke: async (method, params) => {
+        calls.push({ method, params });
+        return method === "toolbox/prefs/set" ? { shortcuts: params.shortcuts } : {};
+      },
+    },
+  };
+  t.after(() => {
+    globalThis.window = originalWindow;
+    globalThis.localStorage = originalStorage;
+  });
+
+  const saved = await setShortcuts({ search: "Alt+KeyP", home: "", "tool:json": "Mod+Shift+KeyJ" });
+  assert.equal(saved.search, "Alt+KeyP");
+  assert.equal(saved.home, "");
+  assert.equal(saved["tool:json"], "Mod+Shift+KeyJ");
+  assert.deepEqual(calls.at(-1), { method: "toolbox/prefs/set", params: { shortcuts: saved } });
+  assert.equal(JSON.parse(values.get("toolbox.shortcuts")).search, "Alt+KeyP");
 });
 
 test("current sidecar settings override stale local auto-lock state", async (t) => {

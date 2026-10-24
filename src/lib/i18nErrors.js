@@ -4,143 +4,1193 @@ const additionalErrors = {};
 // Exact aliases only: never interpolate an untrusted backend error into UI copy.
 // Keep this copy in the existing error dictionary, with all ten host locales.
 function errorGroup(keys, ...copy) {
-  const locales = ["en", "zh-CN", "zh-TW", "es", "it", "ja", "pt-BR", "ko", "tr", "az"];
-  const translations = Object.fromEntries(locales.map((locale, index) => [locale, copy[index]]));
+  const locales = [
+    "en",
+    "zh-CN",
+    "zh-TW",
+    "es",
+    "it",
+    "ja",
+    "pt-BR",
+    "ko",
+    "tr",
+    "az",
+  ];
+  const translations = Object.fromEntries(
+    locales.map((locale, index) => [locale, copy[index]]),
+  );
   for (const key of keys) additionalErrors[key] = translations;
 }
 
-errorGroup(["Unsupported hash algorithm", "Unsupported modern cipher algorithm", "Unsupported specialized crypto algorithm", "Unsupported KEM algorithm", "Unsupported KDF algorithm"],
-  "The selected algorithm is not supported. Choose a supported algorithm.", "不支持所选算法，请选择此工具支持的算法。", "不支援所選演算法，請選擇此工具支援的演算法。", "El algoritmo seleccionado no es compatible. Elige uno compatible.", "L'algoritmo selezionato non è supportato. Scegline uno supportato.", "選択したアルゴリズムは未対応です。対応するものを選択してください。", "O algoritmo selecionado não é compatível. Escolha um compatível.", "선택한 알고리즘은 지원되지 않습니다. 지원되는 알고리즘을 선택하세요.", "Seçilen algoritma desteklenmiyor. Desteklenen bir algoritma seçin.", "Seçilmiş alqoritm dəstəklənmir. Dəstəklənən alqoritm seçin.");
-errorGroup(["Unknown crypto action", "action must be validate, format, or minify", "HPKE operation must be generate, encrypt, or decrypt", "Unsupported signature algorithm or operation"],
-  "The requested operation is not supported by this tool. Check the operation and algorithm.", "此工具不支持请求的操作，请检查操作和算法选择。", "此工具不支援請求的操作，請檢查操作與演算法選擇。", "Esta herramienta no admite la operación. Comprueba la operación y el algoritmo.", "Operazione non supportata. Controlla operazione e algoritmo.", "この操作は未対応です。操作とアルゴリズムを確認してください。", "Esta ferramenta não suporta a operação. Confira a operação e o algoritmo.", "이 도구는 요청한 작업을 지원하지 않습니다. 작업과 알고리즘을 확인하세요.", "Bu araç istenen işlemi desteklemiyor. İşlemi ve algoritmayı kontrol edin.", "Bu alət tələb olunan əməliyyatı dəstəkləmir. Əməliyyatı və alqoritmi yoxlayın.");
-errorGroup(["Too many active hash sessions", "Too many active save sessions"],
-  "Too many file operations are running. Wait for an operation to finish and retry.", "正在处理的文件任务过多，请等待已有任务完成后重试。", "正在處理的檔案工作過多，請等待現有工作完成後重試。", "Hay demasiadas operaciones de archivos. Espera a que termine alguna.", "Troppe operazioni sui file. Attendi che una termini e riprova.", "ファイル処理が多すぎます。完了を待って再試行してください。", "Há muitas operações de arquivo. Aguarde uma terminar e tente novamente.", "파일 작업이 너무 많습니다. 작업이 끝난 후 다시 시도하세요.", "Çok fazla dosya işlemi var. Birinin bitmesini bekleyip tekrar deneyin.", "Həddən çox fayl əməliyyatı var. Bitməsini gözləyib yenidən cəhd edin.");
-errorGroup(["Unknown or expired hash session", "Unknown or expired save session"],
-  "The file operation has expired. Select the file and start again.", "文件处理会话不存在或已过期，请重新选择文件并开始。", "檔案處理工作階段不存在或已過期，請重新選擇檔案並開始。", "La sesión del archivo ha caducado. Selecciona el archivo de nuevo.", "La sessione del file è scaduta. Seleziona nuovamente il file.", "ファイル処理が期限切れです。ファイルを選択し直してください。", "A sessão do arquivo expirou. Selecione o arquivo novamente.", "파일 작업 세션이 만료되었습니다. 파일을 다시 선택하세요.", "Dosya işleminin süresi doldu. Dosyayı yeniden seçin.", "Fayl əməliyyatının vaxtı bitib. Faylı yenidən seçin.");
-errorGroup(["Hash input exceeds the input limit", "File is too large", "Invalid or unsupported file size"],
-  "The file size is unsupported or exceeds this tool's limit. Use a smaller supported file.", "文件大小无效或超出工具限制，请使用符合大小限制的文件。", "檔案大小無效或超出工具限制，請使用符合大小限制的檔案。", "El tamaño del archivo no es válido o supera el límite. Usa un archivo compatible más pequeño.", "Dimensione del file non valida o eccessiva. Usa un file compatibile più piccolo.", "ファイルサイズが無効か上限を超えています。小さい対応ファイルを使用してください。", "O tamanho do arquivo é inválido ou excede o limite. Use um arquivo compatível menor.", "파일 크기가 올바르지 않거나 제한을 초과합니다. 더 작은 지원 파일을 사용하세요.", "Dosya boyutu geçersiz veya sınırı aşıyor. Daha küçük desteklenen bir dosya kullanın.", "Fayl ölçüsü yanlışdır və ya limiti aşır. Daha kiçik dəstəklənən fayl seçin.");
-errorGroup(["Unsupported AES stream mode or key length", "Invalid AES key length", "AES-FF1 requires a 16, 24, or 32-byte key", "AES-CMAC requires a 16, 24, or 32-byte key"],
-  "The AES key length or mode is invalid. Check the selected mode and required key size.", "AES 密钥长度或模式无效，请检查所选模式要求的密钥字节数。", "AES 金鑰長度或模式無效，請檢查所選模式要求的金鑰位元組數。", "La longitud de clave AES o el modo no es válido. Comprueba el tamaño requerido.", "Lunghezza della chiave AES o modalità non valida. Controlla la dimensione richiesta.", "AES の鍵長またはモードが無効です。必要な鍵長を確認してください。", "O tamanho da chave AES ou o modo é inválido. Confira o tamanho exigido.", "AES 키 길이나 모드가 올바르지 않습니다. 필요한 키 크기를 확인하세요.", "AES anahtar uzunluğu veya modu geçersiz. Gereken anahtar boyutunu kontrol edin.", "AES açar uzunluğu və ya rejimi yanlışdır. Tələb olunan açar ölçüsünü yoxlayın.");
-errorGroup(["Invalid key", "Invalid key or counter", "Invalid AES-XTS key", "Invalid AES-CMAC key", "Invalid KEM public key", "Invalid KEM private key"],
-  "The key or counter is invalid. Check its encoding, length, and algorithm.", "密钥或计数器无效，请检查编码、长度和对应算法。", "金鑰或計數器無效，請檢查編碼、長度及對應演算法。", "La clave o el contador no es válido. Comprueba codificación, longitud y algoritmo.", "Chiave o contatore non valido. Controlla codifica, lunghezza e algoritmo.", "鍵またはカウンターが無効です。エンコード、長さ、アルゴリズムを確認してください。", "A chave ou o contador é inválido. Confira codificação, tamanho e algoritmo.", "키 또는 카운터가 올바르지 않습니다. 인코딩, 길이, 알고리즘을 확인하세요.", "Anahtar veya sayaç geçersiz. Kodlamayı, uzunluğu ve algoritmayı kontrol edin.", "Açar və ya sayğac yanlışdır. Kodlaşdırmanı, uzunluğu və alqoritmi yoxlayın.");
-errorGroup(["ChaCha20-Poly1305 authentication failed", "XChaCha20-Poly1305 authentication failed", "AES-GCM-SIV authentication failed", "AES-CCM authentication failed", "AES-SIV authentication failed", "HPKE authentication or decryption failed"],
-  "Authentication or decryption failed. Check the key, nonce, AAD, and ciphertext; the data may have been modified.", "认证或解密失败，请核对密钥、Nonce、AAD 和密文；数据可能被修改。", "驗證或解密失敗，請核對金鑰、Nonce、AAD 與密文；資料可能被修改。", "Falló la autenticación o el descifrado. Comprueba clave, nonce, AAD y texto cifrado; los datos pueden haber cambiado.", "Autenticazione o decifratura fallita. Controlla chiave, nonce, AAD e testo cifrato; i dati potrebbero essere stati modificati.", "認証または復号に失敗しました。鍵、Nonce、AAD、暗号文を確認してください。データが変更された可能性があります。", "Falha na autenticação ou descriptografia. Confira chave, nonce, AAD e texto cifrado; os dados podem ter sido alterados.", "인증 또는 복호화에 실패했습니다. 키, Nonce, AAD, 암호문을 확인하세요. 데이터가 변경되었을 수 있습니다.", "Doğrulama veya şifre çözme başarısız. Anahtarı, nonce, AAD ve şifreli metni kontrol edin; veriler değişmiş olabilir.", "Doğrulama və ya deşifrləmə alınmadı. Açarı, nonce, AAD və şifrəli mətni yoxlayın; məlumat dəyişdirilmiş ola bilər.");
-errorGroup(["AES-CTR does not support AAD"],
-  "AES-CTR does not support AAD. Clear AAD or choose an authenticated encryption mode.", "AES-CTR 不支持 AAD，请清空 AAD 或选择认证加密模式。", "AES-CTR 不支援 AAD，請清空 AAD 或選擇驗證加密模式。", "AES-CTR no admite AAD. Vacíalo o elige cifrado autenticado.", "AES-CTR non supporta AAD. Rimuovilo o scegli una cifratura autenticata.", "AES-CTR は AAD 未対応です。AAD を空にするか認証付き暗号を選択してください。", "AES-CTR não suporta AAD. Limpe-o ou escolha criptografia autenticada.", "AES-CTR은 AAD를 지원하지 않습니다. AAD를 비우거나 인증 암호화를 선택하세요.", "AES-CTR AAD desteklemez. AAD'yi temizleyin veya doğrulamalı şifreleme seçin.", "AES-CTR AAD-ni dəstəkləmir. AAD-ni silin və ya doğrulamalı şifrələmə seçin.");
-errorGroup(["AES key wrap integrity or input-length check failed"],
-  "AES key wrapping failed the integrity or length check. Check the wrapping key, mode, and input bytes.", "AES 密钥包装的完整性或长度检查失败，请检查包装密钥、模式及输入字节。", "AES 金鑰包裝的完整性或長度檢查失敗，請檢查包裝金鑰、模式及輸入位元組。", "Falló la integridad o longitud del envoltorio AES. Comprueba clave, modo y entrada.", "Controllo di integrità o lunghezza AES wrapping fallito. Controlla chiave, modalità e input.", "AES 鍵ラップの整合性または長さの検証に失敗しました。鍵、モード、入力を確認してください。", "Falha de integridade ou tamanho no wrapping AES. Confira chave, modo e entrada.", "AES 키 래핑의 무결성 또는 길이 확인에 실패했습니다. 래핑 키, 모드, 입력을 확인하세요.", "AES anahtar sarma bütünlük veya uzunluk denetimi başarısız. Anahtarı, modu ve girdiyi kontrol edin.", "AES açar sarımasının bütövlük və ya uzunluq yoxlaması alınmadı. Açarı, rejimi və girişi yoxlayın.");
-errorGroup(["AES-XTS input must be at least 16 bytes"],
-  "AES-XTS requires at least 16 input bytes.", "AES-XTS 输入至少需要 16 字节。", "AES-XTS 輸入至少需要 16 位元組。", "AES-XTS requiere al menos 16 bytes de entrada.", "AES-XTS richiede almeno 16 byte di input.", "AES-XTS の入力は 16 バイト以上必要です。", "AES-XTS exige pelo menos 16 bytes de entrada.", "AES-XTS 입력은 최소 16바이트여야 합니다.", "AES-XTS en az 16 giriş baytı gerektirir.", "AES-XTS üçün ən azı 16 giriş baytı tələb olunur.");
-errorGroup(["This FF1 tool supports radix 10 or 36", "Invalid FF1 key or radix", "Input contains a character outside the selected radix"],
-  "FF1 parameters are invalid. Use radix 10 or 36, valid characters for that radix, and a matching AES key.", "FF1 参数无效：仅支持 10 或 36 进制，请检查输入字符和 AES 密钥。", "FF1 參數無效：僅支援 10 或 36 進位，請檢查輸入字元及 AES 金鑰。", "Parámetros FF1 no válidos. Usa base 10 o 36, caracteres válidos y una clave AES correcta.", "Parametri FF1 non validi. Usa base 10 o 36, caratteri validi e una chiave AES corretta.", "FF1 のパラメーターが無効です。基数 10 または 36、対応する文字、正しい AES 鍵を使用してください。", "Parâmetros FF1 inválidos. Use base 10 ou 36, caracteres válidos e uma chave AES correta.", "FF1 매개변수가 올바르지 않습니다. 10 또는 36진수, 유효한 문자와 AES 키를 사용하세요.", "FF1 parametreleri geçersiz. 10 veya 36 tabanı, geçerli karakterler ve uygun AES anahtarı kullanın.", "FF1 parametrləri yanlışdır. 10 və ya 36 əsası, uyğun simvollar və düzgün AES açarı istifadə edin.");
-errorGroup(["GMAC nonce must be 12 bytes", "AES-GMAC failed"],
-  "GMAC parameters are invalid. Use a 12-byte nonce and a key matching the selected AES variant.", "GMAC 参数无效，请使用 12 字节 Nonce 和与所选 AES 规格匹配的密钥。", "GMAC 參數無效，請使用 12 位元組 Nonce 及與所選 AES 規格相符的金鑰。", "Parámetros GMAC no válidos. Usa un nonce de 12 bytes y la clave AES adecuada.", "Parametri GMAC non validi. Usa un nonce di 12 byte e la chiave AES corretta.", "GMAC のパラメーターが無効です。12 バイトの Nonce と対応する AES 鍵を使用してください。", "Parâmetros GMAC inválidos. Use nonce de 12 bytes e a chave AES correspondente.", "GMAC 매개변수가 올바르지 않습니다. 12바이트 Nonce와 해당 AES 키를 사용하세요.", "GMAC parametreleri geçersiz. 12 baytlık nonce ve uygun AES anahtarı kullanın.", "GMAC parametrləri yanlışdır. 12 baytlıq nonce və uyğun AES açarı istifadə edin.");
-errorGroup(["HPKE encryption failed", "ML-KEM encapsulation failed", "ML-KEM decapsulation failed", "Invalid encapsulated key"],
-  "Public-key encryption or key encapsulation failed. Check the algorithm, key encoding, and encapsulated data.", "公钥加密或密钥封装处理失败，请检查算法、密钥编码和封装数据。", "公鑰加密或金鑰封裝處理失敗，請檢查演算法、金鑰編碼及封裝資料。", "Falló el cifrado de clave pública o la encapsulación. Comprueba algoritmo, claves y datos encapsulados.", "Cifratura a chiave pubblica o incapsulamento fallito. Controlla algoritmo, chiavi e dati incapsulati.", "公開鍵暗号または鍵カプセル化に失敗しました。アルゴリズム、鍵の形式、カプセル化データを確認してください。", "Falha na criptografia de chave pública ou encapsulamento. Confira algoritmo, chaves e dados encapsulados.", "공개 키 암호화 또는 키 캡슐화에 실패했습니다. 알고리즘, 키 인코딩과 캡슐화 데이터를 확인하세요.", "Açık anahtarlı şifreleme veya anahtar kapsülleme başarısız. Algoritmayı, anahtarları ve kapsüllenmiş veriyi kontrol edin.", "Açıq açarlı şifrələmə və ya açar kapsullaşdırması alınmadı. Alqoritmi, açarları və kapsullaşdırılmış məlumatı yoxlayın.");
-errorGroup(["KDF salt must be at least 8 bytes"],
-  "Key derivation requires a salt of at least 8 bytes.", "密钥派生的盐值至少需要 8 字节。", "金鑰衍生的鹽值至少需要 8 位元組。", "La derivación de claves requiere una sal de al menos 8 bytes.", "La derivazione della chiave richiede un salt di almeno 8 byte.", "鍵導出には 8 バイト以上のソルトが必要です。", "A derivação de chave exige salt de pelo menos 8 bytes.", "키 파생에는 최소 8바이트의 솔트가 필요합니다.", "Anahtar türetme en az 8 baytlık salt gerektirir.", "Açar törətmə üçün ən azı 8 baytlıq salt tələb olunur.");
-errorGroup(["Invalid scrypt parameters", "Invalid Argon2id parameters", "scrypt failed", "Argon2id failed"],
-  "Key derivation failed. Check the memory, iteration, parallelism, and output-length settings.", "密钥派生失败，请检查内存、迭代次数、并行度和输出长度设置。", "金鑰衍生失敗，請檢查記憶體、迭代次數、平行度及輸出長度設定。", "Falló la derivación. Comprueba memoria, iteraciones, paralelismo y longitud de salida.", "Derivazione fallita. Controlla memoria, iterazioni, parallelismo e lunghezza di output.", "鍵導出に失敗しました。メモリ、反復回数、並列度、出力長を確認してください。", "Falha na derivação. Confira memória, iterações, paralelismo e tamanho de saída.", "키 파생에 실패했습니다. 메모리, 반복 횟수, 병렬 처리와 출력 길이를 확인하세요.", "Anahtar türetme başarısız. Bellek, yineleme, paralellik ve çıktı uzunluğunu kontrol edin.", "Açar törətmə alınmadı. Yaddaşı, təkrar sayını, paralelliyi və çıxış uzunluğunu yoxlayın.");
-errorGroup(["HKDF output length is too large"],
-  "The HKDF output length exceeds the algorithm's limit. Reduce the requested length.", "HKDF 输出长度超过算法上限，请减小输出长度。", "HKDF 輸出長度超過演算法上限，請減小輸出長度。", "La salida HKDF supera el límite. Reduce la longitud.", "La lunghezza di output HKDF supera il limite. Riducila.", "HKDF の出力長が上限を超えています。短くしてください。", "A saída HKDF excede o limite. Reduza o tamanho.", "HKDF 출력 길이가 제한을 초과합니다. 길이를 줄이세요.", "HKDF çıktı uzunluğu sınırı aşıyor. Uzunluğu azaltın.", "HKDF çıxış uzunluğu limiti aşır. Uzunluğu azaldın.");
-errorGroup(["SM2 signing failed"],
-  "SM2 signing failed. Check the private key and signing parameters.", "SM2 签名失败，请检查私钥及签名参数。", "SM2 簽章失敗，請檢查私鑰及簽章參數。", "Falló la firma SM2. Comprueba la clave privada y los parámetros.", "Firma SM2 fallita. Controlla chiave privata e parametri.", "SM2 署名に失敗しました。秘密鍵と署名パラメーターを確認してください。", "Falha na assinatura SM2. Confira a chave privada e os parâmetros.", "SM2 서명에 실패했습니다. 개인 키와 서명 매개변수를 확인하세요.", "SM2 imzalama başarısız. Özel anahtarı ve imza parametrelerini kontrol edin.", "SM2 imzalama alınmadı. Şəxsi açarı və imza parametrlərini yoxlayın.");
-errorGroup(["JWT must contain three non-empty parts", "Invalid JWT header"],
-  "The JWT structure or header is invalid. Supply a token with three non-empty dot-separated parts.", "JWT 结构或头部无效，请提供由点分隔且三段均非空的 Token。", "JWT 結構或標頭無效，請提供由點分隔且三段均非空的 Token。", "Estructura o cabecera JWT no válida. Usa tres partes no vacías separadas por puntos.", "Struttura o header JWT non valido. Usa tre parti non vuote separate da punti.", "JWT の構造またはヘッダーが無効です。空でない 3 部分をドットで区切ってください。", "Estrutura ou cabeçalho JWT inválido. Use três partes não vazias separadas por pontos.", "JWT 구조 또는 헤더가 올바르지 않습니다. 점으로 구분된 세 부분을 입력하세요.", "JWT yapısı veya başlığı geçersiz. Noktayla ayrılmış üç dolu bölüm girin.", "JWT quruluşu və ya başlığı yanlışdır. Nöqtə ilə ayrılmış üç boş olmayan hissə verin.");
-errorGroup(["Invalid JWT signature"],
-  "The JWT signature is invalid. Check the verification key, algorithm, and token contents.", "JWT 签名无效，请检查验签密钥、算法及 Token 是否被修改。", "JWT 簽章無效，請檢查驗證金鑰、演算法及 Token 是否被修改。", "La firma JWT no es válida. Comprueba clave, algoritmo y contenido del token.", "Firma JWT non valida. Controlla chiave, algoritmo e contenuto del token.", "JWT の署名が無効です。検証鍵、アルゴリズム、トークン内容を確認してください。", "A assinatura JWT é inválida. Confira chave, algoritmo e conteúdo do token.", "JWT 서명이 올바르지 않습니다. 검증 키, 알고리즘과 토큰 내용을 확인하세요.", "JWT imzası geçersiz. Doğrulama anahtarını, algoritmayı ve belirteci kontrol edin.", "JWT imzası yanlışdır. Yoxlama açarını, alqoritmi və token məzmununu yoxlayın.");
-errorGroup(["OpenSSH public key needs type and base64 body", "Unsupported OpenSSH public key type", "Invalid OpenSSH key body", "OpenSSH key type does not match its body", "Invalid RSA public key body", "Invalid Ed25519 public key body", "Invalid ECDSA public key type", "Invalid ECDSA public key body"],
-  "The SSH public key type or body is invalid. Paste a complete supported OpenSSH public key.", "SSH 公钥类型或内容无效，请粘贴完整且受支持的 OpenSSH 公钥。", "SSH 公鑰類型或內容無效，請貼上完整且受支援的 OpenSSH 公鑰。", "El tipo o contenido de la clave SSH no es válido. Pega una clave OpenSSH completa y compatible.", "Tipo o contenuto della chiave SSH non valido. Incolla una chiave OpenSSH completa e supportata.", "SSH 公開鍵の種類または内容が無効です。対応する完全な OpenSSH 公開鍵を貼り付けてください。", "Tipo ou conteúdo da chave SSH inválido. Cole uma chave OpenSSH completa e compatível.", "SSH 공개 키 유형 또는 내용이 올바르지 않습니다. 지원되는 완전한 OpenSSH 공개 키를 붙여넣으세요.", "SSH açık anahtar türü veya içeriği geçersiz. Tam ve desteklenen bir OpenSSH açık anahtarı yapıştırın.", "SSH açıq açar növü və ya məzmunu yanlışdır. Tam və dəstəklənən OpenSSH açıq açarı yapışdırın.");
-errorGroup(["Truncated OpenSSH key body", "Truncated RSA public key", "Truncated Ed25519 public key", "Truncated ECDSA public key"],
-  "The public key is truncated. Copy the complete public key and try again.", "公钥数据不完整，请重新复制完整公钥后重试。", "公鑰資料不完整，請重新複製完整公鑰後重試。", "La clave pública está truncada. Copia la clave completa e inténtalo de nuevo.", "La chiave pubblica è incompleta. Copia la chiave intera e riprova.", "公開鍵データが途中で切れています。完全な鍵をコピーし直してください。", "A chave pública está incompleta. Copie a chave inteira e tente novamente.", "공개 키 데이터가 잘렸습니다. 전체 키를 다시 복사하세요.", "Açık anahtar eksik. Tam anahtarı kopyalayıp tekrar deneyin.", "Açıq açar natamamdır. Tam açarı köçürüb yenidən cəhd edin.");
-errorGroup(["Stored key type does not match the selected algorithm", "Key is not allowed for this purpose"],
-  "This key cannot be used for the selected algorithm or purpose. Choose a compatible key.", "此密钥不适用于所选算法或用途，请选择兼容密钥。", "此金鑰不適用於所選演算法或用途，請選擇相容金鑰。", "La clave no sirve para el algoritmo o uso seleccionado. Elige una compatible.", "La chiave non è adatta all'algoritmo o uso scelto. Scegline una compatibile.", "この鍵は選択したアルゴリズムまたは用途に使用できません。対応する鍵を選択してください。", "Esta chave não serve para o algoritmo ou finalidade. Escolha uma compatível.", "이 키는 선택한 알고리즘이나 용도에 사용할 수 없습니다. 호환되는 키를 선택하세요.", "Bu anahtar seçilen algoritma veya amaçla kullanılamaz. Uyumlu bir anahtar seçin.", "Bu açar seçilmiş alqoritm və ya təyinat üçün uyğun deyil. Uyğun açar seçin.");
-errorGroup(["AES-ECB decrypt failed"],
-  "AES-ECB decryption failed. Check the key, ciphertext encoding, and padding.", "AES-ECB 解密失败，请检查密钥、密文编码及填充方式。", "AES-ECB 解密失敗，請檢查金鑰、密文編碼及填充方式。", "Falló el descifrado AES-ECB. Comprueba clave, codificación y relleno.", "Decifratura AES-ECB fallita. Controlla chiave, codifica e padding.", "AES-ECB 復号に失敗しました。鍵、暗号文の形式、パディングを確認してください。", "Falha na descriptografia AES-ECB. Confira chave, codificação e preenchimento.", "AES-ECB 복호화에 실패했습니다. 키, 암호문 인코딩과 패딩을 확인하세요.", "AES-ECB şifre çözme başarısız. Anahtarı, kodlamayı ve dolguyu kontrol edin.", "AES-ECB deşifrləməsi alınmadı. Açarı, kodlaşdırmanı və doldurmanı yoxlayın.");
+errorGroup(
+  ["TOTP store already exists"],
+  "A TOTP store already exists. Unlock it with its dedicated password.",
+  "TOTP 列表已存在，请使用其专用口令解锁。", "TOTP 清單已存在，請使用其專用密碼解鎖。",
+  "Ya existe una lista TOTP. Desbloquéala con su contraseña.", "Esiste già un elenco TOTP. Sbloccalo con la sua password.",
+  "TOTP リストは既に存在します。専用パスワードで解除してください。", "Já existe uma lista TOTP. Desbloqueie com sua senha.",
+  "TOTP 목록이 이미 있습니다. 전용 비밀번호로 잠금을 해제하세요.", "TOTP listesi zaten var. Özel parolasıyla açın.", "TOTP siyahısı artıq mövcuddur. Xüsusi şifrəsi ilə açın.",
+);
+errorGroup(
+  ["TOTP store is locked"],
+  "The TOTP list is locked or changed in another workbench. Unlock it again.",
+  "TOTP 列表已锁定或已在其他工作台更改，请重新解锁。", "TOTP 清單已鎖定或已在其他工作台變更，請重新解鎖。",
+  "La lista TOTP está bloqueada o cambió en otro espacio. Desbloquéala de nuevo.", "L'elenco TOTP è bloccato o modificato altrove. Sbloccalo di nuovo.",
+  "TOTP リストはロック中か、別のワークベンチで変更されました。再度解除してください。", "A lista TOTP está bloqueada ou foi alterada. Desbloqueie novamente.",
+  "TOTP 목록이 잠겼거나 다른 작업 공간에서 변경되었습니다. 다시 잠금을 해제하세요.", "TOTP listesi kilitli veya başka yerde değişti. Yeniden açın.", "TOTP siyahısı kilidlənib və ya dəyişib. Yenidən açın.",
+);
+errorGroup(
+  ["Current TOTP password is wrong", "Wrong TOTP password or store is corrupt"],
+  "The TOTP password is incorrect or the encrypted data is damaged. Check the password or restore a backup.",
+  "TOTP 专用口令不正确或加密数据已损坏，请检查口令或恢复备份。", "TOTP 專用密碼不正確或加密資料已損毀，請檢查密碼或還原備份。",
+  "La contraseña TOTP es incorrecta o los datos están dañados. Revisa la contraseña o restaura una copia.", "Password TOTP errata o dati danneggiati. Verifica la password o ripristina un backup.",
+  "TOTP パスワードが違うか、データが破損しています。確認するかバックアップを復元してください。", "Senha TOTP incorreta ou dados danificados. Confira a senha ou restaure um backup.",
+  "TOTP 비밀번호가 틀리거나 데이터가 손상되었습니다. 비밀번호를 확인하거나 백업을 복원하세요.", "TOTP parolası yanlış veya veri bozuk. Parolayı kontrol edin ya da yedeği geri yükleyin.", "TOTP şifrəsi yanlışdır və ya məlumat zədələnib. Şifrəni yoxlayın və ya ehtiyat nüsxəni bərpa edin.",
+);
+errorGroup(
+  ["Invalid TOTP password length"],
+  "Use a TOTP password of at least 8 characters and at most 1024 bytes.",
+  "TOTP 专用口令至少需要 8 个字符，且不能超过 1024 字节。", "TOTP 專用密碼至少需要 8 個字元，且不能超過 1024 位元組。",
+  "Usa una contraseña TOTP de al menos 8 caracteres y como máximo 1024 bytes.", "Usa una password TOTP di almeno 8 caratteri e massimo 1024 byte.",
+  "TOTP パスワードは8文字以上、1024バイト以下にしてください。", "Use uma senha TOTP com pelo menos 8 caracteres e no máximo 1024 bytes.",
+  "TOTP 비밀번호는 8자 이상, 1024바이트 이하로 입력하세요.", "TOTP parolası en az 8 karakter ve en fazla 1024 bayt olmalı.", "TOTP şifrəsi ən azı 8 simvol və ən çoxu 1024 bayt olmalıdır.",
+);
+errorGroup(
+  ["TOTP store IO failed", "TOTP store not found", "TOTP store is corrupt", "Failed to init TOTP cipher", "Failed to encrypt TOTP store"],
+  "Cannot access the encrypted TOTP list. Check the data directory, available space, or restore a backup.",
+  "无法访问加密 TOTP 列表，请检查数据目录权限、磁盘空间或恢复备份。", "無法存取加密 TOTP 清單，請檢查資料目錄權限、磁碟空間或還原備份。",
+  "No se puede acceder a la lista TOTP cifrada. Revisa permisos, espacio o restaura una copia.", "Impossibile accedere all'elenco TOTP cifrato. Verifica permessi, spazio o ripristina un backup.",
+  "暗号化TOTPリストにアクセスできません。権限と空き容量を確認するか、バックアップを復元してください。", "Não foi possível acessar a lista TOTP. Verifique permissões, espaço ou restaure um backup.",
+  "암호화된 TOTP 목록에 접근할 수 없습니다. 권한과 디스크 공간을 확인하거나 백업을 복원하세요.", "Şifreli TOTP listesine erişilemiyor. İzinleri, alanı kontrol edin veya yedeği geri yükleyin.", "Şifrələnmiş TOTP siyahısına giriş mümkün deyil. İcazələri, boş yeri yoxlayın və ya ehtiyat nüsxəni bərpa edin.",
+);
+errorGroup(
+  ["TOTP store is full", "TOTP store is too large"],
+  "The TOTP list has reached its storage limit (512 entries). Remove unused entries.",
+  "TOTP 列表已达到存储上限（512 条），请移除不再使用的条目。", "TOTP 清單已達儲存上限（512 筆），請移除不再使用的項目。",
+  "La lista TOTP alcanzó el límite de 512 entradas. Elimina las que no uses.", "Limite di 512 voci TOTP raggiunto. Rimuovi quelle inutilizzate.",
+  "TOTPリストは上限512件に達しました。不要な項目を削除してください。", "A lista TOTP atingiu o limite de 512 entradas. Remova as não utilizadas.",
+  "TOTP 목록이 512개 제한에 도달했습니다. 사용하지 않는 항목을 삭제하세요.", "TOTP listesi 512 kayıt sınırına ulaştı. Kullanılmayanları kaldırın.", "TOTP siyahısı 512 qeyd həddinə çatıb. İstifadə olunmayanları silin.",
+);
+errorGroup(
+  ["Unknown TOTP entry", "Invalid TOTP entry name", "Invalid TOTP digits", "Invalid TOTP order", "Invalid TOTP time", "Invalid TOTP parameters", "Unsupported TOTP algorithm", "TOTP uses system account protection"],
+  "Invalid TOTP entry or settings. Use a name of up to 128 characters, 6 or 8 digits, and a period of 1–300 seconds.",
+  "TOTP 条目或配置无效。名称最多 128 个字符，位数为 6 或 8，周期为 1–300 秒，请检查后重试。", "TOTP 項目或設定無效。名稱最多128個字元、位數為6或8、週期為1–300秒，請檢查後重試。",
+  "Entrada TOTP no válida. Usa un nombre de hasta 128 caracteres, 6 u 8 dígitos y 1–300 segundos.", "Voce TOTP non valida. Usa un nome entro 128 caratteri, 6 o 8 cifre e 1–300 secondi.",
+  "TOTP項目か設定が無効です。名前は128文字以内、6桁か8桁、周期は1～300秒にしてください。", "Entrada TOTP inválida. Use nome de até 128 caracteres, 6 ou 8 dígitos e período de 1–300 segundos.",
+  "TOTP 항목이나 설정이 잘못되었습니다. 이름은 128자 이하, 자릿수는 6 또는 8, 주기는 1~300초로 설정하세요.", "TOTP kaydı veya ayarları geçersiz. Ad en fazla 128 karakter, kod 6 veya 8 hane, süre 1–300 saniye olmalı.", "TOTP qeydi və ya parametrləri yanlışdır. Ad ən çoxu 128 simvol, kod 6 və ya 8 rəqəm, müddət 1–300 saniyə olmalıdır.",
+);
+errorGroup(
+  ["Invalid TOTP note"],
+  "Notes allow up to 500 characters, with text and line breaks only.",
+  "备注最多 500 字符，仅支持文本和换行。", "備註最多 500 字元，僅支援文字和換行。",
+  "Las notas admiten hasta 500 caracteres, solo texto y saltos de línea.", "Le note consentono fino a 500 caratteri, solo testo e interruzioni di riga.",
+  "メモは500文字以内で、テキストと改行のみ使用できます。", "As notas aceitam até 500 caracteres, apenas texto e quebras de linha.",
+  "메모는 최대 500자로 텍스트와 줄바꿈만 사용할 수 있습니다.", "Notlar en fazla 500 karakter, yalnızca metin ve satır sonları içerebilir.", "Qeydlər ən çoxu 500 simvol, yalnız mətn və sətir keçidləri ola bilər.",
+);
 
-errorGroup(["DBX_PLUGIN_DATA_DIR is not set; launch through DBX or configure a development data directory", "DBX_PLUGIN_DATA_DIR must be an absolute path"],
-  "The plugin data directory is missing or invalid. Launch through DBX or configure an absolute development data path.", "插件数据目录未配置或无效，请通过 DBX 启动，或配置绝对路径的开发数据目录。", "外掛資料目錄未設定或無效，請透過 DBX 啟動，或設定絕對路徑的開發資料目錄。", "Falta el directorio de datos o no es válido. Inicia desde DBX o configura una ruta absoluta.", "Directory dati mancante o non valida. Avvia tramite DBX o configura un percorso assoluto.", "データディレクトリが未設定か無効です。DBX から起動するか絶対パスを設定してください。", "Diretório de dados ausente ou inválido. Inicie pelo DBX ou configure um caminho absoluto.", "데이터 디렉터리가 없거나 올바르지 않습니다. DBX로 시작하거나 절대 경로를 설정하세요.", "Veri dizini eksik veya geçersiz. DBX üzerinden başlatın veya mutlak yol ayarlayın.", "Məlumat qovluğu yoxdur və ya yanlışdır. DBX ilə başladın və ya mütləq yol təyin edin.");
-errorGroup(["Incomplete file transfer", "Invalid save chunk"],
-  "The file transfer is incomplete or contains an invalid chunk. Select the file and transfer it again.", "文件传输不完整或数据分块无效，请重新选择文件并传输。", "檔案傳輸不完整或資料區塊無效，請重新選擇檔案並傳輸。", "La transferencia está incompleta o tiene un bloque no válido. Vuelve a transferir el archivo.", "Trasferimento incompleto o blocco non valido. Trasferisci nuovamente il file.", "ファイル転送が不完全かブロックが無効です。ファイルを転送し直してください。", "Transferência incompleta ou bloco inválido. Transfira o arquivo novamente.", "파일 전송이 불완전하거나 청크가 올바르지 않습니다. 파일을 다시 전송하세요.", "Dosya aktarımı eksik veya parça geçersiz. Dosyayı yeniden aktarın.", "Fayl ötürməsi natamamdır və ya hissə yanlışdır. Faylı yenidən ötürün.");
-errorGroup(["Clipboard is busy"],
-  "The clipboard is busy. Wait a moment and copy again.", "剪贴板正被其他程序占用，请稍后重新复制。", "剪貼簿正被其他程式占用，請稍後重新複製。", "El portapapeles está ocupado. Espera y vuelve a copiar.", "Gli appunti sono occupati. Attendi e copia di nuovo.", "クリップボードが使用中です。少し待ってコピーし直してください。", "A área de transferência está ocupada. Aguarde e copie novamente.", "클립보드를 사용 중입니다. 잠시 후 다시 복사하세요.", "Pano meşgul. Biraz bekleyip yeniden kopyalayın.", "Mübadilə buferi məşğuldur. Bir qədər gözləyib yenidən köçürün.");
-errorGroup(["Failed to register PNG clipboard format", "Failed to clear clipboard", "Failed to allocate clipboard memory", "Failed to lock clipboard memory", "Failed to write PNG to clipboard"],
-  "The image could not be written to the system clipboard. Retry copying or save it as a file.", "无法将图片写入系统剪贴板，请重新复制或改为保存文件。", "無法將圖片寫入系統剪貼簿，請重新複製或改為儲存檔案。", "No se pudo copiar la imagen al portapapeles. Reintenta o guárdala como archivo.", "Impossibile copiare l'immagine negli appunti. Riprova o salvala come file.", "画像をクリップボードに書き込めません。再試行するかファイルに保存してください。", "Não foi possível copiar a imagem. Tente novamente ou salve como arquivo.", "이미지를 시스템 클립보드에 복사할 수 없습니다. 다시 복사하거나 파일로 저장하세요.", "Görüntü panoya yazılamadı. Yeniden kopyalayın veya dosya olarak kaydedin.", "Şəkli mübadilə buferinə yazmaq mümkün olmadı. Yenidən köçürün və ya fayl kimi saxlayın.");
-errorGroup(["File not found"],
-  "The file was not found. It may have been moved or deleted; select it again.", "找不到文件，文件可能已移动或删除，请重新选择。", "找不到檔案，檔案可能已移動或刪除，請重新選擇。", "No se encontró el archivo. Puede haberse movido o eliminado; selecciónalo de nuevo.", "File non trovato. Potrebbe essere stato spostato o eliminato; selezionalo di nuovo.", "ファイルが見つかりません。移動または削除された可能性があります。選択し直してください。", "Arquivo não encontrado. Pode ter sido movido ou excluído; selecione novamente.", "파일을 찾을 수 없습니다. 이동하거나 삭제되었을 수 있으니 다시 선택하세요.", "Dosya bulunamadı. Taşınmış veya silinmiş olabilir; yeniden seçin.", "Fayl tapılmadı. Köçürülmüş və ya silinmiş ola bilər; yenidən seçin.");
-errorGroup(["Downloads folder not found"],
-  "The system Downloads folder was not found. Check its location and access permissions.", "找不到系统下载目录，请检查目录位置和访问权限。", "找不到系統下載目錄，請檢查目錄位置與存取權限。", "No se encontró la carpeta de descargas. Comprueba ubicación y permisos.", "Cartella Download non trovata. Controlla posizione e permessi.", "ダウンロードフォルダーが見つかりません。場所とアクセス権を確認してください。", "Pasta de downloads não encontrada. Confira local e permissões.", "시스템 다운로드 폴더를 찾을 수 없습니다. 위치와 접근 권한을 확인하세요.", "İndirilenler klasörü bulunamadı. Konumu ve erişim izinlerini kontrol edin.", "Yükləmələr qovluğu tapılmadı. Yerini və giriş icazələrini yoxlayın.");
-errorGroup(["Invalid file data", "File is empty"],
-  "The file is empty or its data is invalid. Select a valid non-empty file.", "文件为空或数据无效，请选择内容完整且非空的文件。", "檔案為空或資料無效，請選擇內容完整且非空的檔案。", "El archivo está vacío o contiene datos no válidos. Selecciona un archivo válido.", "File vuoto o dati non validi. Seleziona un file valido non vuoto.", "ファイルが空かデータが無効です。有効な空でないファイルを選択してください。", "Arquivo vazio ou dados inválidos. Selecione um arquivo válido não vazio.", "파일이 비어 있거나 데이터가 올바르지 않습니다. 유효한 파일을 선택하세요.", "Dosya boş veya veriler geçersiz. Geçerli ve boş olmayan bir dosya seçin.", "Fayl boşdur və ya məlumat yanlışdır. Düzgün və boş olmayan fayl seçin.");
-errorGroup(["Unsupported image format"],
-  "This image format is not supported. Convert it to a supported format and retry.", "不支持此图片格式，请转换为工具支持的格式后重试。", "不支援此圖片格式，請轉換為工具支援的格式後重試。", "Formato de imagen no compatible. Conviértelo a un formato admitido.", "Formato immagine non supportato. Convertilo in un formato supportato.", "この画像形式は未対応です。対応する形式に変換してください。", "Formato de imagem não suportado. Converta para um formato compatível.", "지원하지 않는 이미지 형식입니다. 지원되는 형식으로 변환하세요.", "Görüntü biçimi desteklenmiyor. Desteklenen bir biçime dönüştürün.", "Şəkil formatı dəstəklənmir. Dəstəklənən formata çevirin.");
-errorGroup(["Public key is required for this key type", "Public key is required"],
-  "This operation requires a public key. Provide or generate the matching public key.", "此操作需要公钥，请提供或生成对应公钥。", "此操作需要公鑰，請提供或產生對應公鑰。", "Esta operación requiere una clave pública. Proporciona o genera la correspondiente.", "Questa operazione richiede una chiave pubblica. Fornisci o genera quella corrispondente.", "この操作には公開鍵が必要です。対応する公開鍵を入力または生成してください。", "Esta operação exige uma chave pública. Forneça ou gere a chave correspondente.", "이 작업에는 공개 키가 필요합니다. 해당 공개 키를 입력하거나 생성하세요.", "Bu işlem açık anahtar gerektirir. İlgili açık anahtarı girin veya oluşturun.", "Bu əməliyyat açıq açar tələb edir. Uyğun açıq açarı verin və ya yaradın.");
-errorGroup(["Missing allowedPurposes", "Purposes must be strings"],
-  "The key-usage selection is missing or invalid. Reopen the usage dialog and select the allowed usages.", "密钥用途缺失或格式无效，请重新打开用途设置并选择允许的用途。", "金鑰用途缺失或格式無效，請重新開啟用途設定並選擇允許的用途。", "La selección de usos no es válida. Reabre el diálogo y elige usos permitidos.", "Selezione degli usi mancante o non valida. Riapri il dialogo e scegli gli usi consentiti.", "鍵の用途が未指定か無効です。用途設定を開き直して選択してください。", "Seleção de finalidades ausente ou inválida. Reabra o diálogo e selecione os usos permitidos.", "키 용도 선택이 없거나 올바르지 않습니다. 설정을 다시 열어 허용된 용도를 선택하세요.", "Anahtar kullanım seçimi eksik veya geçersiz. İletişim kutusunu yeniden açıp izinli kullanımları seçin.", "Açar təyinatı yoxdur və ya yanlışdır. Pəncərəni yenidən açıb icazəli təyinatları seçin.");
-errorGroup(["Deletion requires confirm=true", "Export requires confirm=true"],
-  "This sensitive operation requires explicit confirmation. Review and confirm the action first.", "此敏感操作需要明确确认，请检查后先完成确认。", "此敏感操作需要明確確認，請檢查後先完成確認。", "Esta operación sensible requiere confirmación explícita. Revísala y confírmala primero.", "Questa operazione sensibile richiede conferma esplicita. Verificala e confermala prima.", "この機密操作には明示的な確認が必要です。内容を確認して承認してください。", "Esta operação sensível exige confirmação explícita. Revise e confirme primeiro.", "이 민감한 작업에는 명시적인 확인이 필요합니다. 내용을 검토하고 확인하세요.", "Bu hassas işlem açık onay gerektirir. Önce işlemi inceleyip onaylayın.", "Bu həssas əməliyyat açıq təsdiq tələb edir. Əvvəlcə yoxlayıb təsdiqləyin.");
-errorGroup(["Key not found"],
-  "The key no longer exists. Refresh the vault and select another key.", "找不到这把密钥，请刷新密钥库并重新选择。", "找不到這把金鑰，請重新整理金鑰庫並重新選擇。", "La clave ya no existe. Actualiza el almacén y selecciona otra.", "La chiave non esiste più. Aggiorna il vault e selezionane un'altra.", "鍵が見つかりません。保管庫を更新して選択し直してください。", "A chave não existe mais. Atualize o cofre e selecione outra.", "키를 찾을 수 없습니다. 보관함을 새로 고치고 다른 키를 선택하세요.", "Anahtar artık yok. Kasayı yenileyip başka bir anahtar seçin.", "Açar artıq yoxdur. Anbarı yeniləyib başqa açar seçin.");
-errorGroup(["Key vault is too large", "Vault file is too large", "Key vault is full", "Vault contains too many keys"],
-  "The vault exceeds its size or key-count limit. Remove unneeded keys after backing them up.", "密钥库大小或密钥数量达到上限，请备份后删除不需要的密钥。", "金鑰庫大小或金鑰數量達到上限，請備份後刪除不需要的金鑰。", "El almacén supera el límite de tamaño o claves. Haz una copia y elimina claves innecesarias.", "Il vault supera il limite di dimensione o chiavi. Esegui un backup e rimuovi le chiavi inutili.", "保管庫のサイズまたは鍵数が上限に達しました。バックアップ後に不要な鍵を削除してください。", "O cofre excede o limite de tamanho ou chaves. Faça backup e remova chaves desnecessárias.", "보관함 크기 또는 키 개수가 제한에 도달했습니다. 백업 후 불필요한 키를 삭제하세요.", "Kasa boyut veya anahtar sayısı sınırını aşıyor. Yedekledikten sonra gereksiz anahtarları silin.", "Anbarın ölçü və ya açar sayı limiti aşılıb. Ehtiyat nüsxədən sonra lazımsız açarları silin.");
-errorGroup(["Vault ciphertext length mismatch", "Vault contains an invalid key id", "Vault contains an invalid key name", "Vault contains oversized key material", "Vault contains an unsupported key algorithm", "Vault contains invalid key purposes"],
-  "The vault file contains damaged or unsupported data. Preserve the file and restore a known-good backup.", "密钥库文件包含损坏或不支持的数据，请保留原文件并恢复有效备份。", "金鑰庫檔案包含損毀或不支援的資料，請保留原檔並還原有效備份。", "El almacén contiene datos dañados o incompatibles. Conserva el archivo y restaura una copia válida.", "Il vault contiene dati danneggiati o non supportati. Conserva il file e ripristina un backup valido.", "保管庫に破損または未対応のデータがあります。元のファイルを保管し、有効なバックアップから復元してください。", "O cofre contém dados danificados ou incompatíveis. Preserve o arquivo e restaure um backup válido.", "보관함 파일에 손상되었거나 지원되지 않는 데이터가 있습니다. 원본을 보존하고 유효한 백업을 복원하세요.", "Kasa dosyasında bozuk veya desteklenmeyen veriler var. Dosyayı koruyup sağlam bir yedeği geri yükleyin.", "Anbar faylında zədələnmiş və ya dəstəklənməyən məlumat var. Faylı qoruyub düzgün ehtiyat nüsxəni bərpa edin.");
-errorGroup(["Master password is too long"],
-  "The master password exceeds the 1024-byte limit. Use a shorter password.", "主密码超过 1024 字节上限，请使用更短的密码。", "主密碼超過 1024 位元組上限，請使用更短的密碼。", "La contraseña maestra supera 1024 bytes. Usa una más corta.", "La password master supera 1024 byte. Usane una più corta.", "マスターパスワードが 1024 バイトを超えています。短くしてください。", "A senha mestra excede 1024 bytes. Use uma senha menor.", "마스터 비밀번호가 1024바이트를 초과합니다. 더 짧은 비밀번호를 사용하세요.", "Ana parola 1024 baytı aşıyor. Daha kısa bir parola kullanın.", "Əsas parol 1024 baytı aşır. Daha qısa parol istifadə edin.");
-errorGroup(["Key material is too large"],
-  "The key material exceeds the supported size. Check that you pasted only the required key.", "密钥材料超过大小限制，请检查是否只粘贴了所需密钥。", "金鑰材料超過大小限制，請檢查是否只貼上所需金鑰。", "El material de clave supera el tamaño permitido. Pega solo la clave necesaria.", "Il materiale della chiave supera il limite. Incolla solo la chiave richiesta.", "鍵データがサイズ上限を超えています。必要な鍵だけを貼り付けてください。", "O material da chave excede o limite. Cole apenas a chave necessária.", "키 데이터가 크기 제한을 초과합니다. 필요한 키만 붙여넣으세요.", "Anahtar verisi boyut sınırını aşıyor. Yalnızca gerekli anahtarı yapıştırın.", "Açar məlumatı ölçü limitini aşır. Yalnız tələb olunan açarı yapışdırın.");
-errorGroup(["TOTP secret must be Base32"],
-  "The TOTP secret must use Base32 encoding. Check the secret's format.", "TOTP 密钥必须使用 Base32 编码，请检查密钥格式。", "TOTP 金鑰必須使用 Base32 編碼，請檢查金鑰格式。", "El secreto TOTP debe estar en Base32. Comprueba el formato.", "Il segreto TOTP deve essere Base32. Controlla il formato.", "TOTP シークレットには Base32 が必要です。形式を確認してください。", "O segredo TOTP deve usar Base32. Confira o formato.", "TOTP 비밀 키는 Base32 인코딩이어야 합니다. 형식을 확인하세요.", "TOTP sırrı Base32 olmalıdır. Biçimi kontrol edin.", "TOTP sirri Base32 olmalıdır. Formatı yoxlayın.");
-errorGroup(["Key material must be Base64", "Public key must be Base64"],
-  "The key material must use Base64 encoding. Check the selected key format.", "密钥材料必须使用 Base64 编码，请检查所选密钥格式。", "金鑰材料必須使用 Base64 編碼，請檢查所選金鑰格式。", "El material de clave debe estar en Base64. Comprueba el formato.", "Il materiale della chiave deve essere Base64. Controlla il formato.", "鍵データには Base64 が必要です。鍵の形式を確認してください。", "O material da chave deve usar Base64. Confira o formato.", "키 데이터는 Base64 인코딩이어야 합니다. 형식을 확인하세요.", "Anahtar verisi Base64 olmalıdır. Anahtar biçimini kontrol edin.", "Açar məlumatı Base64 olmalıdır. Açar formatını yoxlayın.");
-errorGroup(["This key type does not have public material"],
-  "This key type has no public key. Only asymmetric key types provide public material.", "此密钥类型没有公钥，只有非对称密钥类型提供公钥材料。", "此金鑰類型沒有公鑰，只有非對稱金鑰類型提供公鑰材料。", "Este tipo de clave no tiene clave pública. Solo las claves asimétricas la proporcionan.", "Questo tipo di chiave non ha una chiave pubblica. Solo le chiavi asimmetriche la forniscono.", "この鍵の種類には公開鍵がありません。公開鍵は非対称鍵でのみ利用できます。", "Este tipo de chave não tem chave pública. Apenas chaves assimétricas a fornecem.", "이 키 유형에는 공개 키가 없습니다. 비대칭 키만 공개 키를 제공합니다.", "Bu anahtar türünün açık anahtarı yok. Yalnızca asimetrik anahtarlar açık anahtar sağlar.", "Bu açar növünün açıq açarı yoxdur. Yalnız asimmetrik açarlar açıq açar təqdim edir.");
-errorGroup(["Unknown OCR binary channel", "OCR binary channel must contain a chunk index", "OCR chunk index is invalid", "OCR chunk has an invalid size", "OCR chunk index is outside the declared range", "OCR upload exceeds its declared size", "OCR chunk count is invalid", "OCR image upload is incomplete", "OCR image upload is missing a chunk"],
-  "The OCR image transfer is incomplete or invalid. Select the image and upload it again.", "OCR 图片传输不完整或格式无效，请重新选择图片并上传。", "OCR 圖片傳輸不完整或格式無效，請重新選擇圖片並上傳。", "La transferencia OCR está incompleta o no es válida. Sube la imagen de nuevo.", "Trasferimento immagine OCR incompleto o non valido. Carica nuovamente l'immagine.", "OCR 画像の転送が不完全か無効です。画像をアップロードし直してください。", "Transferência OCR incompleta ou inválida. Envie a imagem novamente.", "OCR 이미지 전송이 불완전하거나 올바르지 않습니다. 이미지를 다시 업로드하세요.", "OCR görüntü aktarımı eksik veya geçersiz. Görüntüyü yeniden yükleyin.", "OCR şəkil ötürməsi natamamdır və ya yanlışdır. Şəkli yenidən yükləyin.");
-errorGroup(["OCR upload session was not found", "OCR upload session is no longer accepting data"],
-  "The OCR upload session has ended. Start recognition again.", "OCR 上传会话已结束或不存在，请重新开始识别。", "OCR 上傳工作階段已結束或不存在，請重新開始辨識。", "La sesión de carga OCR ha terminado. Inicia el reconocimiento de nuevo.", "La sessione di caricamento OCR è terminata. Riavvia il riconoscimento.", "OCR アップロードが終了しています。認識を再開してください。", "A sessão de envio OCR terminou. Inicie o reconhecimento novamente.", "OCR 업로드 세션이 종료되었습니다. 인식을 다시 시작하세요.", "OCR yükleme oturumu sona erdi. Tanımayı yeniden başlatın.", "OCR yükləmə sessiyası bitib. Tanımanı yenidən başladın.");
-errorGroup(["OCR image must be between 1 byte and 20 MB", "OCR image dimensions exceed the safe limit"],
-  "The OCR image is empty, larger than 20 MB, or exceeds the safe pixel limit. Resize it and retry.", "OCR 图片为空、超过 20 MB 或像素尺寸超出安全限制，请缩小图片后重试。", "OCR 圖片為空、超過 20 MB 或像素尺寸超出安全限制，請縮小圖片後重試。", "La imagen OCR está vacía, supera 20 MB o el límite de píxeles. Reduce su tamaño.", "L'immagine OCR è vuota, supera 20 MB o il limite di pixel. Ridimensionala.", "OCR 画像が空、20 MB 超過、または画素数上限超過です。サイズを小さくしてください。", "A imagem OCR está vazia, excede 20 MB ou o limite de pixels. Redimensione-a.", "OCR 이미지가 비어 있거나 20MB 또는 픽셀 제한을 초과합니다. 크기를 줄이세요.", "OCR görüntüsü boş, 20 MB üstünde veya piksel sınırını aşıyor. Küçültüp tekrar deneyin.", "OCR şəkli boşdur, 20 MB və ya piksel limitini aşır. Ölçüsünü azaldıb yenidən cəhd edin.");
-errorGroup(["OCR region is outside the image"],
-  "The OCR selection is outside the image. Select a region within the image bounds.", "OCR 选区超出图片范围，请在图片内重新选择区域。", "OCR 選取範圍超出圖片，請在圖片內重新選取區域。", "La selección OCR está fuera de la imagen. Selecciona una región dentro de ella.", "La selezione OCR è fuori dall'immagine. Seleziona un'area al suo interno.", "OCR の選択範囲が画像外です。画像内の領域を選択してください。", "A seleção OCR está fora da imagem. Selecione uma região dentro dela.", "OCR 선택 영역이 이미지 밖에 있습니다. 이미지 안의 영역을 선택하세요.", "OCR seçimi görüntünün dışında. Görüntü içinde bir alan seçin.", "OCR seçimi şəkildən kənardadır. Şəkil daxilində sahə seçin.");
-errorGroup(["favoriteToolIds must be an array", "favoriteToolIds must be strings", "Invalid tool id", "recentToolIds must be an array", "recentToolIds must be strings", "sidebarCollapsed must be a boolean"],
-  "The saved tool or sidebar preferences are invalid. Reload the page and try changing the preference again.", "工具或侧栏偏好数据无效，请重新加载页面后再修改设置。", "工具或側欄偏好資料無效，請重新載入頁面後再修改設定。", "Preferencias de herramientas o barra lateral no válidas. Recarga y cambia el ajuste de nuevo.", "Preferenze degli strumenti o barra laterale non valide. Ricarica e modifica nuovamente l'impostazione.", "ツールまたはサイドバーの設定が無効です。ページを再読み込みして設定し直してください。", "Preferências de ferramentas ou barra lateral inválidas. Recarregue e altere a configuração novamente.", "도구 또는 사이드바 설정이 올바르지 않습니다. 페이지를 새로 고친 후 설정을 변경하세요.", "Araç veya kenar çubuğu tercihleri geçersiz. Sayfayı yenileyip ayarı tekrar değiştirin.", "Alət və ya yan panel parametrləri yanlışdır. Səhifəni yeniləyib ayarı yenidən dəyişin.");
-errorGroup(["vaultAutoLockMinutes must be a non-negative integer", "Unsupported vault auto-lock interval"],
-  "The vault auto-lock interval is invalid. Select an available interval from the list.", "密钥库自动锁定时间无效，请从列表中选择支持的时间间隔。", "金鑰庫自動鎖定時間無效，請從清單選擇支援的時間間隔。", "El intervalo de bloqueo no es válido. Selecciona uno de la lista.", "Intervallo di blocco non valido. Selezionane uno disponibile dall'elenco.", "自動ロック間隔が無効です。一覧から選択してください。", "Intervalo de bloqueio inválido. Selecione um intervalo da lista.", "자동 잠금 간격이 올바르지 않습니다. 목록에서 지원되는 간격을 선택하세요.", "Otomatik kilit aralığı geçersiz. Listeden kullanılabilir bir aralık seçin.", "Avtomatik kilidləmə aralığı yanlışdır. Siyahıdan uyğun aralıq seçin.");
-errorGroup(["Preferences lock is poisoned"],
-  "Preferences could not be accessed after an internal failure. Restart the plugin and retry.", "内部异常导致无法访问偏好设置，请重启插件后重试。", "內部異常導致無法存取偏好設定，請重新啟動外掛後重試。", "No se pudo acceder a las preferencias tras un fallo interno. Reinicia el complemento.", "Impossibile accedere alle preferenze dopo un errore interno. Riavvia il plugin.", "内部エラーにより設定にアクセスできません。プラグインを再起動してください。", "Não foi possível acessar as preferências após uma falha interna. Reinicie o plugin.", "내부 오류로 설정에 접근할 수 없습니다. 플러그인을 다시 시작하세요.", "Dahili hatadan sonra tercihlere erişilemiyor. Eklentiyi yeniden başlatın.", "Daxili xətadan sonra parametrlərə giriş mümkün deyil. Plaqini yenidən başladın.");
+errorGroup(
+  ["TOTP system credential store is unavailable", "TOTP system encryption key is missing"],
+  "Cannot access the system key for TOTP. Sign in to the original system account and unlock its credential store. Keep the data files; do not reset them.",
+  "无法读取 TOTP 的系统加密密钥。请登录原系统账户并解锁系统凭据存储；保留数据文件，不要重置。",
+  "無法讀取 TOTP 的系統加密金鑰。請登入原系統帳戶並解鎖系統憑證儲存；保留資料檔案，請勿重設。",
+  "No se puede acceder a la clave del sistema para TOTP. Inicia sesión con la cuenta original y desbloquea sus credenciales. Conserva los archivos.",
+  "Impossibile accedere alla chiave di sistema TOTP. Accedi all'account originale e sblocca le credenziali. Conserva i file.",
+  "TOTPのシステム鍵を読み取れません。元のシステムアカウントでログインし、資格情報ストアを解除してください。データファイルを保持してください。",
+  "Não é possível acessar a chave do sistema TOTP. Entre na conta original e desbloqueie as credenciais. Preserve os arquivos.",
+  "TOTP 시스템 키에 접근할 수 없습니다. 원래 시스템 계정으로 로그인하고 자격 증명 저장소를 잠금 해제하세요. 데이터 파일을 보관하세요.",
+  "TOTP sistem anahtarına erişilemiyor. İlk sistem hesabıyla oturum açıp kimlik bilgisi deposunu açın. Veri dosyalarını koruyun.",
+  "TOTP sistem açarına giriş mümkün deyil. İlkin sistem hesabına daxil olun və etimadnamə yaddaşını açın. Məlumat fayllarını saxlayın.",
+);
 
-errorGroup(["UNKNOWN_OPERATION_FAILURE"],
-  "The operation failed. Please try again.", "操作失败，请重试。", "操作失敗，請重試。", "La operación falló. Inténtalo de nuevo.", "Operazione non riuscita. Riprova.", "操作に失敗しました。再試行してください。", "A operação falhou. Tente novamente.", "작업에 실패했습니다. 다시 시도하세요.", "İşlem başarısız oldu. Lütfen tekrar deneyin.", "Əməliyyat alınmadı. Yenidən cəhd edin.");
-errorGroup(["AES-KW/KWP requires a 16, 24, or 32-byte KEK and a wrap/unwrap operation"],
-  "AES-KW/KWP requires a 16, 24, or 32-byte wrapping key and a wrap or unwrap operation.", "AES-KW/KWP 需要 16、24 或 32 字节包装密钥，以及包装或解包操作。", "AES-KW/KWP 需要 16、24 或 32 位元組包裝金鑰，以及包裝或解包操作。", "AES-KW/KWP requiere una clave de 16, 24 o 32 bytes y una operación de envolver o desenvolver.", "AES-KW/KWP richiede una chiave di 16, 24 o 32 byte e un'operazione wrap o unwrap.", "AES-KW/KWP には 16、24、32 バイトの鍵とラップまたはアンラップ操作が必要です。", "AES-KW/KWP exige chave de 16, 24 ou 32 bytes e operação de wrap ou unwrap.", "AES-KW/KWP에는 16, 24, 32바이트 래핑 키와 래핑 또는 언래핑 작업이 필요합니다.", "AES-KW/KWP için 16, 24 veya 32 baytlık anahtar ve sarma veya açma işlemi gerekir.", "AES-KW/KWP üçün 16, 24 və ya 32 baytlıq açar və sarıma və ya açma əməliyyatı tələb olunur.");
-errorGroup(["AES-XTS requires a 32-byte (AES-128-XTS) or 64-byte (AES-256-XTS) key"],
-  "AES-XTS requires a 32-byte or 64-byte key, depending on the selected variant.", "AES-XTS 需要 32 或 64 字节密钥，请与所选规格对应。", "AES-XTS 需要 32 或 64 位元組金鑰，請與所選規格對應。", "AES-XTS requiere una clave de 32 o 64 bytes según la variante.", "AES-XTS richiede una chiave di 32 o 64 byte secondo la variante.", "AES-XTS には種類に応じて 32 または 64 バイトの鍵が必要です。", "AES-XTS exige chave de 32 ou 64 bytes conforme a variante.", "AES-XTS는 선택한 유형에 따라 32 또는 64바이트 키가 필요합니다.", "AES-XTS seçilen türe göre 32 veya 64 baytlık anahtar gerektirir.", "AES-XTS seçilmiş növə görə 32 və ya 64 baytlıq açar tələb edir.");
-errorGroup(["RSA OAEP hash must be SHA-1, SHA-256, SHA-384, or SHA-512"],
-  "RSA-OAEP supports SHA-1, SHA-256, SHA-384, or SHA-512. Select one of these hashes.", "RSA-OAEP 仅支持 SHA-1、SHA-256、SHA-384 或 SHA-512，请重新选择。", "RSA-OAEP 僅支援 SHA-1、SHA-256、SHA-384 或 SHA-512，請重新選擇。", "RSA-OAEP admite SHA-1, SHA-256, SHA-384 o SHA-512. Elige uno.", "RSA-OAEP supporta SHA-1, SHA-256, SHA-384 o SHA-512. Selezionane uno.", "RSA-OAEP は SHA-1、SHA-256、SHA-384、SHA-512 に対応します。選択し直してください。", "RSA-OAEP suporta SHA-1, SHA-256, SHA-384 ou SHA-512. Selecione um.", "RSA-OAEP는 SHA-1, SHA-256, SHA-384, SHA-512를 지원합니다. 다시 선택하세요.", "RSA-OAEP SHA-1, SHA-256, SHA-384 veya SHA-512 destekler. Birini seçin.", "RSA-OAEP SHA-1, SHA-256, SHA-384 və ya SHA-512 dəstəkləyir. Birini seçin.");
-errorGroup(["Name must be at most 128 characters and contain no control characters"],
-  "The name must be at most 128 characters and contain no control characters.", "名称最多 128 个字符，且不能包含控制字符。", "名稱最多 128 個字元，且不能包含控制字元。", "El nombre debe tener como máximo 128 caracteres, sin caracteres de control.", "Il nome deve contenere al massimo 128 caratteri e nessun carattere di controllo.", "名前は 128 文字以内で、制御文字を含めないでください。", "O nome deve ter até 128 caracteres e nenhum caractere de controle.", "이름은 최대 128자이며 제어 문자를 포함할 수 없습니다.", "Ad en fazla 128 karakter olmalı ve kontrol karakteri içermemelidir.", "Ad ən çox 128 simvol olmalı və idarəetmə simvolları ehtiva etməməlidir.");
-errorGroup(["Native image clipboard is not available on this platform"],
-  "Image clipboard copying is not supported on this platform. Save the image as a file instead.", "当前平台不支持原生图片剪贴板，请改为保存图片文件。", "目前平台不支援原生圖片剪貼簿，請改為儲存圖片檔案。", "La copia de imágenes no es compatible en esta plataforma. Guarda la imagen como archivo.", "La copia di immagini non è supportata su questa piattaforma. Salva l'immagine come file.", "この環境では画像のクリップボードへのコピーは未対応です。ファイルに保存してください。", "A cópia de imagens não é suportada nesta plataforma. Salve a imagem como arquivo.", "이 플랫폼은 이미지 클립보드 복사를 지원하지 않습니다. 파일로 저장하세요.", "Bu platform görüntü panosunu desteklemiyor. Görüntüyü dosya olarak kaydedin.", "Bu platform şəkil buferini dəstəkləmir. Şəkli fayl kimi saxlayın.");
-errorGroup(["OCR upload lock is poisoned", "OCR engine lock is poisoned", "OCR model download lock is poisoned"],
-  "The OCR engine encountered an internal failure. Restart the plugin and retry.", "OCR 引擎发生内部异常，请重启插件后重试。", "OCR 引擎發生內部異常，請重新啟動外掛後重試。", "El motor OCR sufrió un fallo interno. Reinicia el complemento.", "Il motore OCR ha riscontrato un errore interno. Riavvia il plugin.", "OCR エンジンに内部エラーが発生しました。プラグインを再起動してください。", "O mecanismo OCR encontrou uma falha interna. Reinicie o plugin.", "OCR 엔진 내부 오류가 발생했습니다. 플러그인을 다시 시작하세요.", "OCR motorunda dahili hata oluştu. Eklentiyi yeniden başlatın.", "OCR mühərrikində daxili xəta baş verdi. Plaqini yenidən başladın.");
-errorGroup(["OCR_MODEL_INTEGRITY", "OCR model response has an invalid Content-Length", "OCR model response size does not match the signed registry", "OCR model response exceeds the signed size", "Downloaded OCR model has an invalid size or RTEN header", "Downloaded OCR model failed SHA-256 verification"],
-  "The OCR model failed its size or integrity check. Do not use this file; download the model again.", "OCR 模型大小或完整性校验失败，请勿使用此文件，并重新下载模型。", "OCR 模型大小或完整性驗證失敗，請勿使用此檔案，並重新下載模型。", "El modelo OCR falló la comprobación de tamaño o integridad. No lo uses; descárgalo de nuevo.", "Il modello OCR non supera il controllo di dimensione o integrità. Non usarlo; scaricalo di nuovo.", "OCR モデルのサイズまたは整合性検証に失敗しました。使用せず再ダウンロードしてください。", "O modelo OCR falhou na verificação de tamanho ou integridade. Não o use; baixe novamente.", "OCR 모델 크기 또는 무결성 검사에 실패했습니다. 사용하지 말고 다시 다운로드하세요.", "OCR modeli boyut veya bütünlük denetiminden geçemedi. Kullanmayın; yeniden indirin.", "OCR modeli ölçü və ya bütövlük yoxlamasından keçmədi. İstifadə etməyin; yenidən yükləyin.");
-errorGroup(["OCR_MODEL_NETWORK", "OCR model URL is invalid", "OCR model redirect is missing a Location header", "OCR model redirect URL is invalid", "OCR model download exceeded the redirect limit", "OCR model download was redirected to an untrusted origin"],
-  "The OCR model could not be downloaded securely. Check access to GitHub and retry; do not bypass download validation.", "无法安全下载 OCR 模型，请检查 GitHub 网络连接后重试，不要绕过下载校验。", "無法安全下載 OCR 模型，請檢查 GitHub 網路連線後重試，不要略過下載驗證。", "No se pudo descargar el modelo OCR de forma segura. Comprueba GitHub y reintenta sin omitir la validación.", "Impossibile scaricare il modello OCR in sicurezza. Controlla GitHub e riprova senza ignorare la verifica.", "OCR モデルを安全にダウンロードできません。GitHub 接続を確認し、検証を無効にせず再試行してください。", "Não foi possível baixar o modelo OCR com segurança. Confira o acesso ao GitHub sem ignorar a validação.", "OCR 모델을 안전하게 다운로드할 수 없습니다. GitHub 연결을 확인하고 검증을 우회하지 말고 다시 시도하세요.", "OCR modeli güvenli indirilemedi. GitHub erişimini kontrol edip doğrulamayı atlamadan yeniden deneyin.", "OCR modelini təhlükəsiz yükləmək mümkün olmadı. GitHub bağlantısını yoxlayıb doğrulamanı keçmədən yenidən cəhd edin.");
-errorGroup(["OCR_MODEL_MISSING"],
-  "The required OCR model is not installed. Download it from the model controls before recognition.", "所需 OCR 模型尚未安装，请先在模型管理中下载，再开始识别。", "所需 OCR 模型尚未安裝，請先在模型管理中下載，再開始辨識。", "El modelo OCR requerido no está instalado. Descárgalo antes del reconocimiento.", "Il modello OCR richiesto non è installato. Scaricalo prima del riconoscimento.", "必要な OCR モデルが未インストールです。認識前にモデル設定からダウンロードしてください。", "O modelo OCR necessário não está instalado. Baixe-o antes do reconhecimento.", "필요한 OCR 모델이 설치되지 않았습니다. 인식 전에 모델을 다운로드하세요.", "Gerekli OCR modeli yüklü değil. Tanımadan önce modeli indirin.", "Tələb olunan OCR modeli quraşdırılmayıb. Tanımadan əvvəl modeli yükləyin.");
-errorGroup(["OCR_MODEL_IO"],
-  "The OCR model file could not be read or saved. Check data-directory permissions and available disk space.", "无法读取或保存 OCR 模型文件，请检查数据目录权限和磁盘剩余空间。", "無法讀取或儲存 OCR 模型檔案，請檢查資料目錄權限與磁碟剩餘空間。", "No se pudo leer o guardar el modelo OCR. Comprueba permisos y espacio disponible.", "Impossibile leggere o salvare il modello OCR. Controlla permessi e spazio libero.", "OCR モデルを読み書きできません。データディレクトリの権限と空き容量を確認してください。", "Não foi possível ler ou salvar o modelo OCR. Confira permissões e espaço livre.", "OCR 모델 파일을 읽거나 저장할 수 없습니다. 폴더 권한과 디스크 공간을 확인하세요.", "OCR model dosyası okunamadı veya kaydedilemedi. Dizin izinlerini ve boş disk alanını kontrol edin.", "OCR model faylını oxumaq və ya saxlamaq mümkün olmadı. Qovluq icazələrini və boş disk yerini yoxlayın.");
+errorGroup(
+  ["shortcuts must be an object", "shortcut values must be strings", "Invalid shortcut"],
+  "Invalid shortcut settings. Choose a valid key combination and try again.",
+  "快捷键设置无效，请选择有效的组合键后重试。",
+  "快捷鍵設定無效，請選擇有效的組合鍵後重試。",
+  "La configuración de atajos no es válida. Elige una combinación válida e inténtalo de nuevo.",
+  "Impostazioni scorciatoie non valide. Scegli una combinazione valida e riprova.",
+  "ショートカット設定が無効です。有効なキーの組み合わせを選び、再試行してください。",
+  "Configurações de atalhos inválidas. Escolha uma combinação válida e tente novamente.",
+  "단축키 설정이 잘못되었습니다. 유효한 키 조합을 선택하고 다시 시도하세요.",
+  "Kısayol ayarları geçersiz. Geçerli bir tuş birleşimi seçip yeniden deneyin.",
+  "Qısayol parametrləri yanlışdır. Düzgün düymə kombinasiyası seçib yenidən cəhd edin.",
+);
 
-additionalErrors["AES-GMAC key length does not match the selected algorithm"] = additionalErrors["GMAC nonce must be 12 bytes"];
-additionalErrors["Stored key type does not match the selected KEM algorithm"] = additionalErrors["Stored key type does not match the selected algorithm"];
-additionalErrors["ML-KEM operation must be generate, encapsulate, or decapsulate"] = additionalErrors["Unknown crypto action"];
-errorGroup(["Could not start file transfer"],
-  "The file transfer could not be started. Select the file again and retry.", "无法启动文件传输，请重新选择文件后重试。", "無法啟動檔案傳輸，請重新選擇檔案後重試。", "No se pudo iniciar la transferencia. Selecciona el archivo e inténtalo de nuevo.", "Impossibile avviare il trasferimento. Seleziona nuovamente il file e riprova.", "ファイル転送を開始できません。ファイルを選択し直して再試行してください。", "Não foi possível iniciar a transferência. Selecione o arquivo e tente novamente.", "파일 전송을 시작할 수 없습니다. 파일을 다시 선택하고 시도하세요.", "Dosya aktarımı başlatılamadı. Dosyayı yeniden seçip tekrar deneyin.", "Fayl ötürməsini başlatmaq mümkün olmadı. Faylı yenidən seçib cəhd edin.");
-for (const key of ["OCR bytes and chunk size are invalid", "OCR channel is invalid", "Timed out while transferring the image to the native OCR engine"]) additionalErrors[key] = additionalErrors["OCR image upload is incomplete"];
+errorGroup(
+  [
+    "Unsupported hash algorithm",
+    "Unsupported modern cipher algorithm",
+    "Unsupported specialized crypto algorithm",
+    "Unsupported KEM algorithm",
+    "Unsupported KDF algorithm",
+  ],
+  "The selected algorithm is not supported. Choose a supported algorithm.",
+  "不支持所选算法，请选择此工具支持的算法。",
+  "不支援所選演算法，請選擇此工具支援的演算法。",
+  "El algoritmo seleccionado no es compatible. Elige uno compatible.",
+  "L'algoritmo selezionato non è supportato. Scegline uno supportato.",
+  "選択したアルゴリズムは未対応です。対応するものを選択してください。",
+  "O algoritmo selecionado não é compatível. Escolha um compatível.",
+  "선택한 알고리즘은 지원되지 않습니다. 지원되는 알고리즘을 선택하세요.",
+  "Seçilen algoritma desteklenmiyor. Desteklenen bir algoritma seçin.",
+  "Seçilmiş alqoritm dəstəklənmir. Dəstəklənən alqoritm seçin.",
+);
+errorGroup(
+  [
+    "Unknown crypto action",
+    "action must be validate, format, or minify",
+    "HPKE operation must be generate, encrypt, or decrypt",
+    "Unsupported signature algorithm or operation",
+  ],
+  "The requested operation is not supported by this tool. Check the operation and algorithm.",
+  "此工具不支持请求的操作，请检查操作和算法选择。",
+  "此工具不支援請求的操作，請檢查操作與演算法選擇。",
+  "Esta herramienta no admite la operación. Comprueba la operación y el algoritmo.",
+  "Operazione non supportata. Controlla operazione e algoritmo.",
+  "この操作は未対応です。操作とアルゴリズムを確認してください。",
+  "Esta ferramenta não suporta a operação. Confira a operação e o algoritmo.",
+  "이 도구는 요청한 작업을 지원하지 않습니다. 작업과 알고리즘을 확인하세요.",
+  "Bu araç istenen işlemi desteklemiyor. İşlemi ve algoritmayı kontrol edin.",
+  "Bu alət tələb olunan əməliyyatı dəstəkləmir. Əməliyyatı və alqoritmi yoxlayın.",
+);
+errorGroup(
+  ["Too many active hash sessions", "Too many active save sessions"],
+  "Too many file operations are running. Wait for an operation to finish and retry.",
+  "正在处理的文件任务过多，请等待已有任务完成后重试。",
+  "正在處理的檔案工作過多，請等待現有工作完成後重試。",
+  "Hay demasiadas operaciones de archivos. Espera a que termine alguna.",
+  "Troppe operazioni sui file. Attendi che una termini e riprova.",
+  "ファイル処理が多すぎます。完了を待って再試行してください。",
+  "Há muitas operações de arquivo. Aguarde uma terminar e tente novamente.",
+  "파일 작업이 너무 많습니다. 작업이 끝난 후 다시 시도하세요.",
+  "Çok fazla dosya işlemi var. Birinin bitmesini bekleyip tekrar deneyin.",
+  "Həddən çox fayl əməliyyatı var. Bitməsini gözləyib yenidən cəhd edin.",
+);
+errorGroup(
+  ["Unknown or expired hash session", "Unknown or expired save session"],
+  "The file operation has expired. Select the file and start again.",
+  "文件处理会话不存在或已过期，请重新选择文件并开始。",
+  "檔案處理工作階段不存在或已過期，請重新選擇檔案並開始。",
+  "La sesión del archivo ha caducado. Selecciona el archivo de nuevo.",
+  "La sessione del file è scaduta. Seleziona nuovamente il file.",
+  "ファイル処理が期限切れです。ファイルを選択し直してください。",
+  "A sessão do arquivo expirou. Selecione o arquivo novamente.",
+  "파일 작업 세션이 만료되었습니다. 파일을 다시 선택하세요.",
+  "Dosya işleminin süresi doldu. Dosyayı yeniden seçin.",
+  "Fayl əməliyyatının vaxtı bitib. Faylı yenidən seçin.",
+);
+errorGroup(
+  [
+    "Hash input exceeds the input limit",
+    "File is too large",
+    "Invalid or unsupported file size",
+  ],
+  "The file size is unsupported or exceeds this tool's limit. Use a smaller supported file.",
+  "文件大小无效或超出工具限制，请使用符合大小限制的文件。",
+  "檔案大小無效或超出工具限制，請使用符合大小限制的檔案。",
+  "El tamaño del archivo no es válido o supera el límite. Usa un archivo compatible más pequeño.",
+  "Dimensione del file non valida o eccessiva. Usa un file compatibile più piccolo.",
+  "ファイルサイズが無効か上限を超えています。小さい対応ファイルを使用してください。",
+  "O tamanho do arquivo é inválido ou excede o limite. Use um arquivo compatível menor.",
+  "파일 크기가 올바르지 않거나 제한을 초과합니다. 더 작은 지원 파일을 사용하세요.",
+  "Dosya boyutu geçersiz veya sınırı aşıyor. Daha küçük desteklenen bir dosya kullanın.",
+  "Fayl ölçüsü yanlışdır və ya limiti aşır. Daha kiçik dəstəklənən fayl seçin.",
+);
+errorGroup(
+  [
+    "Unsupported AES stream mode or key length",
+    "Invalid AES key length",
+    "AES-FF1 requires a 16, 24, or 32-byte key",
+    "AES-CMAC requires a 16, 24, or 32-byte key",
+  ],
+  "The AES key length or mode is invalid. Check the selected mode and required key size.",
+  "AES 密钥长度或模式无效，请检查所选模式要求的密钥字节数。",
+  "AES 金鑰長度或模式無效，請檢查所選模式要求的金鑰位元組數。",
+  "La longitud de clave AES o el modo no es válido. Comprueba el tamaño requerido.",
+  "Lunghezza della chiave AES o modalità non valida. Controlla la dimensione richiesta.",
+  "AES の鍵長またはモードが無効です。必要な鍵長を確認してください。",
+  "O tamanho da chave AES ou o modo é inválido. Confira o tamanho exigido.",
+  "AES 키 길이나 모드가 올바르지 않습니다. 필요한 키 크기를 확인하세요.",
+  "AES anahtar uzunluğu veya modu geçersiz. Gereken anahtar boyutunu kontrol edin.",
+  "AES açar uzunluğu və ya rejimi yanlışdır. Tələb olunan açar ölçüsünü yoxlayın.",
+);
+errorGroup(
+  [
+    "Invalid key",
+    "Invalid key or counter",
+    "Invalid AES-XTS key",
+    "Invalid AES-CMAC key",
+    "Invalid KEM public key",
+    "Invalid KEM private key",
+  ],
+  "The key or counter is invalid. Check its encoding, length, and algorithm.",
+  "密钥或计数器无效，请检查编码、长度和对应算法。",
+  "金鑰或計數器無效，請檢查編碼、長度及對應演算法。",
+  "La clave o el contador no es válido. Comprueba codificación, longitud y algoritmo.",
+  "Chiave o contatore non valido. Controlla codifica, lunghezza e algoritmo.",
+  "鍵またはカウンターが無効です。エンコード、長さ、アルゴリズムを確認してください。",
+  "A chave ou o contador é inválido. Confira codificação, tamanho e algoritmo.",
+  "키 또는 카운터가 올바르지 않습니다. 인코딩, 길이, 알고리즘을 확인하세요.",
+  "Anahtar veya sayaç geçersiz. Kodlamayı, uzunluğu ve algoritmayı kontrol edin.",
+  "Açar və ya sayğac yanlışdır. Kodlaşdırmanı, uzunluğu və alqoritmi yoxlayın.",
+);
+errorGroup(
+  [
+    "ChaCha20-Poly1305 authentication failed",
+    "XChaCha20-Poly1305 authentication failed",
+    "AES-GCM-SIV authentication failed",
+    "AES-CCM authentication failed",
+    "AES-SIV authentication failed",
+    "HPKE authentication or decryption failed",
+  ],
+  "Authentication or decryption failed. Check the key, nonce, AAD, and ciphertext; the data may have been modified.",
+  "认证或解密失败，请核对密钥、Nonce、AAD 和密文；数据可能被修改。",
+  "驗證或解密失敗，請核對金鑰、Nonce、AAD 與密文；資料可能被修改。",
+  "Falló la autenticación o el descifrado. Comprueba clave, nonce, AAD y texto cifrado; los datos pueden haber cambiado.",
+  "Autenticazione o decifratura fallita. Controlla chiave, nonce, AAD e testo cifrato; i dati potrebbero essere stati modificati.",
+  "認証または復号に失敗しました。鍵、Nonce、AAD、暗号文を確認してください。データが変更された可能性があります。",
+  "Falha na autenticação ou descriptografia. Confira chave, nonce, AAD e texto cifrado; os dados podem ter sido alterados.",
+  "인증 또는 복호화에 실패했습니다. 키, Nonce, AAD, 암호문을 확인하세요. 데이터가 변경되었을 수 있습니다.",
+  "Doğrulama veya şifre çözme başarısız. Anahtarı, nonce, AAD ve şifreli metni kontrol edin; veriler değişmiş olabilir.",
+  "Doğrulama və ya deşifrləmə alınmadı. Açarı, nonce, AAD və şifrəli mətni yoxlayın; məlumat dəyişdirilmiş ola bilər.",
+);
+errorGroup(
+  ["AES-CTR does not support AAD"],
+  "AES-CTR does not support AAD. Clear AAD or choose an authenticated encryption mode.",
+  "AES-CTR 不支持 AAD，请清空 AAD 或选择认证加密模式。",
+  "AES-CTR 不支援 AAD，請清空 AAD 或選擇驗證加密模式。",
+  "AES-CTR no admite AAD. Vacíalo o elige cifrado autenticado.",
+  "AES-CTR non supporta AAD. Rimuovilo o scegli una cifratura autenticata.",
+  "AES-CTR は AAD 未対応です。AAD を空にするか認証付き暗号を選択してください。",
+  "AES-CTR não suporta AAD. Limpe-o ou escolha criptografia autenticada.",
+  "AES-CTR은 AAD를 지원하지 않습니다. AAD를 비우거나 인증 암호화를 선택하세요.",
+  "AES-CTR AAD desteklemez. AAD'yi temizleyin veya doğrulamalı şifreleme seçin.",
+  "AES-CTR AAD-ni dəstəkləmir. AAD-ni silin və ya doğrulamalı şifrələmə seçin.",
+);
+errorGroup(
+  ["AES key wrap integrity or input-length check failed"],
+  "AES key wrapping failed the integrity or length check. Check the wrapping key, mode, and input bytes.",
+  "AES 密钥包装的完整性或长度检查失败，请检查包装密钥、模式及输入字节。",
+  "AES 金鑰包裝的完整性或長度檢查失敗，請檢查包裝金鑰、模式及輸入位元組。",
+  "Falló la integridad o longitud del envoltorio AES. Comprueba clave, modo y entrada.",
+  "Controllo di integrità o lunghezza AES wrapping fallito. Controlla chiave, modalità e input.",
+  "AES 鍵ラップの整合性または長さの検証に失敗しました。鍵、モード、入力を確認してください。",
+  "Falha de integridade ou tamanho no wrapping AES. Confira chave, modo e entrada.",
+  "AES 키 래핑의 무결성 또는 길이 확인에 실패했습니다. 래핑 키, 모드, 입력을 확인하세요.",
+  "AES anahtar sarma bütünlük veya uzunluk denetimi başarısız. Anahtarı, modu ve girdiyi kontrol edin.",
+  "AES açar sarımasının bütövlük və ya uzunluq yoxlaması alınmadı. Açarı, rejimi və girişi yoxlayın.",
+);
+errorGroup(
+  ["AES-XTS input must be at least 16 bytes"],
+  "AES-XTS requires at least 16 input bytes.",
+  "AES-XTS 输入至少需要 16 字节。",
+  "AES-XTS 輸入至少需要 16 位元組。",
+  "AES-XTS requiere al menos 16 bytes de entrada.",
+  "AES-XTS richiede almeno 16 byte di input.",
+  "AES-XTS の入力は 16 バイト以上必要です。",
+  "AES-XTS exige pelo menos 16 bytes de entrada.",
+  "AES-XTS 입력은 최소 16바이트여야 합니다.",
+  "AES-XTS en az 16 giriş baytı gerektirir.",
+  "AES-XTS üçün ən azı 16 giriş baytı tələb olunur.",
+);
+errorGroup(
+  [
+    "This FF1 tool supports radix 10 or 36",
+    "Invalid FF1 key or radix",
+    "Input contains a character outside the selected radix",
+  ],
+  "FF1 parameters are invalid. Use radix 10 or 36, valid characters for that radix, and a matching AES key.",
+  "FF1 参数无效：仅支持 10 或 36 进制，请检查输入字符和 AES 密钥。",
+  "FF1 參數無效：僅支援 10 或 36 進位，請檢查輸入字元及 AES 金鑰。",
+  "Parámetros FF1 no válidos. Usa base 10 o 36, caracteres válidos y una clave AES correcta.",
+  "Parametri FF1 non validi. Usa base 10 o 36, caratteri validi e una chiave AES corretta.",
+  "FF1 のパラメーターが無効です。基数 10 または 36、対応する文字、正しい AES 鍵を使用してください。",
+  "Parâmetros FF1 inválidos. Use base 10 ou 36, caracteres válidos e uma chave AES correta.",
+  "FF1 매개변수가 올바르지 않습니다. 10 또는 36진수, 유효한 문자와 AES 키를 사용하세요.",
+  "FF1 parametreleri geçersiz. 10 veya 36 tabanı, geçerli karakterler ve uygun AES anahtarı kullanın.",
+  "FF1 parametrləri yanlışdır. 10 və ya 36 əsası, uyğun simvollar və düzgün AES açarı istifadə edin.",
+);
+errorGroup(
+  ["GMAC nonce must be 12 bytes", "AES-GMAC failed"],
+  "GMAC parameters are invalid. Use a 12-byte nonce and a key matching the selected AES variant.",
+  "GMAC 参数无效，请使用 12 字节 Nonce 和与所选 AES 规格匹配的密钥。",
+  "GMAC 參數無效，請使用 12 位元組 Nonce 及與所選 AES 規格相符的金鑰。",
+  "Parámetros GMAC no válidos. Usa un nonce de 12 bytes y la clave AES adecuada.",
+  "Parametri GMAC non validi. Usa un nonce di 12 byte e la chiave AES corretta.",
+  "GMAC のパラメーターが無効です。12 バイトの Nonce と対応する AES 鍵を使用してください。",
+  "Parâmetros GMAC inválidos. Use nonce de 12 bytes e a chave AES correspondente.",
+  "GMAC 매개변수가 올바르지 않습니다. 12바이트 Nonce와 해당 AES 키를 사용하세요.",
+  "GMAC parametreleri geçersiz. 12 baytlık nonce ve uygun AES anahtarı kullanın.",
+  "GMAC parametrləri yanlışdır. 12 baytlıq nonce və uyğun AES açarı istifadə edin.",
+);
+errorGroup(
+  [
+    "HPKE encryption failed",
+    "ML-KEM encapsulation failed",
+    "ML-KEM decapsulation failed",
+    "Invalid encapsulated key",
+  ],
+  "Public-key encryption or key encapsulation failed. Check the algorithm, key encoding, and encapsulated data.",
+  "公钥加密或密钥封装处理失败，请检查算法、密钥编码和封装数据。",
+  "公鑰加密或金鑰封裝處理失敗，請檢查演算法、金鑰編碼及封裝資料。",
+  "Falló el cifrado de clave pública o la encapsulación. Comprueba algoritmo, claves y datos encapsulados.",
+  "Cifratura a chiave pubblica o incapsulamento fallito. Controlla algoritmo, chiavi e dati incapsulati.",
+  "公開鍵暗号または鍵カプセル化に失敗しました。アルゴリズム、鍵の形式、カプセル化データを確認してください。",
+  "Falha na criptografia de chave pública ou encapsulamento. Confira algoritmo, chaves e dados encapsulados.",
+  "공개 키 암호화 또는 키 캡슐화에 실패했습니다. 알고리즘, 키 인코딩과 캡슐화 데이터를 확인하세요.",
+  "Açık anahtarlı şifreleme veya anahtar kapsülleme başarısız. Algoritmayı, anahtarları ve kapsüllenmiş veriyi kontrol edin.",
+  "Açıq açarlı şifrələmə və ya açar kapsullaşdırması alınmadı. Alqoritmi, açarları və kapsullaşdırılmış məlumatı yoxlayın.",
+);
+errorGroup(
+  ["KDF salt must be at least 8 bytes"],
+  "Key derivation requires a salt of at least 8 bytes.",
+  "密钥派生的盐值至少需要 8 字节。",
+  "金鑰衍生的鹽值至少需要 8 位元組。",
+  "La derivación de claves requiere una sal de al menos 8 bytes.",
+  "La derivazione della chiave richiede un salt di almeno 8 byte.",
+  "鍵導出には 8 バイト以上のソルトが必要です。",
+  "A derivação de chave exige salt de pelo menos 8 bytes.",
+  "키 파생에는 최소 8바이트의 솔트가 필요합니다.",
+  "Anahtar türetme en az 8 baytlık salt gerektirir.",
+  "Açar törətmə üçün ən azı 8 baytlıq salt tələb olunur.",
+);
+errorGroup(
+  [
+    "Invalid scrypt parameters",
+    "Invalid Argon2id parameters",
+    "scrypt failed",
+    "Argon2id failed",
+  ],
+  "Key derivation failed. Check the memory, iteration, parallelism, and output-length settings.",
+  "密钥派生失败，请检查内存、迭代次数、并行度和输出长度设置。",
+  "金鑰衍生失敗，請檢查記憶體、迭代次數、平行度及輸出長度設定。",
+  "Falló la derivación. Comprueba memoria, iteraciones, paralelismo y longitud de salida.",
+  "Derivazione fallita. Controlla memoria, iterazioni, parallelismo e lunghezza di output.",
+  "鍵導出に失敗しました。メモリ、反復回数、並列度、出力長を確認してください。",
+  "Falha na derivação. Confira memória, iterações, paralelismo e tamanho de saída.",
+  "키 파생에 실패했습니다. 메모리, 반복 횟수, 병렬 처리와 출력 길이를 확인하세요.",
+  "Anahtar türetme başarısız. Bellek, yineleme, paralellik ve çıktı uzunluğunu kontrol edin.",
+  "Açar törətmə alınmadı. Yaddaşı, təkrar sayını, paralelliyi və çıxış uzunluğunu yoxlayın.",
+);
+errorGroup(
+  ["HKDF output length is too large"],
+  "The HKDF output length exceeds the algorithm's limit. Reduce the requested length.",
+  "HKDF 输出长度超过算法上限，请减小输出长度。",
+  "HKDF 輸出長度超過演算法上限，請減小輸出長度。",
+  "La salida HKDF supera el límite. Reduce la longitud.",
+  "La lunghezza di output HKDF supera il limite. Riducila.",
+  "HKDF の出力長が上限を超えています。短くしてください。",
+  "A saída HKDF excede o limite. Reduza o tamanho.",
+  "HKDF 출력 길이가 제한을 초과합니다. 길이를 줄이세요.",
+  "HKDF çıktı uzunluğu sınırı aşıyor. Uzunluğu azaltın.",
+  "HKDF çıxış uzunluğu limiti aşır. Uzunluğu azaldın.",
+);
+errorGroup(
+  ["SM2 signing failed"],
+  "SM2 signing failed. Check the private key and signing parameters.",
+  "SM2 签名失败，请检查私钥及签名参数。",
+  "SM2 簽章失敗，請檢查私鑰及簽章參數。",
+  "Falló la firma SM2. Comprueba la clave privada y los parámetros.",
+  "Firma SM2 fallita. Controlla chiave privata e parametri.",
+  "SM2 署名に失敗しました。秘密鍵と署名パラメーターを確認してください。",
+  "Falha na assinatura SM2. Confira a chave privada e os parâmetros.",
+  "SM2 서명에 실패했습니다. 개인 키와 서명 매개변수를 확인하세요.",
+  "SM2 imzalama başarısız. Özel anahtarı ve imza parametrelerini kontrol edin.",
+  "SM2 imzalama alınmadı. Şəxsi açarı və imza parametrlərini yoxlayın.",
+);
+errorGroup(
+  ["JWT must contain three non-empty parts", "Invalid JWT header"],
+  "The JWT structure or header is invalid. Supply a token with three non-empty dot-separated parts.",
+  "JWT 结构或头部无效，请提供由点分隔且三段均非空的 Token。",
+  "JWT 結構或標頭無效，請提供由點分隔且三段均非空的 Token。",
+  "Estructura o cabecera JWT no válida. Usa tres partes no vacías separadas por puntos.",
+  "Struttura o header JWT non valido. Usa tre parti non vuote separate da punti.",
+  "JWT の構造またはヘッダーが無効です。空でない 3 部分をドットで区切ってください。",
+  "Estrutura ou cabeçalho JWT inválido. Use três partes não vazias separadas por pontos.",
+  "JWT 구조 또는 헤더가 올바르지 않습니다. 점으로 구분된 세 부분을 입력하세요.",
+  "JWT yapısı veya başlığı geçersiz. Noktayla ayrılmış üç dolu bölüm girin.",
+  "JWT quruluşu və ya başlığı yanlışdır. Nöqtə ilə ayrılmış üç boş olmayan hissə verin.",
+);
+errorGroup(
+  ["Invalid JWT signature"],
+  "The JWT signature is invalid. Check the verification key, algorithm, and token contents.",
+  "JWT 签名无效，请检查验签密钥、算法及 Token 是否被修改。",
+  "JWT 簽章無效，請檢查驗證金鑰、演算法及 Token 是否被修改。",
+  "La firma JWT no es válida. Comprueba clave, algoritmo y contenido del token.",
+  "Firma JWT non valida. Controlla chiave, algoritmo e contenuto del token.",
+  "JWT の署名が無効です。検証鍵、アルゴリズム、トークン内容を確認してください。",
+  "A assinatura JWT é inválida. Confira chave, algoritmo e conteúdo do token.",
+  "JWT 서명이 올바르지 않습니다. 검증 키, 알고리즘과 토큰 내용을 확인하세요.",
+  "JWT imzası geçersiz. Doğrulama anahtarını, algoritmayı ve belirteci kontrol edin.",
+  "JWT imzası yanlışdır. Yoxlama açarını, alqoritmi və token məzmununu yoxlayın.",
+);
+errorGroup(
+  [
+    "OpenSSH public key needs type and base64 body",
+    "Unsupported OpenSSH public key type",
+    "Invalid OpenSSH key body",
+    "OpenSSH key type does not match its body",
+    "Invalid RSA public key body",
+    "Invalid Ed25519 public key body",
+    "Invalid ECDSA public key type",
+    "Invalid ECDSA public key body",
+  ],
+  "The SSH public key type or body is invalid. Paste a complete supported OpenSSH public key.",
+  "SSH 公钥类型或内容无效，请粘贴完整且受支持的 OpenSSH 公钥。",
+  "SSH 公鑰類型或內容無效，請貼上完整且受支援的 OpenSSH 公鑰。",
+  "El tipo o contenido de la clave SSH no es válido. Pega una clave OpenSSH completa y compatible.",
+  "Tipo o contenuto della chiave SSH non valido. Incolla una chiave OpenSSH completa e supportata.",
+  "SSH 公開鍵の種類または内容が無効です。対応する完全な OpenSSH 公開鍵を貼り付けてください。",
+  "Tipo ou conteúdo da chave SSH inválido. Cole uma chave OpenSSH completa e compatível.",
+  "SSH 공개 키 유형 또는 내용이 올바르지 않습니다. 지원되는 완전한 OpenSSH 공개 키를 붙여넣으세요.",
+  "SSH açık anahtar türü veya içeriği geçersiz. Tam ve desteklenen bir OpenSSH açık anahtarı yapıştırın.",
+  "SSH açıq açar növü və ya məzmunu yanlışdır. Tam və dəstəklənən OpenSSH açıq açarı yapışdırın.",
+);
+errorGroup(
+  [
+    "Truncated OpenSSH key body",
+    "Truncated RSA public key",
+    "Truncated Ed25519 public key",
+    "Truncated ECDSA public key",
+  ],
+  "The public key is truncated. Copy the complete public key and try again.",
+  "公钥数据不完整，请重新复制完整公钥后重试。",
+  "公鑰資料不完整，請重新複製完整公鑰後重試。",
+  "La clave pública está truncada. Copia la clave completa e inténtalo de nuevo.",
+  "La chiave pubblica è incompleta. Copia la chiave intera e riprova.",
+  "公開鍵データが途中で切れています。完全な鍵をコピーし直してください。",
+  "A chave pública está incompleta. Copie a chave inteira e tente novamente.",
+  "공개 키 데이터가 잘렸습니다. 전체 키를 다시 복사하세요.",
+  "Açık anahtar eksik. Tam anahtarı kopyalayıp tekrar deneyin.",
+  "Açıq açar natamamdır. Tam açarı köçürüb yenidən cəhd edin.",
+);
+errorGroup(
+  [
+    "Stored key type does not match the selected algorithm",
+    "Key is not allowed for this purpose",
+  ],
+  "This key cannot be used for the selected algorithm or purpose. Choose a compatible key.",
+  "此密钥不适用于所选算法或用途，请选择兼容密钥。",
+  "此金鑰不適用於所選演算法或用途，請選擇相容金鑰。",
+  "La clave no sirve para el algoritmo o uso seleccionado. Elige una compatible.",
+  "La chiave non è adatta all'algoritmo o uso scelto. Scegline una compatibile.",
+  "この鍵は選択したアルゴリズムまたは用途に使用できません。対応する鍵を選択してください。",
+  "Esta chave não serve para o algoritmo ou finalidade. Escolha uma compatível.",
+  "이 키는 선택한 알고리즘이나 용도에 사용할 수 없습니다. 호환되는 키를 선택하세요.",
+  "Bu anahtar seçilen algoritma veya amaçla kullanılamaz. Uyumlu bir anahtar seçin.",
+  "Bu açar seçilmiş alqoritm və ya təyinat üçün uyğun deyil. Uyğun açar seçin.",
+);
+errorGroup(
+  ["AES-ECB decrypt failed"],
+  "AES-ECB decryption failed. Check the key, ciphertext encoding, and padding.",
+  "AES-ECB 解密失败，请检查密钥、密文编码及填充方式。",
+  "AES-ECB 解密失敗，請檢查金鑰、密文編碼及填充方式。",
+  "Falló el descifrado AES-ECB. Comprueba clave, codificación y relleno.",
+  "Decifratura AES-ECB fallita. Controlla chiave, codifica e padding.",
+  "AES-ECB 復号に失敗しました。鍵、暗号文の形式、パディングを確認してください。",
+  "Falha na descriptografia AES-ECB. Confira chave, codificação e preenchimento.",
+  "AES-ECB 복호화에 실패했습니다. 키, 암호문 인코딩과 패딩을 확인하세요.",
+  "AES-ECB şifre çözme başarısız. Anahtarı, kodlamayı ve dolguyu kontrol edin.",
+  "AES-ECB deşifrləməsi alınmadı. Açarı, kodlaşdırmanı və doldurmanı yoxlayın.",
+);
 
+errorGroup(
+  [
+    "DBX_PLUGIN_DATA_DIR is not set; launch through DBX or configure a development data directory",
+    "DBX_PLUGIN_DATA_DIR must be an absolute path",
+  ],
+  "The plugin data directory is missing or invalid. Launch through DBX or configure an absolute development data path.",
+  "插件数据目录未配置或无效，请通过 DBX 启动，或配置绝对路径的开发数据目录。",
+  "外掛資料目錄未設定或無效，請透過 DBX 啟動，或設定絕對路徑的開發資料目錄。",
+  "Falta el directorio de datos o no es válido. Inicia desde DBX o configura una ruta absoluta.",
+  "Directory dati mancante o non valida. Avvia tramite DBX o configura un percorso assoluto.",
+  "データディレクトリが未設定か無効です。DBX から起動するか絶対パスを設定してください。",
+  "Diretório de dados ausente ou inválido. Inicie pelo DBX ou configure um caminho absoluto.",
+  "데이터 디렉터리가 없거나 올바르지 않습니다. DBX로 시작하거나 절대 경로를 설정하세요.",
+  "Veri dizini eksik veya geçersiz. DBX üzerinden başlatın veya mutlak yol ayarlayın.",
+  "Məlumat qovluğu yoxdur və ya yanlışdır. DBX ilə başladın və ya mütləq yol təyin edin.",
+);
+errorGroup(
+  ["Incomplete file transfer", "Invalid save chunk"],
+  "The file transfer is incomplete or contains an invalid chunk. Select the file and transfer it again.",
+  "文件传输不完整或数据分块无效，请重新选择文件并传输。",
+  "檔案傳輸不完整或資料區塊無效，請重新選擇檔案並傳輸。",
+  "La transferencia está incompleta o tiene un bloque no válido. Vuelve a transferir el archivo.",
+  "Trasferimento incompleto o blocco non valido. Trasferisci nuovamente il file.",
+  "ファイル転送が不完全かブロックが無効です。ファイルを転送し直してください。",
+  "Transferência incompleta ou bloco inválido. Transfira o arquivo novamente.",
+  "파일 전송이 불완전하거나 청크가 올바르지 않습니다. 파일을 다시 전송하세요.",
+  "Dosya aktarımı eksik veya parça geçersiz. Dosyayı yeniden aktarın.",
+  "Fayl ötürməsi natamamdır və ya hissə yanlışdır. Faylı yenidən ötürün.",
+);
+errorGroup(
+  ["Clipboard is busy"],
+  "The clipboard is busy. Wait a moment and copy again.",
+  "剪贴板正被其他程序占用，请稍后重新复制。",
+  "剪貼簿正被其他程式占用，請稍後重新複製。",
+  "El portapapeles está ocupado. Espera y vuelve a copiar.",
+  "Gli appunti sono occupati. Attendi e copia di nuovo.",
+  "クリップボードが使用中です。少し待ってコピーし直してください。",
+  "A área de transferência está ocupada. Aguarde e copie novamente.",
+  "클립보드를 사용 중입니다. 잠시 후 다시 복사하세요.",
+  "Pano meşgul. Biraz bekleyip yeniden kopyalayın.",
+  "Mübadilə buferi məşğuldur. Bir qədər gözləyib yenidən köçürün.",
+);
+errorGroup(
+  [
+    "Failed to register PNG clipboard format",
+    "Failed to clear clipboard",
+    "Failed to allocate clipboard memory",
+    "Failed to lock clipboard memory",
+    "Failed to write PNG to clipboard",
+  ],
+  "The image could not be written to the system clipboard. Retry copying or save it as a file.",
+  "无法将图片写入系统剪贴板，请重新复制或改为保存文件。",
+  "無法將圖片寫入系統剪貼簿，請重新複製或改為儲存檔案。",
+  "No se pudo copiar la imagen al portapapeles. Reintenta o guárdala como archivo.",
+  "Impossibile copiare l'immagine negli appunti. Riprova o salvala come file.",
+  "画像をクリップボードに書き込めません。再試行するかファイルに保存してください。",
+  "Não foi possível copiar a imagem. Tente novamente ou salve como arquivo.",
+  "이미지를 시스템 클립보드에 복사할 수 없습니다. 다시 복사하거나 파일로 저장하세요.",
+  "Görüntü panoya yazılamadı. Yeniden kopyalayın veya dosya olarak kaydedin.",
+  "Şəkli mübadilə buferinə yazmaq mümkün olmadı. Yenidən köçürün və ya fayl kimi saxlayın.",
+);
+errorGroup(
+  ["File not found"],
+  "The file was not found. It may have been moved or deleted; select it again.",
+  "找不到文件，文件可能已移动或删除，请重新选择。",
+  "找不到檔案，檔案可能已移動或刪除，請重新選擇。",
+  "No se encontró el archivo. Puede haberse movido o eliminado; selecciónalo de nuevo.",
+  "File non trovato. Potrebbe essere stato spostato o eliminato; selezionalo di nuovo.",
+  "ファイルが見つかりません。移動または削除された可能性があります。選択し直してください。",
+  "Arquivo não encontrado. Pode ter sido movido ou excluído; selecione novamente.",
+  "파일을 찾을 수 없습니다. 이동하거나 삭제되었을 수 있으니 다시 선택하세요.",
+  "Dosya bulunamadı. Taşınmış veya silinmiş olabilir; yeniden seçin.",
+  "Fayl tapılmadı. Köçürülmüş və ya silinmiş ola bilər; yenidən seçin.",
+);
+errorGroup(
+  ["Downloads folder not found"],
+  "The system Downloads folder was not found. Check its location and access permissions.",
+  "找不到系统下载目录，请检查目录位置和访问权限。",
+  "找不到系統下載目錄，請檢查目錄位置與存取權限。",
+  "No se encontró la carpeta de descargas. Comprueba ubicación y permisos.",
+  "Cartella Download non trovata. Controlla posizione e permessi.",
+  "ダウンロードフォルダーが見つかりません。場所とアクセス権を確認してください。",
+  "Pasta de downloads não encontrada. Confira local e permissões.",
+  "시스템 다운로드 폴더를 찾을 수 없습니다. 위치와 접근 권한을 확인하세요.",
+  "İndirilenler klasörü bulunamadı. Konumu ve erişim izinlerini kontrol edin.",
+  "Yükləmələr qovluğu tapılmadı. Yerini və giriş icazələrini yoxlayın.",
+);
+errorGroup(
+  ["Invalid file data", "File is empty"],
+  "The file is empty or its data is invalid. Select a valid non-empty file.",
+  "文件为空或数据无效，请选择内容完整且非空的文件。",
+  "檔案為空或資料無效，請選擇內容完整且非空的檔案。",
+  "El archivo está vacío o contiene datos no válidos. Selecciona un archivo válido.",
+  "File vuoto o dati non validi. Seleziona un file valido non vuoto.",
+  "ファイルが空かデータが無効です。有効な空でないファイルを選択してください。",
+  "Arquivo vazio ou dados inválidos. Selecione um arquivo válido não vazio.",
+  "파일이 비어 있거나 데이터가 올바르지 않습니다. 유효한 파일을 선택하세요.",
+  "Dosya boş veya veriler geçersiz. Geçerli ve boş olmayan bir dosya seçin.",
+  "Fayl boşdur və ya məlumat yanlışdır. Düzgün və boş olmayan fayl seçin.",
+);
+errorGroup(
+  ["Unsupported image format"],
+  "This image format is not supported. Convert it to a supported format and retry.",
+  "不支持此图片格式，请转换为工具支持的格式后重试。",
+  "不支援此圖片格式，請轉換為工具支援的格式後重試。",
+  "Formato de imagen no compatible. Conviértelo a un formato admitido.",
+  "Formato immagine non supportato. Convertilo in un formato supportato.",
+  "この画像形式は未対応です。対応する形式に変換してください。",
+  "Formato de imagem não suportado. Converta para um formato compatível.",
+  "지원하지 않는 이미지 형식입니다. 지원되는 형식으로 변환하세요.",
+  "Görüntü biçimi desteklenmiyor. Desteklenen bir biçime dönüştürün.",
+  "Şəkil formatı dəstəklənmir. Dəstəklənən formata çevirin.",
+);
+errorGroup(
+  ["Public key is required for this key type", "Public key is required"],
+  "This operation requires a public key. Provide or generate the matching public key.",
+  "此操作需要公钥，请提供或生成对应公钥。",
+  "此操作需要公鑰，請提供或產生對應公鑰。",
+  "Esta operación requiere una clave pública. Proporciona o genera la correspondiente.",
+  "Questa operazione richiede una chiave pubblica. Fornisci o genera quella corrispondente.",
+  "この操作には公開鍵が必要です。対応する公開鍵を入力または生成してください。",
+  "Esta operação exige uma chave pública. Forneça ou gere a chave correspondente.",
+  "이 작업에는 공개 키가 필요합니다. 해당 공개 키를 입력하거나 생성하세요.",
+  "Bu işlem açık anahtar gerektirir. İlgili açık anahtarı girin veya oluşturun.",
+  "Bu əməliyyat açıq açar tələb edir. Uyğun açıq açarı verin və ya yaradın.",
+);
+errorGroup(
+  ["Missing allowedPurposes", "Purposes must be strings"],
+  "The key-usage selection is missing or invalid. Reopen the usage dialog and select the allowed usages.",
+  "密钥用途缺失或格式无效，请重新打开用途设置并选择允许的用途。",
+  "金鑰用途缺失或格式無效，請重新開啟用途設定並選擇允許的用途。",
+  "La selección de usos no es válida. Reabre el diálogo y elige usos permitidos.",
+  "Selezione degli usi mancante o non valida. Riapri il dialogo e scegli gli usi consentiti.",
+  "鍵の用途が未指定か無効です。用途設定を開き直して選択してください。",
+  "Seleção de finalidades ausente ou inválida. Reabra o diálogo e selecione os usos permitidos.",
+  "키 용도 선택이 없거나 올바르지 않습니다. 설정을 다시 열어 허용된 용도를 선택하세요.",
+  "Anahtar kullanım seçimi eksik veya geçersiz. İletişim kutusunu yeniden açıp izinli kullanımları seçin.",
+  "Açar təyinatı yoxdur və ya yanlışdır. Pəncərəni yenidən açıb icazəli təyinatları seçin.",
+);
+errorGroup(
+  ["Deletion requires confirm=true", "Export requires confirm=true"],
+  "This sensitive operation requires explicit confirmation. Review and confirm the action first.",
+  "此敏感操作需要明确确认，请检查后先完成确认。",
+  "此敏感操作需要明確確認，請檢查後先完成確認。",
+  "Esta operación sensible requiere confirmación explícita. Revísala y confírmala primero.",
+  "Questa operazione sensibile richiede conferma esplicita. Verificala e confermala prima.",
+  "この機密操作には明示的な確認が必要です。内容を確認して承認してください。",
+  "Esta operação sensível exige confirmação explícita. Revise e confirme primeiro.",
+  "이 민감한 작업에는 명시적인 확인이 필요합니다. 내용을 검토하고 확인하세요.",
+  "Bu hassas işlem açık onay gerektirir. Önce işlemi inceleyip onaylayın.",
+  "Bu həssas əməliyyat açıq təsdiq tələb edir. Əvvəlcə yoxlayıb təsdiqləyin.",
+);
+errorGroup(
+  ["Key not found"],
+  "The key no longer exists. Refresh the vault and select another key.",
+  "找不到这把密钥，请刷新密钥库并重新选择。",
+  "找不到這把金鑰，請重新整理金鑰庫並重新選擇。",
+  "La clave ya no existe. Actualiza el almacén y selecciona otra.",
+  "La chiave non esiste più. Aggiorna il vault e selezionane un'altra.",
+  "鍵が見つかりません。保管庫を更新して選択し直してください。",
+  "A chave não existe mais. Atualize o cofre e selecione outra.",
+  "키를 찾을 수 없습니다. 보관함을 새로 고치고 다른 키를 선택하세요.",
+  "Anahtar artık yok. Kasayı yenileyip başka bir anahtar seçin.",
+  "Açar artıq yoxdur. Anbarı yeniləyib başqa açar seçin.",
+);
+errorGroup(
+  [
+    "Key vault is too large",
+    "Vault file is too large",
+    "Key vault is full",
+    "Vault contains too many keys",
+  ],
+  "The vault exceeds its size or key-count limit. Remove unneeded keys after backing them up.",
+  "密钥库大小或密钥数量达到上限，请备份后删除不需要的密钥。",
+  "金鑰庫大小或金鑰數量達到上限，請備份後刪除不需要的金鑰。",
+  "El almacén supera el límite de tamaño o claves. Haz una copia y elimina claves innecesarias.",
+  "Il vault supera il limite di dimensione o chiavi. Esegui un backup e rimuovi le chiavi inutili.",
+  "保管庫のサイズまたは鍵数が上限に達しました。バックアップ後に不要な鍵を削除してください。",
+  "O cofre excede o limite de tamanho ou chaves. Faça backup e remova chaves desnecessárias.",
+  "보관함 크기 또는 키 개수가 제한에 도달했습니다. 백업 후 불필요한 키를 삭제하세요.",
+  "Kasa boyut veya anahtar sayısı sınırını aşıyor. Yedekledikten sonra gereksiz anahtarları silin.",
+  "Anbarın ölçü və ya açar sayı limiti aşılıb. Ehtiyat nüsxədən sonra lazımsız açarları silin.",
+);
+errorGroup(
+  [
+    "Vault ciphertext length mismatch",
+    "Vault contains an invalid key id",
+    "Vault contains an invalid key name",
+    "Vault contains oversized key material",
+    "Vault contains an unsupported key algorithm",
+    "Vault contains invalid key purposes",
+  ],
+  "The vault file contains damaged or unsupported data. Preserve the file and restore a known-good backup.",
+  "密钥库文件包含损坏或不支持的数据，请保留原文件并恢复有效备份。",
+  "金鑰庫檔案包含損毀或不支援的資料，請保留原檔並還原有效備份。",
+  "El almacén contiene datos dañados o incompatibles. Conserva el archivo y restaura una copia válida.",
+  "Il vault contiene dati danneggiati o non supportati. Conserva il file e ripristina un backup valido.",
+  "保管庫に破損または未対応のデータがあります。元のファイルを保管し、有効なバックアップから復元してください。",
+  "O cofre contém dados danificados ou incompatíveis. Preserve o arquivo e restaure um backup válido.",
+  "보관함 파일에 손상되었거나 지원되지 않는 데이터가 있습니다. 원본을 보존하고 유효한 백업을 복원하세요.",
+  "Kasa dosyasında bozuk veya desteklenmeyen veriler var. Dosyayı koruyup sağlam bir yedeği geri yükleyin.",
+  "Anbar faylında zədələnmiş və ya dəstəklənməyən məlumat var. Faylı qoruyub düzgün ehtiyat nüsxəni bərpa edin.",
+);
+errorGroup(
+  ["Master password is too long"],
+  "The master password exceeds the 1024-byte limit. Use a shorter password.",
+  "主密码超过 1024 字节上限，请使用更短的密码。",
+  "主密碼超過 1024 位元組上限，請使用更短的密碼。",
+  "La contraseña maestra supera 1024 bytes. Usa una más corta.",
+  "La password master supera 1024 byte. Usane una più corta.",
+  "マスターパスワードが 1024 バイトを超えています。短くしてください。",
+  "A senha mestra excede 1024 bytes. Use uma senha menor.",
+  "마스터 비밀번호가 1024바이트를 초과합니다. 더 짧은 비밀번호를 사용하세요.",
+  "Ana parola 1024 baytı aşıyor. Daha kısa bir parola kullanın.",
+  "Əsas parol 1024 baytı aşır. Daha qısa parol istifadə edin.",
+);
+errorGroup(
+  ["Key material is too large"],
+  "The key material exceeds the supported size. Check that you pasted only the required key.",
+  "密钥材料超过大小限制，请检查是否只粘贴了所需密钥。",
+  "金鑰材料超過大小限制，請檢查是否只貼上所需金鑰。",
+  "El material de clave supera el tamaño permitido. Pega solo la clave necesaria.",
+  "Il materiale della chiave supera il limite. Incolla solo la chiave richiesta.",
+  "鍵データがサイズ上限を超えています。必要な鍵だけを貼り付けてください。",
+  "O material da chave excede o limite. Cole apenas a chave necessária.",
+  "키 데이터가 크기 제한을 초과합니다. 필요한 키만 붙여넣으세요.",
+  "Anahtar verisi boyut sınırını aşıyor. Yalnızca gerekli anahtarı yapıştırın.",
+  "Açar məlumatı ölçü limitini aşır. Yalnız tələb olunan açarı yapışdırın.",
+);
+errorGroup(
+  ["TOTP secret must be Base32"],
+  "The TOTP secret must use Base32 encoding. Check the secret's format.",
+  "TOTP 密钥必须使用 Base32 编码，请检查密钥格式。",
+  "TOTP 金鑰必須使用 Base32 編碼，請檢查金鑰格式。",
+  "El secreto TOTP debe estar en Base32. Comprueba el formato.",
+  "Il segreto TOTP deve essere Base32. Controlla il formato.",
+  "TOTP シークレットには Base32 が必要です。形式を確認してください。",
+  "O segredo TOTP deve usar Base32. Confira o formato.",
+  "TOTP 비밀 키는 Base32 인코딩이어야 합니다. 형식을 확인하세요.",
+  "TOTP sırrı Base32 olmalıdır. Biçimi kontrol edin.",
+  "TOTP sirri Base32 olmalıdır. Formatı yoxlayın.",
+);
+errorGroup(
+  ["Key material must be Base64", "Public key must be Base64"],
+  "The key material must use Base64 encoding. Check the selected key format.",
+  "密钥材料必须使用 Base64 编码，请检查所选密钥格式。",
+  "金鑰材料必須使用 Base64 編碼，請檢查所選金鑰格式。",
+  "El material de clave debe estar en Base64. Comprueba el formato.",
+  "Il materiale della chiave deve essere Base64. Controlla il formato.",
+  "鍵データには Base64 が必要です。鍵の形式を確認してください。",
+  "O material da chave deve usar Base64. Confira o formato.",
+  "키 데이터는 Base64 인코딩이어야 합니다. 형식을 확인하세요.",
+  "Anahtar verisi Base64 olmalıdır. Anahtar biçimini kontrol edin.",
+  "Açar məlumatı Base64 olmalıdır. Açar formatını yoxlayın.",
+);
+errorGroup(
+  ["This key type does not have public material"],
+  "This key type has no public key. Only asymmetric key types provide public material.",
+  "此密钥类型没有公钥，只有非对称密钥类型提供公钥材料。",
+  "此金鑰類型沒有公鑰，只有非對稱金鑰類型提供公鑰材料。",
+  "Este tipo de clave no tiene clave pública. Solo las claves asimétricas la proporcionan.",
+  "Questo tipo di chiave non ha una chiave pubblica. Solo le chiavi asimmetriche la forniscono.",
+  "この鍵の種類には公開鍵がありません。公開鍵は非対称鍵でのみ利用できます。",
+  "Este tipo de chave não tem chave pública. Apenas chaves assimétricas a fornecem.",
+  "이 키 유형에는 공개 키가 없습니다. 비대칭 키만 공개 키를 제공합니다.",
+  "Bu anahtar türünün açık anahtarı yok. Yalnızca asimetrik anahtarlar açık anahtar sağlar.",
+  "Bu açar növünün açıq açarı yoxdur. Yalnız asimmetrik açarlar açıq açar təqdim edir.",
+);
+errorGroup(
+  [
+    "Unknown OCR binary channel",
+    "OCR binary channel must contain a chunk index",
+    "OCR chunk index is invalid",
+    "OCR chunk has an invalid size",
+    "OCR chunk index is outside the declared range",
+    "OCR upload exceeds its declared size",
+    "OCR chunk count is invalid",
+    "OCR image upload is incomplete",
+    "OCR image upload is missing a chunk",
+  ],
+  "The OCR image transfer is incomplete or invalid. Select the image and upload it again.",
+  "OCR 图片传输不完整或格式无效，请重新选择图片并上传。",
+  "OCR 圖片傳輸不完整或格式無效，請重新選擇圖片並上傳。",
+  "La transferencia OCR está incompleta o no es válida. Sube la imagen de nuevo.",
+  "Trasferimento immagine OCR incompleto o non valido. Carica nuovamente l'immagine.",
+  "OCR 画像の転送が不完全か無効です。画像をアップロードし直してください。",
+  "Transferência OCR incompleta ou inválida. Envie a imagem novamente.",
+  "OCR 이미지 전송이 불완전하거나 올바르지 않습니다. 이미지를 다시 업로드하세요.",
+  "OCR görüntü aktarımı eksik veya geçersiz. Görüntüyü yeniden yükleyin.",
+  "OCR şəkil ötürməsi natamamdır və ya yanlışdır. Şəkli yenidən yükləyin.",
+);
+errorGroup(
+  [
+    "OCR upload session was not found",
+    "OCR upload session is no longer accepting data",
+  ],
+  "The OCR upload session has ended. Start recognition again.",
+  "OCR 上传会话已结束或不存在，请重新开始识别。",
+  "OCR 上傳工作階段已結束或不存在，請重新開始辨識。",
+  "La sesión de carga OCR ha terminado. Inicia el reconocimiento de nuevo.",
+  "La sessione di caricamento OCR è terminata. Riavvia il riconoscimento.",
+  "OCR アップロードが終了しています。認識を再開してください。",
+  "A sessão de envio OCR terminou. Inicie o reconhecimento novamente.",
+  "OCR 업로드 세션이 종료되었습니다. 인식을 다시 시작하세요.",
+  "OCR yükleme oturumu sona erdi. Tanımayı yeniden başlatın.",
+  "OCR yükləmə sessiyası bitib. Tanımanı yenidən başladın.",
+);
+errorGroup(
+  [
+    "OCR image must be between 1 byte and 20 MB",
+    "OCR image dimensions exceed the safe limit",
+  ],
+  "The OCR image is empty, larger than 20 MB, or exceeds the safe pixel limit. Resize it and retry.",
+  "OCR 图片为空、超过 20 MB 或像素尺寸超出安全限制，请缩小图片后重试。",
+  "OCR 圖片為空、超過 20 MB 或像素尺寸超出安全限制，請縮小圖片後重試。",
+  "La imagen OCR está vacía, supera 20 MB o el límite de píxeles. Reduce su tamaño.",
+  "L'immagine OCR è vuota, supera 20 MB o il limite di pixel. Ridimensionala.",
+  "OCR 画像が空、20 MB 超過、または画素数上限超過です。サイズを小さくしてください。",
+  "A imagem OCR está vazia, excede 20 MB ou o limite de pixels. Redimensione-a.",
+  "OCR 이미지가 비어 있거나 20MB 또는 픽셀 제한을 초과합니다. 크기를 줄이세요.",
+  "OCR görüntüsü boş, 20 MB üstünde veya piksel sınırını aşıyor. Küçültüp tekrar deneyin.",
+  "OCR şəkli boşdur, 20 MB və ya piksel limitini aşır. Ölçüsünü azaldıb yenidən cəhd edin.",
+);
+errorGroup(
+  ["OCR region is outside the image"],
+  "The OCR selection is outside the image. Select a region within the image bounds.",
+  "OCR 选区超出图片范围，请在图片内重新选择区域。",
+  "OCR 選取範圍超出圖片，請在圖片內重新選取區域。",
+  "La selección OCR está fuera de la imagen. Selecciona una región dentro de ella.",
+  "La selezione OCR è fuori dall'immagine. Seleziona un'area al suo interno.",
+  "OCR の選択範囲が画像外です。画像内の領域を選択してください。",
+  "A seleção OCR está fora da imagem. Selecione uma região dentro dela.",
+  "OCR 선택 영역이 이미지 밖에 있습니다. 이미지 안의 영역을 선택하세요.",
+  "OCR seçimi görüntünün dışında. Görüntü içinde bir alan seçin.",
+  "OCR seçimi şəkildən kənardadır. Şəkil daxilində sahə seçin.",
+);
+errorGroup(
+  [
+    "favoriteToolIds must be an array",
+    "favoriteToolIds must be strings",
+    "Invalid tool id",
+    "recentToolIds must be an array",
+    "recentToolIds must be strings",
+    "sidebarCollapsed must be a boolean",
+    "Invalid preferences file",
+  ],
+  "The saved tool or sidebar preferences are invalid. Reload the page and try changing the preference again.",
+  "工具或侧栏偏好数据无效，请重新加载页面后再修改设置。",
+  "工具或側欄偏好資料無效，請重新載入頁面後再修改設定。",
+  "Preferencias de herramientas o barra lateral no válidas. Recarga y cambia el ajuste de nuevo.",
+  "Preferenze degli strumenti o barra laterale non valide. Ricarica e modifica nuovamente l'impostazione.",
+  "ツールまたはサイドバーの設定が無効です。ページを再読み込みして設定し直してください。",
+  "Preferências de ferramentas ou barra lateral inválidas. Recarregue e altere a configuração novamente.",
+  "도구 또는 사이드바 설정이 올바르지 않습니다. 페이지를 새로 고친 후 설정을 변경하세요.",
+  "Araç veya kenar çubuğu tercihleri geçersiz. Sayfayı yenileyip ayarı tekrar değiştirin.",
+  "Alət və ya yan panel parametrləri yanlışdır. Səhifəni yeniləyib ayarı yenidən dəyişin.",
+);
+errorGroup(
+  ["recentToolLimit must be a positive integer", "Unsupported recent tool limit"],
+  "The recent tools limit is invalid. Select an available value from the list.",
+  "最近工具数量无效，请从列表中选择支持的数量。",
+  "最近使用工具數量無效，請從清單選擇支援的數量。",
+  "El límite de herramientas recientes no es válido. Selecciona un valor disponible.",
+  "Il limite degli strumenti recenti non è valido. Seleziona un valore disponibile.",
+  "最近のツール数が無効です。一覧から選択してください。",
+  "O limite de ferramentas recentes é inválido. Selecione um valor disponível.",
+  "최근 도구 수가 올바르지 않습니다. 목록에서 선택하세요.",
+  "Son alətlər limiti yanlışdır. Siyahıdan dəstəklənən dəyəri seçin.",
+  "Son istifadə olunan alətlərin limiti yanlışdır. Siyahıdan dəstəklənən dəyəri seçin.",
+);
+errorGroup(
+  [
+    "vaultAutoLockMinutes must be a non-negative integer",
+    "Unsupported vault auto-lock interval",
+  ],
+  "The vault auto-lock interval is invalid. Select an available interval from the list.",
+  "密钥库自动锁定时间无效，请从列表中选择支持的时间间隔。",
+  "金鑰庫自動鎖定時間無效，請從清單選擇支援的時間間隔。",
+  "El intervalo de bloqueo no es válido. Selecciona uno de la lista.",
+  "Intervallo di blocco non valido. Selezionane uno disponibile dall'elenco.",
+  "自動ロック間隔が無効です。一覧から選択してください。",
+  "Intervalo de bloqueio inválido. Selecione um intervalo da lista.",
+  "자동 잠금 간격이 올바르지 않습니다. 목록에서 지원되는 간격을 선택하세요.",
+  "Otomatik kilit aralığı geçersiz. Listeden kullanılabilir bir aralık seçin.",
+  "Avtomatik kilidləmə aralığı yanlışdır. Siyahıdan uyğun aralıq seçin.",
+);
+errorGroup(
+  ["Preferences lock is poisoned"],
+  "Preferences could not be accessed after an internal failure. Restart the plugin and retry.",
+  "内部异常导致无法访问偏好设置，请重启插件后重试。",
+  "內部異常導致無法存取偏好設定，請重新啟動外掛後重試。",
+  "No se pudo acceder a las preferencias tras un fallo interno. Reinicia el complemento.",
+  "Impossibile accedere alle preferenze dopo un errore interno. Riavvia il plugin.",
+  "内部エラーにより設定にアクセスできません。プラグインを再起動してください。",
+  "Não foi possível acessar as preferências após uma falha interna. Reinicie o plugin.",
+  "내부 오류로 설정에 접근할 수 없습니다. 플러그인을 다시 시작하세요.",
+  "Dahili hatadan sonra tercihlere erişilemiyor. Eklentiyi yeniden başlatın.",
+  "Daxili xətadan sonra parametrlərə giriş mümkün deyil. Plaqini yenidən başladın.",
+);
+
+errorGroup(
+  ["UNKNOWN_OPERATION_FAILURE"],
+  "The operation failed. Please try again.",
+  "操作失败，请重试。",
+  "操作失敗，請重試。",
+  "La operación falló. Inténtalo de nuevo.",
+  "Operazione non riuscita. Riprova.",
+  "操作に失敗しました。再試行してください。",
+  "A operação falhou. Tente novamente.",
+  "작업에 실패했습니다. 다시 시도하세요.",
+  "İşlem başarısız oldu. Lütfen tekrar deneyin.",
+  "Əməliyyat alınmadı. Yenidən cəhd edin.",
+);
+errorGroup(
+  ["AES-KW/KWP requires a 16, 24, or 32-byte KEK and a wrap/unwrap operation"],
+  "AES-KW/KWP requires a 16, 24, or 32-byte wrapping key and a wrap or unwrap operation.",
+  "AES-KW/KWP 需要 16、24 或 32 字节包装密钥，以及包装或解包操作。",
+  "AES-KW/KWP 需要 16、24 或 32 位元組包裝金鑰，以及包裝或解包操作。",
+  "AES-KW/KWP requiere una clave de 16, 24 o 32 bytes y una operación de envolver o desenvolver.",
+  "AES-KW/KWP richiede una chiave di 16, 24 o 32 byte e un'operazione wrap o unwrap.",
+  "AES-KW/KWP には 16、24、32 バイトの鍵とラップまたはアンラップ操作が必要です。",
+  "AES-KW/KWP exige chave de 16, 24 ou 32 bytes e operação de wrap ou unwrap.",
+  "AES-KW/KWP에는 16, 24, 32바이트 래핑 키와 래핑 또는 언래핑 작업이 필요합니다.",
+  "AES-KW/KWP için 16, 24 veya 32 baytlık anahtar ve sarma veya açma işlemi gerekir.",
+  "AES-KW/KWP üçün 16, 24 və ya 32 baytlıq açar və sarıma və ya açma əməliyyatı tələb olunur.",
+);
+errorGroup(
+  ["AES-XTS requires a 32-byte (AES-128-XTS) or 64-byte (AES-256-XTS) key"],
+  "AES-XTS requires a 32-byte or 64-byte key, depending on the selected variant.",
+  "AES-XTS 需要 32 或 64 字节密钥，请与所选规格对应。",
+  "AES-XTS 需要 32 或 64 位元組金鑰，請與所選規格對應。",
+  "AES-XTS requiere una clave de 32 o 64 bytes según la variante.",
+  "AES-XTS richiede una chiave di 32 o 64 byte secondo la variante.",
+  "AES-XTS には種類に応じて 32 または 64 バイトの鍵が必要です。",
+  "AES-XTS exige chave de 32 ou 64 bytes conforme a variante.",
+  "AES-XTS는 선택한 유형에 따라 32 또는 64바이트 키가 필요합니다.",
+  "AES-XTS seçilen türe göre 32 veya 64 baytlık anahtar gerektirir.",
+  "AES-XTS seçilmiş növə görə 32 və ya 64 baytlıq açar tələb edir.",
+);
+errorGroup(
+  ["RSA OAEP hash must be SHA-1, SHA-256, SHA-384, or SHA-512"],
+  "RSA-OAEP supports SHA-1, SHA-256, SHA-384, or SHA-512. Select one of these hashes.",
+  "RSA-OAEP 仅支持 SHA-1、SHA-256、SHA-384 或 SHA-512，请重新选择。",
+  "RSA-OAEP 僅支援 SHA-1、SHA-256、SHA-384 或 SHA-512，請重新選擇。",
+  "RSA-OAEP admite SHA-1, SHA-256, SHA-384 o SHA-512. Elige uno.",
+  "RSA-OAEP supporta SHA-1, SHA-256, SHA-384 o SHA-512. Selezionane uno.",
+  "RSA-OAEP は SHA-1、SHA-256、SHA-384、SHA-512 に対応します。選択し直してください。",
+  "RSA-OAEP suporta SHA-1, SHA-256, SHA-384 ou SHA-512. Selecione um.",
+  "RSA-OAEP는 SHA-1, SHA-256, SHA-384, SHA-512를 지원합니다. 다시 선택하세요.",
+  "RSA-OAEP SHA-1, SHA-256, SHA-384 veya SHA-512 destekler. Birini seçin.",
+  "RSA-OAEP SHA-1, SHA-256, SHA-384 və ya SHA-512 dəstəkləyir. Birini seçin.",
+);
+errorGroup(
+  ["Name must be at most 128 characters and contain no control characters"],
+  "The name must be at most 128 characters and contain no control characters.",
+  "名称最多 128 个字符，且不能包含控制字符。",
+  "名稱最多 128 個字元，且不能包含控制字元。",
+  "El nombre debe tener como máximo 128 caracteres, sin caracteres de control.",
+  "Il nome deve contenere al massimo 128 caratteri e nessun carattere di controllo.",
+  "名前は 128 文字以内で、制御文字を含めないでください。",
+  "O nome deve ter até 128 caracteres e nenhum caractere de controle.",
+  "이름은 최대 128자이며 제어 문자를 포함할 수 없습니다.",
+  "Ad en fazla 128 karakter olmalı ve kontrol karakteri içermemelidir.",
+  "Ad ən çox 128 simvol olmalı və idarəetmə simvolları ehtiva etməməlidir.",
+);
+errorGroup(
+  ["Native image clipboard is not available on this platform"],
+  "Image clipboard copying is not supported on this platform. Save the image as a file instead.",
+  "当前平台不支持原生图片剪贴板，请改为保存图片文件。",
+  "目前平台不支援原生圖片剪貼簿，請改為儲存圖片檔案。",
+  "La copia de imágenes no es compatible en esta plataforma. Guarda la imagen como archivo.",
+  "La copia di immagini non è supportata su questa piattaforma. Salva l'immagine come file.",
+  "この環境では画像のクリップボードへのコピーは未対応です。ファイルに保存してください。",
+  "A cópia de imagens não é suportada nesta plataforma. Salve a imagem como arquivo.",
+  "이 플랫폼은 이미지 클립보드 복사를 지원하지 않습니다. 파일로 저장하세요.",
+  "Bu platform görüntü panosunu desteklemiyor. Görüntüyü dosya olarak kaydedin.",
+  "Bu platform şəkil buferini dəstəkləmir. Şəkli fayl kimi saxlayın.",
+);
+errorGroup(
+  [
+    "OCR upload lock is poisoned",
+    "OCR engine lock is poisoned",
+    "OCR model download lock is poisoned",
+  ],
+  "The OCR engine encountered an internal failure. Restart the plugin and retry.",
+  "OCR 引擎发生内部异常，请重启插件后重试。",
+  "OCR 引擎發生內部異常，請重新啟動外掛後重試。",
+  "El motor OCR sufrió un fallo interno. Reinicia el complemento.",
+  "Il motore OCR ha riscontrato un errore interno. Riavvia il plugin.",
+  "OCR エンジンに内部エラーが発生しました。プラグインを再起動してください。",
+  "O mecanismo OCR encontrou uma falha interna. Reinicie o plugin.",
+  "OCR 엔진 내부 오류가 발생했습니다. 플러그인을 다시 시작하세요.",
+  "OCR motorunda dahili hata oluştu. Eklentiyi yeniden başlatın.",
+  "OCR mühərrikində daxili xəta baş verdi. Plaqini yenidən başladın.",
+);
+errorGroup(
+  [
+    "OCR_MODEL_INTEGRITY",
+    "OCR model response has an invalid Content-Length",
+    "OCR model response size does not match the signed registry",
+    "OCR model response exceeds the signed size",
+    "Downloaded OCR model has an invalid size or RTEN header",
+    "Downloaded OCR model failed SHA-256 verification",
+  ],
+  "The OCR model failed its size or integrity check. Do not use this file; download the model again.",
+  "OCR 模型大小或完整性校验失败，请勿使用此文件，并重新下载模型。",
+  "OCR 模型大小或完整性驗證失敗，請勿使用此檔案，並重新下載模型。",
+  "El modelo OCR falló la comprobación de tamaño o integridad. No lo uses; descárgalo de nuevo.",
+  "Il modello OCR non supera il controllo di dimensione o integrità. Non usarlo; scaricalo di nuovo.",
+  "OCR モデルのサイズまたは整合性検証に失敗しました。使用せず再ダウンロードしてください。",
+  "O modelo OCR falhou na verificação de tamanho ou integridade. Não o use; baixe novamente.",
+  "OCR 모델 크기 또는 무결성 검사에 실패했습니다. 사용하지 말고 다시 다운로드하세요.",
+  "OCR modeli boyut veya bütünlük denetiminden geçemedi. Kullanmayın; yeniden indirin.",
+  "OCR modeli ölçü və ya bütövlük yoxlamasından keçmədi. İstifadə etməyin; yenidən yükləyin.",
+);
+errorGroup(
+  [
+    "OCR_MODEL_NETWORK",
+    "OCR model URL is invalid",
+    "OCR model redirect is missing a Location header",
+    "OCR model redirect URL is invalid",
+    "OCR model download exceeded the redirect limit",
+    "OCR model download was redirected to an untrusted origin",
+  ],
+  "The OCR model could not be downloaded securely. Check access to GitHub and retry; do not bypass download validation.",
+  "无法安全下载 OCR 模型，请检查 GitHub 网络连接后重试，不要绕过下载校验。",
+  "無法安全下載 OCR 模型，請檢查 GitHub 網路連線後重試，不要略過下載驗證。",
+  "No se pudo descargar el modelo OCR de forma segura. Comprueba GitHub y reintenta sin omitir la validación.",
+  "Impossibile scaricare il modello OCR in sicurezza. Controlla GitHub e riprova senza ignorare la verifica.",
+  "OCR モデルを安全にダウンロードできません。GitHub 接続を確認し、検証を無効にせず再試行してください。",
+  "Não foi possível baixar o modelo OCR com segurança. Confira o acesso ao GitHub sem ignorar a validação.",
+  "OCR 모델을 안전하게 다운로드할 수 없습니다. GitHub 연결을 확인하고 검증을 우회하지 말고 다시 시도하세요.",
+  "OCR modeli güvenli indirilemedi. GitHub erişimini kontrol edip doğrulamayı atlamadan yeniden deneyin.",
+  "OCR modelini təhlükəsiz yükləmək mümkün olmadı. GitHub bağlantısını yoxlayıb doğrulamanı keçmədən yenidən cəhd edin.",
+);
+errorGroup(
+  ["OCR_MODEL_MISSING"],
+  "The required OCR model is not installed. Download it from the model controls before recognition.",
+  "所需 OCR 模型尚未安装，请先在模型管理中下载，再开始识别。",
+  "所需 OCR 模型尚未安裝，請先在模型管理中下載，再開始辨識。",
+  "El modelo OCR requerido no está instalado. Descárgalo antes del reconocimiento.",
+  "Il modello OCR richiesto non è installato. Scaricalo prima del riconoscimento.",
+  "必要な OCR モデルが未インストールです。認識前にモデル設定からダウンロードしてください。",
+  "O modelo OCR necessário não está instalado. Baixe-o antes do reconhecimento.",
+  "필요한 OCR 모델이 설치되지 않았습니다. 인식 전에 모델을 다운로드하세요.",
+  "Gerekli OCR modeli yüklü değil. Tanımadan önce modeli indirin.",
+  "Tələb olunan OCR modeli quraşdırılmayıb. Tanımadan əvvəl modeli yükləyin.",
+);
+errorGroup(
+  ["OCR_MODEL_IO"],
+  "The OCR model file could not be read or saved. Check data-directory permissions and available disk space.",
+  "无法读取或保存 OCR 模型文件，请检查数据目录权限和磁盘剩余空间。",
+  "無法讀取或儲存 OCR 模型檔案，請檢查資料目錄權限與磁碟剩餘空間。",
+  "No se pudo leer o guardar el modelo OCR. Comprueba permisos y espacio disponible.",
+  "Impossibile leggere o salvare il modello OCR. Controlla permessi e spazio libero.",
+  "OCR モデルを読み書きできません。データディレクトリの権限と空き容量を確認してください。",
+  "Não foi possível ler ou salvar o modelo OCR. Confira permissões e espaço livre.",
+  "OCR 모델 파일을 읽거나 저장할 수 없습니다. 폴더 권한과 디스크 공간을 확인하세요.",
+  "OCR model dosyası okunamadı veya kaydedilemedi. Dizin izinlerini ve boş disk alanını kontrol edin.",
+  "OCR model faylını oxumaq və ya saxlamaq mümkün olmadı. Qovluq icazələrini və boş disk yerini yoxlayın.",
+);
+
+errorGroup(
+  [
+    "Unknown PDF binary channel",
+    "Invalid PDF binary channel",
+    "Invalid PDF chunk index",
+    "Invalid PDF file index",
+    "Invalid PDF chunk size",
+    "PDF session lock is poisoned",
+    "PDF session was not found",
+    "PDF file index is outside the declared range",
+    "PDF chunks must be uploaded in order",
+    "PDF chunk was already uploaded",
+    "PDF chunk index is outside the declared range",
+    "PDF upload is too large",
+    "PDF upload exceeds its declared size",
+    "PDF upload is incomplete",
+  ],
+  "The PDF transfer failed or expired. Select the files and start again.",
+  "PDF 传输失败或会话已过期，请重新选择文件并开始。",
+  "PDF 傳輸失敗或工作階段已過期，請重新選擇檔案並開始。",
+  "La transferencia del PDF falló o caducó. Selecciona los archivos de nuevo.",
+  "Il trasferimento PDF non è riuscito o è scaduto. Seleziona nuovamente i file.",
+  "PDF 転送に失敗したか期限切れです。ファイルを選択し直してください。",
+  "A transferência do PDF falhou ou expirou. Selecione os arquivos novamente.",
+  "PDF 전송이 실패했거나 만료되었습니다. 파일을 다시 선택하세요.",
+  "PDF aktarımı başarısız oldu veya süresi doldu. Dosyaları yeniden seçin.",
+  "PDF ötürülməsi alınmadı və ya vaxtı bitdi. Faylları yenidən seçin.",
+);
+errorGroup(
+  [
+    "Missing PDF files",
+    "Use between 1 and 20 PDF files",
+    "PDF file size is invalid or exceeds 512 MB",
+    "PDF chunk count is invalid",
+    "PDF input is too large",
+    "PDF input exceeds the 1 GB total limit",
+    "Too many PDF sessions are active",
+    "PDF page limit is 5000",
+  ],
+  "The PDF input exceeds the Sidecar limits. Reduce the file count, total size, or page count.",
+  "PDF 输入超出 Sidecar 限制，请减少文件数、总体积或页数。",
+  "PDF 輸入超出 Sidecar 限制，請減少檔案數、總大小或頁數。",
+  "La entrada PDF supera los límites del Sidecar. Reduce archivos, tamaño o páginas.",
+  "L'input PDF supera i limiti del Sidecar. Riduci file, dimensione o pagine.",
+  "PDF 入力が Sidecar の上限を超えています。ファイル数、サイズ、ページ数を減らしてください。",
+  "A entrada PDF excede os limites do Sidecar. Reduza arquivos, tamanho ou páginas.",
+  "PDF 입력이 Sidecar 제한을 초과했습니다. 파일 수, 크기 또는 페이지 수를 줄이세요.",
+  "PDF girdisi Sidecar sınırlarını aşıyor. Dosya sayısını, boyutu veya sayfa sayısını azaltın.",
+  "PDF girişi Sidecar limitlərini aşır. Fayl sayını, ölçünü və ya səhifə sayını azaldın.",
+);
+errorGroup(
+  [
+    "Invalid page range",
+    "Page range is out of bounds",
+    "Too many selected pages",
+    "At least one page is required",
+    "Page order is out of bounds",
+    "PDF required",
+    "Specify pages to delete",
+    "Cannot delete all pages",
+    "Invalid page order",
+    "Rotation must be 90, 180, or 270",
+    "Page is out of bounds",
+    "Invalid crop margins",
+    "Crop removes the entire page",
+    "Use an opening password of 1 to 127 characters",
+  ],
+  "The PDF options are invalid. Check the selected pages, margins, rotation, or password.",
+  "PDF 参数无效，请检查所选页面、边距、旋转角度或密码。",
+  "PDF 參數無效，請檢查所選頁面、邊距、旋轉角度或密碼。",
+  "Las opciones del PDF no son válidas. Revisa páginas, márgenes, rotación o contraseña.",
+  "Le opzioni PDF non sono valide. Controlla pagine, margini, rotazione o password.",
+  "PDF の設定が無効です。ページ、余白、回転、パスワードを確認してください。",
+  "As opções do PDF são inválidas. Confira páginas, margens, rotação ou senha.",
+  "PDF 옵션이 잘못되었습니다. 페이지, 여백, 회전 또는 비밀번호를 확인하세요.",
+  "PDF seçenekleri geçersiz. Sayfaları, kenar boşluklarını, döndürmeyi veya parolayı kontrol edin.",
+  "PDF seçimləri yanlışdır. Səhifələri, haşiyələri, fırlatmanı və ya parolu yoxlayın.",
+);
+errorGroup(
+  [
+    "PDF session is processing",
+    "PDF session is already processing",
+    "PDF output is not ready",
+    "PDF processing cannot be cancelled at this stage",
+    "PDF operation is not supported by the Sidecar",
+    "Split output is too large",
+    "Split file name is too long",
+    "Too many split outputs",
+    "Output file was not found",
+  ],
+  "The Sidecar could not complete the PDF operation. Wait for active work to finish or adjust the operation.",
+  "Sidecar 无法完成 PDF 操作，请等待当前任务结束或调整操作参数。",
+  "Sidecar 無法完成 PDF 操作，請等待目前工作結束或調整操作參數。",
+  "El Sidecar no pudo completar la operación PDF. Espera o ajusta la operación.",
+  "Il Sidecar non ha completato l'operazione PDF. Attendi o modifica l'operazione.",
+  "Sidecar が PDF 処理を完了できませんでした。進行中の処理を待つか設定を変更してください。",
+  "O Sidecar não concluiu a operação PDF. Aguarde ou ajuste a operação.",
+  "Sidecar가 PDF 작업을 완료하지 못했습니다. 진행 중인 작업을 기다리거나 설정을 조정하세요.",
+  "Sidecar PDF işlemini tamamlayamadı. Etkin işlemi bekleyin veya ayarları değiştirin.",
+  "Sidecar PDF əməliyyatını tamamlaya bilmədi. Aktiv işi gözləyin və ya parametrləri dəyişin.",
+);
+
+additionalErrors["AES-GMAC key length does not match the selected algorithm"] =
+  additionalErrors["GMAC nonce must be 12 bytes"];
+additionalErrors["Stored key type does not match the selected KEM algorithm"] =
+  additionalErrors["Stored key type does not match the selected algorithm"];
+additionalErrors[
+  "ML-KEM operation must be generate, encapsulate, or decapsulate"
+] = additionalErrors["Unknown crypto action"];
+errorGroup(
+  ["Could not start file transfer"],
+  "The file transfer could not be started. Select the file again and retry.",
+  "无法启动文件传输，请重新选择文件后重试。",
+  "無法啟動檔案傳輸，請重新選擇檔案後重試。",
+  "No se pudo iniciar la transferencia. Selecciona el archivo e inténtalo de nuevo.",
+  "Impossibile avviare il trasferimento. Seleziona nuovamente il file e riprova.",
+  "ファイル転送を開始できません。ファイルを選択し直して再試行してください。",
+  "Não foi possível iniciar a transferência. Selecione o arquivo e tente novamente.",
+  "파일 전송을 시작할 수 없습니다. 파일을 다시 선택하고 시도하세요.",
+  "Dosya aktarımı başlatılamadı. Dosyayı yeniden seçip tekrar deneyin.",
+  "Fayl ötürməsini başlatmaq mümkün olmadı. Faylı yenidən seçib cəhd edin.",
+);
+for (const key of [
+  "OCR bytes and chunk size are invalid",
+  "OCR channel is invalid",
+  "Timed out while transferring the image to the native OCR engine",
+])
+  additionalErrors[key] = additionalErrors["OCR image upload is incomplete"];
+
+errorGroup(["VAULT_STORAGE_FAILED"],"Could not access vault storage. Check permissions and retry.","无法访问密钥库文件，请检查权限后重试。","無法存取金鑰庫檔案，請檢查權限後重試。","No se puede acceder a la bóveda. Revisa los permisos.","Impossibile accedere alla cassaforte. Controlla i permessi.","保管庫にアクセスできません。権限を確認してください。","Não foi possível acessar o cofre. Verifique as permissões.","보관소에 접근할 수 없습니다. 권한을 확인하세요.","Kasaya erişilemiyor. İzinleri kontrol edin.","Anbara giriş mümkün deyil. İcazələri yoxlayın.");
+errorGroup(["VAULT_CHANGED"],"The vault changed in another window. Unlock it again and repeat the operation.","其他窗口已修改密钥库，请重新解锁后再操作。","其他視窗已修改金鑰庫，請重新解鎖後再操作。","Otra ventana cambió la bóveda. Desbloquéala de nuevo.","La cassaforte è cambiata in un’altra finestra. Sbloccala di nuovo.","別のウィンドウで保管庫が変更されました。再度ロック解除してください。","O cofre mudou em outra janela. Desbloqueie novamente.","다른 창에서 보관소가 변경되었습니다. 다시 잠금 해제하세요.","Kasa başka pencerede değişti. Yeniden kilidini açın.","Anbar başqa pəncərədə dəyişib. Yenidən kilidi açın.");
+errorGroup(["VAULT_BACKUP_TOO_LARGE"],"The encrypted backup exceeds the size limit.","加密备份超过大小限制。","加密備份超過大小限制。","La copia cifrada supera el límite.","Il backup cifrato supera il limite.","暗号化バックアップがサイズ制限を超えています。","O backup criptografado excede o limite.","암호화 백업이 크기 제한을 초과했습니다.","Şifreli yedek boyut sınırını aşıyor.","Şifrəli ehtiyat nüsxə ölçü həddini aşır.");
+errorGroup(["VAULT_BACKUP_INVALID"],"The encrypted backup is invalid.","加密备份格式无效。","加密備份格式無效。","La copia cifrada no es válida.","Il backup cifrato non è valido.","暗号化バックアップが無効です。","O backup criptografado é inválido.","암호화 백업이 올바르지 않습니다.","Şifreli yedek geçersiz.","Şifrəli ehtiyat nüsxə etibarsızdır.");
+errorGroup(["VAULT_VERSION_UNSUPPORTED"],"This backup version is not supported. Update the plugin.","不支持此备份版本，请更新插件。","不支援此備份版本，請更新外掛。","Versión no compatible. Actualiza el complemento.","Versione non supportata. Aggiorna il plugin.","未対応のバックアップです。プラグインを更新してください。","Versão não compatível. Atualize o plugin.","지원하지 않는 백업 버전입니다. 플러그인을 업데이트하세요.","Yedek sürümü desteklenmiyor. Eklentiyi güncelleyin.","Nüsxə versiyası dəstəklənmir. Qoşmanı yeniləyin.");
+errorGroup(["VAULT_PREVIEW_EXPIRED"],"The restore preview expired. Preview the backup again.","恢复预览已失效，请重新预览备份。","還原預覽已失效，請重新預覽備份。","La vista previa caducó. Abre la copia de nuevo.","L’anteprima è scaduta. Riapri il backup.","復元プレビューが期限切れです。再度プレビューしてください。","A prévia expirou. Abra o backup novamente.","복원 미리 보기가 만료되었습니다. 다시 미리 보세요.","Geri yükleme önizlemesi sona erdi. Yeniden açın.","Bərpa önbaxışının vaxtı bitib. Yenidən açın.");
+errorGroup(["TRANSFER_INVALID"],"This result cannot be sent to that tool. Check the format and size.","无法将此结果发送到目标工具，请检查格式和大小。","無法將此結果傳送至目標工具，請檢查格式與大小。","No se puede enviar el resultado. Revisa formato y tamaño.","Impossibile inviare il risultato. Controlla formato e dimensione.","結果を送信できません。形式とサイズを確認してください。","Não foi possível enviar. Verifique formato e tamanho.","결과를 보낼 수 없습니다. 형식과 크기를 확인하세요.","Sonuç gönderilemiyor. Biçimi ve boyutu kontrol edin.","Nəticə göndərilmir. Formatı və ölçünü yoxlayın.");
 export const SIDECAR_ERRORS = {
   ...additionalErrors,
   "Wrong master password or vault data is corrupt": {
@@ -150,20 +1200,40 @@ export const SIDECAR_ERRORS = {
     es: "La contraseña maestra es incorrecta o los datos del almacén están dañados. Comprueba la contraseña e inténtalo de nuevo.",
     it: "La password master è errata oppure i dati del vault sono danneggiati. Controlla la password e riprova.",
     ja: "マスターパスワードが正しくないか、保管庫のデータが破損しています。パスワードを確認して再試行してください。",
-    "pt-BR": "A senha mestra está incorreta ou os dados do cofre estão danificados. Confira a senha e tente novamente.",
+    "pt-BR":
+      "A senha mestra está incorreta ou os dados do cofre estão danificados. Confira a senha e tente novamente.",
     ko: "마스터 비밀번호가 올바르지 않거나 보관함 데이터가 손상되었습니다. 비밀번호를 확인하고 다시 시도하세요.",
     tr: "Ana parola yanlış veya kasa verileri bozuk. Parolanızı kontrol edip tekrar deneyin.",
     az: "Əsas parol yanlışdır və ya anbar məlumatları zədələnib. Parolu yoxlayıb yenidən cəhd edin.",
   },
-  "Key purpose updates require a newer backend. Restart or update the plugin.": {
-    ...L("Key purpose updates require a newer backend. Restart or update the plugin.", "当前后端版本不支持保存用途，请重启开发宿主或更新插件后重试。", "目前後端版本不支援儲存用途，請重新啟動開發宿主或更新外掛後重試。", "El backend no admite guardar usos. Reinicia el host de desarrollo o actualiza el complemento.", "Il backend non supporta il salvataggio degli usi. Riavvia l'host di sviluppo o aggiorna il plugin.", "現在のバックエンドは用途の保存に対応していません。開発ホストを再起動するか、プラグインを更新してください。", "O backend não permite salvar finalidades. Reinicie o host de desenvolvimento ou atualize o plugin."),
-    ko: "현재 백엔드는 용도 저장을 지원하지 않습니다. 개발 호스트를 다시 시작하거나 플러그인을 업데이트하세요.",
-    tr: "Mevcut arka uç kullanım amaçlarını kaydetmeyi desteklemiyor. Geliştirme sunucusunu yeniden başlatın veya eklentiyi güncelleyin.",
-    az: "Cari arxa sistem təyinatları saxlamağı dəstəkləmir. Tərtibat hostunu yenidən başladın və ya plaqini yeniləyin.",
-  },
+  "Key purpose updates require a newer backend. Restart or update the plugin.":
+    {
+      ...L(
+        "Key purpose updates require a newer backend. Restart or update the plugin.",
+        "当前后端版本不支持保存用途，请重启开发宿主或更新插件后重试。",
+        "目前後端版本不支援儲存用途，請重新啟動開發宿主或更新外掛後重試。",
+        "El backend no admite guardar usos. Reinicia el host de desarrollo o actualiza el complemento.",
+        "Il backend non supporta il salvataggio degli usi. Riavvia l'host di sviluppo o aggiorna il plugin.",
+        "現在のバックエンドは用途の保存に対応していません。開発ホストを再起動するか、プラグインを更新してください。",
+        "O backend não permite salvar finalidades. Reinicie o host de desenvolvimento ou atualize o plugin.",
+      ),
+      ko: "현재 백엔드는 용도 저장을 지원하지 않습니다. 개발 호스트를 다시 시작하거나 플러그인을 업데이트하세요.",
+      tr: "Mevcut arka uç kullanım amaçlarını kaydetmeyi desteklemiyor. Geliştirme sunucusunu yeniden başlatın veya eklentiyi güncelleyin.",
+      az: "Cari arxa sistem təyinatları saxlamağı dəstəkləmir. Tərtibat hostunu yenidən başladın və ya plaqini yeniləyin.",
+    },
   "Purpose is not supported by this key": {
-    ...L("Purpose is not supported by this key", "这把密钥不支持所选用途，请重新选择。", "這把金鑰不支援所選用途，請重新選擇。", "La clave no admite el uso seleccionado.", "La chiave non supporta l'uso selezionato.", "この鍵は選択した用途に対応していません。", "A chave não suporta a finalidade selecionada."),
-    ko: "이 키는 선택한 용도를 지원하지 않습니다.", tr: "Bu anahtar seçilen kullanım amacını desteklemiyor.", az: "Bu açar seçilmiş təyinatı dəstəkləmir.",
+    ...L(
+      "Purpose is not supported by this key",
+      "这把密钥不支持所选用途，请重新选择。",
+      "這把金鑰不支援所選用途，請重新選擇。",
+      "La clave no admite el uso seleccionado.",
+      "La chiave non supporta l'uso selezionato.",
+      "この鍵は選択した用途に対応していません。",
+      "A chave não suporta a finalidade selecionada.",
+    ),
+    ko: "이 키는 선택한 용도를 지원하지 않습니다.",
+    tr: "Bu anahtar seçilen kullanım amacını desteklemiyor.",
+    az: "Bu açar seçilmiş təyinatı dəstəkləmir.",
   },
   "Master password must be at least 8 characters": L(
     "Master password must be at least 8 characters",
@@ -978,51 +2048,56 @@ export const APP_ERRORS = {
     "循環参照を含むデータはこの形式に変換できません",
     "Dados cíclicos não podem ser convertidos para este formato",
   ),
-  "TOML needs an object at the document root. Wrap the data in a named property first.": L(
-    "TOML needs an object at the document root. Wrap the data in a named property first.",
-    "TOML 文档根须为对象，请先用命名属性包一层",
-    "TOML 文件根須為物件，請先用命名屬性包一層",
-    "TOML necesita un objeto en la raíz del documento. Envuelva primero los datos en una propiedad con nombre.",
-    "TOML richiede un oggetto alla radice del documento. Racchiudi prima i dati in una proprietà con nome.",
-    "TOML はドキュメントルートにオブジェクトが必要です。先に名前付きプロパティでデータを包んでください。",
-    "TOML precisa de um objeto na raiz do documento. Envolva os dados em uma propriedade nomeada primeiro.",
-  ),
-  "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.": L(
-    "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.",
-    "数据转换不支持 XML DOCTYPE，请改用 XML 格式化以保留文档",
-    "資料轉換不支援 XML DOCTYPE，請改用 XML 格式化以保留文件",
-    "La conversión de datos XML no admite DOCTYPE. Use el formateador XML para conservar el documento.",
-    "La conversione dati XML non supporta DOCTYPE. Usa il formatter XML per preservare il documento.",
-    "XML データ変換は DOCTYPE をサポートしていません。ドキュメントを保持するには XML フォーマッタを使用してください。",
-    "A conversão de dados XML não oferece suporte a DOCTYPE. Use o formatador XML para preservar o documento.",
-  ),
-  "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.": L(
-    "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.",
-    "跨格式转换无法保留 XML 注释、CDATA 与处理指令的位置，请选择 XML 输出以保留文档",
-    "跨格式轉換無法保留 XML 註解、CDATA 與處理指令的位置，請選擇 XML 輸出以保留文件",
-    "Los comentarios XML, CDATA e instrucciones de procesamiento no pueden conservar sus posiciones entre formatos. Elija salida XML para conservar este documento.",
-    "Commenti XML, CDATA e istruzioni di elaborazione non possono mantenere le posizioni tra i formati. Scegli output XML per preservare questo documento.",
-    "XML コメント、CDATA、処理命令は形式間で位置を保持できません。このドキュメントを保持するには XML 出力を選択してください。",
-    "Comentários XML, CDATA e instruções de processamento não podem manter suas posições entre formatos. Escolha saída XML para preservar este documento.",
-  ),
-  "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.": L(
-    "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.",
-    "交错的同级 XML 元素无法无损转换顺序，请选择 XML 输出以保留文档",
-    "交錯的同級 XML 元素無法無損轉換順序，請選擇 XML 輸出以保留文件",
-    "Los elementos hermanos XML intercalados no se pueden convertir sin perder el orden. Elija salida XML para conservar este documento.",
-    "Gli elementi XML fratelli intercalati non possono essere convertiti senza perdere l'ordine. Scegli output XML per preservare questo documento.",
-    "入れ子になった同階層の XML 要素は順序を失わずに変換できません。このドキュメントを保持するには XML 出力を選択してください。",
-    "Elementos irmãos XML intercalados não podem ser convertidos sem perder a ordem. Escolha saída XML para preservar este documento.",
-  ),
-  "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.": L(
-    "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.",
-    "XML 文本与元素混排无法无损转换，请改用 XML 格式化",
-    "XML 文字與元素混排無法無損轉換，請改用 XML 格式化",
-    "El texto y los elementos XML mezclados no se pueden convertir sin perder el orden. Use el formateador XML en su lugar.",
-    "Testo ed elementi XML misti non possono essere convertiti senza perdere l'ordine. Usa invece il formatter XML.",
-    "混在した XML テキストと要素は順序を失わずに変換できません。代わりに XML フォーマッタを使用してください。",
-    "Texto e elementos XML mistos não podem ser convertidos sem perder a ordem. Use o formatador XML.",
-  ),
+  "TOML needs an object at the document root. Wrap the data in a named property first.":
+    L(
+      "TOML needs an object at the document root. Wrap the data in a named property first.",
+      "TOML 文档根须为对象，请先用命名属性包一层",
+      "TOML 文件根須為物件，請先用命名屬性包一層",
+      "TOML necesita un objeto en la raíz del documento. Envuelva primero los datos en una propiedad con nombre.",
+      "TOML richiede un oggetto alla radice del documento. Racchiudi prima i dati in una proprietà con nome.",
+      "TOML はドキュメントルートにオブジェクトが必要です。先に名前付きプロパティでデータを包んでください。",
+      "TOML precisa de um objeto na raiz do documento. Envolva os dados em uma propriedade nomeada primeiro.",
+    ),
+  "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.":
+    L(
+      "XML data conversion does not support DOCTYPE. Use the XML formatter to preserve the document.",
+      "数据转换不支持 XML DOCTYPE，请改用 XML 格式化以保留文档",
+      "資料轉換不支援 XML DOCTYPE，請改用 XML 格式化以保留文件",
+      "La conversión de datos XML no admite DOCTYPE. Use el formateador XML para conservar el documento.",
+      "La conversione dati XML non supporta DOCTYPE. Usa il formatter XML per preservare il documento.",
+      "XML データ変換は DOCTYPE をサポートしていません。ドキュメントを保持するには XML フォーマッタを使用してください。",
+      "A conversão de dados XML não oferece suporte a DOCTYPE. Use o formatador XML para preservar o documento.",
+    ),
+  "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.":
+    L(
+      "XML comments, CDATA and processing instructions cannot retain their positions across data formats. Choose XML output to preserve this document.",
+      "跨格式转换无法保留 XML 注释、CDATA 与处理指令的位置，请选择 XML 输出以保留文档",
+      "跨格式轉換無法保留 XML 註解、CDATA 與處理指令的位置，請選擇 XML 輸出以保留文件",
+      "Los comentarios XML, CDATA e instrucciones de procesamiento no pueden conservar sus posiciones entre formatos. Elija salida XML para conservar este documento.",
+      "Commenti XML, CDATA e istruzioni di elaborazione non possono mantenere le posizioni tra i formati. Scegli output XML per preservare questo documento.",
+      "XML コメント、CDATA、処理命令は形式間で位置を保持できません。このドキュメントを保持するには XML 出力を選択してください。",
+      "Comentários XML, CDATA e instruções de processamento não podem manter suas posições entre formatos. Escolha saída XML para preservar este documento.",
+    ),
+  "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.":
+    L(
+      "Interleaved XML sibling elements cannot be converted without losing order. Choose XML output to preserve this document.",
+      "交错的同级 XML 元素无法无损转换顺序，请选择 XML 输出以保留文档",
+      "交錯的同級 XML 元素無法無損轉換順序，請選擇 XML 輸出以保留文件",
+      "Los elementos hermanos XML intercalados no se pueden convertir sin perder el orden. Elija salida XML para conservar este documento.",
+      "Gli elementi XML fratelli intercalati non possono essere convertiti senza perdere l'ordine. Scegli output XML per preservare questo documento.",
+      "入れ子になった同階層の XML 要素は順序を失わずに変換できません。このドキュメントを保持するには XML 出力を選択してください。",
+      "Elementos irmãos XML intercalados não podem ser convertidos sem perder a ordem. Escolha saída XML para preservar este documento.",
+    ),
+  "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.":
+    L(
+      "Mixed XML text and elements cannot be converted without losing order. Use the XML formatter instead.",
+      "XML 文本与元素混排无法无损转换，请改用 XML 格式化",
+      "XML 文字與元素混排無法無損轉換，請改用 XML 格式化",
+      "El texto y los elementos XML mezclados no se pueden convertir sin perder el orden. Use el formateador XML en su lugar.",
+      "Testo ed elementi XML misti non possono essere convertiti senza perdere l'ordine. Usa invece il formatter XML.",
+      "混在した XML テキストと要素は順序を失わずに変換できません。代わりに XML フォーマッタを使用してください。",
+      "Texto e elementos XML mistos não podem ser convertidos sem perder a ordem. Use o formatador XML.",
+    ),
   "Unexpected character after quoted TSV field": L(
     "Unexpected character after quoted TSV field",
     "TSV 引号字段后出现意外字符",

@@ -1,9 +1,10 @@
 import { TOOL_DEFS } from "./toolCatalog.js";
 import { TEXT_ACTIONS } from "./textActions.js";
-import { categories, L, localeValues, pick } from "./i18n.js";
+import { categories, legacyCategories, L, localeValues, pick } from "./i18n.js";
 import { intentLabelForTool, normalizeIntentQuery, resolveIntent } from "./searchIntent.js";
 
-export const CATEGORY_ORDER = ["data", "encode", "text", "calculate", "network", "developer", "security", "generate", "image"];
+import { CATEGORY_ORDER } from "./toolPresentation.js";
+export { CATEGORY_ORDER };
 
 export const LEGACY_TOOL_IDS = {
   "client-diagnostics": "device-info",
@@ -579,7 +580,7 @@ const ROMANCE_SUMMARIES = {
 const catalog = TOOL_DEFS;
 
 export const tools = catalog.map((tool) => {
-  const baseSummary = SUMMARIES[tool.id];
+  const baseSummary = tool.summary || SUMMARIES[tool.id];
   const [es, it, ptBR] = ROMANCE_SUMMARIES[tool.id] || [];
   const genericSummary = {
     ...L(
@@ -667,11 +668,13 @@ export function searchToolMatches(query, locale, pool = tools) {
   if (!q) return searchable.map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   const normalizedQuery = normalizeIntentQuery(q);
   const exactCategoryId = CATEGORY_ORDER.find((id) => [id, ...localeValues(categories[id])].some((value) => [q, normalizedQuery].includes(value.toLowerCase())));
-  const candidates = exactCategoryId ? searchable.filter((tool) => tool.category === exactCategoryId) : searchable;
+  const legacyCategoryId = !exactCategoryId && Object.keys(legacyCategories).find((id) => [id, ...localeValues(legacyCategories[id])].some((value) => q === value.toLowerCase()));
+  const candidates = exactCategoryId ? searchable.filter((tool) => tool.category === exactCategoryId)
+    : legacyCategoryId ? searchable.filter((tool) => tool.legacyCategory === ({ format: 'data', convert: 'calculate' }[legacyCategoryId] || legacyCategoryId)) : searchable;
   const tokens = q.split(/\s+/).filter(Boolean);
   const intentMatches = new Map();
   for (const [index, intent] of resolveIntent(q).entries()) {
-    const score = (Object.keys(intent.options || {}).length ? 700 : 650) - index * 0.001;
+    const score = (intent.priority >= 20 ? 800 : Object.keys(intent.options || {}).length ? 700 : 650) - index * 0.001;
     const previous = intentMatches.get(intent.toolId);
     if (!previous || score > previous.score) intentMatches.set(intent.toolId, { intent, score });
   }
@@ -680,7 +683,7 @@ export function searchToolMatches(query, locale, pool = tools) {
     const aliases = (tool.aliases || []).map((value) => value.toLowerCase());
     const category = categories[tool.category];
     const summaries = localeValues(tool.summary).map((value) => value.toLowerCase());
-    const categoryValues = [tool.category, ...localeValues(category)].map((value) => value.toLowerCase());
+    const categoryValues = [tool.category, ...localeValues(category), ...localeValues(legacyCategories[tool.legacyCategory])].map((value) => value.toLowerCase());
     const haystack = [...names, ...aliases, ...summaries, ...categoryValues].filter(Boolean).join(" ");
     const allTokensMatch = tokens.every((token) => haystack.includes(token));
     let score = 0;
@@ -701,8 +704,8 @@ export function searchToolMatches(query, locale, pool = tools) {
     } else if (names.some((name) => name.startsWith(q)) || aliases.some((alias) => alias.startsWith(q))) {
       score = 500;
       matchKind = "prefix";
-    } else if (exactCategoryId || allTokensMatch) {
-      if (exactCategoryId || categoryValues.some((value) => value.includes(q))) {
+    } else if (exactCategoryId || legacyCategoryId || allTokensMatch) {
+      if (exactCategoryId || legacyCategoryId || categoryValues.some((value) => value.includes(q))) {
         score = 300;
         matchKind = "category";
       } else {

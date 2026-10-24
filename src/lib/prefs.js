@@ -1,5 +1,7 @@
 import { invoke } from "./host.js";
 import { canonicalToolId, DEFAULT_ENABLED_IDS, tools } from "./catalog.js";
+import { DEFAULT_SHORTCUTS, sanitizeShortcuts } from "./shortcuts.js";
+import { validateSettings } from "./settingsTransfer.js";
 
 const knownIds = new Set(tools.map((tool) => tool.id));
 
@@ -42,8 +44,17 @@ const LEGACY_LOCAL_KEY = "toolbox.enabledToolIds";
 const VAULT_AUTO_LOCK_KEY = "toolbox.vaultAutoLockMinutes";
 const RECENT_KEY = "toolbox.recentToolIds";
 const SIDEBAR_KEY = "toolbox.sidebarCollapsed";
+const SHORTCUTS_KEY = "toolbox.shortcuts";
+const RECENT_LIMIT_KEY = "toolbox.recentToolLimit";
 export const DEFAULT_VAULT_AUTO_LOCK_MINUTES = 15;
 export const VAULT_AUTO_LOCK_MINUTES = [0, 5, 15, 30, 60];
+export const RECENT_TOOL_LIMITS = [5, 8, 10, 15, 20];
+export const DEFAULT_RECENT_TOOL_LIMIT = 10;
+
+export function sanitizeRecentToolLimit(value) {
+  const limit = Number(value);
+  return RECENT_TOOL_LIMITS.includes(limit) ? limit : DEFAULT_RECENT_TOOL_LIMIT;
+}
 
 export function sanitizeVaultAutoLockMinutes(value) {
   if (value == null || value === "") return DEFAULT_VAULT_AUTO_LOCK_MINUTES;
@@ -165,18 +176,24 @@ export async function setVaultAutoLockMinutes(value) {
 function readLocalWorkspace(defaultCollapsed = false) {
   let recentToolIds = [];
   let sidebarCollapsed = Boolean(defaultCollapsed);
-  try { recentToolIds = sanitize(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]")).slice(0, 10); } catch { /* ignore */ }
+  let shortcuts = { ...DEFAULT_SHORTCUTS };
+  let recentToolLimit = DEFAULT_RECENT_TOOL_LIMIT;
+  try { recentToolIds = sanitize(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]")).slice(0, 20); } catch { /* ignore */ }
   try {
     const saved = localStorage.getItem(SIDEBAR_KEY);
     if (saved != null) sidebarCollapsed = saved === "true";
   } catch { /* ignore */ }
-  return { recentToolIds, sidebarCollapsed };
+  try { shortcuts = sanitizeShortcuts(JSON.parse(localStorage.getItem(SHORTCUTS_KEY) || "{}")); } catch { /* ignore */ }
+  try { recentToolLimit = sanitizeRecentToolLimit(localStorage.getItem(RECENT_LIMIT_KEY)); } catch { /* ignore */ }
+  return { recentToolIds, sidebarCollapsed, shortcuts, recentToolLimit };
 }
 
-function writeLocalWorkspace({ recentToolIds, sidebarCollapsed }) {
+function writeLocalWorkspace({ recentToolIds, sidebarCollapsed, shortcuts, recentToolLimit }) {
   try {
     if (recentToolIds) localStorage.setItem(RECENT_KEY, JSON.stringify(recentToolIds));
     if (typeof sidebarCollapsed === "boolean") localStorage.setItem(SIDEBAR_KEY, String(sidebarCollapsed));
+    if (shortcuts) localStorage.setItem(SHORTCUTS_KEY, JSON.stringify(sanitizeShortcuts(shortcuts)));
+    if (recentToolLimit != null) localStorage.setItem(RECENT_LIMIT_KEY, String(sanitizeRecentToolLimit(recentToolLimit)));
   } catch { /* sandboxed or unavailable storage */ }
 }
 
@@ -187,11 +204,15 @@ export async function getWorkspacePreferences(defaultCollapsed = false) {
     const result = await invoke("toolbox/prefs/get");
     const next = {
       recentToolIds: Array.isArray(result?.recentToolIds)
-        ? sanitize(result.recentToolIds).slice(0, 10)
+        ? (result?.recentToolLimit == null && local.recentToolLimit > 10 ? retainKnownExtras(result.recentToolIds, local.recentToolIds) : sanitize(result.recentToolIds)).slice(0, 20)
         : local.recentToolIds,
       sidebarCollapsed: typeof result?.sidebarCollapsed === "boolean"
         ? result.sidebarCollapsed
         : local.sidebarCollapsed,
+      shortcuts: result?.shortcuts && typeof result.shortcuts === "object"
+        ? sanitizeShortcuts(result.shortcuts)
+        : local.shortcuts,
+      recentToolLimit: sanitizeRecentToolLimit(result?.recentToolLimit ?? local.recentToolLimit),
     };
     writeLocalWorkspace(next);
     return next;
@@ -200,12 +221,28 @@ export async function getWorkspacePreferences(defaultCollapsed = false) {
   }
 }
 
+export async function setRecentToolLimit(value) {
+  const recentToolLimit = sanitizeRecentToolLimit(value);
+  try {
+    const result = await invoke("toolbox/prefs/set", { recentToolLimit });
+    const saved = sanitizeRecentToolLimit(result?.recentToolLimit ?? recentToolLimit);
+    writeLocalWorkspace({ recentToolLimit: saved });
+    return saved;
+  } catch (err) {
+    if (window.dbxPlugin?.invoke) throw err;
+    writeLocalWorkspace({ recentToolLimit });
+    return recentToolLimit;
+  }
+}
+
 export async function setRecentToolIds(ids) {
-  const recentToolIds = sanitize(ids).slice(0, 10);
+  const recentToolIds = sanitize(ids).slice(0, 20);
   writeLocalWorkspace({ recentToolIds });
   try {
     const result = await invoke("toolbox/prefs/set", { recentToolIds });
-    const saved = Array.isArray(result?.recentToolIds) ? sanitize(result.recentToolIds).slice(0, 10) : recentToolIds;
+    const saved = Array.isArray(result?.recentToolIds)
+      ? (result?.recentToolLimit == null && recentToolIds.length > 10 ? retainKnownExtras(result.recentToolIds, recentToolIds) : sanitize(result.recentToolIds)).slice(0, 20)
+      : recentToolIds;
     writeLocalWorkspace({ recentToolIds: saved });
     return saved;
   } catch (err) {
@@ -226,6 +263,61 @@ export async function setSidebarCollapsed(value) {
     if (window.dbxPlugin?.invoke) throw err;
     return sidebarCollapsed;
   }
+}
+
+export async function setShortcuts(value) {
+  const shortcuts = sanitizeShortcuts(value);
+  writeLocalWorkspace({ shortcuts });
+  try {
+    const result = await invoke("toolbox/prefs/set", { shortcuts });
+    // Old sidecars ignore this forward-compatible field. Keep the local copy
+    // until the rebuilt sidecar starts returning shortcuts.
+    const saved = result?.shortcuts && typeof result.shortcuts === "object"
+      ? sanitizeShortcuts(result.shortcuts)
+      : shortcuts;
+    writeLocalWorkspace({ shortcuts: saved });
+    return saved;
+  } catch (err) {
+    // Shortcuts are safe, UI-only preferences. Keep the local fallback when
+    // an older or temporarily unavailable sidecar cannot store the new field.
+    return shortcuts;
+  }
+}
+
+/** Save a settings draft in one backend transaction; keep live UI unchanged on failure. */
+export async function setSettingsPreferences(value, { clearRecent = false } = {}) {
+  const next = validateSettings(value);
+  const params = { ...next, ...(clearRecent ? { recentToolIds: [] } : {}) };
+  let version = null;
+  try {
+    const result = await invoke("toolbox/prefs/set", params);
+    version = result?.version ?? null;
+  } catch (err) {
+    if (window.dbxPlugin?.invoke) throw err;
+    // With no Sidecar, local storage is the only durable store. Report its
+    // failure instead of marking an in-memory-only change as saved.
+    const updates = {
+      [LOCAL_KEY]: JSON.stringify(next.favoriteToolIds),
+      [VAULT_AUTO_LOCK_KEY]: String(next.vaultAutoLockMinutes),
+      [SIDEBAR_KEY]: String(next.sidebarCollapsed),
+      [SHORTCUTS_KEY]: JSON.stringify(next.shortcuts),
+      [RECENT_LIMIT_KEY]: String(next.recentToolLimit),
+      ...(clearRecent ? { [RECENT_KEY]: "[]" } : {}),
+    };
+    const previous = Object.fromEntries(Object.keys(updates).map(key => [key, localStorage.getItem(key)]));
+    try {
+      for (const [key, content] of Object.entries(updates)) localStorage.setItem(key, content);
+    } catch (storageError) {
+      for (const [key, content] of Object.entries(previous)) {
+        try { if (content == null) localStorage.removeItem(key); else localStorage.setItem(key, content); } catch { /* best-effort rollback */ }
+      }
+      throw storageError;
+    }
+  }
+  writeLocal(next.favoriteToolIds);
+  writeLocalVaultAutoLockMinutes(next.vaultAutoLockMinutes);
+  writeLocalWorkspace({ ...next, ...(clearRecent ? { recentToolIds: [] } : {}) });
+  return { ...next, version };
 }
 
 // Compatibility aliases for older callers while the preference schema migrates to v2.

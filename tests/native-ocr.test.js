@@ -54,3 +54,21 @@ test("OCR model installation stops waiting immediately when locally cancelled", 
     globalThis.window = previousWindow;
   }
 });
+
+test("OCR model cancellation while creating a session releases the late download", async () => {
+  const previousWindow = globalThis.window, controller = new AbortController();
+  const cancelled = [];
+  globalThis.window = { dbxPlugin: {
+    ready: Promise.resolve(), onEvent() { return () => {}; },
+    async invoke(method, params) {
+      if (method.endsWith("install")) { controller.abort(); return { sessionId: "late-model" }; }
+      if (method.endsWith("cancel")) { cancelled.push(params.sessionId); return {}; }
+      throw new Error(`Unexpected method: ${method}`);
+    },
+  } };
+  try {
+    await assert.rejects(installOcrModels("base", { signal: controller.signal }), { name: "AbortError" });
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.deepEqual(cancelled, ["late-model"]);
+  } finally { globalThis.window = previousWindow; }
+});

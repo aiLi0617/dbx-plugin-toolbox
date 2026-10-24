@@ -5,6 +5,7 @@
   import { invoke } from "./host.js";
   import { localizeError, pick } from "./i18n.js";
   import { csvToGrid, gridToCsv, gridToObjects, gridToTsv, objectsToGrid, readXlsx, spreadsheetLimits, tsvToGrid, writeXlsx } from "./spreadsheet.js";
+  import { gridToHtml, gridToText } from './spreadsheet.js';
 
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -20,7 +21,9 @@
   let renameOpen = $state(false);
   let renameValue = $state("");
   let renameInput = $state(null);
+  let textDelimiter = $state('\t');
   let deleteOpen = $state(false);
+
   const active = $derived(sheets[activeIndex] || sheets[0]);
   const sheetOptions = $derived(sheets.map((sheet, index) => ({ value: String(index), label: sheet.name })));
   const width = $derived(Math.max(1, ...(active?.rows || []).map((row) => row.length)));
@@ -252,6 +255,8 @@
   async function exportTsv() {
     await saveExport(textBytes(`\uFEFF${gridToTsv(active.rows)}`), `${active.name}.tsv`, "text/tab-separated-values", t("导出 TSV", "Export TSV"), "tsv");
   }
+  async function exportHtml() { await saveExport(textBytes(gridToHtml(active.rows,firstRowHeader)),`${active.name}.html`,'text/html',t('导出 HTML 表格','Export HTML table'),'html'); }
+  async function exportText() { try { await saveExport(textBytes(gridToText(active.rows,textDelimiter)),`${active.name}.txt`,'text/plain',t('导出纯文本','Export plain text'),'txt'); } catch(cause) { error=localizeError(locale,cause); } }
   async function exportJson() {
     await saveExport(
       textBytes(JSON.stringify(gridToObjects(active.rows, firstRowHeader), null, 2)),
@@ -304,6 +309,9 @@
       </div>
       <span class="spacer"></span>
       <div class="group export" role="group" aria-label={t("导出", "Export")}>
+        <button class="dbx-btn" type="button" onclick={exportHtml} disabled={busy}>{t('导出 HTML 表格','Export HTML table')}</button>
+        <label>{t('文本分隔符','Text delimiter')}<input class="dbx-input" bind:value={textDelimiter} maxlength="16" style="width:60px" /></label>
+        <button class="dbx-btn" type="button" onclick={exportText} disabled={busy}>{t('导出纯文本','Export plain text')}</button>
         <div class="btn-cluster">
           <button class="dbx-btn" type="button" onclick={exportCsv} disabled={busy} title={t("导出 CSV", "Export CSV")}>CSV</button>
           <button class="dbx-btn" type="button" onclick={exportTsv} disabled={busy} title={t("导出 TSV", "Export TSV")}>TSV</button>

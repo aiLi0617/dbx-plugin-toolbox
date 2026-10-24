@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
+use std::io::Write;
 #[cfg(target_os = "windows")]
 use std::num::NonZeroIsize;
 use std::path::{Path, PathBuf};
@@ -383,7 +384,7 @@ fn save_file_bytes(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError> 
     }))
 }
 
-fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError> {
+pub(crate) fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError> {
     let mime = opt_str(&params, "mimeType").unwrap_or("application/octet-stream");
     let raw_name = str_param(&params, "fileName").unwrap_or("download");
     let extension = resolve_save_extension(opt_str(&params, "extension"), raw_name, mime);
@@ -395,11 +396,80 @@ fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, PluginError>
         return Ok(json!({ "cancelled": true }));
     };
     path = ensure_extension(path, &extension);
-    write_saved_file(&path, &bytes)?;
+    write_binary_export(&path, &bytes)?;
     Ok(json!({
         "cancelled": false,
         "path": path.to_string_lossy(),
         "fileName": path.file_name().and_then(|value| value.to_str()).unwrap_or(&name),
+    }))
+}
+
+fn write_binary_export(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|error| err(format!("Failed to save file: {error}")))?;
+    }
+    let temporary = path.with_extension(format!("part-{}", uuid::Uuid::new_v4()));
+    let result = (|| -> std::io::Result<()> {
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+        fs::rename(&temporary, path)
+    })();
+    if let Err(error) = result {
+        let _ = fs::remove_file(&temporary);
+        return Err(err(format!("Failed to save file: {error}")));
+    }
+    if let Ok(mut last) = LAST_SAVED.lock() {
+        *last = Some(path.to_path_buf());
+    }
+    Ok(())
+}
+
+pub(crate) fn save_existing_file(
+    source: &Path,
+    name: &str,
+    title: &str,
+) -> Result<Value, PluginError> {
+    if !source.is_file() {
+        return Err(bad("Output file was not found"));
+    }
+    let extension = source
+        .extension()
+        .and_then(|value| value.to_str())
+        .unwrap_or("bin");
+    let safe_name = sanitize_file_name(name, extension);
+    let start_dir = download_dir().ok();
+    let Some(mut target) =
+        pick_save_path_binary(title, &safe_name, start_dir.as_deref(), extension)
+    else {
+        return Ok(json!({ "cancelled": true }));
+    };
+    target = ensure_extension(target, extension);
+    if let Some(parent) = target.parent() {
+        fs::create_dir_all(parent)
+            .map_err(|error| err(format!("Failed to create folder: {error}")))?;
+    }
+    let temporary = target.with_extension(format!(
+        "{}.part-{}",
+        extension,
+        uuid::Uuid::new_v4().simple()
+    ));
+    let result = fs::copy(source, &temporary).and_then(|_| fs::rename(&temporary, &target));
+    if let Err(error) = result {
+        let _ = fs::remove_file(&temporary);
+        return Err(err(format!("Failed to save file: {error}")));
+    }
+    if let Ok(mut last) = LAST_SAVED.lock() {
+        *last = Some(target.clone());
+    }
+    Ok(json!({
+        "cancelled": false,
+        "path": target.to_string_lossy(),
+        "fileName": target.file_name().and_then(|value| value.to_str()).unwrap_or(&safe_name),
     }))
 }
 
@@ -802,5 +872,22 @@ mod tests {
     #[test]
     fn escapes_applescript_string_literals() {
         assert_eq!(escape_applescript(r#"a"b\c"#), r#"a\"b\\c"#);
+    }
+
+    #[test]
+    fn binary_export_replaces_only_after_writing_and_cleans_failed_temporaries() {
+        let root = std::env::temp_dir().join(format!("toolbox-export-{}", uuid::Uuid::new_v4()));
+        fs::create_dir_all(&root).unwrap();
+        let target = root.join("backup.dbxvault");
+        fs::write(&target, b"old encrypted backup").unwrap();
+        write_binary_export(&target, b"new encrypted backup").unwrap();
+        assert_eq!(fs::read(&target).unwrap(), b"new encrypted backup");
+        let blocked = root.join("blocked.dbxvault");
+        fs::create_dir(&blocked).unwrap();
+        fs::write(blocked.join("existing"), b"preserved").unwrap();
+        assert!(write_binary_export(&blocked, b"replacement").is_err());
+        assert_eq!(fs::read(blocked.join("existing")).unwrap(), b"preserved");
+        assert_eq!(fs::read_dir(&root).unwrap().count(), 2);
+        fs::remove_dir_all(root).unwrap();
     }
 }

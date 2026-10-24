@@ -24,8 +24,8 @@ test("chrome distinguishes zh-CN and zh-TW for sidebar/home copy", () => {
 });
 
 test("categories and tool names resolve Traditional Chinese for zh-TW", () => {
-  assert.equal(pick("zh-CN", categories.format), "数据与代码");
-  assert.equal(pick("zh-TW", categories.format), "資料與程式碼");
+  assert.equal(pick("zh-CN", categories.developer), "开发");
+  assert.equal(pick("zh-TW", categories.developer), "開發");
   const dataConvert = tools.find((tool) => tool.id === "data-convert");
   assert.ok(dataConvert);
   assert.equal(pick("zh-CN", dataConvert.name), "数据格式转换");
@@ -50,7 +50,7 @@ test("Japanese shell, tool names, and summaries do not fall back to English", ()
   const expected = new Map([
     ["json", "JSON ワークベンチ"],
     ["code-format", "コードフォーマッター"],
-    ["network-calc", "ネットワーク / CIDR"],
+    ["network-calc", "IP サブネット計算"],
     ["hash", "ハッシュとチェックサム"],
     ["uuid", "一意の ID"],
   ]);

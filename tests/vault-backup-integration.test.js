@@ -1,0 +1,38 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { connect } from './helpers/sidecar.js';
+
+test('encrypted vault backups: append restore, deduplication, invalid input and concurrent changes', {skip: !process.env.TOOLBOX_SIDECAR, timeout:120000}, async t => {
+  const root=await fs.mkdtemp(path.resolve('backend/target/backup-test-')), hosts=[];
+  t.after(async()=>{await Promise.all(hosts.map(h=>h.close()));await fs.rm(root,{recursive:true,force:true});});
+  const open=async name=>{const dir=path.join(root,name);const scoped=path.join(dir,'io.github.aili0617.toolbox');await fs.mkdir(scoped,{recursive:true});await fs.writeFile(path.join(scoped,'.legacy-migration-v1.done'),'test-only');const host=connect(process.env.TOOLBOX_SIDECAR,{...process.env,DBX_PLUGIN_DATA_DIR:dir});hosts.push(host);await host.invoke('plugin/initialize',{host:{protocolVersions:[1]}});return {host,dir,rpc:(method,params={})=>host.invoke('toolbox/keys/'+method,params)};};
+  const source=await open('source');await source.rpc('setup',{password:'source-password'});
+  await source.rpc('create',{name:'Test key',algorithm:'aes-256',generate:true});
+  await source.rpc('change-password',{currentPassword:'source-password',newPassword:'rotated-password'});
+  await source.rpc('lock');await assert.rejects(source.rpc('unlock',{password:'source-password'}));
+  await source.rpc('unlock',{password:'rotated-password'});
+  const bytes=await fs.readFile(path.join(source.dir,'io.github.aili0617.toolbox','keystore'));
+  const target=await open('target');await target.rpc('setup',{password:'target-password'});
+  const preview=async(data=bytes,password='rotated-password')=>{await target.rpc('restore/begin');await target.rpc('restore/upload',{data:data.toString('base64')});return target.rpc('restore/preview',{password});};
+  await assert.rejects(preview(bytes,'wrong-password'));
+  const tampered=Buffer.from(bytes);tampered[tampered.length-1]^=1;await assert.rejects(preview(tampered));
+  const unknown=Buffer.from(bytes);unknown[4]=255;await assert.rejects(preview(unknown));
+  assert.equal((await target.rpc('list')).keys.length,0);
+  let result=await preview();assert.equal(result.addedKeys,1);assert.equal(result.duplicates,0);
+  assert.doesNotMatch(JSON.stringify(result),/material|password|secret/);
+  await target.rpc('restore/commit',{token:result.token});
+  const imported=(await target.rpc('list')).keys[0];
+  result=await preview();assert.equal(result.addedKeys,0);assert.equal(result.duplicates,1);
+  await target.rpc('restore/commit',{token:result.token});assert.equal((await target.rpc('list')).keys.length,1);
+  result=await preview();await target.rpc('lock');await target.rpc('unlock',{password:'target-password'});
+  await assert.rejects(target.rpc('restore/commit',{token:result.token}),/VAULT_PREVIEW_EXPIRED/);
+  result=await preview();await target.rpc('rename',{id:imported.id,name:'Renamed'});
+  await assert.rejects(target.rpc('restore/commit',{token:result.token}),/VAULT_CHANGED/);
+  const concurrent=connect(process.env.TOOLBOX_SIDECAR,{...process.env,DBX_PLUGIN_DATA_DIR:target.dir});hosts.push(concurrent);
+  await concurrent.invoke('plugin/initialize',{host:{protocolVersions:[1]}});await concurrent.invoke('toolbox/keys/unlock',{password:'target-password'});
+  await target.rpc('rename',{id:imported.id,name:'Latest'});
+  await assert.rejects(concurrent.invoke('toolbox/keys/rename',{id:imported.id,name:'Stale'}),/VAULT_CHANGED/);
+  assert.equal((await target.rpc('list')).keys[0].name,'Latest');
+});

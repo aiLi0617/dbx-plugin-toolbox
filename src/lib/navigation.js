@@ -70,3 +70,9 @@ export function navigationTargetFromContext(value) {
     options: toolId ? { ...toolOptionsForQuery(toolId, action), ...explicit } : {},
   };
 }
+
+export const MAX_TOOL_SESSIONS = 8;
+// Release the least recently visited view when the working set is full.
+export function retainToolSession(ids, id, limit = MAX_TOOL_SESSIONS) {
+  return [...sanitizeToolIds(ids).filter((item) => item !== id), id].slice(-limit);
+}

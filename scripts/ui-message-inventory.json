@@ -145,6 +145,130 @@
     "en": "Copy {0}",
     "zh-CN": "复制 {0}"
   },
+  "Username": {
+    "en": "Username",
+    "zh-CN": "用户名"
+  },
+  "Password": {
+    "en": "Password",
+    "zh-CN": "密码"
+  },
+  "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.": {
+    "en": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
+    "zh-CN": "UTF-8 编码；Basic Auth 是编码，不提供加密保护。"
+  },
+  "Generate header": {
+    "en": "Generate header",
+    "zh-CN": "生成认证头"
+  },
+  "Example": {
+    "en": "Example",
+    "zh-CN": "示例"
+  },
+  "Pause": {
+    "en": "Pause",
+    "zh-CN": "暂停"
+  },
+  "Start": {
+    "en": "Start",
+    "zh-CN": "起始序号"
+  },
+  "Lap": {
+    "en": "Lap",
+    "zh-CN": "计次"
+  },
+  "Reset": {
+    "en": "Reset",
+    "zh-CN": "恢复默认"
+  },
+  "Export laps": {
+    "en": "Export laps",
+    "zh-CN": "导出记录"
+  },
+  "Holidays (YYYY-MM-DD, one per line)": {
+    "en": "Holidays (YYYY-MM-DD, one per line)",
+    "zh-CN": "节假日（YYYY-MM-DD，每行一个）"
+  },
+  "Each line: name: sample1, sample2": {
+    "en": "Each line: name: sample1, sample2",
+    "zh-CN": "每行：名称: 样本1, 样本2"
+  },
+  "Input": {
+    "en": "Input",
+    "zh-CN": "输入",
+    "zh-TW": "輸入",
+    "es": "Entrada",
+    "it": "Ingresso",
+    "ja": "入力",
+    "pt-BR": "Entrada"
+  },
+  "Mode": {
+    "en": "Mode",
+    "zh-CN": "模式",
+    "zh-TW": "模式",
+    "es": "Modo",
+    "it": "Modalità",
+    "ja": "モード",
+    "pt-BR": "Modo"
+  },
+  "Working day difference": {
+    "en": "Working day difference",
+    "zh-CN": "工作日差"
+  },
+  "Add working days": {
+    "en": "Add working days",
+    "zh-CN": "增加工作日"
+  },
+  "Weekends (0=Sunday, 6=Saturday)": {
+    "en": "Weekends (0=Sunday, 6=Saturday)",
+    "zh-CN": "周末（0=周日，6=周六）"
+  },
+  "Value": {
+    "en": "Value",
+    "zh-CN": "值"
+  },
+  "Category": {
+    "en": "Category",
+    "zh-CN": "类别"
+  },
+  "From": {
+    "en": "From",
+    "zh-CN": "从",
+    "zh-TW": "從",
+    "es": "Desde",
+    "it": "Da",
+    "ja": "から",
+    "pt-BR": "De"
+  },
+  "To": {
+    "en": "To",
+    "zh-CN": "到",
+    "zh-TW": "到",
+    "es": "Hasta",
+    "it": "A",
+    "ja": "へ",
+    "pt-BR": "Para"
+  },
+  "Compounding periods per year": {
+    "en": "Compounding periods per year",
+    "zh-CN": "每年计息次数"
+  },
+  "Monthly contribution at month end": {
+    "en": "Monthly contribution at month end",
+    "zh-CN": "每月月底投入"
+  },
+  "Mathematical projection; excludes taxes and product fees.": {
+    "en": "Mathematical projection; excludes taxes and product fees.",
+    "zh-CN": "数学推算，不包含税费和产品费率。"
+  },
+  "Significant digits": {
+    "en": "Significant digits",
+    "zh-CN": "有效数字"
+  },
+  "Calculate": {
+    "en": "Calculate",
+    "zh-CN": "计算"
+  },
   "Find and terminate processes using a TCP or UDP port": {
     "en": "Find and terminate processes using a TCP or UDP port",
     "zh-CN": "查询并结束占用 TCP 或 UDP 端口的进程",
@@ -835,6 +959,18 @@
     "en": "Enter up to 3 octal umask digits, optionally prefixed with 0",
     "zh-CN": "请输入最多 3 位八进制 umask（可带前导 0）"
   },
+  "Defaults save options only, without keys or input content.": {
+    "en": "Defaults save options only, without keys or input content.",
+    "zh-CN": "默认配置仅保存选项，不保存密钥或输入内容。"
+  },
+  "Save as default": {
+    "en": "Save as default",
+    "zh-CN": "保存为默认配置"
+  },
+  "Restore initial settings": {
+    "en": "Restore initial settings",
+    "zh-CN": "恢复初始配置"
+  },
   "Operation": {
     "en": "Operation",
     "zh-CN": "处理方式",
@@ -870,15 +1006,6 @@
     "it": "Algoritmo",
     "ja": "アルゴリズム",
     "pt-BR": "Algoritmo"
-  },
-  "Mode": {
-    "en": "Mode",
-    "zh-CN": "模式",
-    "zh-TW": "模式",
-    "es": "Modo",
-    "it": "Modalità",
-    "ja": "モード",
-    "pt-BR": "Modo"
   },
   "Ciphertext format": {
     "en": "Ciphertext format",
@@ -928,7 +1055,15 @@
   },
   "Text": {
     "en": "Text",
-    "zh-CN": "文本"
+    "zh-CN": "文本",
+    "zh-TW": "文字",
+    "es": "Texto",
+    "it": "Testo",
+    "ja": "テキスト",
+    "pt-BR": "Texto",
+    "ko": "텍스트",
+    "tr": "Metin",
+    "az": "Mətn"
   },
   "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.": {
     "en": "XOR each byte with a repeating key. Hex on the right is the main result; UTF-8 below is the same bytes as text. To reverse, click Use as input or paste back as Hex.",
@@ -1018,6 +1153,22 @@
   "Decrypted bytes are not UTF-8 and are shown as Hex. Advanced mode lets you select the output encoding.": {
     "en": "Decrypted bytes are not UTF-8 and are shown as Hex. Advanced mode lets you select the output encoding.",
     "zh-CN": "解密结果不是 UTF-8 文本，已显示为 Hex；可切换高级模式选择输出编码。"
+  },
+  "Saved for the next time you open this tool.": {
+    "en": "Saved for the next time you open this tool.",
+    "zh-CN": "已保存，下次打开此工具时生效。"
+  },
+  "Could not save configuration. Check that local storage is available.": {
+    "en": "Could not save configuration. Check that local storage is available.",
+    "zh-CN": "无法保存配置，请检查本地存储是否可用。"
+  },
+  "Restored initial settings and removed saved defaults.": {
+    "en": "Restored initial settings and removed saved defaults.",
+    "zh-CN": "已恢复初始配置，并清除已保存的默认配置。"
+  },
+  "Could not reset configuration. Check that local storage is available.": {
+    "en": "Could not reset configuration. Check that local storage is available.",
+    "zh-CN": "无法恢复配置，请检查本地存储是否可用。"
   },
   "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.": {
     "en": "Base64(12-byte nonce + ciphertext + 16-byte tag), no AAD. A fresh nonce is generated for encryption.",
@@ -1373,6 +1524,103 @@
     "en": "Current color",
     "zh-CN": "当前颜色"
   },
+  "Search": {
+    "en": "Search",
+    "zh-CN": "搜索"
+  },
+  "Skin tone": {
+    "en": "Skin tone",
+    "zh-CN": "肤色"
+  },
+  "Default": {
+    "en": "Default",
+    "zh-CN": "默认"
+  },
+  "Link URL": {
+    "en": "Link URL",
+    "zh-CN": "链接地址"
+  },
+  "Insert link": {
+    "en": "Insert link",
+    "zh-CN": "插入链接"
+  },
+  "Rich text content": {
+    "en": "Rich text content",
+    "zh-CN": "富文本内容"
+  },
+  "HTML source": {
+    "en": "HTML source",
+    "zh-CN": "HTML 源码"
+  },
+  "Base color": {
+    "en": "Base color",
+    "zh-CN": "基础色"
+  },
+  "Solar to lunar": {
+    "en": "Solar to lunar",
+    "zh-CN": "阳历转农历"
+  },
+  "Lunar to solar": {
+    "en": "Lunar to solar",
+    "zh-CN": "农历转阳历"
+  },
+  "Year": {
+    "en": "Year",
+    "zh-CN": "年"
+  },
+  "Month": {
+    "en": "Month",
+    "zh-CN": "月"
+  },
+  "Day": {
+    "en": "Day",
+    "zh-CN": "日"
+  },
+  "Leap month": {
+    "en": "Leap month",
+    "zh-CN": "闰月"
+  },
+  "Width": {
+    "en": "Width",
+    "zh-CN": "全半角"
+  },
+  "Pluralize": {
+    "en": "Pluralize",
+    "zh-CN": "转复数"
+  },
+  "Singularize": {
+    "en": "Singularize",
+    "zh-CN": "转单数"
+  },
+  "Enable Gmail-specific rules": {
+    "en": "Enable Gmail-specific rules",
+    "zh-CN": "启用 Gmail 专属规则"
+  },
+  "Remove Gmail plus aliases": {
+    "en": "Remove Gmail plus aliases",
+    "zh-CN": "移除 Gmail 加号别名"
+  },
+  "Lowercase local part (may change meaning)": {
+    "en": "Lowercase local part (may change meaning)",
+    "zh-CN": "用户名转小写（可能改变含义）"
+  },
+  "Keep query parameters": {
+    "en": "Keep query parameters",
+    "zh-CN": "保留查询参数"
+  },
+  "Group by domain": {
+    "en": "Group by domain",
+    "zh-CN": "按域名分组"
+  },
+  "Run": {
+    "en": "Run",
+    "zh-CN": "运行",
+    "zh-TW": "執行",
+    "es": "Ejecutar",
+    "it": "Esegui",
+    "ja": "実行",
+    "pt-BR": "Executar"
+  },
   "Copy": {
     "en": "Copy",
     "zh-CN": "复制",
@@ -1434,10 +1682,6 @@
     "en": "hour",
     "zh-CN": "小时"
   },
-  "Day": {
-    "en": "Day",
-    "zh-CN": "日"
-  },
   "Every day": {
     "en": "Every day",
     "zh-CN": "每日"
@@ -1445,10 +1689,6 @@
   "day": {
     "en": "day",
     "zh-CN": "日"
-  },
-  "Month": {
-    "en": "Month",
-    "zh-CN": "月"
   },
   "Every month": {
     "en": "Every month",
@@ -1473,10 +1713,6 @@
   "weekday": {
     "en": "weekday",
     "zh-CN": "周"
-  },
-  "Year": {
-    "en": "Year",
-    "zh-CN": "年"
   },
   "Every year": {
     "en": "Every year",
@@ -1646,15 +1882,6 @@
     "en": "Range",
     "zh-CN": "范围"
   },
-  "From": {
-    "en": "From",
-    "zh-CN": "从",
-    "zh-TW": "從",
-    "es": "Desde",
-    "it": "Da",
-    "ja": "から",
-    "pt-BR": "De"
-  },
   "Range start": {
     "en": "Range start",
     "zh-CN": "范围起始"
@@ -1685,7 +1912,7 @@
   },
   "{0}s": {
     "en": "{0}s",
-    "zh-CN": "{0} 秒"
+    "zh-CN": "{0}执行一次"
   },
   "Nearest weekday": {
     "en": "Nearest weekday",
@@ -1926,7 +2153,7 @@
   },
   "Create": {
     "en": "Create",
-    "zh-CN": "生成"
+    "zh-CN": "创建"
   },
   "Base64": {
     "en": "Base64",
@@ -1951,6 +2178,34 @@
   "Save failed": {
     "en": "Save failed",
     "zh-CN": "保存失败"
+  },
+  "Open in regex tester": {
+    "en": "Open in regex tester",
+    "zh-CN": "在正则测试中打开"
+  },
+  "Summarize CIDRs": {
+    "en": "Summarize CIDRs",
+    "zh-CN": "汇总 CIDR"
+  },
+  "Expand address range": {
+    "en": "Expand address range",
+    "zh-CN": "展开地址范围"
+  },
+  "MAC prefix (optional)": {
+    "en": "MAC prefix (optional)",
+    "zh-CN": "MAC 前缀（可留空）"
+  },
+  "Second JSON": {
+    "en": "Second JSON",
+    "zh-CN": "第二份 JSON"
+  },
+  "End address": {
+    "en": "End address",
+    "zh-CN": "结束地址"
+  },
+  "Count": {
+    "en": "Count",
+    "zh-CN": "数量"
   },
   "Informational": {
     "en": "Informational",
@@ -2027,15 +2282,6 @@
   "Working…": {
     "en": "Working…",
     "zh-CN": "处理中…"
-  },
-  "Run": {
-    "en": "Run",
-    "zh-CN": "运行",
-    "zh-TW": "執行",
-    "es": "Ejecutar",
-    "it": "Esegui",
-    "ja": "実行",
-    "pt-BR": "Executar"
   },
   "Input exceeds this tool's safe limit": {
     "en": "Input exceeds this tool's safe limit",
@@ -2247,6 +2493,82 @@
     "en": "Up to 50 files, 100 MB each, and 250 MB total.",
     "zh-CN": "最多 50 个文件、单文件 100 MB、总计 250 MB。"
   },
+  "Import GIF": {
+    "en": "Import GIF",
+    "zh-CN": "导入 GIF"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "zh-CN": "取消"
+  },
+  "Up to 30 MB, 300 frames, and 24 million total pixels.": {
+    "en": "Up to 30 MB, 300 frames, and 24 million total pixels.",
+    "zh-CN": "最多 30 MB、300 帧、总计 2400 万像素。"
+  },
+  "Original": {
+    "en": "Original",
+    "zh-CN": "原图"
+  },
+  "Crop width": {
+    "en": "Crop width",
+    "zh-CN": "裁剪宽度"
+  },
+  "Crop height": {
+    "en": "Crop height",
+    "zh-CN": "裁剪高度"
+  },
+  "Height": {
+    "en": "Height",
+    "zh-CN": "高度"
+  },
+  "Colors": {
+    "en": "Colors",
+    "zh-CN": "颜色数量"
+  },
+  "Repeat (-1 once, 0 forever)": {
+    "en": "Repeat (-1 once, 0 forever)",
+    "zh-CN": "循环次数（-1 单次，0 无限）"
+  },
+  "Keep every Nth frame (combine delays)": {
+    "en": "Keep every Nth frame (combine delays)",
+    "zh-CN": "每 N 帧保留一帧（合并时长）"
+  },
+  "Frame duration (ms)": {
+    "en": "Frame duration (ms)",
+    "zh-CN": "帧时长（毫秒）"
+  },
+  "Delete": {
+    "en": "Delete",
+    "zh-CN": "删除"
+  },
+  "Extract frame": {
+    "en": "Extract frame",
+    "zh-CN": "提取帧"
+  },
+  "Export PNG": {
+    "en": "Export PNG",
+    "zh-CN": "导出 PNG"
+  },
+  "Generate GIF": {
+    "en": "Generate GIF",
+    "zh-CN": "生成 GIF"
+  },
+  "(size did not decrease)": {
+    "en": "(size did not decrease)",
+    "zh-CN": "（体积未减小）"
+  },
+  "Save GIF": {
+    "en": "Save GIF",
+    "zh-CN": "保存 GIF"
+  },
+  "Processing timed out; reimport a smaller file": {
+    "en": "Processing timed out; reimport a smaller file",
+    "zh-CN": "处理超时，请重新导入较小文件"
+  },
+  "File must not exceed 30 MB": {
+    "en": "File must not exceed 30 MB",
+    "zh-CN": "文件不能超过 30 MB"
+  },
   "Replace frames": {
     "en": "Replace frames",
     "zh-CN": "更换帧"
@@ -2255,29 +2577,9 @@
     "en": "Choose image sequence",
     "zh-CN": "选择图片序列"
   },
-  "Save GIF": {
-    "en": "Save GIF",
-    "zh-CN": "保存 GIF"
-  },
-  "Cancel": {
-    "en": "Cancel",
-    "zh-CN": "取消"
-  },
-  "Generate GIF": {
-    "en": "Generate GIF",
-    "zh-CN": "生成 GIF"
-  },
   "Choose 2–60 images; file order becomes frame order": {
     "en": "Choose 2–60 images; file order becomes frame order",
     "zh-CN": "选择 2–60 张图片；文件顺序即帧顺序"
-  },
-  "Width": {
-    "en": "Width",
-    "zh-CN": "全半角"
-  },
-  "Height": {
-    "en": "Height",
-    "zh-CN": "高度"
   },
   "Fit mode": {
     "en": "Fit mode",
@@ -2286,10 +2588,6 @@
   "Default frame delay": {
     "en": "Default frame delay",
     "zh-CN": "默认帧时长"
-  },
-  "Colors": {
-    "en": "Colors",
-    "zh-CN": "颜色数量"
   },
   "Repeat (0 = forever)": {
     "en": "Repeat (0 = forever)",
@@ -2339,17 +2637,9 @@
     "en": "Total frame pixels exceed 80 million",
     "zh-CN": "帧像素总量超过 8000 万"
   },
-  "Preparing frame {0}/{1}": {
-    "en": "Preparing frame {0}/{1}",
-    "zh-CN": "准备第 {0}/{1} 帧"
-  },
   "Encoding GIF…": {
     "en": "Encoding GIF…",
     "zh-CN": "编码 GIF…"
-  },
-  "frames": {
-    "en": "frames",
-    "zh-CN": "帧"
   },
   "Gzip operation": {
     "en": "Gzip operation",
@@ -2414,7 +2704,7 @@
   },
   "Input type": {
     "en": "Input type",
-    "zh-CN": "输入方式"
+    "zh-CN": "处理对象"
   },
   "Text checksum": {
     "en": "Text checksum",
@@ -2463,15 +2753,6 @@
   "Could not read the file. Please select it again.": {
     "en": "Could not read the file. Please select it again.",
     "zh-CN": "无法读取文件，请重新选择。"
-  },
-  "Input": {
-    "en": "Input",
-    "zh-CN": "输入",
-    "zh-TW": "輸入",
-    "es": "Entrada",
-    "it": "Ingresso",
-    "ja": "入力",
-    "pt-BR": "Entrada"
   },
   "Provide a key to compute the digest.": {
     "en": "Provide a key to compute the digest.",
@@ -2548,7 +2829,7 @@
   },
   "Clear filters": {
     "en": "Clear filters",
-    "zh-CN": "清空筛选"
+    "zh-CN": "清除筛选"
   },
   "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.": {
     "en": "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.",
@@ -2896,6 +3177,18 @@
     "ja": "TOML は {0} の null を表現できません。削除するか別形式を選んでください。",
     "pt-BR": "TOML não pode representar null em {0}. Remova-o ou escolha outro formato."
   },
+  "Settings": {
+    "en": "Settings",
+    "zh-CN": "设置",
+    "zh-TW": "設定",
+    "es": "Ajustes",
+    "it": "Impostazioni",
+    "ja": "設定",
+    "pt-BR": "Configurações",
+    "ko": "설정",
+    "tr": "Ayarlar",
+    "az": "Parametrlər"
+  },
   "DBX Toolbox": {
     "en": "DBX Toolbox",
     "zh-CN": "DBX 工具箱",
@@ -3114,7 +3407,7 @@
   },
   "Favorites": {
     "en": "Favorites",
-    "zh-CN": "常用工具",
+    "zh-CN": "收藏",
     "zh-TW": "常用工具",
     "es": "Favoritos",
     "it": "Preferiti",
@@ -3567,12 +3860,15 @@
   },
   "Images": {
     "en": "Images",
-    "zh-CN": "图片",
-    "zh-TW": "圖片",
+    "zh-CN": "图像",
+    "zh-TW": "圖像",
     "es": "Imágenes",
     "it": "Immagini",
     "ja": "画像",
-    "pt-BR": "Imagens"
+    "pt-BR": "Imagens",
+    "ko": "이미지",
+    "tr": "Görüntüler",
+    "az": "Şəkillər"
   },
   "Path": {
     "en": "Path",
@@ -3591,15 +3887,6 @@
     "it": "Tabella",
     "ja": "テーブル",
     "pt-BR": "Tabela"
-  },
-  "To": {
-    "en": "To",
-    "zh-CN": "到",
-    "zh-TW": "到",
-    "es": "Hasta",
-    "it": "A",
-    "ja": "へ",
-    "pt-BR": "Para"
   },
   "Kind": {
     "en": "Kind",
@@ -3708,6 +3995,126 @@
     "it": "Simboli",
     "ja": "記号",
     "pt-BR": "Símbolos"
+  },
+  "A TOTP store already exists. Unlock it with its dedicated password.": {
+    "en": "A TOTP store already exists. Unlock it with its dedicated password.",
+    "zh-CN": "TOTP 列表已存在，请使用其专用口令解锁。",
+    "zh-TW": "TOTP 清單已存在，請使用其專用密碼解鎖。",
+    "es": "Ya existe una lista TOTP. Desbloquéala con su contraseña.",
+    "it": "Esiste già un elenco TOTP. Sbloccalo con la sua password.",
+    "ja": "TOTP リストは既に存在します。専用パスワードで解除してください。",
+    "pt-BR": "Já existe uma lista TOTP. Desbloqueie com sua senha.",
+    "ko": "TOTP 목록이 이미 있습니다. 전용 비밀번호로 잠금을 해제하세요.",
+    "tr": "TOTP listesi zaten var. Özel parolasıyla açın.",
+    "az": "TOTP siyahısı artıq mövcuddur. Xüsusi şifrəsi ilə açın."
+  },
+  "The TOTP list is locked or changed in another workbench. Unlock it again.": {
+    "en": "The TOTP list is locked or changed in another workbench. Unlock it again.",
+    "zh-CN": "TOTP 列表已锁定或已在其他工作台更改，请重新解锁。",
+    "zh-TW": "TOTP 清單已鎖定或已在其他工作台變更，請重新解鎖。",
+    "es": "La lista TOTP está bloqueada o cambió en otro espacio. Desbloquéala de nuevo.",
+    "it": "L'elenco TOTP è bloccato o modificato altrove. Sbloccalo di nuovo.",
+    "ja": "TOTP リストはロック中か、別のワークベンチで変更されました。再度解除してください。",
+    "pt-BR": "A lista TOTP está bloqueada ou foi alterada. Desbloqueie novamente.",
+    "ko": "TOTP 목록이 잠겼거나 다른 작업 공간에서 변경되었습니다. 다시 잠금을 해제하세요.",
+    "tr": "TOTP listesi kilitli veya başka yerde değişti. Yeniden açın.",
+    "az": "TOTP siyahısı kilidlənib və ya dəyişib. Yenidən açın."
+  },
+  "The TOTP password is incorrect or the encrypted data is damaged. Check the password or restore a backup.": {
+    "en": "The TOTP password is incorrect or the encrypted data is damaged. Check the password or restore a backup.",
+    "zh-CN": "TOTP 专用口令不正确或加密数据已损坏，请检查口令或恢复备份。",
+    "zh-TW": "TOTP 專用密碼不正確或加密資料已損毀，請檢查密碼或還原備份。",
+    "es": "La contraseña TOTP es incorrecta o los datos están dañados. Revisa la contraseña o restaura una copia.",
+    "it": "Password TOTP errata o dati danneggiati. Verifica la password o ripristina un backup.",
+    "ja": "TOTP パスワードが違うか、データが破損しています。確認するかバックアップを復元してください。",
+    "pt-BR": "Senha TOTP incorreta ou dados danificados. Confira a senha ou restaure um backup.",
+    "ko": "TOTP 비밀번호가 틀리거나 데이터가 손상되었습니다. 비밀번호를 확인하거나 백업을 복원하세요.",
+    "tr": "TOTP parolası yanlış veya veri bozuk. Parolayı kontrol edin ya da yedeği geri yükleyin.",
+    "az": "TOTP şifrəsi yanlışdır və ya məlumat zədələnib. Şifrəni yoxlayın və ya ehtiyat nüsxəni bərpa edin."
+  },
+  "Use a TOTP password of at least 8 characters and at most 1024 bytes.": {
+    "en": "Use a TOTP password of at least 8 characters and at most 1024 bytes.",
+    "zh-CN": "TOTP 专用口令至少需要 8 个字符，且不能超过 1024 字节。",
+    "zh-TW": "TOTP 專用密碼至少需要 8 個字元，且不能超過 1024 位元組。",
+    "es": "Usa una contraseña TOTP de al menos 8 caracteres y como máximo 1024 bytes.",
+    "it": "Usa una password TOTP di almeno 8 caratteri e massimo 1024 byte.",
+    "ja": "TOTP パスワードは8文字以上、1024バイト以下にしてください。",
+    "pt-BR": "Use uma senha TOTP com pelo menos 8 caracteres e no máximo 1024 bytes.",
+    "ko": "TOTP 비밀번호는 8자 이상, 1024바이트 이하로 입력하세요.",
+    "tr": "TOTP parolası en az 8 karakter ve en fazla 1024 bayt olmalı.",
+    "az": "TOTP şifrəsi ən azı 8 simvol və ən çoxu 1024 bayt olmalıdır."
+  },
+  "Cannot access the encrypted TOTP list. Check the data directory, available space, or restore a backup.": {
+    "en": "Cannot access the encrypted TOTP list. Check the data directory, available space, or restore a backup.",
+    "zh-CN": "无法访问加密 TOTP 列表，请检查数据目录权限、磁盘空间或恢复备份。",
+    "zh-TW": "無法存取加密 TOTP 清單，請檢查資料目錄權限、磁碟空間或還原備份。",
+    "es": "No se puede acceder a la lista TOTP cifrada. Revisa permisos, espacio o restaura una copia.",
+    "it": "Impossibile accedere all'elenco TOTP cifrato. Verifica permessi, spazio o ripristina un backup.",
+    "ja": "暗号化TOTPリストにアクセスできません。権限と空き容量を確認するか、バックアップを復元してください。",
+    "pt-BR": "Não foi possível acessar a lista TOTP. Verifique permissões, espaço ou restaure um backup.",
+    "ko": "암호화된 TOTP 목록에 접근할 수 없습니다. 권한과 디스크 공간을 확인하거나 백업을 복원하세요.",
+    "tr": "Şifreli TOTP listesine erişilemiyor. İzinleri, alanı kontrol edin veya yedeği geri yükleyin.",
+    "az": "Şifrələnmiş TOTP siyahısına giriş mümkün deyil. İcazələri, boş yeri yoxlayın və ya ehtiyat nüsxəni bərpa edin."
+  },
+  "The TOTP list has reached its storage limit (512 entries). Remove unused entries.": {
+    "en": "The TOTP list has reached its storage limit (512 entries). Remove unused entries.",
+    "zh-CN": "TOTP 列表已达到存储上限（512 条），请移除不再使用的条目。",
+    "zh-TW": "TOTP 清單已達儲存上限（512 筆），請移除不再使用的項目。",
+    "es": "La lista TOTP alcanzó el límite de 512 entradas. Elimina las que no uses.",
+    "it": "Limite di 512 voci TOTP raggiunto. Rimuovi quelle inutilizzate.",
+    "ja": "TOTPリストは上限512件に達しました。不要な項目を削除してください。",
+    "pt-BR": "A lista TOTP atingiu o limite de 512 entradas. Remova as não utilizadas.",
+    "ko": "TOTP 목록이 512개 제한에 도달했습니다. 사용하지 않는 항목을 삭제하세요.",
+    "tr": "TOTP listesi 512 kayıt sınırına ulaştı. Kullanılmayanları kaldırın.",
+    "az": "TOTP siyahısı 512 qeyd həddinə çatıb. İstifadə olunmayanları silin."
+  },
+  "Invalid TOTP entry or settings. Use a name of up to 128 characters, 6 or 8 digits, and a period of 1–300 seconds.": {
+    "en": "Invalid TOTP entry or settings. Use a name of up to 128 characters, 6 or 8 digits, and a period of 1–300 seconds.",
+    "zh-CN": "TOTP 条目或配置无效。名称最多 128 个字符，位数为 6 或 8，周期为 1–300 秒，请检查后重试。",
+    "zh-TW": "TOTP 項目或設定無效。名稱最多128個字元、位數為6或8、週期為1–300秒，請檢查後重試。",
+    "es": "Entrada TOTP no válida. Usa un nombre de hasta 128 caracteres, 6 u 8 dígitos y 1–300 segundos.",
+    "it": "Voce TOTP non valida. Usa un nome entro 128 caratteri, 6 o 8 cifre e 1–300 secondi.",
+    "ja": "TOTP項目か設定が無効です。名前は128文字以内、6桁か8桁、周期は1～300秒にしてください。",
+    "pt-BR": "Entrada TOTP inválida. Use nome de até 128 caracteres, 6 ou 8 dígitos e período de 1–300 segundos.",
+    "ko": "TOTP 항목이나 설정이 잘못되었습니다. 이름은 128자 이하, 자릿수는 6 또는 8, 주기는 1~300초로 설정하세요.",
+    "tr": "TOTP kaydı veya ayarları geçersiz. Ad en fazla 128 karakter, kod 6 veya 8 hane, süre 1–300 saniye olmalı.",
+    "az": "TOTP qeydi və ya parametrləri yanlışdır. Ad ən çoxu 128 simvol, kod 6 və ya 8 rəqəm, müddət 1–300 saniyə olmalıdır."
+  },
+  "Notes allow up to 500 characters, with text and line breaks only.": {
+    "en": "Notes allow up to 500 characters, with text and line breaks only.",
+    "zh-CN": "备注最多 500 字符，仅支持文本和换行。",
+    "zh-TW": "備註最多 500 字元，僅支援文字和換行。",
+    "es": "Las notas admiten hasta 500 caracteres, solo texto y saltos de línea.",
+    "it": "Le note consentono fino a 500 caratteri, solo testo e interruzioni di riga.",
+    "ja": "メモは500文字以内で、テキストと改行のみ使用できます。",
+    "pt-BR": "As notas aceitam até 500 caracteres, apenas texto e quebras de linha.",
+    "ko": "메모는 최대 500자로 텍스트와 줄바꿈만 사용할 수 있습니다.",
+    "tr": "Notlar en fazla 500 karakter, yalnızca metin ve satır sonları içerebilir.",
+    "az": "Qeydlər ən çoxu 500 simvol, yalnız mətn və sətir keçidləri ola bilər."
+  },
+  "Cannot access the system key for TOTP. Sign in to the original system account and unlock its credential store. Keep the data files; do not reset them.": {
+    "en": "Cannot access the system key for TOTP. Sign in to the original system account and unlock its credential store. Keep the data files; do not reset them.",
+    "zh-CN": "无法读取 TOTP 的系统加密密钥。请登录原系统账户并解锁系统凭据存储；保留数据文件，不要重置。",
+    "zh-TW": "無法讀取 TOTP 的系統加密金鑰。請登入原系統帳戶並解鎖系統憑證儲存；保留資料檔案，請勿重設。",
+    "es": "No se puede acceder a la clave del sistema para TOTP. Inicia sesión con la cuenta original y desbloquea sus credenciales. Conserva los archivos.",
+    "it": "Impossibile accedere alla chiave di sistema TOTP. Accedi all'account originale e sblocca le credenziali. Conserva i file.",
+    "ja": "TOTPのシステム鍵を読み取れません。元のシステムアカウントでログインし、資格情報ストアを解除してください。データファイルを保持してください。",
+    "pt-BR": "Não é possível acessar a chave do sistema TOTP. Entre na conta original e desbloqueie as credenciais. Preserve os arquivos.",
+    "ko": "TOTP 시스템 키에 접근할 수 없습니다. 원래 시스템 계정으로 로그인하고 자격 증명 저장소를 잠금 해제하세요. 데이터 파일을 보관하세요.",
+    "tr": "TOTP sistem anahtarına erişilemiyor. İlk sistem hesabıyla oturum açıp kimlik bilgisi deposunu açın. Veri dosyalarını koruyun.",
+    "az": "TOTP sistem açarına giriş mümkün deyil. İlkin sistem hesabına daxil olun və etimadnamə yaddaşını açın. Məlumat fayllarını saxlayın."
+  },
+  "Invalid shortcut settings. Choose a valid key combination and try again.": {
+    "en": "Invalid shortcut settings. Choose a valid key combination and try again.",
+    "zh-CN": "快捷键设置无效，请选择有效的组合键后重试。",
+    "zh-TW": "快捷鍵設定無效，請選擇有效的組合鍵後重試。",
+    "es": "La configuración de atajos no es válida. Elige una combinación válida e inténtalo de nuevo.",
+    "it": "Impostazioni scorciatoie non valide. Scegli una combinazione valida e riprova.",
+    "ja": "ショートカット設定が無効です。有効なキーの組み合わせを選び、再試行してください。",
+    "pt-BR": "Configurações de atalhos inválidas. Escolha uma combinação válida e tente novamente.",
+    "ko": "단축키 설정이 잘못되었습니다. 유효한 키 조합을 선택하고 다시 시도하세요.",
+    "tr": "Kısayol ayarları geçersiz. Geçerli bir tuş birleşimi seçip yeniden deneyin.",
+    "az": "Qısayol parametrləri yanlışdır. Düzgün düymə kombinasiyası seçib yenidən cəhd edin."
   },
   "The selected algorithm is not supported. Choose a supported algorithm.": {
     "en": "The selected algorithm is not supported. Choose a supported algorithm.",
@@ -4285,6 +4692,18 @@
     "tr": "Araç veya kenar çubuğu tercihleri geçersiz. Sayfayı yenileyip ayarı tekrar değiştirin.",
     "az": "Alət və ya yan panel parametrləri yanlışdır. Səhifəni yeniləyib ayarı yenidən dəyişin."
   },
+  "The recent tools limit is invalid. Select an available value from the list.": {
+    "en": "The recent tools limit is invalid. Select an available value from the list.",
+    "zh-CN": "最近工具数量无效，请从列表中选择支持的数量。",
+    "zh-TW": "最近使用工具數量無效，請從清單選擇支援的數量。",
+    "es": "El límite de herramientas recientes no es válido. Selecciona un valor disponible.",
+    "it": "Il limite degli strumenti recenti non è valido. Seleziona un valore disponibile.",
+    "ja": "最近のツール数が無効です。一覧から選択してください。",
+    "pt-BR": "O limite de ferramentas recentes é inválido. Selecione um valor disponível.",
+    "ko": "최근 도구 수가 올바르지 않습니다. 목록에서 선택하세요.",
+    "tr": "Son alətlər limiti yanlışdır. Siyahıdan dəstəklənən dəyəri seçin.",
+    "az": "Son istifadə olunan alətlərin limiti yanlışdır. Siyahıdan dəstəklənən dəyəri seçin."
+  },
   "The vault auto-lock interval is invalid. Select an available interval from the list.": {
     "en": "The vault auto-lock interval is invalid. Select an available interval from the list.",
     "zh-CN": "密钥库自动锁定时间无效，请从列表中选择支持的时间间隔。",
@@ -4441,6 +4860,54 @@
     "tr": "OCR model dosyası okunamadı veya kaydedilemedi. Dizin izinlerini ve boş disk alanını kontrol edin.",
     "az": "OCR model faylını oxumaq və ya saxlamaq mümkün olmadı. Qovluq icazələrini və boş disk yerini yoxlayın."
   },
+  "The PDF transfer failed or expired. Select the files and start again.": {
+    "en": "The PDF transfer failed or expired. Select the files and start again.",
+    "zh-CN": "PDF 传输失败或会话已过期，请重新选择文件并开始。",
+    "zh-TW": "PDF 傳輸失敗或工作階段已過期，請重新選擇檔案並開始。",
+    "es": "La transferencia del PDF falló o caducó. Selecciona los archivos de nuevo.",
+    "it": "Il trasferimento PDF non è riuscito o è scaduto. Seleziona nuovamente i file.",
+    "ja": "PDF 転送に失敗したか期限切れです。ファイルを選択し直してください。",
+    "pt-BR": "A transferência do PDF falhou ou expirou. Selecione os arquivos novamente.",
+    "ko": "PDF 전송이 실패했거나 만료되었습니다. 파일을 다시 선택하세요.",
+    "tr": "PDF aktarımı başarısız oldu veya süresi doldu. Dosyaları yeniden seçin.",
+    "az": "PDF ötürülməsi alınmadı və ya vaxtı bitdi. Faylları yenidən seçin."
+  },
+  "The PDF input exceeds the Sidecar limits. Reduce the file count, total size, or page count.": {
+    "en": "The PDF input exceeds the Sidecar limits. Reduce the file count, total size, or page count.",
+    "zh-CN": "PDF 输入超出 Sidecar 限制，请减少文件数、总体积或页数。",
+    "zh-TW": "PDF 輸入超出 Sidecar 限制，請減少檔案數、總大小或頁數。",
+    "es": "La entrada PDF supera los límites del Sidecar. Reduce archivos, tamaño o páginas.",
+    "it": "L'input PDF supera i limiti del Sidecar. Riduci file, dimensione o pagine.",
+    "ja": "PDF 入力が Sidecar の上限を超えています。ファイル数、サイズ、ページ数を減らしてください。",
+    "pt-BR": "A entrada PDF excede os limites do Sidecar. Reduza arquivos, tamanho ou páginas.",
+    "ko": "PDF 입력이 Sidecar 제한을 초과했습니다. 파일 수, 크기 또는 페이지 수를 줄이세요.",
+    "tr": "PDF girdisi Sidecar sınırlarını aşıyor. Dosya sayısını, boyutu veya sayfa sayısını azaltın.",
+    "az": "PDF girişi Sidecar limitlərini aşır. Fayl sayını, ölçünü və ya səhifə sayını azaldın."
+  },
+  "The PDF options are invalid. Check the selected pages, margins, rotation, or password.": {
+    "en": "The PDF options are invalid. Check the selected pages, margins, rotation, or password.",
+    "zh-CN": "PDF 参数无效，请检查所选页面、边距、旋转角度或密码。",
+    "zh-TW": "PDF 參數無效，請檢查所選頁面、邊距、旋轉角度或密碼。",
+    "es": "Las opciones del PDF no son válidas. Revisa páginas, márgenes, rotación o contraseña.",
+    "it": "Le opzioni PDF non sono valide. Controlla pagine, margini, rotazione o password.",
+    "ja": "PDF の設定が無効です。ページ、余白、回転、パスワードを確認してください。",
+    "pt-BR": "As opções do PDF são inválidas. Confira páginas, margens, rotação ou senha.",
+    "ko": "PDF 옵션이 잘못되었습니다. 페이지, 여백, 회전 또는 비밀번호를 확인하세요.",
+    "tr": "PDF seçenekleri geçersiz. Sayfaları, kenar boşluklarını, döndürmeyi veya parolayı kontrol edin.",
+    "az": "PDF seçimləri yanlışdır. Səhifələri, haşiyələri, fırlatmanı və ya parolu yoxlayın."
+  },
+  "The Sidecar could not complete the PDF operation. Wait for active work to finish or adjust the operation.": {
+    "en": "The Sidecar could not complete the PDF operation. Wait for active work to finish or adjust the operation.",
+    "zh-CN": "Sidecar 无法完成 PDF 操作，请等待当前任务结束或调整操作参数。",
+    "zh-TW": "Sidecar 無法完成 PDF 操作，請等待目前工作結束或調整操作參數。",
+    "es": "El Sidecar no pudo completar la operación PDF. Espera o ajusta la operación.",
+    "it": "Il Sidecar non ha completato l'operazione PDF. Attendi o modifica l'operazione.",
+    "ja": "Sidecar が PDF 処理を完了できませんでした。進行中の処理を待つか設定を変更してください。",
+    "pt-BR": "O Sidecar não concluiu a operação PDF. Aguarde ou ajuste a operação.",
+    "ko": "Sidecar가 PDF 작업을 완료하지 못했습니다. 진행 중인 작업을 기다리거나 설정을 조정하세요.",
+    "tr": "Sidecar PDF işlemini tamamlayamadı. Etkin işlemi bekleyin veya ayarları değiştirin.",
+    "az": "Sidecar PDF əməliyyatını tamamlaya bilmədi. Aktiv işi gözləyin və ya parametrləri dəyişin."
+  },
   "The file transfer could not be started. Select the file again and retry.": {
     "en": "The file transfer could not be started. Select the file again and retry.",
     "zh-CN": "无法启动文件传输，请重新选择文件后重试。",
@@ -4452,6 +4919,90 @@
     "ko": "파일 전송을 시작할 수 없습니다. 파일을 다시 선택하고 시도하세요.",
     "tr": "Dosya aktarımı başlatılamadı. Dosyayı yeniden seçip tekrar deneyin.",
     "az": "Fayl ötürməsini başlatmaq mümkün olmadı. Faylı yenidən seçib cəhd edin."
+  },
+  "Could not access vault storage. Check permissions and retry.": {
+    "en": "Could not access vault storage. Check permissions and retry.",
+    "zh-CN": "无法访问密钥库文件，请检查权限后重试。",
+    "zh-TW": "無法存取金鑰庫檔案，請檢查權限後重試。",
+    "es": "No se puede acceder a la bóveda. Revisa los permisos.",
+    "it": "Impossibile accedere alla cassaforte. Controlla i permessi.",
+    "ja": "保管庫にアクセスできません。権限を確認してください。",
+    "pt-BR": "Não foi possível acessar o cofre. Verifique as permissões.",
+    "ko": "보관소에 접근할 수 없습니다. 권한을 확인하세요.",
+    "tr": "Kasaya erişilemiyor. İzinleri kontrol edin.",
+    "az": "Anbara giriş mümkün deyil. İcazələri yoxlayın."
+  },
+  "The vault changed in another window. Unlock it again and repeat the operation.": {
+    "en": "The vault changed in another window. Unlock it again and repeat the operation.",
+    "zh-CN": "其他窗口已修改密钥库，请重新解锁后再操作。",
+    "zh-TW": "其他視窗已修改金鑰庫，請重新解鎖後再操作。",
+    "es": "Otra ventana cambió la bóveda. Desbloquéala de nuevo.",
+    "it": "La cassaforte è cambiata in un’altra finestra. Sbloccala di nuovo.",
+    "ja": "別のウィンドウで保管庫が変更されました。再度ロック解除してください。",
+    "pt-BR": "O cofre mudou em outra janela. Desbloqueie novamente.",
+    "ko": "다른 창에서 보관소가 변경되었습니다. 다시 잠금 해제하세요.",
+    "tr": "Kasa başka pencerede değişti. Yeniden kilidini açın.",
+    "az": "Anbar başqa pəncərədə dəyişib. Yenidən kilidi açın."
+  },
+  "The encrypted backup exceeds the size limit.": {
+    "en": "The encrypted backup exceeds the size limit.",
+    "zh-CN": "加密备份超过大小限制。",
+    "zh-TW": "加密備份超過大小限制。",
+    "es": "La copia cifrada supera el límite.",
+    "it": "Il backup cifrato supera il limite.",
+    "ja": "暗号化バックアップがサイズ制限を超えています。",
+    "pt-BR": "O backup criptografado excede o limite.",
+    "ko": "암호화 백업이 크기 제한을 초과했습니다.",
+    "tr": "Şifreli yedek boyut sınırını aşıyor.",
+    "az": "Şifrəli ehtiyat nüsxə ölçü həddini aşır."
+  },
+  "The encrypted backup is invalid.": {
+    "en": "The encrypted backup is invalid.",
+    "zh-CN": "加密备份格式无效。",
+    "zh-TW": "加密備份格式無效。",
+    "es": "La copia cifrada no es válida.",
+    "it": "Il backup cifrato non è valido.",
+    "ja": "暗号化バックアップが無効です。",
+    "pt-BR": "O backup criptografado é inválido.",
+    "ko": "암호화 백업이 올바르지 않습니다.",
+    "tr": "Şifreli yedek geçersiz.",
+    "az": "Şifrəli ehtiyat nüsxə etibarsızdır."
+  },
+  "This backup version is not supported. Update the plugin.": {
+    "en": "This backup version is not supported. Update the plugin.",
+    "zh-CN": "不支持此备份版本，请更新插件。",
+    "zh-TW": "不支援此備份版本，請更新外掛。",
+    "es": "Versión no compatible. Actualiza el complemento.",
+    "it": "Versione non supportata. Aggiorna il plugin.",
+    "ja": "未対応のバックアップです。プラグインを更新してください。",
+    "pt-BR": "Versão não compatível. Atualize o plugin.",
+    "ko": "지원하지 않는 백업 버전입니다. 플러그인을 업데이트하세요.",
+    "tr": "Yedek sürümü desteklenmiyor. Eklentiyi güncelleyin.",
+    "az": "Nüsxə versiyası dəstəklənmir. Qoşmanı yeniləyin."
+  },
+  "The restore preview expired. Preview the backup again.": {
+    "en": "The restore preview expired. Preview the backup again.",
+    "zh-CN": "恢复预览已失效，请重新预览备份。",
+    "zh-TW": "還原預覽已失效，請重新預覽備份。",
+    "es": "La vista previa caducó. Abre la copia de nuevo.",
+    "it": "L’anteprima è scaduta. Riapri il backup.",
+    "ja": "復元プレビューが期限切れです。再度プレビューしてください。",
+    "pt-BR": "A prévia expirou. Abra o backup novamente.",
+    "ko": "복원 미리 보기가 만료되었습니다. 다시 미리 보세요.",
+    "tr": "Geri yükleme önizlemesi sona erdi. Yeniden açın.",
+    "az": "Bərpa önbaxışının vaxtı bitib. Yenidən açın."
+  },
+  "This result cannot be sent to that tool. Check the format and size.": {
+    "en": "This result cannot be sent to that tool. Check the format and size.",
+    "zh-CN": "无法将此结果发送到目标工具，请检查格式和大小。",
+    "zh-TW": "無法將此結果傳送至目標工具，請檢查格式與大小。",
+    "es": "No se puede enviar el resultado. Revisa formato y tamaño.",
+    "it": "Impossibile inviare il risultato. Controlla formato e dimensione.",
+    "ja": "結果を送信できません。形式とサイズを確認してください。",
+    "pt-BR": "Não foi possível enviar. Verifique formato e tamanho.",
+    "ko": "결과를 보낼 수 없습니다. 형식과 크기를 확인하세요.",
+    "tr": "Sonuç gönderilemiyor. Biçimi ve boyutu kontrol edin.",
+    "az": "Nəticə göndərilmir. Formatı və ölçünü yoxlayın."
   },
   "Key purpose updates require a newer backend. Restart or update the plugin.": {
     "en": "Key purpose updates require a newer backend. Restart or update the plugin.",
@@ -5840,7 +6391,7 @@
   },
   "Clear all": {
     "en": "Clear all",
-    "zh-CN": "清空全部"
+    "zh-CN": "全部清除"
   },
   "Exporting…": {
     "en": "Exporting…",
@@ -5922,10 +6473,6 @@
   "The crop may include canvas area outside the image; axes follow rotation": {
     "en": "The crop may include canvas area outside the image; axes follow rotation",
     "zh-CN": "可框选画布内的图片外区域，轴向随旋转"
-  },
-  "Reset": {
-    "en": "Reset",
-    "zh-CN": "重置参数"
   },
   "Resize": {
     "en": "Resize",
@@ -6020,10 +6567,6 @@
   "Transparency background": {
     "en": "Transparency background",
     "zh-CN": "透明区域背景"
-  },
-  "Original": {
-    "en": "Original",
-    "zh-CN": "原图"
   },
   "Drag the frame to move, handles to resize, or drag outside to reselect; rotate the crop": {
     "en": "Drag the frame to move, handles to resize, or drag outside to reselect; rotate the crop",
@@ -6411,10 +6954,6 @@
     "en": "String value",
     "zh-CN": "字符串值"
   },
-  "Delete": {
-    "en": "Delete",
-    "zh-CN": "删除"
-  },
   "Add item": {
     "en": "Add item",
     "zh-CN": "添加元素"
@@ -6477,7 +7016,7 @@
   },
   "Diagnostics": {
     "en": "Diagnostics",
-    "zh-CN": "诊断结果"
+    "zh-CN": "诊断信息"
   },
   "Valid": {
     "en": "Valid",
@@ -7097,7 +7636,15 @@
   },
   "Network": {
     "en": "Network",
-    "zh-CN": "网络地址"
+    "zh-CN": "网络",
+    "zh-TW": "網路",
+    "es": "Red",
+    "it": "Rete",
+    "ja": "ネットワーク",
+    "pt-BR": "Rede",
+    "ko": "네트워크",
+    "tr": "Ağ",
+    "az": "Şəbəkə"
   },
   "Broadcast": {
     "en": "Broadcast",
@@ -7207,10 +7754,6 @@
     "en": "Decrease",
     "zh-CN": "减少"
   },
-  "Count": {
-    "en": "Count",
-    "zh-CN": "数量"
-  },
   "Regenerate": {
     "en": "Regenerate",
     "zh-CN": "重新生成"
@@ -7275,9 +7818,241 @@
     "en": "Very strong",
     "zh-CN": "很强"
   },
+  "Compression cleans metadata and thumbnails and rewrites structure. Scanned files may not shrink; output can be larger.": {
+    "en": "Compression cleans metadata and thumbnails and rewrites structure. Scanned files may not shrink; output can be larger.",
+    "zh-CN": "压缩主要清理元数据、缩略图并重写结构；扫描件不保证明显缩小，输出也可能变大。"
+  },
+  "PDF file upload": {
+    "en": "PDF file upload",
+    "zh-CN": "PDF 文件上传"
+  },
+  "Drop to add PDFs": {
+    "en": "Drop to add PDFs",
+    "zh-CN": "松开即可添加 PDF"
+  },
+  "Add more PDFs": {
+    "en": "Add more PDFs",
+    "zh-CN": "继续添加 PDF"
+  },
+  "Replace the PDF": {
+    "en": "Replace the PDF",
+    "zh-CN": "更换 PDF 文件"
+  },
+  "Choose or drop PDFs": {
+    "en": "Choose or drop PDFs",
+    "zh-CN": "选择或拖入 PDF"
+  },
+  "Drag file cards to set the merge order": {
+    "en": "Drag file cards to set the merge order",
+    "zh-CN": "拖动文件卡片调整合并顺序"
+  },
+  "Choose a PDF file from this device": {
+    "en": "Choose a PDF file from this device",
+    "zh-CN": "从本地选择一个 PDF 文件"
+  },
+  "Selected files": {
+    "en": "Selected files",
+    "zh-CN": "已选文件"
+  },
+  "files": {
+    "en": "files",
+    "zh-CN": "个文件"
+  },
+  "File {0}: {1}, draggable": {
+    "en": "File {0}: {1}, draggable",
+    "zh-CN": "第 {0} 个文件：{1}，可拖动排序"
+  },
+  "Drag to reorder, or use the arrow keys": {
+    "en": "Drag to reorder, or use the arrow keys",
+    "zh-CN": "拖动调整顺序，也可用上下方向键"
+  },
+  "Remove {0}": {
+    "en": "Remove {0}",
+    "zh-CN": "移除 {0}"
+  },
+  "Source password": {
+    "en": "Source password",
+    "zh-CN": "原文件密码"
+  },
+  "Hide password": {
+    "en": "Hide password",
+    "zh-CN": "隐藏密码"
+  },
+  "Show password": {
+    "en": "Show password",
+    "zh-CN": "显示密码"
+  },
+  "Read and configure": {
+    "en": "Read and configure",
+    "zh-CN": "读取并配置"
+  },
+  "Processing settings": {
+    "en": "Processing settings",
+    "zh-CN": "处理设置"
+  },
+  "pages": {
+    "en": "pages",
+    "zh-CN": "页"
+  },
+  "Modifying the document may invalidate existing digital signatures.": {
+    "en": "Modifying the document may invalidate existing digital signatures.",
+    "zh-CN": "修改文档可能使原有数字签名失效。"
+  },
+  "Split ranges (empty means individual pages)": {
+    "en": "Split ranges (empty means individual pages)",
+    "zh-CN": "拆分范围（留空按单页拆分）"
+  },
+  "Page ranges (empty means all, e.g. 1-3,5)": {
+    "en": "Page ranges (empty means all, e.g. 1-3,5)",
+    "zh-CN": "页码范围（留空为全部，例如 1-3,5）"
+  },
+  "Page range shortcuts": {
+    "en": "Page range shortcuts",
+    "zh-CN": "页码快捷选择"
+  },
+  "Odd": {
+    "en": "Odd",
+    "zh-CN": "奇数页"
+  },
+  "Even": {
+    "en": "Even",
+    "zh-CN": "偶数页"
+  },
+  "{0} pages selected": {
+    "en": "{0} pages selected",
+    "zh-CN": "已选择 {0} 页"
+  },
+  "Angle": {
+    "en": "Angle",
+    "zh-CN": "角度"
+  },
+  "Watermark text": {
+    "en": "Watermark text",
+    "zh-CN": "水印文字"
+  },
+  "Starting page number": {
+    "en": "Starting page number",
+    "zh-CN": "起始页码"
+  },
+  "Format: {n} page, {total} total": {
+    "en": "Format: {n} page, {total} total",
+    "zh-CN": "格式：{n} 页码，{total} 总数"
+  },
+  "Advanced settings": {
+    "en": "Advanced settings",
+    "zh-CN": "高级设置"
+  },
+  "Position is in PDF points, measured from the bottom-left corner.": {
+    "en": "Position is in PDF points, measured from the bottom-left corner.",
+    "zh-CN": "位置单位为 PDF 点，原点为页面左下角。"
+  },
+  "Local font (TTF / OTF, optional)": {
+    "en": "Local font (TTF / OTF, optional)",
+    "zh-CN": "本地字体（TTF / OTF，可选）"
+  },
+  "The built-in font supports Latin text; choose a local font with the required glyphs for other scripts.": {
+    "en": "The built-in font supports Latin text; choose a local font with the required glyphs for other scripts.",
+    "zh-CN": "内置字体支持拉丁文字；中文等文字请选择包含对应字形的本地字体。"
+  },
+  "Top margin (pt)": {
+    "en": "Top margin (pt)",
+    "zh-CN": "上边距（点）"
+  },
+  "Bottom margin (pt)": {
+    "en": "Bottom margin (pt)",
+    "zh-CN": "下边距（点）"
+  },
+  "Left margin (pt)": {
+    "en": "Left margin (pt)",
+    "zh-CN": "左边距（点）"
+  },
+  "Right margin (pt)": {
+    "en": "Right margin (pt)",
+    "zh-CN": "右边距（点）"
+  },
+  "A visual signature is a page image, not a cryptographic digital signature.": {
+    "en": "A visual signature is a page image, not a cryptographic digital signature.",
+    "zh-CN": "视觉签名是页面图像，不是密码学数字签名。"
+  },
+  "Upload signature image": {
+    "en": "Upload signature image",
+    "zh-CN": "上传签名图片"
+  },
+  "Handwritten signature area": {
+    "en": "Handwritten signature area",
+    "zh-CN": "手写签名区域"
+  },
+  "Clear signature": {
+    "en": "Clear signature",
+    "zh-CN": "清空签名"
+  },
+  "Signature width": {
+    "en": "Signature width",
+    "zh-CN": "签名宽度"
+  },
+  "Signature height": {
+    "en": "Signature height",
+    "zh-CN": "签名高度"
+  },
+  "New opening password": {
+    "en": "New opening password",
+    "zh-CN": "新的打开密码"
+  },
+  "Render scale": {
+    "en": "Render scale",
+    "zh-CN": "渲染倍率"
+  },
+  "Removes metadata and thumbnails and rewrites object streams without downsampling images; file size may increase.": {
+    "en": "Removes metadata and thumbnails and rewrites object streams without downsampling images; file size may increase.",
+    "zh-CN": "移除元数据和缩略图并重写对象流，不降低图片分辨率；体积可能增大。"
+  },
+  "Run processing": {
+    "en": "Run processing",
+    "zh-CN": "执行处理"
+  },
+  "Processing complete": {
+    "en": "Processing complete",
+    "zh-CN": "处理完成"
+  },
+  "Size change": {
+    "en": "Size change",
+    "zh-CN": "体积变化"
+  },
+  "No size reduction. You can keep the original file.": {
+    "en": "No size reduction. You can keep the original file.",
+    "zh-CN": "未缩小，可保留原文件。"
+  },
+  "Signature inspection report": {
+    "en": "Signature inspection report",
+    "zh-CN": "签名检查报告"
+  },
+  "Cancelling and cleaning up…": {
+    "en": "Cancelling and cleaning up…",
+    "zh-CN": "正在取消并清理…"
+  },
+  "Loading PDF rendering module…": {
+    "en": "Loading PDF rendering module…",
+    "zh-CN": "加载 PDF 渲染模块…"
+  },
+  "Starting PDF renderer…": {
+    "en": "Starting PDF renderer…",
+    "zh-CN": "启动 PDF 渲染器…"
+  },
+  "The Sidecar is processing temporary files…": {
+    "en": "The Sidecar is processing temporary files…",
+    "zh-CN": "Sidecar 正在处理临时文件…"
+  },
   "Find local TCP / UDP port owners on Windows, macOS, and Linux.": {
     "en": "Find local TCP / UDP port owners on Windows, macOS, and Linux.",
     "zh-CN": "查询本机 TCP / UDP 端口占用，支持 Windows、macOS 和 Linux。"
+  },
+  "Requirements and troubleshooting": {
+    "en": "Requirements and troubleshooting",
+    "zh-CN": "环境要求与排错"
+  },
+  "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.": {
+    "en": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "zh-CN": "Windows 使用系统端口查询；macOS / Linux 需要 lsof。Linux 可通过系统包管理器安装 lsof。权限不足时只显示可访问的进程；安装或调整权限后重新查询。"
   },
   "Port number": {
     "en": "Port number",
@@ -7710,6 +8485,54 @@
     "ja": "重複削除",
     "pt-BR": "Remover duplicados"
   },
+  "Text and data": {
+    "en": "Text and data",
+    "zh-CN": "文本与数据"
+  },
+  "Documents": {
+    "en": "Documents",
+    "zh-CN": "文档",
+    "zh-TW": "文件",
+    "es": "Documentos",
+    "it": "Documenti",
+    "ja": "ドキュメント",
+    "pt-BR": "Documentos",
+    "ko": "문서",
+    "tr": "Belgeler",
+    "az": "Sənədlər"
+  },
+  "Derive seed": {
+    "en": "Derive seed",
+    "zh-CN": "派生种子"
+  },
+  "Mnemonic": {
+    "en": "Mnemonic",
+    "zh-CN": "助记词"
+  },
+  "Existing hash": {
+    "en": "Existing hash",
+    "zh-CN": "已有哈希"
+  },
+  "Cost factor": {
+    "en": "Cost factor",
+    "zh-CN": "成本因子"
+  },
+  "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.": {
+    "en": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "zh-CN": "助记词和种子具有资产控制权，请只在可信环境中处理。离开页面后清除。"
+  },
+  "Wordlist": {
+    "en": "Wordlist",
+    "zh-CN": "词表"
+  },
+  "Optional passphrase": {
+    "en": "Optional passphrase",
+    "zh-CN": "可选口令"
+  },
+  "Checks syntax and checksum only, not account existence or ownership.": {
+    "en": "Checks syntax and checksum only, not account existence or ownership.",
+    "zh-CN": "仅校验格式和校验和，不验证账号存在或归属。"
+  },
   "Versions": {
     "en": "Versions",
     "zh-CN": "版本列表"
@@ -7814,6 +8637,442 @@
     "en": "View sorted versions",
     "zh-CN": "查看排序结果"
   },
+  "Protect your work": {
+    "en": "Protect your work",
+    "zh-CN": "保留当前工作"
+  },
+  "A task is still running. Keep it in the background or cancel it before closing.": {
+    "en": "A task is still running. Keep it in the background or cancel it before closing.",
+    "zh-CN": "任务仍在运行。可以保留任务并隐藏页面，或取消任务后关闭。"
+  },
+  "This action will release or replace unsaved content. Content is kept only in this workbench session.": {
+    "en": "This action will release or replace unsaved content. Content is kept only in this workbench session.",
+    "zh-CN": "此操作会释放或覆盖未保存内容。内容仅在当前工作台会话保留。"
+  },
+  "Choose a page to close": {
+    "en": "Choose a page to close",
+    "zh-CN": "选择要关闭的页面"
+  },
+  "Keep task and hide": {
+    "en": "Keep task and hide",
+    "zh-CN": "保留任务并隐藏"
+  },
+  "Export and continue": {
+    "en": "Export and continue",
+    "zh-CN": "导出后继续"
+  },
+  "Cancel task and close": {
+    "en": "Cancel task and close",
+    "zh-CN": "取消任务并关闭"
+  },
+  "Discard and continue": {
+    "en": "Discard and continue",
+    "zh-CN": "放弃并继续"
+  },
+  "Your content was preserved. Complete the export to continue.": {
+    "en": "Your content was preserved. Complete the export to continue.",
+    "zh-CN": "内容已保留，请完成导出后继续。"
+  },
+  "Export failed. Your content was preserved.": {
+    "en": "Export failed. Your content was preserved.",
+    "zh-CN": "导出失败，内容已保留。"
+  },
+  "Settings sections": {
+    "en": "Settings sections",
+    "zh-CN": "设置分组"
+  },
+  "Interface": {
+    "en": "Interface",
+    "zh-CN": "界面偏好"
+  },
+  "Shortcuts": {
+    "en": "Shortcuts",
+    "zh-CN": "快捷键"
+  },
+  "Backup and restore": {
+    "en": "Backup and restore",
+    "zh-CN": "备份与恢复"
+  },
+  "Data & diagnostics": {
+    "en": "Data & diagnostics",
+    "zh-CN": "数据与诊断"
+  },
+  "Interface preferences": {
+    "en": "Interface preferences",
+    "zh-CN": "界面偏好"
+  },
+  "Default sidebar state": {
+    "en": "Default sidebar state",
+    "zh-CN": "侧栏默认状态"
+  },
+  "Whether the sidebar starts collapsed.": {
+    "en": "Whether the sidebar starts collapsed.",
+    "zh-CN": "控制启动时侧栏是否收起。"
+  },
+  "Collapsed": {
+    "en": "Collapsed",
+    "zh-CN": "已收起"
+  },
+  "Expanded": {
+    "en": "Expanded",
+    "zh-CN": "已展开"
+  },
+  "Controlled by the DBX host.": {
+    "en": "Controlled by the DBX host.",
+    "zh-CN": "由 DBX 宿主控制。"
+  },
+  "Theme": {
+    "en": "Theme",
+    "zh-CN": "主题"
+  },
+  "Follows the DBX host theme.": {
+    "en": "Follows the DBX host theme.",
+    "zh-CN": "跟随 DBX 宿主主题。"
+  },
+  "Dark": {
+    "en": "Dark",
+    "zh-CN": "深色"
+  },
+  "Light": {
+    "en": "Light",
+    "zh-CN": "浅色"
+  },
+  "Reset interface": {
+    "en": "Reset interface",
+    "zh-CN": "恢复界面默认"
+  },
+  "Auto-lock": {
+    "en": "Auto-lock",
+    "zh-CN": "自动锁定"
+  },
+  "Lock the vault after inactivity.": {
+    "en": "Lock the vault after inactivity.",
+    "zh-CN": "无操作后自动锁定密钥库。"
+  },
+  "Never": {
+    "en": "Never",
+    "zh-CN": "从不"
+  },
+  "Open key vault": {
+    "en": "Open key vault",
+    "zh-CN": "打开密钥库"
+  },
+  "Export preferences": {
+    "en": "Export preferences",
+    "zh-CN": "导出偏好"
+  },
+  "Import preferences": {
+    "en": "Import preferences",
+    "zh-CN": "导入偏好"
+  },
+  "Import preview": {
+    "en": "Import preview",
+    "zh-CN": "导入预览"
+  },
+  "Replaces shortcuts, interface, vault preferences and favorites. Key material is unchanged.": {
+    "en": "Replaces shortcuts, interface, vault preferences and favorites. Key material is unchanged.",
+    "zh-CN": "将替换快捷键、界面、密钥库偏好及收藏，不修改密钥材料。"
+  },
+  "Assigned shortcuts": {
+    "en": "Assigned shortcuts",
+    "zh-CN": "已绑定快捷键"
+  },
+  "Load into draft": {
+    "en": "Load into draft",
+    "zh-CN": "载入草稿"
+  },
+  "Clear preferences": {
+    "en": "Clear preferences",
+    "zh-CN": "清除偏好设置"
+  },
+  "Plugin version": {
+    "en": "Plugin version",
+    "zh-CN": "插件版本"
+  },
+  "Copy sanitized diagnostics": {
+    "en": "Copy sanitized diagnostics",
+    "zh-CN": "复制脱敏诊断信息"
+  },
+  "Preferences version": {
+    "en": "Preferences version",
+    "zh-CN": "偏好版本"
+  },
+  "Unavailable": {
+    "en": "Unavailable",
+    "zh-CN": "不可用"
+  },
+  "Backend": {
+    "en": "Backend",
+    "zh-CN": "后端"
+  },
+  "Connected": {
+    "en": "Connected",
+    "zh-CN": "已连接"
+  },
+  "User agent": {
+    "en": "User agent",
+    "zh-CN": "用户代理"
+  },
+  "Platform": {
+    "en": "Platform",
+    "zh-CN": "平台"
+  },
+  "Time zone": {
+    "en": "Time zone",
+    "zh-CN": "时区"
+  },
+  "Bound tools": {
+    "en": "Bound tools",
+    "zh-CN": "绑定工具"
+  },
+  "Known limits and release notes": {
+    "en": "Known limits and release notes",
+    "zh-CN": "已知限制与更新说明"
+  },
+  "This update: unified vault and TOTP, encrypted backups, session protection and background tasks.": {
+    "en": "This update: unified vault and TOTP, encrypted backups, session protection and background tasks.",
+    "zh-CN": "本次更新：统一密钥库与 TOTP、加密备份恢复、会话保护和后台任务。"
+  },
+  "Session content is not restored after closing the workbench. Spreadsheets retain cell values only. OCR models download at your request; processed content stays local.": {
+    "en": "Session content is not restored after closing the workbench. Spreadsheets retain cell values only. OCR models download at your request; processed content stays local.",
+    "zh-CN": "工作台关闭后会话内容不会恢复。表格仅保留单元格值。OCR 模型由用户主动下载，处理内容保留在本机。"
+  },
+  "Exports exclude keys, passwords, and tool inputs.": {
+    "en": "Exports exclude keys, passwords, and tool inputs.",
+    "zh-CN": "导出文件不包含密钥、口令或工具输入内容。"
+  },
+  "Resolve conflicts before saving.": {
+    "en": "Resolve conflicts before saving.",
+    "zh-CN": "解决冲突后才能保存。"
+  },
+  "Unsaved changes": {
+    "en": "Unsaved changes",
+    "zh-CN": "有未保存的更改"
+  },
+  "All changes saved": {
+    "en": "All changes saved",
+    "zh-CN": "所有更改已保存"
+  },
+  "Save changes": {
+    "en": "Save changes",
+    "zh-CN": "保存更改"
+  },
+  "Discard unsaved changes?": {
+    "en": "Discard unsaved changes?",
+    "zh-CN": "放弃未保存的更改？",
+    "zh-TW": "放棄未儲存的變更？",
+    "es": "¿Descartar los cambios sin guardar?",
+    "it": "Scartare le modifiche non salvate?",
+    "ja": "未保存の変更を破棄しますか？",
+    "pt-BR": "Descartar alterações não salvas?",
+    "ko": "저장하지 않은 변경 사항을 삭제할까요?",
+    "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
+    "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
+  },
+  "Clear settings, favorites and recents? Vault contents will be kept.": {
+    "en": "Clear settings, favorites and recents? Vault contents will be kept.",
+    "zh-CN": "清除设置、收藏和最近记录？密钥库内容将保留。"
+  },
+  "Keep editing": {
+    "en": "Keep editing",
+    "zh-CN": "继续编辑",
+    "zh-TW": "繼續編輯",
+    "es": "Seguir editando",
+    "it": "Continua a modificare",
+    "ja": "編集を続ける",
+    "pt-BR": "Continuar editando",
+    "ko": "계속 편집",
+    "tr": "Düzenlemeye devam et",
+    "az": "Redaktəyə davam et"
+  },
+  "Discard": {
+    "en": "Discard",
+    "zh-CN": "放弃更改"
+  },
+  "Sanitized diagnostics copied.": {
+    "en": "Sanitized diagnostics copied.",
+    "zh-CN": "脱敏诊断信息已复制。"
+  },
+  "Preferences exported.": {
+    "en": "Preferences exported.",
+    "zh-CN": "偏好设置已导出。"
+  },
+  "Import loaded into draft. Save changes to apply.": {
+    "en": "Import loaded into draft. Save changes to apply.",
+    "zh-CN": "导入已载入草稿，请保存更改。"
+  },
+  "Preference clearing is pending. Save changes to apply.": {
+    "en": "Preference clearing is pending. Save changes to apply.",
+    "zh-CN": "清除操作已加入草稿，请保存更改。"
+  },
+  "Conflicts with another shortcut": {
+    "en": "Conflicts with another shortcut",
+    "zh-CN": "与其他快捷键冲突"
+  },
+  "Set shortcut": {
+    "en": "Set shortcut",
+    "zh-CN": "设置快捷键"
+  },
+  "Press keys…": {
+    "en": "Press keys…",
+    "zh-CN": "请按组合键…"
+  },
+  "Not set": {
+    "en": "Not set",
+    "zh-CN": "未设置"
+  },
+  "Remove direct shortcut": {
+    "en": "Remove direct shortcut",
+    "zh-CN": "移除直达快捷键"
+  },
+  "Reset to default": {
+    "en": "Reset to default",
+    "zh-CN": "恢复默认"
+  },
+  "Keyboard shortcuts": {
+    "en": "Keyboard shortcuts",
+    "zh-CN": "键盘快捷键"
+  },
+  "Manage workspace actions and assign direct shortcuts to tools.": {
+    "en": "Manage workspace actions and assign direct shortcuts to tools.",
+    "zh-CN": "管理工作区动作，并为常用工具设置直达快捷键。"
+  },
+  "Restore defaults": {
+    "en": "Restore defaults",
+    "zh-CN": "恢复默认"
+  },
+  "Shortcut overview": {
+    "en": "Shortcut overview",
+    "zh-CN": "快捷键概览"
+  },
+  "Assigned": {
+    "en": "Assigned",
+    "zh-CN": "已设置"
+  },
+  "Customized": {
+    "en": "Customized",
+    "zh-CN": "已自定义"
+  },
+  "Conflicts": {
+    "en": "Conflicts",
+    "zh-CN": "冲突"
+  },
+  "Search actions or tools…": {
+    "en": "Search actions or tools…",
+    "zh-CN": "搜索动作或工具…"
+  },
+  "Search shortcuts": {
+    "en": "Search shortcuts",
+    "zh-CN": "搜索快捷键"
+  },
+  "Filter shortcuts": {
+    "en": "Filter shortcuts",
+    "zh-CN": "筛选快捷键"
+  },
+  "Tools": {
+    "en": "Tools",
+    "zh-CN": "工具直达"
+  },
+  "items": {
+    "en": "items",
+    "zh-CN": "项"
+  },
+  "Duplicate shortcuts detected": {
+    "en": "Duplicate shortcuts detected",
+    "zh-CN": "存在重复快捷键"
+  },
+  "Open tools directly": {
+    "en": "Open tools directly",
+    "zh-CN": "工具直达"
+  },
+  "Search for any tool to bind it. Bound and favorite tools appear when the search is empty.": {
+    "en": "Search for any tool to bind it. Bound and favorite tools appear when the search is empty.",
+    "zh-CN": "搜索任意工具并绑定；未搜索时显示已绑定和收藏的工具。"
+  },
+  "No customized shortcuts yet": {
+    "en": "No customized shortcuts yet",
+    "zh-CN": "还没有自定义快捷键"
+  },
+  "Favorite or search for a tool to assign a shortcut": {
+    "en": "Favorite or search for a tool to assign a shortcut",
+    "zh-CN": "收藏工具或搜索工具后即可设置直达快捷键"
+  },
+  "No shortcut conflicts": {
+    "en": "No shortcut conflicts",
+    "zh-CN": "没有快捷键冲突"
+  },
+  "Every assigned shortcut is unique.": {
+    "en": "Every assigned shortcut is unique.",
+    "zh-CN": "当前所有组合键都可以正常使用。"
+  },
+  "Changed shortcuts will appear here.": {
+    "en": "Changed shortcuts will appear here.",
+    "zh-CN": "修改一个组合键后会显示在这里。"
+  },
+  "Recording: ": {
+    "en": "Recording: ",
+    "zh-CN": "正在录制："
+  },
+  "Click a shortcut to record; Esc cancels, Backspace / Delete clears.": {
+    "en": "Click a shortcut to record; Esc cancels, Backspace / Delete clears.",
+    "zh-CN": "点击组合键开始录制；Esc 取消，Backspace / Delete 清除。"
+  },
+  "Your changes will be lost.": {
+    "en": "Your changes will be lost.",
+    "zh-CN": "关闭后将无法恢复。"
+  },
+  "Go home": {
+    "en": "Go home",
+    "zh-CN": "返回首页"
+  },
+  "Open tool library": {
+    "en": "Open tool library",
+    "zh-CN": "打开工具库"
+  },
+  "Toggle sidebar": {
+    "en": "Toggle sidebar",
+    "zh-CN": "展开或收起侧栏"
+  },
+  "Previous open tool": {
+    "en": "Previous open tool",
+    "zh-CN": "上一个已打开工具"
+  },
+  "Next open tool": {
+    "en": "Next open tool",
+    "zh-CN": "下一个已打开工具"
+  },
+  "Close current tool": {
+    "en": "Close current tool",
+    "zh-CN": "关闭当前工具"
+  },
+  "Toggle current tool favorite": {
+    "en": "Toggle current tool favorite",
+    "zh-CN": "收藏或取消收藏当前工具"
+  },
+  "Load current tool demo": {
+    "en": "Load current tool demo",
+    "zh-CN": "载入当前工具 Demo"
+  },
+  "Open settings center": {
+    "en": "Open settings center",
+    "zh-CN": "打开设置中心"
+  },
+  "Navigation": {
+    "en": "Navigation",
+    "zh-CN": "导航"
+  },
+  "Workspace": {
+    "en": "Workspace",
+    "zh-CN": "工作区"
+  },
+  "Current tool": {
+    "en": "Current tool",
+    "zh-CN": "当前工具"
+  },
+  "Use a shortcut with Ctrl/Cmd or Alt, or press F1–F12.": {
+    "en": "Use a shortcut with Ctrl/Cmd or Alt, or press F1–F12.",
+    "zh-CN": "请使用带 Ctrl/Cmd、Alt 的组合键，或 F1–F12。"
+  },
   "Message": {
     "en": "Message",
     "zh-CN": "消息"
@@ -7878,6 +9137,46 @@
     "en": "AES key",
     "zh-CN": "AES 密钥"
   },
+  "No local voices are available": {
+    "en": "No local voices are available",
+    "zh-CN": "没有可用的本地语音"
+  },
+  "Install a local voice pack in your system language and speech settings, then retry.": {
+    "en": "Install a local voice pack in your system language and speech settings, then retry.",
+    "zh-CN": "请在系统语言与语音设置中安装本地语音包，然后重试。"
+  },
+  "Rate": {
+    "en": "Rate",
+    "zh-CN": "语速"
+  },
+  "Pitch": {
+    "en": "Pitch",
+    "zh-CN": "音高"
+  },
+  "Read aloud": {
+    "en": "Read aloud",
+    "zh-CN": "文字朗读",
+    "zh-TW": "文字朗讀",
+    "es": "Leer en voz alta",
+    "it": "Leggi ad alta voce",
+    "ja": "読み上げ",
+    "pt-BR": "Ler em voz alta",
+    "ko": "소리 내어 읽기",
+    "tr": "Sesli oku",
+    "az": "Ucadan oxu"
+  },
+  "Resume": {
+    "en": "Resume",
+    "zh-CN": "继续"
+  },
+  "Stop": {
+    "en": "Stop",
+    "zh-CN": "停止"
+  },
+  "Read aloud failed": {
+    "en": "Read aloud failed",
+    "zh-CN": "朗读失败"
+  },
   "Open spreadsheet": {
     "en": "Open spreadsheet",
     "zh-CN": "打开表格"
@@ -7930,6 +9229,18 @@
     "en": "Redo",
     "zh-CN": "恢复"
   },
+  "Export HTML table": {
+    "en": "Export HTML table",
+    "zh-CN": "导出 HTML 表格"
+  },
+  "Text delimiter": {
+    "en": "Text delimiter",
+    "zh-CN": "文本分隔符"
+  },
+  "Export plain text": {
+    "en": "Export plain text",
+    "zh-CN": "导出纯文本"
+  },
   "Export CSV": {
     "en": "Export CSV",
     "zh-CN": "导出 CSV"
@@ -7945,10 +9256,6 @@
   "Export XLSX": {
     "en": "Export XLSX",
     "zh-CN": "导出 XLSX"
-  },
-  "Search": {
-    "en": "Search",
-    "zh-CN": "搜索"
   },
   "Filter cells": {
     "en": "Filter cells",
@@ -8046,6 +9353,86 @@
     "en": "Words: each CJK character, or a Latin word.",
     "zh-CN": "词：汉字按字计，英文按单词计。"
   },
+  "Task manager": {
+    "en": "Task manager",
+    "zh-CN": "任务管理"
+  },
+  "Session tasks": {
+    "en": "Session tasks",
+    "zh-CN": "本次会话任务"
+  },
+  "Clear finished tasks": {
+    "en": "Clear finished tasks",
+    "zh-CN": "清除已结束任务"
+  },
+  "Some results are unsaved. Clearing records keeps results in their tool pages.": {
+    "en": "Some results are unsaved. Clearing records keeps results in their tool pages.",
+    "zh-CN": "部分结果尚未保存。清除记录后，结果仍保留在工具页面。"
+  },
+  "Confirm clear records": {
+    "en": "Confirm clear records",
+    "zh-CN": "确认清除记录"
+  },
+  "Return to tool": {
+    "en": "Return to tool",
+    "zh-CN": "返回工具"
+  },
+  "Processing timed out. Retry or choose a smaller file.": {
+    "en": "Processing timed out. Retry or choose a smaller file.",
+    "zh-CN": "处理超时，请重试或选择较小文件。"
+  },
+  "Processing failed. Return to the tool for details and retry.": {
+    "en": "Processing failed. Return to the tool for details and retry.",
+    "zh-CN": "处理失败。请返回工具查看原因并重新处理。"
+  },
+  "Save failed. The result was preserved.": {
+    "en": "Save failed. The result was preserved.",
+    "zh-CN": "保存失败，结果已保留。"
+  },
+  "Queued": {
+    "en": "Queued",
+    "zh-CN": "排队中"
+  },
+  "Completed": {
+    "en": "Completed",
+    "zh-CN": "已完成"
+  },
+  "Failed; return to the tool for details": {
+    "en": "Failed; return to the tool for details",
+    "zh-CN": "失败，请返回工具查看详情"
+  },
+  "Preparing…": {
+    "en": "Preparing…",
+    "zh-CN": "准备中…"
+  },
+  "Transferring files…": {
+    "en": "Transferring files…",
+    "zh-CN": "传输文件…"
+  },
+  "Reading document…": {
+    "en": "Reading document…",
+    "zh-CN": "读取文档…"
+  },
+  "Processing frames…": {
+    "en": "Processing frames…",
+    "zh-CN": "处理帧…"
+  },
+  "Encoding…": {
+    "en": "Encoding…",
+    "zh-CN": "编码中…"
+  },
+  "Processing document…": {
+    "en": "Processing document…",
+    "zh-CN": "处理文档…"
+  },
+  "Writing result…": {
+    "en": "Writing result…",
+    "zh-CN": "写入结果…"
+  },
+  "Rendering pages…": {
+    "en": "Rendering pages…",
+    "zh-CN": "渲染页面…"
+  },
   "Text operation groups": {
     "en": "Text operation groups",
     "zh-CN": "文本处理分类"
@@ -8077,10 +9464,6 @@
   "First only": {
     "en": "First only",
     "zh-CN": "仅首次"
-  },
-  "Start": {
-    "en": "Start",
-    "zh-CN": "起始序号"
   },
   "Zero-pad width": {
     "en": "Zero-pad width",
@@ -8133,6 +9516,10 @@
   "Convert": {
     "en": "Convert",
     "zh-CN": "转换"
+  },
+  "Loading noun inflection rules…": {
+    "en": "Loading noun inflection rules…",
+    "zh-CN": "正在加载词形转换规则…"
   },
   "Current Unix timestamp": {
     "en": "Current Unix timestamp",
@@ -8221,6 +9608,10 @@
   "Unrecognized date-time format": {
     "en": "Unrecognized date-time format",
     "zh-CN": "无法识别的时间格式"
+  },
+  "Try JSON → CSV": {
+    "en": "Try JSON → CSV",
+    "zh-CN": "试试 JSON → CSV"
   },
   "Decimal": {
     "en": "Decimal",
@@ -8422,29 +9813,69 @@
     "en": "Halfwidth",
     "zh-CN": "转半角"
   },
-  "Secret (Base32 / otpauth URI)": {
-    "en": "Secret (Base32 / otpauth URI)",
-    "zh-CN": "密钥（Base32 / otpauth URI）"
+  "Manual input": {
+    "en": "Manual input",
+    "zh-CN": "手动输入"
+  },
+  "TOTP secret": {
+    "en": "TOTP secret",
+    "zh-CN": "TOTP 密钥"
+  },
+  "Hide": {
+    "en": "Hide",
+    "zh-CN": "隐藏"
+  },
+  "Show": {
+    "en": "Show",
+    "zh-CN": "显示"
+  },
+  "Note": {
+    "en": "Note",
+    "zh-CN": "备注"
   },
   "Digits": {
     "en": "Digits",
     "zh-CN": "位数"
   },
+  "Secret (Base32 / otpauth URI)": {
+    "en": "Secret (Base32 / otpauth URI)",
+    "zh-CN": "密钥（Base32 / otpauth URI）"
+  },
+  "Save account": {
+    "en": "Save account",
+    "zh-CN": "保存账户"
+  },
   "Period": {
     "en": "Period",
     "zh-CN": "周期"
   },
-  "Using URI settings: {0} digits · {1}s · {2}": {
-    "en": "Using URI settings: {0} digits · {1}s · {2}",
-    "zh-CN": "使用 URI 配置：{0} 位 · {1}s · {2}"
+  "Current": {
+    "en": "Current",
+    "zh-CN": "当前口令"
+  },
+  "Refreshes in {0}s": {
+    "en": "Refreshes in {0}s",
+    "zh-CN": "{0} 秒后刷新"
+  },
+  "Waiting for a secret": {
+    "en": "Waiting for a secret",
+    "zh-CN": "等待输入密钥"
+  },
+  "Parsing…": {
+    "en": "Parsing…",
+    "zh-CN": "正在解析…"
+  },
+  "Auto refresh": {
+    "en": "Auto refresh",
+    "zh-CN": "自动刷新"
+  },
+  "Adjacent codes": {
+    "en": "Adjacent codes",
+    "zh-CN": "相邻周期口令"
   },
   "Previous": {
     "en": "Previous",
     "zh-CN": "上一周期"
-  },
-  "Current": {
-    "en": "Current",
-    "zh-CN": "当前口令"
   },
   "Next": {
     "en": "Next",
@@ -8454,25 +9885,137 @@
     "en": "In {0}s",
     "zh-CN": "{0} 秒后生效"
   },
-  "Refreshes in {0}s": {
-    "en": "Refreshes in {0}s",
-    "zh-CN": "{0} 秒后刷新"
+  "Acceptance of previous codes depends on the target system's time window.": {
+    "en": "Acceptance of previous codes depends on the target system's time window.",
+    "zh-CN": "上一周期口令能否使用，取决于目标系统允许的时间窗口。"
   },
-  "Codes are generated locally. Whether the previous code is accepted depends on the verification window allowed by the target system.": {
-    "en": "Codes are generated locally. Whether the previous code is accepted depends on the verification window allowed by the target system.",
-    "zh-CN": "口令在本地生成；上一周期口令能否通过验证，取决于目标系统允许的验证时间窗口。"
+  "Saved TOTP": {
+    "en": "Saved TOTP",
+    "zh-CN": "已保存 TOTP"
   },
-  "Paste an authenticator secret to see the current code.": {
-    "en": "Paste an authenticator secret to see the current code.",
-    "zh-CN": "粘贴身份验证器密钥后会显示当前口令。"
+  "Done": {
+    "en": "Done",
+    "zh-CN": "完成"
+  },
+  "Manage": {
+    "en": "Manage",
+    "zh-CN": "管理"
+  },
+  "Loading accounts…": {
+    "en": "Loading accounts…",
+    "zh-CN": "正在读取账户…"
+  },
+  "Unlock your saved accounts": {
+    "en": "Unlock your saved accounts",
+    "zh-CN": "已有账户需要解锁"
+  },
+  "Saved accounts share the vault master password, lock state and backup.": {
+    "en": "Saved accounts share the vault master password, lock state and backup.",
+    "zh-CN": "已保存账户与密钥库共用主密码、锁定状态和备份。"
+  },
+  "Unlock saved accounts": {
+    "en": "Unlock saved accounts",
+    "zh-CN": "解锁已有账户"
+  },
+  "Search accounts": {
+    "en": "Search accounts",
+    "zh-CN": "搜索账户"
+  },
+  "Drag to reorder": {
+    "en": "Drag to reorder",
+    "zh-CN": "拖动排序"
+  },
+  "Unlabeled account": {
+    "en": "Unlabeled account",
+    "zh-CN": "未标记账户"
+  },
+  "Edit": {
+    "en": "Edit",
+    "zh-CN": "编辑"
+  },
+  "No matching accounts": {
+    "en": "No matching accounts",
+    "zh-CN": "没有匹配的账户"
+  },
+  "No saved TOTP entries yet.": {
+    "en": "No saved TOTP entries yet.",
+    "zh-CN": "还没有保存的 TOTP。"
+  },
+  "Generate a code from a secret, then save the account here.": {
+    "en": "Generate a code from a secret, then save the account here.",
+    "zh-CN": "输入密钥生成验证码后，可将账户保存在这里。"
+  },
+  "Vault master password · Encrypted locally": {
+    "en": "Vault master password · Encrypted locally",
+    "zh-CN": "密钥库主密码保护 · 本机加密保存"
+  },
+  "Unlock vault": {
+    "en": "Unlock vault",
+    "zh-CN": "解锁密钥库"
+  },
+  "Create vault": {
+    "en": "Create vault",
+    "zh-CN": "创建密钥库"
+  },
+  "Master password": {
+    "en": "Master password",
+    "zh-CN": "主密码"
+  },
+  "Confirm master password": {
+    "en": "Confirm master password",
+    "zh-CN": "确认主密码"
+  },
+  "Unlock": {
+    "en": "Unlock",
+    "zh-CN": "解锁"
+  },
+  "Edit account": {
+    "en": "Edit account",
+    "zh-CN": "编辑账户"
+  },
+  "Service name": {
+    "en": "Service name",
+    "zh-CN": "服务名称"
+  },
+  "Account": {
+    "en": "Account",
+    "zh-CN": "账户"
+  },
+  "Note (optional)": {
+    "en": "Note (optional)",
+    "zh-CN": "备注（可选）"
+  },
+  "Save": {
+    "en": "Save",
+    "zh-CN": "保存"
+  },
+  "Confirm deletion": {
+    "en": "Confirm deletion",
+    "zh-CN": "确认删除"
+  },
+  "Delete {0}? Make sure you have another recovery method.": {
+    "en": "Delete {0}? Make sure you have another recovery method.",
+    "zh-CN": "删除 {0}？请确认你有其他恢复方式。"
+  },
+  "Passwords do not match": {
+    "en": "Passwords do not match",
+    "zh-CN": "两次输入的主密码不一致"
+  },
+  "Unnamed TOTP": {
+    "en": "Unnamed TOTP",
+    "zh-CN": "未命名 TOTP"
+  },
+  "A name is required (up to 128 characters). Check the account details.": {
+    "en": "A name is required (up to 128 characters). Check the account details.",
+    "zh-CN": "名称必填且最多 128 字符，请检查账户信息。"
+  },
+  "Showing secrets requires the updated backend. Restart the plugin and retry.": {
+    "en": "Showing secrets requires the updated backend. Restart the plugin and retry.",
+    "zh-CN": "显示密钥需要新版后端，请重启插件后重试。"
   },
   "Not a valid TOTP secret or URI": {
     "en": "Not a valid TOTP secret or URI",
     "zh-CN": "不是有效的 TOTP 密钥或 URI"
-  },
-  "Not a valid Base32 secret": {
-    "en": "Not a valid Base32 secret",
-    "zh-CN": "不是有效的 Base32 密钥"
   },
   "Paste characters to inspect": {
     "en": "Paste characters to inspect",
@@ -8574,17 +10117,9 @@
     "en": "No vault yet. Set a master password (8+ characters) to save the key.",
     "zh-CN": "还没有密钥库。设置主密码（至少 8 位）后即可保存。"
   },
-  "Master password": {
-    "en": "Master password",
-    "zh-CN": "主密码"
-  },
   "Unlocking…": {
     "en": "Unlocking…",
     "zh-CN": "解锁中…"
-  },
-  "Unlock": {
-    "en": "Unlock",
-    "zh-CN": "解锁"
   },
   "Confirm password": {
     "en": "Confirm password",
@@ -8598,10 +10133,6 @@
     "en": "Create and continue",
     "zh-CN": "创建并继续"
   },
-  "Passwords do not match": {
-    "en": "Passwords do not match",
-    "zh-CN": "两次输入的主密码不一致"
-  },
   "URL or query string": {
     "en": "URL or query string",
     "zh-CN": "URL 或查询串"
@@ -8613,10 +10144,6 @@
   "Structure": {
     "en": "Structure",
     "zh-CN": "结构"
-  },
-  "Value": {
-    "en": "Value",
-    "zh-CN": "值"
   },
   "Query": {
     "en": "Query",
@@ -9006,10 +10533,6 @@
     "en": "Target language",
     "zh-CN": "目标语言"
   },
-  "Service name": {
-    "en": "Service name",
-    "zh-CN": "服务名称"
-  },
   "Auto (prefers --name)": {
     "en": "Auto (prefers --name)",
     "zh-CN": "自动（优先使用 --name）"
@@ -9069,14 +10592,6 @@
   "(deprecated)": {
     "en": "(deprecated)",
     "zh-CN": "（已废弃）"
-  },
-  "Unavailable": {
-    "en": "Unavailable",
-    "zh-CN": "不可用"
-  },
-  "Platform": {
-    "en": "Platform",
-    "zh-CN": "平台"
   },
   "Languages": {
     "en": "Languages",
@@ -9146,9 +10661,117 @@
     "en": "Save chart",
     "zh-CN": "保存图表"
   },
-  "Create vault": {
-    "en": "Create vault",
-    "zh-CN": "创建密钥库"
+  "Backups include all keys and TOTP accounts. Restore requires the master password used for that backup; password changes do not update old backups.": {
+    "en": "Backups include all keys and TOTP accounts. Restore requires the master password used for that backup; password changes do not update old backups.",
+    "zh-CN": "备份包含全部密钥和 TOTP。恢复需要备份时的主密码；以后改密不会更新旧备份。"
+  },
+  "Backup master password": {
+    "en": "Backup master password",
+    "zh-CN": "备份文件的主密码"
+  },
+  "Current master password": {
+    "en": "Current master password",
+    "zh-CN": "当前主密码"
+  },
+  "Choose encrypted backup": {
+    "en": "Choose encrypted backup",
+    "zh-CN": "选择加密备份"
+  },
+  "Export encrypted backup": {
+    "en": "Export encrypted backup",
+    "zh-CN": "导出加密备份"
+  },
+  "Keys / TOTP / Added / Duplicates skipped": {
+    "en": "Keys / TOTP / Added / Duplicates skipped",
+    "zh-CN": "密钥 / TOTP / 新增 / 跳过重复"
+  },
+  "Confirm append restore": {
+    "en": "Confirm append restore",
+    "zh-CN": "确认追加恢复"
+  },
+  "Preview restore": {
+    "en": "Preview restore",
+    "zh-CN": "预览恢复"
+  },
+  "Create or unlock the vault first.": {
+    "en": "Create or unlock the vault first.",
+    "zh-CN": "请先创建或解锁密钥库。"
+  },
+  "Back up vault": {
+    "en": "Back up vault",
+    "zh-CN": "备份密钥库"
+  },
+  "Encrypted backup saved.": {
+    "en": "Encrypted backup saved.",
+    "zh-CN": "加密备份已保存。"
+  },
+  "Choose an encrypted backup up to 16 MB.": {
+    "en": "Choose an encrypted backup up to 16 MB.",
+    "zh-CN": "请选择不超过 16 MB 的加密备份。"
+  },
+  "Restore complete. Existing data was preserved.": {
+    "en": "Restore complete. Existing data was preserved.",
+    "zh-CN": "恢复完成，已有数据未被覆盖。"
+  },
+  "Current password": {
+    "en": "Current password",
+    "zh-CN": "当前主密码"
+  },
+  "New password": {
+    "en": "New password",
+    "zh-CN": "新主密码"
+  },
+  "Confirm new": {
+    "en": "Confirm new",
+    "zh-CN": "再输入一次"
+  },
+  "Update": {
+    "en": "Update",
+    "zh-CN": "更新"
+  },
+  "Change master password": {
+    "en": "Change master password",
+    "zh-CN": "修改主密码",
+    "zh-TW": "修改主密碼",
+    "es": "Cambiar contraseña maestra",
+    "it": "Modifica password principale",
+    "ja": "マスターパスワードを変更",
+    "pt-BR": "Alterar senha mestra",
+    "ko": "마스터 비밀번호 변경",
+    "tr": "Ana şifreyi değiştir",
+    "az": "Əsas parolu dəyiş"
+  },
+  "Open and unlock the key vault before changing its password.": {
+    "en": "Open and unlock the key vault before changing its password.",
+    "zh-CN": "请先打开并解锁密钥库，再修改主密码。",
+    "zh-TW": "請先開啟並解鎖金鑰庫，再修改主密碼。",
+    "es": "Abre y desbloquea la bóveda antes de cambiar su contraseña.",
+    "it": "Apri e sblocca la cassaforte prima di modificarne la password.",
+    "ja": "パスワードを変更する前に保管庫を開いてロックを解除してください。",
+    "pt-BR": "Abra e desbloqueie o cofre antes de alterar a senha.",
+    "ko": "비밀번호를 변경하기 전에 보관소를 열고 잠금을 해제하세요.",
+    "tr": "Parolasını değiştirmeden önce kasayı açın ve kilidini kaldırın.",
+    "az": "Parolu dəyişməzdən əvvəl anbarı açın və kilidini açın."
+  },
+  "Use Update to change the password immediately. Passwords are never saved or exported with preferences.": {
+    "en": "Use Update to change the password immediately. Passwords are never saved or exported with preferences.",
+    "zh-CN": "点击“更新”立即修改主密码；密码不会随偏好设置保存或导出。",
+    "zh-TW": "點擊「更新」立即修改主密碼；密碼不會隨偏好設定儲存或匯出。",
+    "es": "Usa Actualizar para cambiar la contraseña al instante. No se guarda ni exporta con las preferencias.",
+    "it": "Usa Aggiorna per cambiare subito la password. Le password non vengono salvate o esportate con le preferenze.",
+    "ja": "更新ボタンで直ちに変更します。パスワードは設定と一緒に保存・エクスポートされません。",
+    "pt-BR": "Use Atualizar para alterar a senha imediatamente. Senhas não são salvas nem exportadas com as preferências.",
+    "ko": "업데이트를 눌러 비밀번호를 즉시 변경합니다. 비밀번호는 설정과 함께 저장되거나 내보내지지 않습니다.",
+    "tr": "Parolayı hemen değiştirmek için Güncelle'yi kullanın. Parolalar tercihlerle kaydedilmez veya dışa aktarılmaz.",
+    "az": "Parolu dərhal dəyişmək üçün Yenilə düyməsini istifadə edin. Parollar seçimlərlə saxlanmır və ixrac edilmir."
+  },
+  "New passwords do not match": {
+    "en": "New passwords do not match",
+    "zh-CN": "两次输入的新密码不一致"
+  },
+  "Master password updated": {
+    "en": "Master password updated",
+    "zh-CN": "主密码已更新"
   },
   "Unlocked · {0} key{1}": {
     "en": "Unlocked · {0} key{1}",
@@ -9157,10 +10780,6 @@
   "Add key": {
     "en": "Add key",
     "zh-CN": "添加密钥"
-  },
-  "Auto-lock": {
-    "en": "Auto-lock",
-    "zh-CN": "自动锁定"
   },
   "Lock": {
     "en": "Lock",
@@ -9205,10 +10824,6 @@
   "Clear the filter to reorder": {
     "en": "Clear the filter to reorder",
     "zh-CN": "筛选时不能排序"
-  },
-  "Save": {
-    "en": "Save",
-    "zh-CN": "保存"
   },
   "Public": {
     "en": "Public",
@@ -9266,22 +10881,6 @@
     "en": "Public key material (Base64)",
     "zh-CN": "公钥材料（Base64）"
   },
-  "Current password": {
-    "en": "Current password",
-    "zh-CN": "当前主密码"
-  },
-  "New password": {
-    "en": "New password",
-    "zh-CN": "新主密码"
-  },
-  "Confirm new": {
-    "en": "Confirm new",
-    "zh-CN": "再输入一次"
-  },
-  "Update": {
-    "en": "Update",
-    "zh-CN": "更新"
-  },
   "Public · {0}": {
     "en": "Public · {0}",
     "zh-CN": "公钥 · {0}"
@@ -9338,30 +10937,6 @@
     "tr": "Anahtar türüne göre filtrele",
     "az": "Açar növünə görə süzgəc"
   },
-  "Change master password": {
-    "en": "Change master password",
-    "zh-CN": "修改主密码",
-    "zh-TW": "修改主密碼",
-    "es": "Cambiar contraseña maestra",
-    "it": "Modifica password principale",
-    "ja": "マスターパスワードを変更",
-    "pt-BR": "Alterar senha mestra",
-    "ko": "마스터 비밀번호 변경",
-    "tr": "Ana şifreyi değiştir",
-    "az": "Əsas parolu dəyiş"
-  },
-  "Discard unsaved changes?": {
-    "en": "Discard unsaved changes?",
-    "zh-CN": "放弃未保存的更改？",
-    "zh-TW": "放棄未儲存的變更？",
-    "es": "¿Descartar los cambios sin guardar?",
-    "it": "Scartare le modifiche non salvate?",
-    "ja": "未保存の変更を破棄しますか？",
-    "pt-BR": "Descartar alterações não salvas?",
-    "ko": "저장하지 않은 변경 사항을 삭제할까요?",
-    "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
-    "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
-  },
   "Discard changes": {
     "en": "Discard changes",
     "zh-CN": "放弃更改",
@@ -9373,26 +10948,6 @@
     "ko": "변경 사항 삭제",
     "tr": "Değişiklikleri sil",
     "az": "Dəyişiklikləri ləğv et"
-  },
-  "Keep editing": {
-    "en": "Keep editing",
-    "zh-CN": "继续编辑",
-    "zh-TW": "繼續編輯",
-    "es": "Seguir editando",
-    "it": "Continua a modificare",
-    "ja": "編集を続ける",
-    "pt-BR": "Continuar editando",
-    "ko": "계속 편집",
-    "tr": "Düzenlemeye devam et",
-    "az": "Redaktəyə davam et"
-  },
-  "Never": {
-    "en": "Never",
-    "zh-CN": "从不"
-  },
-  "{0} min": {
-    "en": "{0} min",
-    "zh-CN": "{0} 分钟"
   },
   "Legacy · confirmation needed": {
     "en": "Legacy · confirmation needed",
@@ -9409,14 +10964,6 @@
   "Unlocked": {
     "en": "Unlocked",
     "zh-CN": "已解锁"
-  },
-  "New passwords do not match": {
-    "en": "New passwords do not match",
-    "zh-CN": "两次输入的新密码不一致"
-  },
-  "Master password updated": {
-    "en": "Master password updated",
-    "zh-CN": "主密码已更新"
   },
   "Enter a name": {
     "en": "Enter a name",
@@ -9445,6 +10992,82 @@
   "Space": {
     "en": "Space",
     "zh-CN": "空白"
+  },
+  "Network name": {
+    "en": "Network name",
+    "zh-CN": "网络名称"
+  },
+  "Encryption": {
+    "en": "Encryption",
+    "zh-CN": "加密方式"
+  },
+  "Open network": {
+    "en": "Open network",
+    "zh-CN": "开放网络"
+  },
+  "Hidden network": {
+    "en": "Hidden network",
+    "zh-CN": "隐藏网络"
+  },
+  "Generate QR code": {
+    "en": "Generate QR code",
+    "zh-CN": "生成二维码"
+  },
+  "Wi-Fi connection QR code": {
+    "en": "Wi-Fi connection QR code",
+    "zh-CN": "Wi-Fi 连接二维码"
+  },
+  "Export SVG": {
+    "en": "Export SVG",
+    "zh-CN": "导出 SVG"
+  },
+  "Development": {
+    "en": "Development",
+    "zh-CN": "开发",
+    "zh-TW": "開發",
+    "es": "Desarrollo",
+    "it": "Sviluppo",
+    "ja": "開発",
+    "pt-BR": "Desenvolvimento",
+    "ko": "개발",
+    "tr": "Geliştirme",
+    "az": "Proqramlaşdırma"
+  },
+  "Calculations": {
+    "en": "Calculations",
+    "zh-CN": "计算",
+    "zh-TW": "計算",
+    "es": "Cálculos",
+    "it": "Calcoli",
+    "ja": "計算",
+    "pt-BR": "Cálculos",
+    "ko": "계산",
+    "tr": "Hesaplama",
+    "az": "Hesablamalar"
+  },
+  "System": {
+    "en": "System",
+    "zh-CN": "系统",
+    "zh-TW": "系統",
+    "es": "Sistema",
+    "it": "Sistema",
+    "ja": "システム",
+    "pt-BR": "Sistema",
+    "ko": "시스템",
+    "tr": "Sistem",
+    "az": "Sistem"
+  },
+  "Security": {
+    "en": "Security",
+    "zh-CN": "安全",
+    "zh-TW": "安全",
+    "es": "Seguridad",
+    "it": "Sicurezza",
+    "ja": "セキュリティ",
+    "pt-BR": "Segurança",
+    "ko": "보안",
+    "tr": "Güvenlik",
+    "az": "Təhlükəsizlik"
   },
   "JSON workbench": {
     "en": "JSON workbench",
@@ -9510,13 +11133,25 @@
     "en": "Open Chart generator directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图表生成器",
     "zh-TW": "使用預設參數直接開啟圖表產生器",
-    "es": "Abre directamente Chart generator con valores preparados",
-    "it": "Apri direttamente Chart generator con valori pronti",
-    "ja": "Chart generatorを既定値ですぐに開く",
-    "pt-BR": "Abra Chart generator diretamente com valores prontos",
+    "es": "Abre directamente Generador de gráficos con valores preparados",
+    "it": "Apri direttamente Generatore di grafici con valori pronti",
+    "ja": "チャートジェネレーターを既定値ですぐに開く",
+    "pt-BR": "Abra Gerador de gráficos diretamente com valores prontos",
     "ko": "차트 생성기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Grafik oluşturucu aracını hazır varsayılanlarla doğrudan açın",
     "az": "Diaqram generatoru hazır parametrlərlə birbaşa açılsın"
+  },
+  "Base encoding / decoding": {
+    "en": "Base encoding / decoding",
+    "zh-CN": "Base 编解码",
+    "zh-TW": "Base 編解碼",
+    "es": "Codificación y decodificación Base",
+    "it": "Codifica e decodifica Base",
+    "ja": "Base エンコード・デコード",
+    "pt-BR": "Codificação e decodificação Base",
+    "ko": "Base 인코딩·디코딩",
+    "tr": "Base kodlama ve çözme",
+    "az": "Base kodlaşdırma və dekodlaşdırma"
   },
   "Base / Hex": {
     "en": "Base / Hex",
@@ -9602,6 +11237,18 @@
     "tr": "Quoted-Printable",
     "az": "Quoted-Printable"
   },
+  "Timestamp conversion": {
+    "en": "Timestamp conversion",
+    "zh-CN": "时间戳转换",
+    "zh-TW": "時間戳轉換",
+    "es": "Conversión de marcas de tiempo",
+    "it": "Conversione timestamp",
+    "ja": "タイムスタンプ変換",
+    "pt-BR": "Conversão de timestamps",
+    "ko": "타임스탬프 변환",
+    "tr": "Zaman damgası dönüştürme",
+    "az": "Zaman damğası çevirmə"
+  },
   "Color & contrast": {
     "en": "Color & contrast",
     "zh-CN": "颜色与对比度",
@@ -9630,10 +11277,10 @@
     "en": "Open Phone number directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开电话号码解析",
     "zh-TW": "使用預設參數直接開啟電話號碼解析",
-    "es": "Abre directamente Phone number con valores preparados",
-    "it": "Apri direttamente Phone number con valori pronti",
-    "ja": "Phone numberを既定値ですぐに開く",
-    "pt-BR": "Abra Phone number diretamente com valores prontos",
+    "es": "Abre directamente Número de teléfono con valores preparados",
+    "it": "Apri direttamente Numero di telefono con valori pronti",
+    "ja": "電話番号を既定値ですぐに開く",
+    "pt-BR": "Abra Número de telefone diretamente com valores prontos",
     "ko": "전화번호 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Telefon numarası aracını hazır varsayılanlarla doğrudan açın",
     "az": "Telefon nömrəsi hazır parametrlərlə birbaşa açılsın"
@@ -9654,13 +11301,25 @@
     "en": "Open Bandwidth calculator directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开带宽与传输",
     "zh-TW": "使用預設參數直接開啟頻寬與傳輸",
-    "es": "Abre directamente Bandwidth calculator con valores preparados",
-    "it": "Apri direttamente Bandwidth calculator con valori pronti",
-    "ja": "Bandwidth calculatorを既定値ですぐに開く",
-    "pt-BR": "Abra Bandwidth calculator diretamente com valores prontos",
+    "es": "Abre directamente Calculadora de ancho de banda con valores preparados",
+    "it": "Apri direttamente Calcolatore di banda con valori pronti",
+    "ja": "帯域幅計算を既定値ですぐに開く",
+    "pt-BR": "Abra Calculadora de largura de banda diretamente com valores prontos",
     "ko": "대역폭 계산기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Bant genişliği hesaplayıcı aracını hazır varsayılanlarla doğrudan açın",
     "az": "Bant genişliyi kalkulyatoru hazır parametrlərlə birbaşa açılsın"
+  },
+  "IP subnet calculation": {
+    "en": "IP subnet calculation",
+    "zh-CN": "IP 子网计算",
+    "zh-TW": "IP 子網計算",
+    "es": "Cálculo de subredes IP",
+    "it": "Calcolo sottoreti IP",
+    "ja": "IP サブネット計算",
+    "pt-BR": "Cálculo de sub-redes IP",
+    "ko": "IP 서브넷 계산",
+    "tr": "IP alt ağ hesaplama",
+    "az": "IP alt şəbəkə hesablanması"
   },
   "Network / CIDR": {
     "en": "Network / CIDR",
@@ -9670,9 +11329,9 @@
     "it": "Rete / CIDR",
     "ja": "ネットワーク / CIDR",
     "pt-BR": "Rede / CIDR",
-    "ko": "네트워크/CIDR",
-    "tr": "Ağ / CIDR",
-    "az": "Şəbəkə / CIDR"
+    "ko": "Network / CIDR",
+    "tr": "Network / CIDR",
+    "az": "Network / CIDR"
   },
   "Port processes": {
     "en": "Port processes",
@@ -9794,6 +11453,18 @@
     "tr": "Metin farkı",
     "az": "Mətn fərqi"
   },
+  "Markdown editor and preview": {
+    "en": "Markdown editor and preview",
+    "zh-CN": "Markdown 编辑与预览",
+    "zh-TW": "Markdown 編輯與預覽",
+    "es": "Editor y vista previa Markdown",
+    "it": "Editor e anteprima Markdown",
+    "ja": "Markdown 編集・プレビュー",
+    "pt-BR": "Editor e prévia Markdown",
+    "ko": "Markdown 편집 및 미리보기",
+    "tr": "Markdown düzenleme ve önizleme",
+    "az": "Markdown redaktəsi və önbaxışı"
+  },
   "Unicode inspector": {
     "en": "Unicode inspector",
     "zh-CN": "Unicode 检查",
@@ -9870,10 +11541,10 @@
     "en": "Open Git reference directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开Git 速查",
     "zh-TW": "使用預設參數直接開啟Git 速查",
-    "es": "Abre directamente Git reference con valores preparados",
-    "it": "Apri direttamente Git reference con valori pronti",
-    "ja": "Git referenceを既定値ですぐに開く",
-    "pt-BR": "Abra Git reference diretamente com valores prontos",
+    "es": "Abre directamente Referencia de Git con valores preparados",
+    "it": "Apri direttamente Riferimento Git con valori pronti",
+    "ja": "Git リファレンスを既定値ですぐに開く",
+    "pt-BR": "Abra Referência Git diretamente com valores prontos",
     "ko": "Git 참조 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Git başvurusu aracını hazır varsayılanlarla doğrudan açın",
     "az": "Git arayışı hazır parametrlərlə birbaşa açılsın"
@@ -9894,13 +11565,25 @@
     "en": "Open Web Meta generator directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开Web Meta 生成器",
     "zh-TW": "使用預設參數直接開啟Web Meta 產生器",
-    "es": "Abre directamente Web Meta generator con valores preparados",
-    "it": "Apri direttamente Web Meta generator con valori pronti",
-    "ja": "Web Meta generatorを既定値ですぐに開く",
-    "pt-BR": "Abra Web Meta generator diretamente com valores prontos",
+    "es": "Abre directamente Generador Web Meta con valores preparados",
+    "it": "Apri direttamente Generatore Web Meta con valori pronti",
+    "ja": "Web Meta ジェネレーターを既定値ですぐに開く",
+    "pt-BR": "Abra Gerador Web Meta diretamente com valores prontos",
     "ko": "Web Meta 생성기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Web Meta oluşturucu aracını hazır varsayılanlarla doğrudan açın",
     "az": "Web Meta generatoru hazır parametrlərlə birbaşa açılsın"
+  },
+  "HTML live preview": {
+    "en": "HTML live preview",
+    "zh-CN": "HTML 在线预览",
+    "zh-TW": "HTML 線上預覽",
+    "es": "Vista previa HTML en vivo",
+    "it": "Anteprima HTML dal vivo",
+    "ja": "HTML ライブプレビュー",
+    "pt-BR": "Prévia HTML ao vivo",
+    "ko": "HTML 실시간 미리보기",
+    "tr": "HTML canlı önizleme",
+    "az": "HTML canlı önbaxış"
   },
   "HTML playground": {
     "en": "HTML playground",
@@ -9910,21 +11593,21 @@
     "it": "HTML playground",
     "ja": "HTML playground",
     "pt-BR": "HTML playground",
-    "ko": "HTML 플레이그라운드",
-    "tr": "HTML oyun alanı",
-    "az": "HTML sınaq sahəsi"
+    "ko": "HTML playground",
+    "tr": "HTML playground",
+    "az": "HTML playground"
   },
-  "Open HTML playground directly with ready-to-use defaults": {
-    "en": "Open HTML playground directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开HTML Playground",
-    "zh-TW": "使用預設參數直接開啟HTML Playground",
-    "es": "Abre directamente HTML playground con valores preparados",
-    "it": "Apri direttamente HTML playground con valori pronti",
-    "ja": "HTML playgroundを既定値ですぐに開く",
-    "pt-BR": "Abra HTML playground diretamente com valores prontos",
-    "ko": "HTML 플레이그라운드 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "HTML oyun alanı aracını hazır varsayılanlarla doğrudan açın",
-    "az": "HTML sınaq sahəsi hazır parametrlərlə birbaşa açılsın"
+  "Open HTML live preview directly with ready-to-use defaults": {
+    "en": "Open HTML live preview directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HTML 在线预览",
+    "zh-TW": "使用預設參數直接開啟HTML 線上預覽",
+    "es": "Abre directamente Vista previa HTML en vivo con valores preparados",
+    "it": "Apri direttamente Anteprima HTML dal vivo con valori pronti",
+    "ja": "HTML ライブプレビューを既定値ですぐに開く",
+    "pt-BR": "Abra Prévia HTML ao vivo diretamente com valores prontos",
+    "ko": "HTML 실시간 미리보기 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HTML canlı önizleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HTML canlı önbaxış hazır parametrlərlə birbaşa açılsın"
   },
   "Hash & checksum": {
     "en": "Hash & checksum",
@@ -9949,6 +11632,18 @@
     "ko": "파일 형식 식별",
     "tr": "Dosya biçimi tanıma",
     "az": "Fayl formatının müəyyənləşdirilməsi"
+  },
+  "JWT decoding, signing and verification": {
+    "en": "JWT decoding, signing and verification",
+    "zh-CN": "JWT 解码、签发与验签",
+    "zh-TW": "JWT 解碼、簽發與驗簽",
+    "es": "Decodificación, firma y verificación JWT",
+    "it": "Decodifica, firma e verifica JWT",
+    "ja": "JWT デコード・署名・検証",
+    "pt-BR": "Decodificação, assinatura e verificação JWT",
+    "ko": "JWT 디코딩·서명·검증",
+    "tr": "JWT çözme, imzalama ve doğrulama",
+    "az": "JWT dekodlaşdırma, imzalama və yoxlama"
   },
   "JWT": {
     "en": "JWT",
@@ -9997,6 +11692,18 @@
     "ko": "SM4 cipher 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "SM4 cipher aracını hazır varsayılanlarla doğrudan açın",
     "az": "SM4 cipher hazır parametrlərlə birbaşa açılsın"
+  },
+  "HMAC message authentication": {
+    "en": "HMAC message authentication",
+    "zh-CN": "HMAC 消息认证",
+    "zh-TW": "HMAC 訊息驗證",
+    "es": "Autenticación de mensajes HMAC",
+    "it": "Autenticazione messaggi HMAC",
+    "ja": "HMAC メッセージ認証",
+    "pt-BR": "Autenticação de mensagens HMAC",
+    "ko": "HMAC 메시지 인증",
+    "tr": "HMAC mesaj doğrulama",
+    "az": "HMAC mesaj autentifikasiyası"
   },
   "HMAC": {
     "en": "HMAC",
@@ -10082,6 +11789,18 @@
     "tr": "SM2 cipher",
     "az": "SM2 cipher"
   },
+  "ChaCha20-Poly1305 encryption": {
+    "en": "ChaCha20-Poly1305 encryption",
+    "zh-CN": "ChaCha20-Poly1305 加密",
+    "zh-TW": "ChaCha20-Poly1305 加密",
+    "es": "Cifrado ChaCha20-Poly1305",
+    "it": "Cifratura ChaCha20-Poly1305",
+    "ja": "ChaCha20-Poly1305 暗号化",
+    "pt-BR": "Criptografia ChaCha20-Poly1305",
+    "ko": "ChaCha20-Poly1305 암호화",
+    "tr": "ChaCha20-Poly1305 şifreleme",
+    "az": "ChaCha20-Poly1305 şifrələmə"
+  },
   "ChaCha20-Poly1305": {
     "en": "ChaCha20-Poly1305",
     "zh-CN": "ChaCha20-Poly1305",
@@ -10094,17 +11813,29 @@
     "tr": "ChaCha20-Poly1305",
     "az": "ChaCha20-Poly1305"
   },
-  "Open ChaCha20-Poly1305 directly with ready-to-use defaults": {
-    "en": "Open ChaCha20-Poly1305 directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开ChaCha20-Poly1305",
-    "zh-TW": "使用預設參數直接開啟ChaCha20-Poly1305",
-    "es": "Abre directamente ChaCha20-Poly1305 con valores preparados",
-    "it": "Apri direttamente ChaCha20-Poly1305 con valori pronti",
-    "ja": "ChaCha20-Poly1305を既定値ですぐに開く",
-    "pt-BR": "Abra ChaCha20-Poly1305 diretamente com valores prontos",
-    "ko": "ChaCha20-Poly1305 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "ChaCha20-Poly1305 aracını hazır varsayılanlarla doğrudan açın",
-    "az": "ChaCha20-Poly1305 hazır parametrlərlə birbaşa açılsın"
+  "Open ChaCha20-Poly1305 encryption directly with ready-to-use defaults": {
+    "en": "Open ChaCha20-Poly1305 encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开ChaCha20-Poly1305 加密",
+    "zh-TW": "使用預設參數直接開啟ChaCha20-Poly1305 加密",
+    "es": "Abre directamente Cifrado ChaCha20-Poly1305 con valores preparados",
+    "it": "Apri direttamente Cifratura ChaCha20-Poly1305 con valori pronti",
+    "ja": "ChaCha20-Poly1305 暗号化を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia ChaCha20-Poly1305 diretamente com valores prontos",
+    "ko": "ChaCha20-Poly1305 암호화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "ChaCha20-Poly1305 şifreleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "ChaCha20-Poly1305 şifrələmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "XChaCha20-Poly1305 encryption": {
+    "en": "XChaCha20-Poly1305 encryption",
+    "zh-CN": "XChaCha20-Poly1305 加密",
+    "zh-TW": "XChaCha20-Poly1305 加密",
+    "es": "Cifrado XChaCha20-Poly1305",
+    "it": "Cifratura XChaCha20-Poly1305",
+    "ja": "XChaCha20-Poly1305 暗号化",
+    "pt-BR": "Criptografia XChaCha20-Poly1305",
+    "ko": "XChaCha20-Poly1305 암호화",
+    "tr": "XChaCha20-Poly1305 şifreleme",
+    "az": "XChaCha20-Poly1305 şifrələmə"
   },
   "XChaCha20-Poly1305": {
     "en": "XChaCha20-Poly1305",
@@ -10118,17 +11849,29 @@
     "tr": "XChaCha20-Poly1305",
     "az": "XChaCha20-Poly1305"
   },
-  "Open XChaCha20-Poly1305 directly with ready-to-use defaults": {
-    "en": "Open XChaCha20-Poly1305 directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开XChaCha20-Poly1305",
-    "zh-TW": "使用預設參數直接開啟XChaCha20-Poly1305",
-    "es": "Abre directamente XChaCha20-Poly1305 con valores preparados",
-    "it": "Apri direttamente XChaCha20-Poly1305 con valori pronti",
-    "ja": "XChaCha20-Poly1305を既定値ですぐに開く",
-    "pt-BR": "Abra XChaCha20-Poly1305 diretamente com valores prontos",
-    "ko": "XChaCha20-Poly1305 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "XChaCha20-Poly1305 aracını hazır varsayılanlarla doğrudan açın",
-    "az": "XChaCha20-Poly1305 hazır parametrlərlə birbaşa açılsın"
+  "Open XChaCha20-Poly1305 encryption directly with ready-to-use defaults": {
+    "en": "Open XChaCha20-Poly1305 encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开XChaCha20-Poly1305 加密",
+    "zh-TW": "使用預設參數直接開啟XChaCha20-Poly1305 加密",
+    "es": "Abre directamente Cifrado XChaCha20-Poly1305 con valores preparados",
+    "it": "Apri direttamente Cifratura XChaCha20-Poly1305 con valori pronti",
+    "ja": "XChaCha20-Poly1305 暗号化を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia XChaCha20-Poly1305 diretamente com valores prontos",
+    "ko": "XChaCha20-Poly1305 암호화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "XChaCha20-Poly1305 şifreleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "XChaCha20-Poly1305 şifrələmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-GCM-SIV encryption": {
+    "en": "AES-256-GCM-SIV encryption",
+    "zh-CN": "AES-256-GCM-SIV 加密",
+    "zh-TW": "AES-256-GCM-SIV 加密",
+    "es": "Cifrado AES-256-GCM-SIV",
+    "it": "Cifratura AES-256-GCM-SIV",
+    "ja": "AES-256-GCM-SIV 暗号化",
+    "pt-BR": "Criptografia AES-256-GCM-SIV",
+    "ko": "AES-256-GCM-SIV 암호화",
+    "tr": "AES-256-GCM-SIV şifreleme",
+    "az": "AES-256-GCM-SIV şifrələmə"
   },
   "AES-256-GCM-SIV": {
     "en": "AES-256-GCM-SIV",
@@ -10142,17 +11885,29 @@
     "tr": "AES-256-GCM-SIV",
     "az": "AES-256-GCM-SIV"
   },
-  "Open AES-256-GCM-SIV directly with ready-to-use defaults": {
-    "en": "Open AES-256-GCM-SIV directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-256-GCM-SIV",
-    "zh-TW": "使用預設參數直接開啟AES-256-GCM-SIV",
-    "es": "Abre directamente AES-256-GCM-SIV con valores preparados",
-    "it": "Apri direttamente AES-256-GCM-SIV con valori pronti",
-    "ja": "AES-256-GCM-SIVを既定値ですぐに開く",
-    "pt-BR": "Abra AES-256-GCM-SIV diretamente com valores prontos",
-    "ko": "AES-256-GCM-SIV 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-256-GCM-SIV aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-256-GCM-SIV hazır parametrlərlə birbaşa açılsın"
+  "Open AES-256-GCM-SIV encryption directly with ready-to-use defaults": {
+    "en": "Open AES-256-GCM-SIV encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-GCM-SIV 加密",
+    "zh-TW": "使用預設參數直接開啟AES-256-GCM-SIV 加密",
+    "es": "Abre directamente Cifrado AES-256-GCM-SIV con valores preparados",
+    "it": "Apri direttamente Cifratura AES-256-GCM-SIV con valori pronti",
+    "ja": "AES-256-GCM-SIV 暗号化を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia AES-256-GCM-SIV diretamente com valores prontos",
+    "ko": "AES-256-GCM-SIV 암호화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-GCM-SIV şifreleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-GCM-SIV şifrələmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-SIV encryption": {
+    "en": "AES-256-SIV encryption",
+    "zh-CN": "AES-256-SIV 加密",
+    "zh-TW": "AES-256-SIV 加密",
+    "es": "Cifrado AES-256-SIV",
+    "it": "Cifratura AES-256-SIV",
+    "ja": "AES-256-SIV 暗号化",
+    "pt-BR": "Criptografia AES-256-SIV",
+    "ko": "AES-256-SIV 암호화",
+    "tr": "AES-256-SIV şifreleme",
+    "az": "AES-256-SIV şifrələmə"
   },
   "AES-256-SIV": {
     "en": "AES-256-SIV",
@@ -10166,17 +11921,29 @@
     "tr": "AES-256-SIV",
     "az": "AES-256-SIV"
   },
-  "Open AES-256-SIV directly with ready-to-use defaults": {
-    "en": "Open AES-256-SIV directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-256-SIV",
-    "zh-TW": "使用預設參數直接開啟AES-256-SIV",
-    "es": "Abre directamente AES-256-SIV con valores preparados",
-    "it": "Apri direttamente AES-256-SIV con valori pronti",
-    "ja": "AES-256-SIVを既定値ですぐに開く",
-    "pt-BR": "Abra AES-256-SIV diretamente com valores prontos",
-    "ko": "AES-256-SIV 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-256-SIV aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-256-SIV hazır parametrlərlə birbaşa açılsın"
+  "Open AES-256-SIV encryption directly with ready-to-use defaults": {
+    "en": "Open AES-256-SIV encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-SIV 加密",
+    "zh-TW": "使用預設參數直接開啟AES-256-SIV 加密",
+    "es": "Abre directamente Cifrado AES-256-SIV con valores preparados",
+    "it": "Apri direttamente Cifratura AES-256-SIV con valori pronti",
+    "ja": "AES-256-SIV 暗号化を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia AES-256-SIV diretamente com valores prontos",
+    "ko": "AES-256-SIV 암호화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-SIV şifreleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-SIV şifrələmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-CCM encryption": {
+    "en": "AES-256-CCM encryption",
+    "zh-CN": "AES-256-CCM 加密",
+    "zh-TW": "AES-256-CCM 加密",
+    "es": "Cifrado AES-256-CCM",
+    "it": "Cifratura AES-256-CCM",
+    "ja": "AES-256-CCM 暗号化",
+    "pt-BR": "Criptografia AES-256-CCM",
+    "ko": "AES-256-CCM 암호화",
+    "tr": "AES-256-CCM şifreleme",
+    "az": "AES-256-CCM şifrələmə"
   },
   "AES-256-CCM": {
     "en": "AES-256-CCM",
@@ -10190,17 +11957,17 @@
     "tr": "AES-256-CCM",
     "az": "AES-256-CCM"
   },
-  "Open AES-256-CCM directly with ready-to-use defaults": {
-    "en": "Open AES-256-CCM directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-256-CCM",
-    "zh-TW": "使用預設參數直接開啟AES-256-CCM",
-    "es": "Abre directamente AES-256-CCM con valores preparados",
-    "it": "Apri direttamente AES-256-CCM con valori pronti",
-    "ja": "AES-256-CCMを既定値ですぐに開く",
-    "pt-BR": "Abra AES-256-CCM diretamente com valores prontos",
-    "ko": "AES-256-CCM 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-256-CCM aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-256-CCM hazır parametrlərlə birbaşa açılsın"
+  "Open AES-256-CCM encryption directly with ready-to-use defaults": {
+    "en": "Open AES-256-CCM encryption directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-CCM 加密",
+    "zh-TW": "使用預設參數直接開啟AES-256-CCM 加密",
+    "es": "Abre directamente Cifrado AES-256-CCM con valores preparados",
+    "it": "Apri direttamente Cifratura AES-256-CCM con valori pronti",
+    "ja": "AES-256-CCM 暗号化を既定値ですぐに開く",
+    "pt-BR": "Abra Criptografia AES-256-CCM diretamente com valores prontos",
+    "ko": "AES-256-CCM 암호화 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-CCM şifreleme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-CCM şifrələmə hazır parametrlərlə birbaşa açılsın"
   },
   "Modern authenticated cipher": {
     "en": "Modern authenticated cipher",
@@ -10226,6 +11993,18 @@
     "tr": "Modern authenticated cipher aracını hazır varsayılanlarla doğrudan açın",
     "az": "Modern authenticated cipher hazır parametrlərlə birbaşa açılsın"
   },
+  "Argon2id key derivation": {
+    "en": "Argon2id key derivation",
+    "zh-CN": "Argon2id 密钥派生",
+    "zh-TW": "Argon2id 金鑰衍生",
+    "es": "Derivación de claves Argon2id",
+    "it": "Derivazione chiavi Argon2id",
+    "ja": "Argon2id 鍵導出",
+    "pt-BR": "Derivação de chaves Argon2id",
+    "ko": "Argon2id 키 파생",
+    "tr": "Argon2id anahtar türetme",
+    "az": "Argon2id açar törətmə"
+  },
   "Argon2id": {
     "en": "Argon2id",
     "zh-CN": "Argon2id",
@@ -10238,17 +12017,29 @@
     "tr": "Argon2id",
     "az": "Argon2id"
   },
-  "Open Argon2id directly with ready-to-use defaults": {
-    "en": "Open Argon2id directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开Argon2id",
-    "zh-TW": "使用預設參數直接開啟Argon2id",
-    "es": "Abre directamente Argon2id con valores preparados",
-    "it": "Apri direttamente Argon2id con valori pronti",
-    "ja": "Argon2idを既定値ですぐに開く",
-    "pt-BR": "Abra Argon2id diretamente com valores prontos",
-    "ko": "Argon2id 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "Argon2id aracını hazır varsayılanlarla doğrudan açın",
-    "az": "Argon2id hazır parametrlərlə birbaşa açılsın"
+  "Open Argon2id key derivation directly with ready-to-use defaults": {
+    "en": "Open Argon2id key derivation directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开Argon2id 密钥派生",
+    "zh-TW": "使用預設參數直接開啟Argon2id 金鑰衍生",
+    "es": "Abre directamente Derivación de claves Argon2id con valores preparados",
+    "it": "Apri direttamente Derivazione chiavi Argon2id con valori pronti",
+    "ja": "Argon2id 鍵導出を既定値ですぐに開く",
+    "pt-BR": "Abra Derivação de chaves Argon2id diretamente com valores prontos",
+    "ko": "Argon2id 키 파생 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Argon2id anahtar türetme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Argon2id açar törətmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "scrypt key derivation": {
+    "en": "scrypt key derivation",
+    "zh-CN": "scrypt 密钥派生",
+    "zh-TW": "scrypt 金鑰衍生",
+    "es": "Derivación de claves scrypt",
+    "it": "Derivazione chiavi scrypt",
+    "ja": "scrypt 鍵導出",
+    "pt-BR": "Derivação de chaves scrypt",
+    "ko": "scrypt 키 파생",
+    "tr": "scrypt anahtar türetme",
+    "az": "scrypt açar törətmə"
   },
   "scrypt": {
     "en": "scrypt",
@@ -10262,17 +12053,29 @@
     "tr": "scrypt",
     "az": "scrypt"
   },
-  "Open scrypt directly with ready-to-use defaults": {
-    "en": "Open scrypt directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开scrypt",
-    "zh-TW": "使用預設參數直接開啟scrypt",
-    "es": "Abre directamente scrypt con valores preparados",
-    "it": "Apri direttamente scrypt con valori pronti",
-    "ja": "scryptを既定値ですぐに開く",
-    "pt-BR": "Abra scrypt diretamente com valores prontos",
-    "ko": "scrypt 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "scrypt aracını hazır varsayılanlarla doğrudan açın",
-    "az": "scrypt hazır parametrlərlə birbaşa açılsın"
+  "Open scrypt key derivation directly with ready-to-use defaults": {
+    "en": "Open scrypt key derivation directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开scrypt 密钥派生",
+    "zh-TW": "使用預設參數直接開啟scrypt 金鑰衍生",
+    "es": "Abre directamente Derivación de claves scrypt con valores preparados",
+    "it": "Apri direttamente Derivazione chiavi scrypt con valori pronti",
+    "ja": "scrypt 鍵導出を既定値ですぐに開く",
+    "pt-BR": "Abra Derivação de chaves scrypt diretamente com valores prontos",
+    "ko": "scrypt 키 파생 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "scrypt anahtar türetme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "scrypt açar törətmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "PBKDF2-HMAC-SHA256 key derivation": {
+    "en": "PBKDF2-HMAC-SHA256 key derivation",
+    "zh-CN": "PBKDF2-HMAC-SHA256 密钥派生",
+    "zh-TW": "PBKDF2-HMAC-SHA256 金鑰衍生",
+    "es": "Derivación de claves PBKDF2-HMAC-SHA256",
+    "it": "Derivazione chiavi PBKDF2-HMAC-SHA256",
+    "ja": "PBKDF2-HMAC-SHA256 鍵導出",
+    "pt-BR": "Derivação de chaves PBKDF2-HMAC-SHA256",
+    "ko": "PBKDF2-HMAC-SHA256 키 파생",
+    "tr": "PBKDF2-HMAC-SHA256 anahtar türetme",
+    "az": "PBKDF2-HMAC-SHA256 açar törətmə"
   },
   "PBKDF2-HMAC-SHA256": {
     "en": "PBKDF2-HMAC-SHA256",
@@ -10286,17 +12089,29 @@
     "tr": "PBKDF2-HMAC-SHA256",
     "az": "PBKDF2-HMAC-SHA256"
   },
-  "Open PBKDF2-HMAC-SHA256 directly with ready-to-use defaults": {
-    "en": "Open PBKDF2-HMAC-SHA256 directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开PBKDF2-HMAC-SHA256",
-    "zh-TW": "使用預設參數直接開啟PBKDF2-HMAC-SHA256",
-    "es": "Abre directamente PBKDF2-HMAC-SHA256 con valores preparados",
-    "it": "Apri direttamente PBKDF2-HMAC-SHA256 con valori pronti",
-    "ja": "PBKDF2-HMAC-SHA256を既定値ですぐに開く",
-    "pt-BR": "Abra PBKDF2-HMAC-SHA256 diretamente com valores prontos",
-    "ko": "PBKDF2-HMAC-SHA256 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "PBKDF2-HMAC-SHA256 aracını hazır varsayılanlarla doğrudan açın",
-    "az": "PBKDF2-HMAC-SHA256 hazır parametrlərlə birbaşa açılsın"
+  "Open PBKDF2-HMAC-SHA256 key derivation directly with ready-to-use defaults": {
+    "en": "Open PBKDF2-HMAC-SHA256 key derivation directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开PBKDF2-HMAC-SHA256 密钥派生",
+    "zh-TW": "使用預設參數直接開啟PBKDF2-HMAC-SHA256 金鑰衍生",
+    "es": "Abre directamente Derivación de claves PBKDF2-HMAC-SHA256 con valores preparados",
+    "it": "Apri direttamente Derivazione chiavi PBKDF2-HMAC-SHA256 con valori pronti",
+    "ja": "PBKDF2-HMAC-SHA256 鍵導出を既定値ですぐに開く",
+    "pt-BR": "Abra Derivação de chaves PBKDF2-HMAC-SHA256 diretamente com valores prontos",
+    "ko": "PBKDF2-HMAC-SHA256 키 파생 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "PBKDF2-HMAC-SHA256 anahtar türetme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "PBKDF2-HMAC-SHA256 açar törətmə hazır parametrlərlə birbaşa açılsın"
+  },
+  "HKDF-SHA256 key derivation": {
+    "en": "HKDF-SHA256 key derivation",
+    "zh-CN": "HKDF-SHA256 密钥派生",
+    "zh-TW": "HKDF-SHA256 金鑰衍生",
+    "es": "Derivación de claves HKDF-SHA256",
+    "it": "Derivazione chiavi HKDF-SHA256",
+    "ja": "HKDF-SHA256 鍵導出",
+    "pt-BR": "Derivação de chaves HKDF-SHA256",
+    "ko": "HKDF-SHA256 키 파생",
+    "tr": "HKDF-SHA256 anahtar türetme",
+    "az": "HKDF-SHA256 açar törətmə"
   },
   "HKDF-SHA256": {
     "en": "HKDF-SHA256",
@@ -10310,17 +12125,17 @@
     "tr": "HKDF-SHA256",
     "az": "HKDF-SHA256"
   },
-  "Open HKDF-SHA256 directly with ready-to-use defaults": {
-    "en": "Open HKDF-SHA256 directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开HKDF-SHA256",
-    "zh-TW": "使用預設參數直接開啟HKDF-SHA256",
-    "es": "Abre directamente HKDF-SHA256 con valores preparados",
-    "it": "Apri direttamente HKDF-SHA256 con valori pronti",
-    "ja": "HKDF-SHA256を既定値ですぐに開く",
-    "pt-BR": "Abra HKDF-SHA256 diretamente com valores prontos",
-    "ko": "HKDF-SHA256 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "HKDF-SHA256 aracını hazır varsayılanlarla doğrudan açın",
-    "az": "HKDF-SHA256 hazır parametrlərlə birbaşa açılsın"
+  "Open HKDF-SHA256 key derivation directly with ready-to-use defaults": {
+    "en": "Open HKDF-SHA256 key derivation directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开HKDF-SHA256 密钥派生",
+    "zh-TW": "使用預設參數直接開啟HKDF-SHA256 金鑰衍生",
+    "es": "Abre directamente Derivación de claves HKDF-SHA256 con valores preparados",
+    "it": "Apri direttamente Derivazione chiavi HKDF-SHA256 con valori pronti",
+    "ja": "HKDF-SHA256 鍵導出を既定値ですぐに開く",
+    "pt-BR": "Abra Derivação de chaves HKDF-SHA256 diretamente com valores prontos",
+    "ko": "HKDF-SHA256 키 파생 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "HKDF-SHA256 anahtar türetme aracını hazır varsayılanlarla doğrudan açın",
+    "az": "HKDF-SHA256 açar törətmə hazır parametrlərlə birbaşa açılsın"
   },
   "Key derivation (KDF)": {
     "en": "Key derivation (KDF)",
@@ -10514,6 +12329,18 @@
     "tr": "AES-FF1 format-preserving encryption aracını hazır varsayılanlarla doğrudan açın",
     "az": "AES-FF1 format-preserving encryption hazır parametrlərlə birbaşa açılsın"
   },
+  "AES-CMAC message authentication": {
+    "en": "AES-CMAC message authentication",
+    "zh-CN": "AES-CMAC 消息认证",
+    "zh-TW": "AES-CMAC 訊息驗證",
+    "es": "Autenticación de mensajes AES-CMAC",
+    "it": "Autenticazione messaggi AES-CMAC",
+    "ja": "AES-CMAC メッセージ認証",
+    "pt-BR": "Autenticação de mensagens AES-CMAC",
+    "ko": "AES-CMAC 메시지 인증",
+    "tr": "AES-CMAC mesaj doğrulama",
+    "az": "AES-CMAC mesaj autentifikasiyası"
+  },
   "AES-CMAC": {
     "en": "AES-CMAC",
     "zh-CN": "AES-CMAC",
@@ -10526,17 +12353,29 @@
     "tr": "AES-CMAC",
     "az": "AES-CMAC"
   },
-  "Open AES-CMAC directly with ready-to-use defaults": {
-    "en": "Open AES-CMAC directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-CMAC",
-    "zh-TW": "使用預設參數直接開啟AES-CMAC",
-    "es": "Abre directamente AES-CMAC con valores preparados",
-    "it": "Apri direttamente AES-CMAC con valori pronti",
-    "ja": "AES-CMACを既定値ですぐに開く",
-    "pt-BR": "Abra AES-CMAC diretamente com valores prontos",
-    "ko": "AES-CMAC 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-CMAC aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-CMAC hazır parametrlərlə birbaşa açılsın"
+  "Open AES-CMAC message authentication directly with ready-to-use defaults": {
+    "en": "Open AES-CMAC message authentication directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-CMAC 消息认证",
+    "zh-TW": "使用預設參數直接開啟AES-CMAC 訊息驗證",
+    "es": "Abre directamente Autenticación de mensajes AES-CMAC con valores preparados",
+    "it": "Apri direttamente Autenticazione messaggi AES-CMAC con valori pronti",
+    "ja": "AES-CMAC メッセージ認証を既定値ですぐに開く",
+    "pt-BR": "Abra Autenticação de mensagens AES-CMAC diretamente com valores prontos",
+    "ko": "AES-CMAC 메시지 인증 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-CMAC mesaj doğrulama aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-CMAC mesaj autentifikasiyası hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-128-GMAC message authentication": {
+    "en": "AES-128-GMAC message authentication",
+    "zh-CN": "AES-128-GMAC 消息认证",
+    "zh-TW": "AES-128-GMAC 訊息驗證",
+    "es": "Autenticación de mensajes AES-128-GMAC",
+    "it": "Autenticazione messaggi AES-128-GMAC",
+    "ja": "AES-128-GMAC メッセージ認証",
+    "pt-BR": "Autenticação de mensagens AES-128-GMAC",
+    "ko": "AES-128-GMAC 메시지 인증",
+    "tr": "AES-128-GMAC mesaj doğrulama",
+    "az": "AES-128-GMAC mesaj autentifikasiyası"
   },
   "AES-128-GMAC": {
     "en": "AES-128-GMAC",
@@ -10550,17 +12389,29 @@
     "tr": "AES-128-GMAC",
     "az": "AES-128-GMAC"
   },
-  "Open AES-128-GMAC directly with ready-to-use defaults": {
-    "en": "Open AES-128-GMAC directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-128-GMAC",
-    "zh-TW": "使用預設參數直接開啟AES-128-GMAC",
-    "es": "Abre directamente AES-128-GMAC con valores preparados",
-    "it": "Apri direttamente AES-128-GMAC con valori pronti",
-    "ja": "AES-128-GMACを既定値ですぐに開く",
-    "pt-BR": "Abra AES-128-GMAC diretamente com valores prontos",
-    "ko": "AES-128-GMAC 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-128-GMAC aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-128-GMAC hazır parametrlərlə birbaşa açılsın"
+  "Open AES-128-GMAC message authentication directly with ready-to-use defaults": {
+    "en": "Open AES-128-GMAC message authentication directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-128-GMAC 消息认证",
+    "zh-TW": "使用預設參數直接開啟AES-128-GMAC 訊息驗證",
+    "es": "Abre directamente Autenticación de mensajes AES-128-GMAC con valores preparados",
+    "it": "Apri direttamente Autenticazione messaggi AES-128-GMAC con valori pronti",
+    "ja": "AES-128-GMAC メッセージ認証を既定値ですぐに開く",
+    "pt-BR": "Abra Autenticação de mensagens AES-128-GMAC diretamente com valores prontos",
+    "ko": "AES-128-GMAC 메시지 인증 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-128-GMAC mesaj doğrulama aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-128-GMAC mesaj autentifikasiyası hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-256-GMAC message authentication": {
+    "en": "AES-256-GMAC message authentication",
+    "zh-CN": "AES-256-GMAC 消息认证",
+    "zh-TW": "AES-256-GMAC 訊息驗證",
+    "es": "Autenticación de mensajes AES-256-GMAC",
+    "it": "Autenticazione messaggi AES-256-GMAC",
+    "ja": "AES-256-GMAC メッセージ認証",
+    "pt-BR": "Autenticação de mensagens AES-256-GMAC",
+    "ko": "AES-256-GMAC 메시지 인증",
+    "tr": "AES-256-GMAC mesaj doğrulama",
+    "az": "AES-256-GMAC mesaj autentifikasiyası"
   },
   "AES-256-GMAC": {
     "en": "AES-256-GMAC",
@@ -10574,17 +12425,29 @@
     "tr": "AES-256-GMAC",
     "az": "AES-256-GMAC"
   },
-  "Open AES-256-GMAC directly with ready-to-use defaults": {
-    "en": "Open AES-256-GMAC directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-256-GMAC",
-    "zh-TW": "使用預設參數直接開啟AES-256-GMAC",
-    "es": "Abre directamente AES-256-GMAC con valores preparados",
-    "it": "Apri direttamente AES-256-GMAC con valori pronti",
-    "ja": "AES-256-GMACを既定値ですぐに開く",
-    "pt-BR": "Abra AES-256-GMAC diretamente com valores prontos",
-    "ko": "AES-256-GMAC 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-256-GMAC aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-256-GMAC hazır parametrlərlə birbaşa açılsın"
+  "Open AES-256-GMAC message authentication directly with ready-to-use defaults": {
+    "en": "Open AES-256-GMAC message authentication directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-256-GMAC 消息认证",
+    "zh-TW": "使用預設參數直接開啟AES-256-GMAC 訊息驗證",
+    "es": "Abre directamente Autenticación de mensajes AES-256-GMAC con valores preparados",
+    "it": "Apri direttamente Autenticazione messaggi AES-256-GMAC con valori pronti",
+    "ja": "AES-256-GMAC メッセージ認証を既定値ですぐに開く",
+    "pt-BR": "Abra Autenticação de mensagens AES-256-GMAC diretamente com valores prontos",
+    "ko": "AES-256-GMAC 메시지 인증 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-256-GMAC mesaj doğrulama aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-256-GMAC mesaj autentifikasiyası hazır parametrlərlə birbaşa açılsın"
+  },
+  "AES-CMAC / GMAC message authentication": {
+    "en": "AES-CMAC / GMAC message authentication",
+    "zh-CN": "AES-CMAC / GMAC 消息认证",
+    "zh-TW": "AES-CMAC / GMAC 訊息驗證",
+    "es": "Autenticación de mensajes AES-CMAC / GMAC",
+    "it": "Autenticazione messaggi AES-CMAC / GMAC",
+    "ja": "AES-CMAC / GMAC メッセージ認証",
+    "pt-BR": "Autenticação de mensagens AES-CMAC / GMAC",
+    "ko": "AES-CMAC / GMAC 메시지 인증",
+    "tr": "AES-CMAC / GMAC mesaj doğrulama",
+    "az": "AES-CMAC / GMAC mesaj autentifikasiyası"
   },
   "AES-CMAC / GMAC": {
     "en": "AES-CMAC / GMAC",
@@ -10598,17 +12461,17 @@
     "tr": "AES-CMAC / GMAC",
     "az": "AES-CMAC / GMAC"
   },
-  "Open AES-CMAC / GMAC directly with ready-to-use defaults": {
-    "en": "Open AES-CMAC / GMAC directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开AES-CMAC / GMAC",
-    "zh-TW": "使用預設參數直接開啟AES-CMAC / GMAC",
-    "es": "Abre directamente MAC basado en AES con valores preparados",
-    "it": "Apri direttamente MAC basato su AES con valori pronti",
-    "ja": "AES ベース MACを既定値ですぐに開く",
-    "pt-BR": "Abra MAC baseado em AES diretamente com valores prontos",
-    "ko": "AES-CMAC / GMAC 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "AES-CMAC / GMAC aracını hazır varsayılanlarla doğrudan açın",
-    "az": "AES-CMAC / GMAC hazır parametrlərlə birbaşa açılsın"
+  "Open AES-CMAC / GMAC message authentication directly with ready-to-use defaults": {
+    "en": "Open AES-CMAC / GMAC message authentication directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开AES-CMAC / GMAC 消息认证",
+    "zh-TW": "使用預設參數直接開啟AES-CMAC / GMAC 訊息驗證",
+    "es": "Abre directamente Autenticación de mensajes AES-CMAC / GMAC con valores preparados",
+    "it": "Apri direttamente Autenticazione messaggi AES-CMAC / GMAC con valori pronti",
+    "ja": "AES-CMAC / GMAC メッセージ認証を既定値ですぐに開く",
+    "pt-BR": "Abra Autenticação de mensagens AES-CMAC / GMAC diretamente com valores prontos",
+    "ko": "AES-CMAC / GMAC 메시지 인증 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "AES-CMAC / GMAC mesaj doğrulama aracını hazır varsayılanlarla doğrudan açın",
+    "az": "AES-CMAC / GMAC mesaj autentifikasiyası hazır parametrlərlə birbaşa açılsın"
   },
   "HPKE hybrid encryption": {
     "en": "HPKE hybrid encryption",
@@ -10658,6 +12521,18 @@
     "tr": "ML-KEM post-quantum encapsulation aracını hazır varsayılanlarla doğrudan açın",
     "az": "ML-KEM post-quantum encapsulation hazır parametrlərlə birbaşa açılsın"
   },
+  "TOTP code generation": {
+    "en": "TOTP code generation",
+    "zh-CN": "TOTP 验证码生成",
+    "zh-TW": "TOTP 驗證碼產生",
+    "es": "Generación de códigos TOTP",
+    "it": "Generazione codici TOTP",
+    "ja": "TOTP コード生成",
+    "pt-BR": "Geração de códigos TOTP",
+    "ko": "TOTP 코드 생성",
+    "tr": "TOTP kodu oluşturma",
+    "az": "TOTP kodunun yaradılması"
+  },
   "TOTP": {
     "en": "TOTP",
     "zh-CN": "TOTP",
@@ -10670,6 +12545,18 @@
     "tr": "TOTP",
     "az": "TOTP"
   },
+  "Certificate and SSH inspection": {
+    "en": "Certificate and SSH inspection",
+    "zh-CN": "证书与 SSH 检查",
+    "zh-TW": "憑證與 SSH 檢查",
+    "es": "Inspección de certificados y SSH",
+    "it": "Analisi certificati e SSH",
+    "ja": "証明書・SSH 検査",
+    "pt-BR": "Inspeção de certificados e SSH",
+    "ko": "인증서 및 SSH 검사",
+    "tr": "Sertifika ve SSH inceleme",
+    "az": "Sertifikat və SSH yoxlanması"
+  },
   "Certificate & SSH": {
     "en": "Certificate & SSH",
     "zh-CN": "证书与 SSH",
@@ -10678,9 +12565,21 @@
     "it": "Certificati e SSH",
     "ja": "証明書と SSH",
     "pt-BR": "Certificados e SSH",
-    "ko": "인증서 및 SSH",
-    "tr": "Sertifika ve SSH",
-    "az": "Sertifikat və SSH"
+    "ko": "Certificate & SSH",
+    "tr": "Certificate & SSH",
+    "az": "Certificate & SSH"
+  },
+  "JWK / JWKS validation and conversion": {
+    "en": "JWK / JWKS validation and conversion",
+    "zh-CN": "JWK / JWKS 校验与转换",
+    "zh-TW": "JWK / JWKS 驗證與轉換",
+    "es": "Validación y conversión JWK / JWKS",
+    "it": "Validazione e conversione JWK / JWKS",
+    "ja": "JWK / JWKS 検証・変換",
+    "pt-BR": "Validação e conversão JWK / JWKS",
+    "ko": "JWK / JWKS 검증 및 변환",
+    "tr": "JWK / JWKS doğrulama ve dönüştürme",
+    "az": "JWK / JWKS yoxlanması və çevrilməsi"
   },
   "JWK / JWKS": {
     "en": "JWK / JWKS",
@@ -10782,10 +12681,10 @@
     "en": "Open Key generator directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开密钥生成",
     "zh-TW": "使用預設參數直接開啟金鑰產生",
-    "es": "Abre directamente Key generator con valores preparados",
-    "it": "Apri direttamente Key generator con valori pronti",
-    "ja": "Key generatorを既定値ですぐに開く",
-    "pt-BR": "Abra Key generator diretamente com valores prontos",
+    "es": "Abre directamente Generador de claves con valores preparados",
+    "it": "Apri direttamente Generatore di chiavi con valori pronti",
+    "ja": "鍵ジェネレーターを既定値ですぐに開く",
+    "pt-BR": "Abra Gerador de chaves diretamente com valores prontos",
     "ko": "키 생성기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Anahtar oluşturucu aracını hazır varsayılanlarla doğrudan açın",
     "az": "Açar generatoru hazır parametrlərlə birbaşa açılsın"
@@ -10878,10 +12777,10 @@
     "en": "Open Fake data generator directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开假数据生成",
     "zh-TW": "使用預設參數直接開啟假資料產生",
-    "es": "Abre directamente Fake data generator con valores preparados",
-    "it": "Apri direttamente Fake data generator con valori pronti",
-    "ja": "Fake data generatorを既定値ですぐに開く",
-    "pt-BR": "Abra Fake data generator diretamente com valores prontos",
+    "es": "Abre directamente Generador de datos ficticios con valores preparados",
+    "it": "Apri direttamente Generatore di dati fittizi con valori pronti",
+    "ja": "ダミーデータ生成を既定値ですぐに開く",
+    "pt-BR": "Abra Gerador de dados fictícios diretamente com valores prontos",
     "ko": "가상 데이터 생성기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Sahte veri oluşturucu aracını hazır varsayılanlarla doğrudan açın",
     "az": "Saxta məlumat generatoru hazır parametrlərlə birbaşa açılsın"
@@ -10926,10 +12825,10 @@
     "en": "Open Image compress & convert directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图片压缩与格式转换",
     "zh-TW": "使用預設參數直接開啟圖片壓縮與格式轉換",
-    "es": "Abre directamente Image compress & convert con valores preparados",
-    "it": "Apri direttamente Image compress & convert con valori pronti",
-    "ja": "Image compress & convertを既定値ですぐに開く",
-    "pt-BR": "Abra Image compress & convert diretamente com valores prontos",
+    "es": "Abre directamente Comprimir y convertir imágenes con valores preparados",
+    "it": "Apri direttamente Comprimi e converti immagini con valori pronti",
+    "ja": "画像圧縮・変換を既定値ですぐに開く",
+    "pt-BR": "Abra Comprimir e converter imagens diretamente com valores prontos",
     "ko": "이미지 압축 및 변환 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Görüntü sıkıştırma ve dönüştürme aracını hazır varsayılanlarla doğrudan açın",
     "az": "Şəkil sıxışdırma və çevirmə hazır parametrlərlə birbaşa açılsın"
@@ -10950,10 +12849,10 @@
     "en": "Open Image grid slicer directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图片切图",
     "zh-TW": "使用預設參數直接開啟圖片切圖",
-    "es": "Abre directamente Image grid slicer con valores preparados",
-    "it": "Apri direttamente Image grid slicer con valori pronti",
-    "ja": "Image grid slicerを既定値ですぐに開く",
-    "pt-BR": "Abra Image grid slicer diretamente com valores prontos",
+    "es": "Abre directamente Dividir en cuadrícula con valores preparados",
+    "it": "Apri direttamente Taglio a griglia con valori pronti",
+    "ja": "画像グリッド分割を既定値ですぐに開く",
+    "pt-BR": "Abra Cortar em grade diretamente com valores prontos",
     "ko": "이미지 격자 분할 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Görüntü ızgara dilimleyici aracını hazır varsayılanlarla doğrudan açın",
     "az": "Şəkil toru bölücüsü hazır parametrlərlə birbaşa açılsın"
@@ -10974,10 +12873,10 @@
     "en": "Open Image pixelate directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图片像素化",
     "zh-TW": "使用預設參數直接開啟圖片像素化",
-    "es": "Abre directamente Image pixelate con valores preparados",
-    "it": "Apri direttamente Image pixelate con valori pronti",
-    "ja": "Image pixelateを既定値ですぐに開く",
-    "pt-BR": "Abra Image pixelate diretamente com valores prontos",
+    "es": "Abre directamente Pixelar imagen con valores preparados",
+    "it": "Apri direttamente Pixel art con valori pronti",
+    "ja": "画像のピクセル化を既定値ですぐに開く",
+    "pt-BR": "Abra Pixelizar imagem diretamente com valores prontos",
     "ko": "이미지 픽셀화 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Görüntüyü pikselleştir aracını hazır varsayılanlarla doğrudan açın",
     "az": "Şəkli pikselləşdir hazır parametrlərlə birbaşa açılsın"
@@ -10998,10 +12897,10 @@
     "en": "Open Image & Base64 directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图片与 Base64",
     "zh-TW": "使用預設參數直接開啟圖片與 Base64",
-    "es": "Abre directamente Image & Base64 con valores preparados",
-    "it": "Apri direttamente Image & Base64 con valori pronti",
-    "ja": "Image & Base64を既定値ですぐに開く",
-    "pt-BR": "Abra Image & Base64 diretamente com valores prontos",
+    "es": "Abre directamente Imagen y Base64 con valores preparados",
+    "it": "Apri direttamente Immagine e Base64 con valori pronti",
+    "ja": "画像と Base64を既定値ですぐに開く",
+    "pt-BR": "Abra Imagem e Base64 diretamente com valores prontos",
     "ko": "이미지 및 Base64 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Görüntü ve Base64 aracını hazır varsayılanlarla doğrudan açın",
     "az": "Şəkil və Base64 hazır parametrlərlə birbaşa açılsın"
@@ -11022,10 +12921,10 @@
     "en": "Open Image stitcher directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开图片拼接",
     "zh-TW": "使用預設參數直接開啟圖片拼接",
-    "es": "Abre directamente Image stitcher con valores preparados",
-    "it": "Apri direttamente Image stitcher con valori pronti",
-    "ja": "Image stitcherを既定値ですぐに開く",
-    "pt-BR": "Abra Image stitcher diretamente com valores prontos",
+    "es": "Abre directamente Unir imágenes con valores preparados",
+    "it": "Apri direttamente Unione immagini con valori pronti",
+    "ja": "画像結合を既定値ですぐに開く",
+    "pt-BR": "Abra União de imagens diretamente com valores prontos",
     "ko": "이미지 이어붙이기 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "Görüntü birleştirici aracını hazır varsayılanlarla doğrudan açın",
     "az": "Şəkil birləşdirici hazır parametrlərlə birbaşa açılsın"
@@ -11046,13 +12945,25 @@
     "en": "Open GIF workbench directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开GIF 动画生成",
     "zh-TW": "使用預設參數直接開啟GIF 動畫產生",
-    "es": "Abre directamente GIF workbench con valores preparados",
-    "it": "Apri direttamente GIF workbench con valori pronti",
-    "ja": "GIF workbenchを既定値ですぐに開く",
-    "pt-BR": "Abra GIF workbench diretamente com valores prontos",
+    "es": "Abre directamente Banco de trabajo GIF con valores preparados",
+    "it": "Apri direttamente Area di lavoro GIF con valori pronti",
+    "ja": "GIF ワークベンチを既定値ですぐに開く",
+    "pt-BR": "Abra Bancada GIF diretamente com valores prontos",
     "ko": "GIF 워크벤치 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "GIF çalışma alanı aracını hazır varsayılanlarla doğrudan açın",
     "az": "GIF iş sahəsi hazır parametrlərlə birbaşa açılsın"
+  },
+  "Image text recognition": {
+    "en": "Image text recognition",
+    "zh-CN": "图片文字识别",
+    "zh-TW": "圖片文字辨識",
+    "es": "Reconocimiento de texto en imágenes",
+    "it": "Riconoscimento testo nelle immagini",
+    "ja": "画像の文字認識",
+    "pt-BR": "Reconhecimento de texto em imagens",
+    "ko": "이미지 문자 인식",
+    "tr": "Görüntüden metin tanıma",
+    "az": "Şəkildə mətnin tanınması"
   },
   "Image OCR": {
     "en": "Image OCR",
@@ -11062,21 +12973,21 @@
     "it": "Image OCR",
     "ja": "Image OCR",
     "pt-BR": "Image OCR",
-    "ko": "이미지 OCR",
-    "tr": "Görüntü OCR",
-    "az": "Şəkil OCR"
+    "ko": "Image OCR",
+    "tr": "Image OCR",
+    "az": "Image OCR"
   },
-  "Open Image OCR directly with ready-to-use defaults": {
-    "en": "Open Image OCR directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开图片 OCR",
-    "zh-TW": "使用預設參數直接開啟圖片 OCR",
-    "es": "Abre directamente Image OCR con valores preparados",
-    "it": "Apri direttamente Image OCR con valori pronti",
-    "ja": "Image OCRを既定値ですぐに開く",
-    "pt-BR": "Abra Image OCR diretamente com valores prontos",
-    "ko": "이미지 OCR 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "Görüntü OCR aracını hazır varsayılanlarla doğrudan açın",
-    "az": "Şəkil OCR hazır parametrlərlə birbaşa açılsın"
+  "Open Image text recognition directly with ready-to-use defaults": {
+    "en": "Open Image text recognition directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开图片文字识别",
+    "zh-TW": "使用預設參數直接開啟圖片文字辨識",
+    "es": "Abre directamente Reconocimiento de texto en imágenes con valores preparados",
+    "it": "Apri direttamente Riconoscimento testo nelle immagini con valori pronti",
+    "ja": "画像の文字認識を既定値ですぐに開く",
+    "pt-BR": "Abra Reconhecimento de texto em imagens diretamente com valores prontos",
+    "ko": "이미지 문자 인식 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Görüntüden metin tanıma aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Şəkildə mətnin tanınması hazır parametrlərlə birbaşa açılsın"
   },
   ".env manager": {
     "en": ".env manager",
@@ -11094,13 +13005,25 @@
     "en": "Open .env manager directly with ready-to-use defaults",
     "zh-CN": "使用预设参数直接打开.env 管理",
     "zh-TW": "使用預設參數直接開啟.env 管理",
-    "es": "Abre directamente .env manager con valores preparados",
-    "it": "Apri direttamente .env manager con valori pronti",
-    "ja": ".env managerを既定値ですぐに開く",
-    "pt-BR": "Abra .env manager diretamente com valores prontos",
+    "es": "Abre directamente Gestor .env con valores preparados",
+    "it": "Apri direttamente Gestore .env con valori pronti",
+    "ja": ".env 管理を既定値ですぐに開く",
+    "pt-BR": "Abra Gerenciador .env diretamente com valores prontos",
     "ko": ".env 관리자 도구를 준비된 기본값으로 바로 엽니다",
     "tr": ".env yöneticisi aracını hazır varsayılanlarla doğrudan açın",
     "az": ".env meneceri hazır parametrlərlə birbaşa açılsın"
+  },
+  "Semantic version comparison": {
+    "en": "Semantic version comparison",
+    "zh-CN": "语义版本比较",
+    "zh-TW": "語意版本比較",
+    "es": "Comparación de versiones semánticas",
+    "it": "Confronto versioni semantiche",
+    "ja": "セマンティックバージョン比較",
+    "pt-BR": "Comparação de versões semânticas",
+    "ko": "시맨틱 버전 비교",
+    "tr": "Anlamsal sürüm karşılaştırma",
+    "az": "Semantik versiyaların müqayisəsi"
   },
   "Semantic version": {
     "en": "Semantic version",
@@ -11114,17 +13037,17 @@
     "tr": "Semantic version",
     "az": "Semantic version"
   },
-  "Open Semantic version directly with ready-to-use defaults": {
-    "en": "Open Semantic version directly with ready-to-use defaults",
-    "zh-CN": "使用预设参数直接打开语义版本",
-    "zh-TW": "使用預設參數直接開啟語意版本",
-    "es": "Abre directamente Semantic version con valores preparados",
-    "it": "Apri direttamente Semantic version con valori pronti",
-    "ja": "Semantic versionを既定値ですぐに開く",
-    "pt-BR": "Abra Semantic version diretamente com valores prontos",
-    "ko": "Semantic version 도구를 준비된 기본값으로 바로 엽니다",
-    "tr": "Semantic version aracını hazır varsayılanlarla doğrudan açın",
-    "az": "Semantic version hazır parametrlərlə birbaşa açılsın"
+  "Open Semantic version comparison directly with ready-to-use defaults": {
+    "en": "Open Semantic version comparison directly with ready-to-use defaults",
+    "zh-CN": "使用预设参数直接打开语义版本比较",
+    "zh-TW": "使用預設參數直接開啟語意版本比較",
+    "es": "Abre directamente Comparación de versiones semánticas con valores preparados",
+    "it": "Apri direttamente Confronto versioni semantiche con valori pronti",
+    "ja": "セマンティックバージョン比較を既定値ですぐに開く",
+    "pt-BR": "Abra Comparação de versões semânticas diretamente com valores prontos",
+    "ko": "시맨틱 버전 비교 도구를 준비된 기본값으로 바로 엽니다",
+    "tr": "Anlamsal sürüm karşılaştırma aracını hazır varsayılanlarla doğrudan açın",
+    "az": "Semantik versiyaların müqayisəsi hazır parametrlərlə birbaşa açılsın"
   },
   "chmod calculator": {
     "en": "chmod calculator",
@@ -11173,6 +13096,1254 @@
     "ko": "HTTP status codes 도구를 준비된 기본값으로 바로 엽니다",
     "tr": "HTTP status codes aracını hazır varsayılanlarla doğrudan açın",
     "az": "HTTP status codes hazır parametrlərlə birbaşa açılsın"
+  },
+  "JSON structure diff": {
+    "en": "JSON structure diff",
+    "zh-CN": "JSON 结构对比",
+    "zh-TW": "JSON 結構比較",
+    "es": "Comparar estructura JSON",
+    "it": "Confronto struttura JSON",
+    "ja": "JSON 構造比較",
+    "pt-BR": "Comparar estrutura JSON",
+    "ko": "JSON 구조 비교",
+    "tr": "JSON yapı karşılaştırması",
+    "az": "JSON struktur müqayisəsi"
+  },
+  "Compare JSON fields": {
+    "en": "Compare JSON fields",
+    "zh-CN": "按字段比较 JSON 的新增、删除与修改",
+    "zh-TW": "本機工具：JSON 結構比較",
+    "es": "Herramienta local: Comparar estructura JSON",
+    "it": "Strumento locale: Confronto struttura JSON",
+    "ja": "ローカルツール：JSON 構造比較",
+    "pt-BR": "Ferramenta local: Comparar estrutura JSON",
+    "ko": "로컬 도구: JSON 구조 비교",
+    "tr": "Yerel araç: JSON yapı karşılaştırması",
+    "az": "Yerli alət: JSON struktur müqayisəsi"
+  },
+  "YAML tree viewer": {
+    "en": "YAML tree viewer",
+    "zh-CN": "YAML 树形查看",
+    "zh-TW": "YAML 樹狀檢視",
+    "es": "Árbol YAML",
+    "it": "Albero YAML",
+    "ja": "YAML ツリー表示",
+    "pt-BR": "Árvore YAML",
+    "ko": "YAML 트리 보기",
+    "tr": "YAML ağaç görünümü",
+    "az": "YAML ağac görünüşü"
+  },
+  "Browse YAML documents as trees": {
+    "en": "Browse YAML documents as trees",
+    "zh-CN": "折叠查看 YAML 多文档与节点路径",
+    "zh-TW": "本機工具：YAML 樹狀檢視",
+    "es": "Herramienta local: Árbol YAML",
+    "it": "Strumento locale: Albero YAML",
+    "ja": "ローカルツール：YAML ツリー表示",
+    "pt-BR": "Ferramenta local: Árvore YAML",
+    "ko": "로컬 도구: YAML 트리 보기",
+    "tr": "Yerel araç: YAML ağaç görünümü",
+    "az": "Yerli alət: YAML ağac görünüşü"
+  },
+  "Basic Auth generator": {
+    "en": "Basic Auth generator",
+    "zh-CN": "Basic Auth 生成器",
+    "zh-TW": "Basic Auth 產生器",
+    "es": "Generador Basic Auth",
+    "it": "Generatore Basic Auth",
+    "ja": "Basic Auth 生成",
+    "pt-BR": "Gerador Basic Auth",
+    "ko": "Basic Auth 생성기",
+    "tr": "Basic Auth oluşturucu",
+    "az": "Basic Auth generatoru"
+  },
+  "Generate an Authorization header from a username and password": {
+    "en": "Generate an Authorization header from a username and password",
+    "zh-CN": "通过用户名、密码生成认证请求头",
+    "zh-TW": "本機工具：Basic Auth 產生器",
+    "es": "Herramienta local: Generador Basic Auth",
+    "it": "Strumento locale: Generatore Basic Auth",
+    "ja": "ローカルツール：Basic Auth 生成",
+    "pt-BR": "Ferramenta local: Gerador Basic Auth",
+    "ko": "로컬 도구: Basic Auth 생성기",
+    "tr": "Yerel araç: Basic Auth oluşturucu",
+    "az": "Yerli alət: Basic Auth generatoru"
+  },
+  "SafeLink decoder": {
+    "en": "SafeLink decoder",
+    "zh-CN": "SafeLink 解码",
+    "zh-TW": "SafeLink 解碼",
+    "es": "Decodificar SafeLink",
+    "it": "Decodifica SafeLink",
+    "ja": "SafeLink デコード",
+    "pt-BR": "Decodificar SafeLink",
+    "ko": "SafeLink 디코더",
+    "tr": "SafeLink çözümleyici",
+    "az": "SafeLink dekoderi"
+  },
+  "Extract the original URL without visiting it": {
+    "en": "Extract the original URL without visiting it",
+    "zh-CN": "提取安全链接中的原始网址，不访问目标",
+    "zh-TW": "本機工具：SafeLink 解碼",
+    "es": "Herramienta local: Decodificar SafeLink",
+    "it": "Strumento locale: Decodifica SafeLink",
+    "ja": "ローカルツール：SafeLink デコード",
+    "pt-BR": "Ferramenta local: Decodificar SafeLink",
+    "ko": "로컬 도구: SafeLink 디코더",
+    "tr": "Yerel araç: SafeLink çözümleyici",
+    "az": "Yerli alət: SafeLink dekoderi"
+  },
+  "Regex reference": {
+    "en": "Regex reference",
+    "zh-CN": "正则语法速查",
+    "zh-TW": "正規表示式速查",
+    "es": "Referencia de expresiones regulares",
+    "it": "Guida espressioni regolari",
+    "ja": "正規表現リファレンス",
+    "pt-BR": "Referência de expressões regulares",
+    "ko": "정규식 참조",
+    "tr": "Düzenli ifade başvurusu",
+    "az": "Müntəzəm ifadələr bələdçisi"
+  },
+  "Browse syntax and try examples": {
+    "en": "Browse syntax and try examples",
+    "zh-CN": "查阅正则语法并测试示例",
+    "zh-TW": "本機工具：正規表示式速查",
+    "es": "Herramienta local: Referencia de expresiones regulares",
+    "it": "Strumento locale: Guida espressioni regolari",
+    "ja": "ローカルツール：正規表現リファレンス",
+    "pt-BR": "Ferramenta local: Referência de expressões regulares",
+    "ko": "로컬 도구: 정규식 참조",
+    "tr": "Yerel araç: Düzenli ifade başvurusu",
+    "az": "Yerli alət: Müntəzəm ifadələr bələdçisi"
+  },
+  "Wi-Fi QR code": {
+    "en": "Wi-Fi QR code",
+    "zh-CN": "Wi-Fi 二维码",
+    "zh-TW": "Wi-Fi 二維碼",
+    "es": "Código QR Wi-Fi",
+    "it": "Codice QR Wi-Fi",
+    "ja": "Wi-Fi QR コード",
+    "pt-BR": "Código QR Wi-Fi",
+    "ko": "Wi-Fi QR 코드",
+    "tr": "Wi-Fi QR kodu",
+    "az": "Wi-Fi QR kodu"
+  },
+  "Create a Wi-Fi connection QR code": {
+    "en": "Create a Wi-Fi connection QR code",
+    "zh-CN": "生成包含网络名称、密码和加密方式的连接二维码",
+    "zh-TW": "本機工具：Wi-Fi 二維碼",
+    "es": "Herramienta local: Código QR Wi-Fi",
+    "it": "Strumento locale: Codice QR Wi-Fi",
+    "ja": "ローカルツール：Wi-Fi QR コード",
+    "pt-BR": "Ferramenta local: Código QR Wi-Fi",
+    "ko": "로컬 도구: Wi-Fi QR 코드",
+    "tr": "Yerel araç: Wi-Fi QR kodu",
+    "az": "Yerli alət: Wi-Fi QR kodu"
+  },
+  "Roman numeral converter": {
+    "en": "Roman numeral converter",
+    "zh-CN": "罗马数字转换",
+    "zh-TW": "羅馬數字轉換",
+    "es": "Convertidor de números romanos",
+    "it": "Convertitore numeri romani",
+    "ja": "ローマ数字変換",
+    "pt-BR": "Conversor de números romanos",
+    "ko": "로마 숫자 변환",
+    "tr": "Roma rakamı dönüştürücü",
+    "az": "Roma rəqəmləri çeviricisi"
+  },
+  "Convert integers and Roman numerals": {
+    "en": "Convert integers and Roman numerals",
+    "zh-CN": "整数与罗马数字双向转换",
+    "zh-TW": "本機工具：羅馬數字轉換",
+    "es": "Herramienta local: Convertidor de números romanos",
+    "it": "Strumento locale: Convertitore numeri romani",
+    "ja": "ローカルツール：ローマ数字変換",
+    "pt-BR": "Ferramenta local: Conversor de números romanos",
+    "ko": "로컬 도구: 로마 숫자 변환",
+    "tr": "Yerel araç: Roma rakamı dönüştürücü",
+    "az": "Yerli alət: Roma rəqəmləri çeviricisi"
+  },
+  "MAC address generator": {
+    "en": "MAC address generator",
+    "zh-CN": "MAC 地址生成",
+    "zh-TW": "MAC 位址產生",
+    "es": "Generador de direcciones MAC",
+    "it": "Generatore indirizzi MAC",
+    "ja": "MAC アドレス生成",
+    "pt-BR": "Gerador de endereços MAC",
+    "ko": "MAC 주소 생성",
+    "tr": "MAC adresi oluşturucu",
+    "az": "MAC ünvan generatoru"
+  },
+  "Generate locally administered MAC addresses": {
+    "en": "Generate locally administered MAC addresses",
+    "zh-CN": "批量生成 MAC 地址，支持指定前缀和格式",
+    "zh-TW": "本機工具：MAC 位址產生",
+    "es": "Herramienta local: Generador de direcciones MAC",
+    "it": "Strumento locale: Generatore indirizzi MAC",
+    "ja": "ローカルツール：MAC アドレス生成",
+    "pt-BR": "Ferramenta local: Gerador de endereços MAC",
+    "ko": "로컬 도구: MAC 주소 생성",
+    "tr": "Yerel araç: MAC adresi oluşturucu",
+    "az": "Yerli alət: MAC ünvan generatoru"
+  },
+  "IPv6 ULA generator": {
+    "en": "IPv6 ULA generator",
+    "zh-CN": "IPv6 ULA 生成",
+    "zh-TW": "IPv6 ULA 產生",
+    "es": "Generador IPv6 ULA",
+    "it": "Generatore IPv6 ULA",
+    "ja": "IPv6 ULA 生成",
+    "pt-BR": "Gerador IPv6 ULA",
+    "ko": "IPv6 ULA 생성",
+    "tr": "IPv6 ULA oluşturucu",
+    "az": "IPv6 ULA generatoru"
+  },
+  "Generate private IPv6 prefixes": {
+    "en": "Generate private IPv6 prefixes",
+    "zh-CN": "生成私有 IPv6 ULA 前缀",
+    "zh-TW": "本機工具：IPv6 ULA 產生",
+    "es": "Herramienta local: Generador IPv6 ULA",
+    "it": "Strumento locale: Generatore IPv6 ULA",
+    "ja": "ローカルツール：IPv6 ULA 生成",
+    "pt-BR": "Ferramenta local: Gerador IPv6 ULA",
+    "ko": "로컬 도구: IPv6 ULA 생성",
+    "tr": "Yerel araç: IPv6 ULA oluşturucu",
+    "az": "Yerli alət: IPv6 ULA generatoru"
+  },
+  "IPv4 ranges and aggregation": {
+    "en": "IPv4 ranges and aggregation",
+    "zh-CN": "IPv4 范围与汇总",
+    "zh-TW": "IPv4 範圍與彙總",
+    "es": "Rangos y agregación IPv4",
+    "it": "Intervalli e aggregazione IPv4",
+    "ja": "IPv4 範囲と集約",
+    "pt-BR": "Intervalos e agregação IPv4",
+    "ko": "IPv4 범위 및 집계",
+    "tr": "IPv4 aralıkları ve birleştirme",
+    "az": "IPv4 aralıqları və birləşdirmə"
+  },
+  "Expand ranges and summarize CIDRs": {
+    "en": "Expand ranges and summarize CIDRs",
+    "zh-CN": "展开地址范围并汇总最小 CIDR 集合",
+    "zh-TW": "本機工具：IPv4 範圍與彙總",
+    "es": "Herramienta local: Rangos y agregación IPv4",
+    "it": "Strumento locale: Intervalli e aggregazione IPv4",
+    "ja": "ローカルツール：IPv4 範囲と集約",
+    "pt-BR": "Ferramenta local: Intervalos e agregação IPv4",
+    "ko": "로컬 도구: IPv4 범위 및 집계",
+    "tr": "Yerel araç: IPv4 aralıkları ve birleştirme",
+    "az": "Yerli alət: IPv4 aralıqları və birləşdirmə"
+  },
+  "Math expression": {
+    "en": "Math expression",
+    "zh-CN": "数学表达式计算",
+    "zh-TW": "數學運算式計算",
+    "es": "Expresiones matemáticas",
+    "it": "Espressioni matematiche",
+    "ja": "数式計算",
+    "pt-BR": "Expressões matemáticas",
+    "ko": "수식 계산",
+    "tr": "Matematiksel ifade",
+    "az": "Riyazi ifadə"
+  },
+  "Evaluate expressions with powers, trigonometry and logarithms": {
+    "en": "Evaluate expressions with powers, trigonometry and logarithms",
+    "zh-CN": "计算括号、幂、三角函数和对数等表达式",
+    "zh-TW": "本機工具：數學運算式計算",
+    "es": "Herramienta local: Expresiones matemáticas",
+    "it": "Strumento locale: Espressioni matematiche",
+    "ja": "ローカルツール：数式計算",
+    "pt-BR": "Ferramenta local: Expressões matemáticas",
+    "ko": "로컬 도구: 수식 계산",
+    "tr": "Yerel araç: Matematiksel ifade",
+    "az": "Yerli alət: Riyazi ifadə"
+  },
+  "Unit converter": {
+    "en": "Unit converter",
+    "zh-CN": "单位换算",
+    "zh-TW": "單位換算",
+    "es": "Conversor de unidades",
+    "it": "Convertitore unità",
+    "ja": "単位換算",
+    "pt-BR": "Conversor de unidades",
+    "ko": "단위 변환",
+    "tr": "Birim dönüştürücü",
+    "az": "Vahid çeviricisi"
+  },
+  "Convert length, area, volume, mass, speed and data units": {
+    "en": "Convert length, area, volume, mass, speed and data units",
+    "zh-CN": "换算长度、面积、体积、质量、速度和数据容量",
+    "zh-TW": "本機工具：單位換算",
+    "es": "Herramienta local: Conversor de unidades",
+    "it": "Strumento locale: Convertitore unità",
+    "ja": "ローカルツール：単位換算",
+    "pt-BR": "Ferramenta local: Conversor de unidades",
+    "ko": "로컬 도구: 단위 변환",
+    "tr": "Yerel araç: Birim dönüştürücü",
+    "az": "Yerli alət: Vahid çeviricisi"
+  },
+  "Percentage calculator": {
+    "en": "Percentage calculator",
+    "zh-CN": "百分比计算",
+    "zh-TW": "百分比計算",
+    "es": "Calculadora de porcentajes",
+    "it": "Calcolatore percentuali",
+    "ja": "割合計算",
+    "pt-BR": "Calculadora de porcentagem",
+    "ko": "백분율 계산",
+    "tr": "Yüzde hesaplayıcı",
+    "az": "Faiz hesablayıcısı"
+  },
+  "Calculate percentages, proportions and changes with formulas": {
+    "en": "Calculate percentages, proportions and changes with formulas",
+    "zh-CN": "计算百分比、占比及增减幅度并展示公式",
+    "zh-TW": "本機工具：百分比計算",
+    "es": "Herramienta local: Calculadora de porcentajes",
+    "it": "Strumento locale: Calcolatore percentuali",
+    "ja": "ローカルツール：割合計算",
+    "pt-BR": "Ferramenta local: Calculadora de porcentagem",
+    "ko": "로컬 도구: 백분율 계산",
+    "tr": "Yerel araç: Yüzde hesaplayıcı",
+    "az": "Yerli alət: Faiz hesablayıcısı"
+  },
+  "Statistics": {
+    "en": "Statistics",
+    "zh-CN": "数值统计",
+    "zh-TW": "數值統計",
+    "es": "Estadística",
+    "it": "Statistiche",
+    "ja": "統計計算",
+    "pt-BR": "Estatística",
+    "ko": "통계 계산",
+    "tr": "İstatistik",
+    "az": "Statistika"
+  },
+  "Calculate mean, median, modes, variance and standard deviation": {
+    "en": "Calculate mean, median, modes, variance and standard deviation",
+    "zh-CN": "计算均值、中位数、众数、方差和标准差",
+    "zh-TW": "本機工具：數值統計",
+    "es": "Herramienta local: Estadística",
+    "it": "Strumento locale: Statistiche",
+    "ja": "ローカルツール：統計計算",
+    "pt-BR": "Ferramenta local: Estatística",
+    "ko": "로컬 도구: 통계 계산",
+    "tr": "Yerel araç: İstatistik",
+    "az": "Yerli alət: Statistika"
+  },
+  "Business days": {
+    "en": "Business days",
+    "zh-CN": "工作日计算",
+    "zh-TW": "工作日計算",
+    "es": "Días laborables",
+    "it": "Giorni lavorativi",
+    "ja": "営業日計算",
+    "pt-BR": "Dias úteis",
+    "ko": "영업일 계산",
+    "tr": "İş günleri",
+    "az": "İş günləri"
+  },
+  "Calculate working days and deadlines with custom holidays": {
+    "en": "Calculate working days and deadlines with custom holidays",
+    "zh-CN": "按周末规则和自定义节假日计算工作日或截止日期",
+    "zh-TW": "本機工具：工作日計算",
+    "es": "Herramienta local: Días laborables",
+    "it": "Strumento locale: Giorni lavorativi",
+    "ja": "ローカルツール：営業日計算",
+    "pt-BR": "Ferramenta local: Dias úteis",
+    "ko": "로컬 도구: 영업일 계산",
+    "tr": "Yerel araç: İş günleri",
+    "az": "Yerli alət: İş günləri"
+  },
+  "Temperature converter": {
+    "en": "Temperature converter",
+    "zh-CN": "温度换算",
+    "zh-TW": "溫度換算",
+    "es": "Conversor de temperatura",
+    "it": "Convertitore temperatura",
+    "ja": "温度換算",
+    "pt-BR": "Conversor de temperatura",
+    "ko": "온도 변환",
+    "tr": "Sıcaklık dönüştürücü",
+    "az": "Temperatur çeviricisi"
+  },
+  "Convert Celsius, Fahrenheit, Kelvin and Rankine": {
+    "en": "Convert Celsius, Fahrenheit, Kelvin and Rankine",
+    "zh-CN": "换算摄氏、华氏、开尔文和兰金温标",
+    "zh-TW": "本機工具：溫度換算",
+    "es": "Herramienta local: Conversor de temperatura",
+    "it": "Strumento locale: Convertitore temperatura",
+    "ja": "ローカルツール：温度換算",
+    "pt-BR": "Ferramenta local: Conversor de temperatura",
+    "ko": "로컬 도구: 온도 변환",
+    "tr": "Yerel araç: Sıcaklık dönüştürücü",
+    "az": "Yerli alət: Temperatur çeviricisi"
+  },
+  "ETA calculator": {
+    "en": "ETA calculator",
+    "zh-CN": "ETA 预计完成时间",
+    "zh-TW": "預計完成時間",
+    "es": "Hora estimada de finalización",
+    "it": "Orario di completamento stimato",
+    "ja": "完了予定時刻",
+    "pt-BR": "Previsão de conclusão",
+    "ko": "완료 예상 시간",
+    "tr": "Tahmini tamamlanma zamanı",
+    "az": "Təxmini tamamlanma vaxtı"
+  },
+  "Estimate time remaining from progress and elapsed time": {
+    "en": "Estimate time remaining from progress and elapsed time",
+    "zh-CN": "根据总量、已完成量和耗时估算剩余时间",
+    "zh-TW": "本機工具：預計完成時間",
+    "es": "Herramienta local: Hora estimada de finalización",
+    "it": "Strumento locale: Orario di completamento stimato",
+    "ja": "ローカルツール：完了予定時刻",
+    "pt-BR": "Ferramenta local: Previsão de conclusão",
+    "ko": "로컬 도구: 완료 예상 시간",
+    "tr": "Yerel araç: Tahmini tamamlanma zamanı",
+    "az": "Yerli alət: Təxmini tamamlanma vaxtı"
+  },
+  "Stopwatch and laps": {
+    "en": "Stopwatch and laps",
+    "zh-CN": "秒表与计次",
+    "zh-TW": "碼錶與計次",
+    "es": "Cronómetro y vueltas",
+    "it": "Cronometro e giri",
+    "ja": "ストップウォッチとラップ",
+    "pt-BR": "Cronômetro e voltas",
+    "ko": "스톱워치 및 랩",
+    "tr": "Kronometre ve turlar",
+    "az": "Saniyəölçən və dövrələr"
+  },
+  "Start, pause and export stopwatch lap records": {
+    "en": "Start, pause and export stopwatch lap records",
+    "zh-CN": "开始、暂停、计次并导出分圈记录",
+    "zh-TW": "本機工具：碼錶與計次",
+    "es": "Herramienta local: Cronómetro y vueltas",
+    "it": "Strumento locale: Cronometro e giri",
+    "ja": "ローカルツール：ストップウォッチとラップ",
+    "pt-BR": "Ferramenta local: Cronômetro e voltas",
+    "ko": "로컬 도구: 스톱워치 및 랩",
+    "tr": "Yerel araç: Kronometre ve turlar",
+    "az": "Yerli alət: Saniyəölçən və dövrələr"
+  },
+  "Benchmark comparison": {
+    "en": "Benchmark comparison",
+    "zh-CN": "基准测试结果对比",
+    "zh-TW": "基準測試結果比較",
+    "es": "Comparación de rendimiento",
+    "it": "Confronto prestazioni",
+    "ja": "ベンチマーク比較",
+    "pt-BR": "Comparação de desempenho",
+    "ko": "벤치마크 비교",
+    "tr": "Performans karşılaştırması",
+    "az": "Performans müqayisəsi"
+  },
+  "Compare benchmark sample averages, variation and relative performance": {
+    "en": "Compare benchmark sample averages, variation and relative performance",
+    "zh-CN": "比较多组跑分样本的均值、波动和相对性能",
+    "zh-TW": "本機工具：基準測試結果比較",
+    "es": "Herramienta local: Comparación de rendimiento",
+    "it": "Strumento locale: Confronto prestazioni",
+    "ja": "ローカルツール：ベンチマーク比較",
+    "pt-BR": "Ferramenta local: Comparação de desempenho",
+    "ko": "로컬 도구: 벤치마크 비교",
+    "tr": "Yerel araç: Performans karşılaştırması",
+    "az": "Yerli alət: Performans müqayisəsi"
+  },
+  "Compound interest": {
+    "en": "Compound interest",
+    "zh-CN": "复利计算",
+    "zh-TW": "複利計算",
+    "es": "Interés compuesto",
+    "it": "Interesse composto",
+    "ja": "複利計算",
+    "pt-BR": "Juros compostos",
+    "ko": "복리 계산",
+    "tr": "Bileşik faiz",
+    "az": "Mürəkkəb faiz"
+  },
+  "Calculate compound growth with regular contributions": {
+    "en": "Calculate compound growth with regular contributions",
+    "zh-CN": "按本金、利率、计息频率和定投计算本息",
+    "zh-TW": "本機工具：複利計算",
+    "es": "Herramienta local: Interés compuesto",
+    "it": "Strumento locale: Interesse composto",
+    "ja": "ローカルツール：複利計算",
+    "pt-BR": "Ferramenta local: Juros compostos",
+    "ko": "로컬 도구: 복리 계산",
+    "tr": "Yerel araç: Bileşik faiz",
+    "az": "Yerli alət: Mürəkkəb faiz"
+  },
+  "Bcrypt hash and verify": {
+    "en": "Bcrypt hash and verify",
+    "zh-CN": "Bcrypt 哈希与校验",
+    "zh-TW": "Bcrypt 雜湊與驗證",
+    "es": "Hash y verificación Bcrypt",
+    "it": "Hash e verifica Bcrypt",
+    "ja": "Bcrypt ハッシュと検証",
+    "pt-BR": "Hash e verificação Bcrypt",
+    "ko": "Bcrypt 해시 및 검증",
+    "tr": "Bcrypt özeti ve doğrulama",
+    "az": "Bcrypt heş və yoxlama"
+  },
+  "Generate salted hashes and verify passwords against Bcrypt hashes": {
+    "en": "Generate salted hashes and verify passwords against Bcrypt hashes",
+    "zh-CN": "生成带盐哈希或校验密码与已有哈希是否匹配",
+    "zh-TW": "本機工具：Bcrypt 雜湊與驗證",
+    "es": "Herramienta local: Hash y verificación Bcrypt",
+    "it": "Strumento locale: Hash e verifica Bcrypt",
+    "ja": "ローカルツール：Bcrypt ハッシュと検証",
+    "pt-BR": "Ferramenta local: Hash e verificação Bcrypt",
+    "ko": "로컬 도구: Bcrypt 해시 및 검증",
+    "tr": "Yerel araç: Bcrypt özeti ve doğrulama",
+    "az": "Yerli alət: Bcrypt heş və yoxlama"
+  },
+  "Password strength": {
+    "en": "Password strength",
+    "zh-CN": "密码强度分析",
+    "zh-TW": "密碼強度分析",
+    "es": "Seguridad de contraseña",
+    "it": "Robustezza password",
+    "ja": "パスワード強度",
+    "pt-BR": "Força da senha",
+    "ko": "비밀번호 강도",
+    "tr": "Parola gücü",
+    "az": "Şifrə gücü"
+  },
+  "Estimate password strength locally and suggest improvements": {
+    "en": "Estimate password strength locally and suggest improvements",
+    "zh-CN": "本地分析弱密码模式并提供改进建议",
+    "zh-TW": "本機工具：密碼強度分析",
+    "es": "Herramienta local: Seguridad de contraseña",
+    "it": "Strumento locale: Robustezza password",
+    "ja": "ローカルツール：パスワード強度",
+    "pt-BR": "Ferramenta local: Força da senha",
+    "ko": "로컬 도구: 비밀번호 강도",
+    "tr": "Yerel araç: Parola gücü",
+    "az": "Yerli alət: Şifrə gücü"
+  },
+  "IBAN validator": {
+    "en": "IBAN validator",
+    "zh-CN": "IBAN 校验",
+    "zh-TW": "IBAN 驗證",
+    "es": "Validador IBAN",
+    "it": "Validatore IBAN",
+    "ja": "IBAN 検証",
+    "pt-BR": "Validador IBAN",
+    "ko": "IBAN 검증",
+    "tr": "IBAN doğrulayıcı",
+    "az": "IBAN yoxlayıcısı"
+  },
+  "Check IBAN country lengths and checksums": {
+    "en": "Check IBAN country lengths and checksums",
+    "zh-CN": "检查国际银行账号的国家长度和校验和",
+    "zh-TW": "本機工具：IBAN 驗證",
+    "es": "Herramienta local: Validador IBAN",
+    "it": "Strumento locale: Validatore IBAN",
+    "ja": "ローカルツール：IBAN 検証",
+    "pt-BR": "Ferramenta local: Validador IBAN",
+    "ko": "로컬 도구: IBAN 검증",
+    "tr": "Yerel araç: IBAN doğrulayıcı",
+    "az": "Yerli alət: IBAN yoxlayıcısı"
+  },
+  "BIP39 mnemonic": {
+    "en": "BIP39 mnemonic",
+    "zh-CN": "BIP39 助记词",
+    "zh-TW": "BIP39 助記詞",
+    "es": "Frase mnemónica BIP39",
+    "it": "Frase mnemonica BIP39",
+    "ja": "BIP39 ニーモニック",
+    "pt-BR": "Frase mnemônica BIP39",
+    "ko": "BIP39 니모닉",
+    "tr": "BIP39 anımsatıcı",
+    "az": "BIP39 yaddaş ifadəsi"
+  },
+  "Generate and validate mnemonics and derive seeds with an optional passphrase": {
+    "en": "Generate and validate mnemonics and derive seeds with an optional passphrase",
+    "zh-CN": "生成、校验助记词并使用可选口令派生种子",
+    "zh-TW": "本機工具：BIP39 助記詞",
+    "es": "Herramienta local: Frase mnemónica BIP39",
+    "it": "Strumento locale: Frase mnemonica BIP39",
+    "ja": "ローカルツール：BIP39 ニーモニック",
+    "pt-BR": "Ferramenta local: Frase mnemônica BIP39",
+    "ko": "로컬 도구: BIP39 니모닉",
+    "tr": "Yerel araç: BIP39 anımsatıcı",
+    "az": "Yerli alət: BIP39 yaddaş ifadəsi"
+  },
+  "Figlet banner": {
+    "en": "Figlet banner",
+    "zh-CN": "Figlet 字符横幅",
+    "zh-TW": "Figlet 字元橫幅",
+    "es": "Banner Figlet",
+    "it": "Banner di testo Figlet",
+    "ja": "Figlet 文字バナー",
+    "pt-BR": "Faixa de texto Figlet",
+    "ko": "Figlet 문자 배너",
+    "tr": "Figlet metin afişi",
+    "az": "Figlet mətn banneri"
+  },
+  "Render ASCII banners with bundled Figlet fonts": {
+    "en": "Render ASCII banners with bundled Figlet fonts",
+    "zh-CN": "使用内置 Figlet 字体生成多行 ASCII 艺术字",
+    "zh-TW": "本機工具：Figlet 字元橫幅",
+    "es": "Herramienta local: Banner Figlet",
+    "it": "Strumento locale: Banner di testo Figlet",
+    "ja": "ローカルツール：Figlet 文字バナー",
+    "pt-BR": "Ferramenta local: Faixa de texto Figlet",
+    "ko": "로컬 도구: Figlet 문자 배너",
+    "tr": "Yerel araç: Figlet metin afişi",
+    "az": "Yerli alət: Figlet mətn banneri"
+  },
+  "Numeronym": {
+    "en": "Numeronym",
+    "zh-CN": "数字缩写",
+    "zh-TW": "數字縮寫",
+    "es": "Abreviatura numérica",
+    "it": "Abbreviazione numerica",
+    "ja": "数字略語",
+    "pt-BR": "Abreviação numérica",
+    "ko": "숫자 약어",
+    "tr": "Sayısal kısaltma",
+    "az": "Rəqəmli ixtisar"
+  },
+  "Abbreviate words into numeronyms such as i18n and a11y": {
+    "en": "Abbreviate words into numeronyms such as i18n and a11y",
+    "zh-CN": "把长单词转换为 i18n、a11y 等数字缩写",
+    "zh-TW": "本機工具：數字縮寫",
+    "es": "Herramienta local: Abreviatura numérica",
+    "it": "Strumento locale: Abbreviazione numerica",
+    "ja": "ローカルツール：数字略語",
+    "pt-BR": "Ferramenta local: Abreviação numérica",
+    "ko": "로컬 도구: 숫자 약어",
+    "tr": "Yerel araç: Sayısal kısaltma",
+    "az": "Yerli alət: Rəqəmli ixtisar"
+  },
+  "English singular and plural": {
+    "en": "English singular and plural",
+    "zh-CN": "英文单复数转换",
+    "zh-TW": "英文單複數轉換",
+    "es": "Singular y plural en inglés",
+    "it": "Singolare e plurale inglese",
+    "ja": "英語の単数形と複数形",
+    "pt-BR": "Singular e plural em inglês",
+    "ko": "영어 단수 및 복수",
+    "tr": "İngilizce tekil ve çoğul",
+    "az": "İngilis dilində tək və cəm"
+  },
+  "Convert English singular and plural nouns including irregular forms": {
+    "en": "Convert English singular and plural nouns including irregular forms",
+    "zh-CN": "双向转换英文名词，支持不规则词和不可数名词",
+    "zh-TW": "本機工具：英文單複數轉換",
+    "es": "Herramienta local: Singular y plural en inglés",
+    "it": "Strumento locale: Singolare e plurale inglese",
+    "ja": "ローカルツール：英語の単数形と複数形",
+    "pt-BR": "Ferramenta local: Singular e plural em inglês",
+    "ko": "로컬 도구: 영어 단수 및 복수",
+    "tr": "Yerel araç: İngilizce tekil ve çoğul",
+    "az": "Yerli alət: İngilis dilində tək və cəm"
+  },
+  "Email normalizer": {
+    "en": "Email normalizer",
+    "zh-CN": "邮箱规范化",
+    "zh-TW": "電子郵件正規化",
+    "es": "Normalizar correos",
+    "it": "Normalizza email",
+    "ja": "メールアドレス正規化",
+    "pt-BR": "Normalizar e-mails",
+    "ko": "이메일 정규화",
+    "tr": "E-posta normalleştirme",
+    "az": "E-poçt normallaşdırma"
+  },
+  "Normalize email addresses with opt-in provider-specific rules": {
+    "en": "Normalize email addresses with opt-in provider-specific rules",
+    "zh-CN": "按选项规范邮箱，服务商规则需主动启用",
+    "zh-TW": "本機工具：電子郵件正規化",
+    "es": "Herramienta local: Normalizar correos",
+    "it": "Strumento locale: Normalizza email",
+    "ja": "ローカルツール：メールアドレス正規化",
+    "pt-BR": "Ferramenta local: Normalizar e-mails",
+    "ko": "로컬 도구: 이메일 정규화",
+    "tr": "Yerel araç: E-posta normalleştirme",
+    "az": "Yerli alət: E-poçt normallaşdırma"
+  },
+  "URL extractor": {
+    "en": "URL extractor",
+    "zh-CN": "URL 提取",
+    "zh-TW": "URL 擷取",
+    "es": "Extraer URL",
+    "it": "Estrai URL",
+    "ja": "URL 抽出",
+    "pt-BR": "Extrair URL",
+    "ko": "URL 추출",
+    "tr": "URL ayıklayıcı",
+    "az": "URL çıxarıcısı"
+  },
+  "Extract URLs, bare domains and mailto links with deduplication and grouping": {
+    "en": "Extract URLs, bare domains and mailto links with deduplication and grouping",
+    "zh-CN": "提取链接、裸域名和 mailto，支持去重与域名分组",
+    "zh-TW": "本機工具：URL 擷取",
+    "es": "Herramienta local: Extraer URL",
+    "it": "Strumento locale: Estrai URL",
+    "ja": "ローカルツール：URL 抽出",
+    "pt-BR": "Ferramenta local: Extrair URL",
+    "ko": "로컬 도구: URL 추출",
+    "tr": "Yerel araç: URL ayıklayıcı",
+    "az": "Yerli alət: URL çıxarıcısı"
+  },
+  "Emoji picker": {
+    "en": "Emoji picker",
+    "zh-CN": "Emoji 选择器",
+    "zh-TW": "Emoji 選擇器",
+    "es": "Selector de emojis",
+    "it": "Selettore emoji",
+    "ja": "絵文字選択",
+    "pt-BR": "Seletor de emojis",
+    "ko": "이모지 선택",
+    "tr": "Emoji seçici",
+    "az": "Emoji seçicisi"
+  },
+  "Browse, search and copy Emoji with skin tone variants": {
+    "en": "Browse, search and copy Emoji with skin tone variants",
+    "zh-CN": "分类浏览、搜索和复制 Emoji 及肤色变体",
+    "zh-TW": "本機工具：Emoji 選擇器",
+    "es": "Herramienta local: Selector de emojis",
+    "it": "Strumento locale: Selettore emoji",
+    "ja": "ローカルツール：絵文字選択",
+    "pt-BR": "Ferramenta local: Seletor de emojis",
+    "ko": "로컬 도구: 이모지 선택",
+    "tr": "Yerel araç: Emoji seçici",
+    "az": "Yerli alət: Emoji seçicisi"
+  },
+  "Color palette": {
+    "en": "Color palette",
+    "zh-CN": "配色方案生成",
+    "zh-TW": "配色方案產生",
+    "es": "Paleta de colores",
+    "it": "Tavolozza colori",
+    "ja": "配色生成",
+    "pt-BR": "Paleta de cores",
+    "ko": "색상 팔레트",
+    "tr": "Renk paleti",
+    "az": "Rəng palitrası"
+  },
+  "Generate color palettes and export CSS or JSON": {
+    "en": "Generate color palettes and export CSS or JSON",
+    "zh-CN": "根据基础色生成配色并导出 CSS 或 JSON",
+    "zh-TW": "本機工具：配色方案產生",
+    "es": "Herramienta local: Paleta de colores",
+    "it": "Strumento locale: Tavolozza colori",
+    "ja": "ローカルツール：配色生成",
+    "pt-BR": "Ferramenta local: Paleta de cores",
+    "ko": "로컬 도구: 색상 팔레트",
+    "tr": "Yerel araç: Renk paleti",
+    "az": "Yerli alət: Rəng palitrası"
+  },
+  "HTML rich text editor": {
+    "en": "HTML rich text editor",
+    "zh-CN": "HTML 富文本编辑器",
+    "zh-TW": "HTML 豐富文字編輯器",
+    "es": "Editor de texto enriquecido HTML",
+    "it": "Editor di testo avanzato HTML",
+    "ja": "HTML リッチテキスト編集",
+    "pt-BR": "Editor de texto rico HTML",
+    "ko": "HTML 서식 있는 텍스트 편집기",
+    "tr": "HTML zengin metin düzenleyici",
+    "az": "HTML zəngin mətn redaktoru"
+  },
+  "Visually edit headings, paragraphs, lists and links and inspect HTML": {
+    "en": "Visually edit headings, paragraphs, lists and links and inspect HTML",
+    "zh-CN": "可视化编辑标题、段落、列表和链接并查看 HTML",
+    "zh-TW": "本機工具：HTML 豐富文字編輯器",
+    "es": "Herramienta local: Editor de texto enriquecido HTML",
+    "it": "Strumento locale: Editor di testo avanzato HTML",
+    "ja": "ローカルツール：HTML リッチテキスト編集",
+    "pt-BR": "Ferramenta local: Editor de texto rico HTML",
+    "ko": "로컬 도구: HTML 서식 있는 텍스트 편집기",
+    "tr": "Yerel araç: HTML zengin metin düzenleyici",
+    "az": "Yerli alət: HTML zəngin mətn redaktoru"
+  },
+  "Lunar and solar calendar": {
+    "en": "Lunar and solar calendar",
+    "zh-CN": "农历阳历转换",
+    "zh-TW": "農曆陽曆轉換",
+    "es": "Calendario lunar y solar",
+    "it": "Calendario lunare e solare",
+    "ja": "旧暦・新暦変換",
+    "pt-BR": "Calendário lunar e solar",
+    "ko": "음력 및 양력 변환",
+    "tr": "Ay ve güneş takvimi",
+    "az": "Ay və günəş təqvimi"
+  },
+  "Convert between Chinese lunar and solar dates including leap months": {
+    "en": "Convert between Chinese lunar and solar dates including leap months",
+    "zh-CN": "双向换算中国农历与公历并校验闰月",
+    "zh-TW": "本機工具：農曆陽曆轉換",
+    "es": "Herramienta local: Calendario lunar y solar",
+    "it": "Strumento locale: Calendario lunare e solare",
+    "ja": "ローカルツール：旧暦・新暦変換",
+    "pt-BR": "Ferramenta local: Calendário lunar e solar",
+    "ko": "로컬 도구: 음력 및 양력 변환",
+    "tr": "Yerel araç: Ay ve güneş takvimi",
+    "az": "Yerli alət: Ay və günəş təqvimi"
+  },
+  "GIF compressor": {
+    "en": "GIF compressor",
+    "zh-CN": "GIF 压缩",
+    "zh-TW": "GIF 壓縮",
+    "es": "Comprimir GIF",
+    "it": "Comprimi GIF",
+    "ja": "GIF 圧縮",
+    "pt-BR": "Comprimir GIF",
+    "ko": "GIF 압축",
+    "tr": "GIF sıkıştırma",
+    "az": "GIF sıxışdırma"
+  },
+  "Optimize GIF colors, dimensions and frame rate and compare file sizes": {
+    "en": "Optimize GIF colors, dimensions and frame rate and compare file sizes",
+    "zh-CN": "调整已有 GIF 的颜色数、尺寸和帧率并比较体积",
+    "zh-TW": "本機工具：GIF 壓縮",
+    "es": "Herramienta local: Comprimir GIF",
+    "it": "Strumento locale: Comprimi GIF",
+    "ja": "ローカルツール：GIF 圧縮",
+    "pt-BR": "Ferramenta local: Comprimir GIF",
+    "ko": "로컬 도구: GIF 압축",
+    "tr": "Yerel araç: GIF sıkıştırma",
+    "az": "Yerli alət: GIF sıxışdırma"
+  },
+  "GIF cropper": {
+    "en": "GIF cropper",
+    "zh-CN": "GIF 裁剪",
+    "zh-TW": "GIF 裁切",
+    "es": "Recortar GIF",
+    "it": "Ritaglia GIF",
+    "ja": "GIF 切り抜き",
+    "pt-BR": "Recortar GIF",
+    "ko": "GIF 자르기",
+    "tr": "GIF kırpma",
+    "az": "GIF kəsmə"
+  },
+  "Crop every frame of an imported GIF to the same rectangle": {
+    "en": "Crop every frame of an imported GIF to the same rectangle",
+    "zh-CN": "对已有 GIF 的全部帧应用相同裁剪区域",
+    "zh-TW": "本機工具：GIF 裁切",
+    "es": "Herramienta local: Recortar GIF",
+    "it": "Strumento locale: Ritaglia GIF",
+    "ja": "ローカルツール：GIF 切り抜き",
+    "pt-BR": "Ferramenta local: Recortar GIF",
+    "ko": "로컬 도구: GIF 자르기",
+    "tr": "Yerel araç: GIF kırpma",
+    "az": "Yerli alət: GIF kəsmə"
+  },
+  "GIF frame editor": {
+    "en": "GIF frame editor",
+    "zh-CN": "GIF 帧编辑",
+    "zh-TW": "GIF 影格編輯",
+    "es": "Editar fotogramas GIF",
+    "it": "Modifica fotogrammi GIF",
+    "ja": "GIF フレーム編集",
+    "pt-BR": "Editar quadros GIF",
+    "ko": "GIF 프레임 편집",
+    "tr": "GIF kare düzenleyici",
+    "az": "GIF kadr redaktoru"
+  },
+  "Extract, delete and reorder GIF frames and edit timing and loops": {
+    "en": "Extract, delete and reorder GIF frames and edit timing and loops",
+    "zh-CN": "提取、删除和重排 GIF 帧并修改时长及循环次数",
+    "zh-TW": "本機工具：GIF 影格編輯",
+    "es": "Herramienta local: Editar fotogramas GIF",
+    "it": "Strumento locale: Modifica fotogrammi GIF",
+    "ja": "ローカルツール：GIF フレーム編集",
+    "pt-BR": "Ferramenta local: Editar quadros GIF",
+    "ko": "로컬 도구: GIF 프레임 편집",
+    "tr": "Yerel araç: GIF kare düzenleyici",
+    "az": "Yerli alət: GIF kadr redaktoru"
+  },
+  "Read text using local voices": {
+    "en": "Read text using local voices",
+    "zh-CN": "使用本地语音朗读文字",
+    "zh-TW": "本機工具：文字朗讀",
+    "es": "Herramienta local: Leer en voz alta",
+    "it": "Strumento locale: Leggi ad alta voce",
+    "ja": "ローカルツール：読み上げ",
+    "pt-BR": "Ferramenta local: Ler em voz alta",
+    "ko": "로컬 도구: 소리 내어 읽기",
+    "tr": "Yerel araç: Sesli oku",
+    "az": "Yerli alət: Ucadan oxu"
+  },
+  "PDF Merge": {
+    "en": "PDF Merge",
+    "zh-CN": "PDF 合并",
+    "zh-TW": "PDF 合併",
+    "es": "Combinar PDF",
+    "it": "Unisci PDF",
+    "ja": "PDF 結合",
+    "pt-BR": "Mesclar PDF",
+    "ko": "PDF 병합",
+    "tr": "PDF birleştirme",
+    "az": "PDF birləşdirmə"
+  },
+  "Merge PDF files in the specified order": {
+    "en": "Merge PDF files in the specified order",
+    "zh-CN": "按指定顺序合并多个 PDF",
+    "zh-TW": "本機工具：PDF 合併",
+    "es": "Herramienta local: Combinar PDF",
+    "it": "Strumento locale: Unisci PDF",
+    "ja": "ローカルツール：PDF 結合",
+    "pt-BR": "Ferramenta local: Mesclar PDF",
+    "ko": "로컬 도구: PDF 병합",
+    "tr": "Yerel araç: PDF birleştirme",
+    "az": "Yerli alət: PDF birləşdirmə"
+  },
+  "PDF Split": {
+    "en": "PDF Split",
+    "zh-CN": "PDF 拆分",
+    "zh-TW": "PDF 分割",
+    "es": "Dividir PDF",
+    "it": "Dividi PDF",
+    "ja": "PDF 分割",
+    "pt-BR": "Dividir PDF",
+    "ko": "PDF 분할",
+    "tr": "PDF bölme",
+    "az": "PDF bölmə"
+  },
+  "Split a PDF into individual pages or page ranges": {
+    "en": "Split a PDF into individual pages or page ranges",
+    "zh-CN": "按单页或多个页码范围拆成文件",
+    "zh-TW": "本機工具：PDF 分割",
+    "es": "Herramienta local: Dividir PDF",
+    "it": "Strumento locale: Dividi PDF",
+    "ja": "ローカルツール：PDF 分割",
+    "pt-BR": "Ferramenta local: Dividir PDF",
+    "ko": "로컬 도구: PDF 분할",
+    "tr": "Yerel araç: PDF bölme",
+    "az": "Yerli alət: PDF bölmə"
+  },
+  "PDF Organize pages": {
+    "en": "PDF Organize pages",
+    "zh-CN": "PDF 页面整理",
+    "zh-TW": "PDF 頁面整理",
+    "es": "Organizar páginas PDF",
+    "it": "Organizza pagine PDF",
+    "ja": "PDF ページ整理",
+    "pt-BR": "Organizar páginas PDF",
+    "ko": "PDF 페이지 정리",
+    "tr": "PDF sayfa düzenleme",
+    "az": "PDF səhifə təşkilatı"
+  },
+  "Reorder PDF pages using draggable thumbnails": {
+    "en": "Reorder PDF pages using draggable thumbnails",
+    "zh-CN": "通过缩略图拖拽调整页面顺序",
+    "zh-TW": "本機工具：PDF 頁面整理",
+    "es": "Herramienta local: Organizar páginas PDF",
+    "it": "Strumento locale: Organizza pagine PDF",
+    "ja": "ローカルツール：PDF ページ整理",
+    "pt-BR": "Ferramenta local: Organizar páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 정리",
+    "tr": "Yerel araç: PDF sayfa düzenleme",
+    "az": "Yerli alət: PDF səhifə təşkilatı"
+  },
+  "PDF Rotate pages": {
+    "en": "PDF Rotate pages",
+    "zh-CN": "PDF 页面旋转",
+    "zh-TW": "PDF 頁面旋轉",
+    "es": "Girar páginas PDF",
+    "it": "Ruota pagine PDF",
+    "ja": "PDF ページ回転",
+    "pt-BR": "Girar páginas PDF",
+    "ko": "PDF 페이지 회전",
+    "tr": "PDF sayfa döndürme",
+    "az": "PDF səhifə döndərmə"
+  },
+  "Rotate all or selected PDF pages": {
+    "en": "Rotate all or selected PDF pages",
+    "zh-CN": "旋转全部或指定 PDF 页面",
+    "zh-TW": "本機工具：PDF 頁面旋轉",
+    "es": "Herramienta local: Girar páginas PDF",
+    "it": "Strumento locale: Ruota pagine PDF",
+    "ja": "ローカルツール：PDF ページ回転",
+    "pt-BR": "Ferramenta local: Girar páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 회전",
+    "tr": "Yerel araç: PDF sayfa döndürme",
+    "az": "Yerli alət: PDF səhifə döndərmə"
+  },
+  "PDF Delete pages": {
+    "en": "PDF Delete pages",
+    "zh-CN": "PDF 删除页面",
+    "zh-TW": "PDF 刪除頁面",
+    "es": "Eliminar páginas PDF",
+    "it": "Elimina pagine PDF",
+    "ja": "PDF ページ削除",
+    "pt-BR": "Excluir páginas PDF",
+    "ko": "PDF 페이지 삭제",
+    "tr": "PDF sayfa silme",
+    "az": "PDF səhifə silmə"
+  },
+  "Remove selected pages or ranges from a PDF": {
+    "en": "Remove selected pages or ranges from a PDF",
+    "zh-CN": "删除指定页码或页码范围",
+    "zh-TW": "本機工具：PDF 刪除頁面",
+    "es": "Herramienta local: Eliminar páginas PDF",
+    "it": "Strumento locale: Elimina pagine PDF",
+    "ja": "ローカルツール：PDF ページ削除",
+    "pt-BR": "Ferramenta local: Excluir páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 삭제",
+    "tr": "Yerel araç: PDF sayfa silme",
+    "az": "Yerli alət: PDF səhifə silmə"
+  },
+  "PDF Extract pages": {
+    "en": "PDF Extract pages",
+    "zh-CN": "PDF 提取页面",
+    "zh-TW": "PDF 擷取頁面",
+    "es": "Extraer páginas PDF",
+    "it": "Estrai pagine PDF",
+    "ja": "PDF ページ抽出",
+    "pt-BR": "Extrair páginas PDF",
+    "ko": "PDF 페이지 추출",
+    "tr": "PDF sayfa ayıklama",
+    "az": "PDF səhifə çıxarma"
+  },
+  "Save selected pages as a new PDF": {
+    "en": "Save selected pages as a new PDF",
+    "zh-CN": "将指定页面另存为一个新 PDF",
+    "zh-TW": "本機工具：PDF 擷取頁面",
+    "es": "Herramienta local: Extraer páginas PDF",
+    "it": "Strumento locale: Estrai pagine PDF",
+    "ja": "ローカルツール：PDF ページ抽出",
+    "pt-BR": "Ferramenta local: Extrair páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 추출",
+    "tr": "Yerel araç: PDF sayfa ayıklama",
+    "az": "Yerli alət: PDF səhifə çıxarma"
+  },
+  "PDF Text watermark": {
+    "en": "PDF Text watermark",
+    "zh-CN": "PDF 文字水印",
+    "zh-TW": "PDF 文字浮水印",
+    "es": "Marca de agua PDF",
+    "it": "Filigrana di testo PDF",
+    "ja": "PDF 文字透かし",
+    "pt-BR": "Marca d’água PDF",
+    "ko": "PDF 텍스트 워터마크",
+    "tr": "PDF metin filigranı",
+    "az": "PDF mətn su nişanı"
+  },
+  "Add text watermarks with position, angle and opacity controls": {
+    "en": "Add text watermarks with position, angle and opacity controls",
+    "zh-CN": "设置文字、位置、角度和透明度并添加水印",
+    "zh-TW": "本機工具：PDF 文字浮水印",
+    "es": "Herramienta local: Marca de agua PDF",
+    "it": "Strumento locale: Filigrana di testo PDF",
+    "ja": "ローカルツール：PDF 文字透かし",
+    "pt-BR": "Ferramenta local: Marca d’água PDF",
+    "ko": "로컬 도구: PDF 텍스트 워터마크",
+    "tr": "Yerel araç: PDF metin filigranı",
+    "az": "Yerli alət: PDF mətn su nişanı"
+  },
+  "PDF Page numbers": {
+    "en": "PDF Page numbers",
+    "zh-CN": "PDF 添加页码",
+    "zh-TW": "PDF 加入頁碼",
+    "es": "Numerar páginas PDF",
+    "it": "Numera pagine PDF",
+    "ja": "PDF ページ番号",
+    "pt-BR": "Numerar páginas PDF",
+    "ko": "PDF 페이지 번호",
+    "tr": "PDF sayfa numaraları",
+    "az": "PDF səhifə nömrələri"
+  },
+  "Add page numbers with custom starting number, position and format": {
+    "en": "Add page numbers with custom starting number, position and format",
+    "zh-CN": "设置起始页码、位置和格式",
+    "zh-TW": "本機工具：PDF 加入頁碼",
+    "es": "Herramienta local: Numerar páginas PDF",
+    "it": "Strumento locale: Numera pagine PDF",
+    "ja": "ローカルツール：PDF ページ番号",
+    "pt-BR": "Ferramenta local: Numerar páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 번호",
+    "tr": "Yerel araç: PDF sayfa numaraları",
+    "az": "Yerli alət: PDF səhifə nömrələri"
+  },
+  "PDF Crop pages": {
+    "en": "PDF Crop pages",
+    "zh-CN": "PDF 页面裁剪",
+    "zh-TW": "PDF 頁面裁切",
+    "es": "Recortar páginas PDF",
+    "it": "Ritaglia pagine PDF",
+    "ja": "PDF ページ切り抜き",
+    "pt-BR": "Recortar páginas PDF",
+    "ko": "PDF 페이지 자르기",
+    "tr": "PDF sayfa kırpma",
+    "az": "PDF səhifə kəsmə"
+  },
+  "Adjust the visible bounds of selected PDF pages": {
+    "en": "Adjust the visible bounds of selected PDF pages",
+    "zh-CN": "调整指定 PDF 页面的可见范围",
+    "zh-TW": "本機工具：PDF 頁面裁切",
+    "es": "Herramienta local: Recortar páginas PDF",
+    "it": "Strumento locale: Ritaglia pagine PDF",
+    "ja": "ローカルツール：PDF ページ切り抜き",
+    "pt-BR": "Ferramenta local: Recortar páginas PDF",
+    "ko": "로컬 도구: PDF 페이지 자르기",
+    "tr": "Yerel araç: PDF sayfa kırpma",
+    "az": "Yerli alət: PDF səhifə kəsmə"
+  },
+  "PDF handwritten and image signatures": {
+    "en": "PDF handwritten and image signatures",
+    "zh-CN": "PDF 手写与图片签名",
+    "zh-TW": "PDF 手寫與圖片簽名",
+    "es": "Firmas manuscritas y de imagen PDF",
+    "it": "Firme manoscritte e immagini PDF",
+    "ja": "PDF 手書き・画像署名",
+    "pt-BR": "Assinaturas manuscritas e de imagem PDF",
+    "ko": "PDF 손글씨 및 이미지 서명",
+    "tr": "PDF el yazısı ve görüntü imzaları",
+    "az": "PDF əl yazısı və şəkil imzaları"
+  },
+  "PDF Visual signature": {
+    "en": "PDF Visual signature",
+    "zh-CN": "PDF 视觉签名",
+    "zh-TW": "PDF 視覺簽名",
+    "es": "Firma visual PDF",
+    "it": "Firma visiva PDF",
+    "ja": "PDF 画像署名",
+    "pt-BR": "Assinatura visual PDF",
+    "ko": "PDF 시각적 서명",
+    "tr": "PDF görsel imza",
+    "az": "PDF vizual imza"
+  },
+  "Place handwritten or image signatures on PDF pages": {
+    "en": "Place handwritten or image signatures on PDF pages",
+    "zh-CN": "添加手写或图片签名并调整位置和尺寸",
+    "zh-TW": "本機工具：PDF 視覺簽名",
+    "es": "Herramienta local: Firma visual PDF",
+    "it": "Strumento locale: Firma visiva PDF",
+    "ja": "ローカルツール：PDF 画像署名",
+    "pt-BR": "Ferramenta local: Assinatura visual PDF",
+    "ko": "로컬 도구: PDF 시각적 서명",
+    "tr": "Yerel araç: PDF görsel imza",
+    "az": "Yerli alət: PDF vizual imza"
+  },
+  "PDF To images": {
+    "en": "PDF To images",
+    "zh-CN": "PDF 转图片",
+    "zh-TW": "PDF 轉圖片",
+    "es": "PDF a imágenes",
+    "it": "PDF in immagini",
+    "ja": "PDF を画像に変換",
+    "pt-BR": "PDF para imagens",
+    "ko": "PDF를 이미지로",
+    "tr": "PDF görüntülere dönüştürme",
+    "az": "PDF-dən şəkillərə"
+  },
+  "Export selected PDF pages as PNG or JPEG images": {
+    "en": "Export selected PDF pages as PNG or JPEG images",
+    "zh-CN": "将选定页面导出为 PNG 或 JPEG",
+    "zh-TW": "本機工具：PDF 轉圖片",
+    "es": "Herramienta local: PDF a imágenes",
+    "it": "Strumento locale: PDF in immagini",
+    "ja": "ローカルツール：PDF を画像に変換",
+    "pt-BR": "Ferramenta local: PDF para imagens",
+    "ko": "로컬 도구: PDF를 이미지로",
+    "tr": "Yerel araç: PDF görüntülere dönüştürme",
+    "az": "Yerli alət: PDF-dən şəkillərə"
+  },
+  "PDF Compress": {
+    "en": "PDF Compress",
+    "zh-CN": "PDF 压缩",
+    "zh-TW": "PDF 壓縮",
+    "es": "Comprimir PDF",
+    "it": "Comprimi PDF",
+    "ja": "PDF 圧縮",
+    "pt-BR": "Comprimir PDF",
+    "ko": "PDF 압축",
+    "tr": "PDF sıkıştırma",
+    "az": "PDF sıxışdırma"
+  },
+  "Optimize PDF resources and compare file sizes": {
+    "en": "Optimize PDF resources and compare file sizes",
+    "zh-CN": "优化资源并显示处理前后的体积变化",
+    "zh-TW": "本機工具：PDF 壓縮",
+    "es": "Herramienta local: Comprimir PDF",
+    "it": "Strumento locale: Comprimi PDF",
+    "ja": "ローカルツール：PDF 圧縮",
+    "pt-BR": "Ferramenta local: Comprimir PDF",
+    "ko": "로컬 도구: PDF 압축",
+    "tr": "Yerel araç: PDF sıkıştırma",
+    "az": "Yerli alət: PDF sıxışdırma"
+  },
+  "PDF Encrypt": {
+    "en": "PDF Encrypt",
+    "zh-CN": "PDF 密码加密",
+    "zh-TW": "PDF 密碼加密",
+    "es": "Cifrar PDF",
+    "it": "Cifra PDF",
+    "ja": "PDF パスワード暗号化",
+    "pt-BR": "Criptografar PDF",
+    "ko": "PDF 암호화",
+    "tr": "PDF şifreleme",
+    "az": "PDF şifrələmə"
+  },
+  "Set an opening password on a new PDF copy": {
+    "en": "Set an opening password on a new PDF copy",
+    "zh-CN": "为新的 PDF 副本设置打开密码",
+    "zh-TW": "本機工具：PDF 密碼加密",
+    "es": "Herramienta local: Cifrar PDF",
+    "it": "Strumento locale: Cifra PDF",
+    "ja": "ローカルツール：PDF パスワード暗号化",
+    "pt-BR": "Ferramenta local: Criptografar PDF",
+    "ko": "로컬 도구: PDF 암호화",
+    "tr": "Yerel araç: PDF şifreleme",
+    "az": "Yerli alət: PDF şifrələmə"
+  },
+  "PDF Decrypt": {
+    "en": "PDF Decrypt",
+    "zh-CN": "PDF 密码解密",
+    "zh-TW": "PDF 密碼解密",
+    "es": "Descifrar PDF",
+    "it": "Decifra PDF",
+    "ja": "PDF パスワード解除",
+    "pt-BR": "Descriptografar PDF",
+    "ko": "PDF 암호 해제",
+    "tr": "PDF şifre çözme",
+    "az": "PDF şifrəsini açma"
+  },
+  "Create an unencrypted PDF copy using a known password": {
+    "en": "Create an unencrypted PDF copy using a known password",
+    "zh-CN": "使用已知密码生成解密副本",
+    "zh-TW": "本機工具：PDF 密碼解密",
+    "es": "Herramienta local: Descifrar PDF",
+    "it": "Strumento locale: Decifra PDF",
+    "ja": "ローカルツール：PDF パスワード解除",
+    "pt-BR": "Ferramenta local: Descriptografar PDF",
+    "ko": "로컬 도구: PDF 암호 해제",
+    "tr": "Yerel araç: PDF şifre çözme",
+    "az": "Yerli alət: PDF şifrəsini açma"
+  },
+  "PDF Check digital signatures": {
+    "en": "PDF Check digital signatures",
+    "zh-CN": "PDF 数字签名检查",
+    "zh-TW": "PDF 數位簽章檢查",
+    "es": "Verificar firmas digitales PDF",
+    "it": "Verifica firme digitali PDF",
+    "ja": "PDF 電子署名検証",
+    "pt-BR": "Verificar assinaturas digitais PDF",
+    "ko": "PDF 디지털 서명 검사",
+    "tr": "PDF dijital imza denetimi",
+    "az": "PDF rəqəmsal imza yoxlaması"
+  },
+  "Report signature integrity, certificate validity and verifiable chain information": {
+    "en": "Report signature integrity, certificate validity and verifiable chain information",
+    "zh-CN": "分别报告内容完整性、证书有效期及可验证的链和信任信息",
+    "zh-TW": "本機工具：PDF 數位簽章檢查",
+    "es": "Herramienta local: Verificar firmas digitales PDF",
+    "it": "Strumento locale: Verifica firme digitali PDF",
+    "ja": "ローカルツール：PDF 電子署名検証",
+    "pt-BR": "Ferramenta local: Verificar assinaturas digitais PDF",
+    "ko": "로컬 도구: PDF 디지털 서명 검사",
+    "tr": "Yerel araç: PDF dijital imza denetimi",
+    "az": "Yerli alət: PDF rəqəmsal imza yoxlaması"
   },
   "Trim": {
     "en": "Trim",
@@ -11249,10 +14420,6 @@
   "Mask sensitive data": {
     "en": "Mask sensitive data",
     "zh-CN": "敏感信息脱敏"
-  },
-  "Numeronym": {
-    "en": "Numeronym",
-    "zh-CN": "数字缩写"
   },
   "English plural": {
     "en": "English plural",
