@@ -163,7 +163,9 @@ test("JSON editor uses one CodeMirror layout for text, highlighting, selection, 
   assert.match(source, /await import\("\.\/lazy\/codemirror\.js"\)/);
   assert.match(source, /loadAssetModule\("codemirror"\)/);
   assert.match(assetModules, /"codemirror"/);
-  assert.match(source, /mode: "application\/json"/);
+  assert.match(source, /mode = "application\/json"/);
+  assert.match(source, /editor = CodeMirror\(hostEl, \{\s+value,\s+mode,/);
+  assert.match(source, /editor\.setOption\("mode", mode\)/);
   assert.match(source, /lineWrapping: true/);
   assert.match(source, /lineNumbers: showLineNumbers/);
   assert.match(source, /foldGutter: true/);

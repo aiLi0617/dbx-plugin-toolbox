@@ -507,8 +507,8 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 auto_lock_from_params(&params)?.unwrap_or(current_auto_lock_minutes);
             let recent_tool_ids = recent_from_params(&params)?.unwrap_or(current_recent);
             let sidebar_collapsed = sidebar_from_params(&params)?.unwrap_or(current_sidebar);
-            let recent_collapsed = recent_collapsed_from_params(&params)?
-                .unwrap_or(current_recent_collapsed);
+            let recent_collapsed =
+                recent_collapsed_from_params(&params)?.unwrap_or(current_recent_collapsed);
             let shortcuts = shortcuts_from_params(&params)?.unwrap_or(current_shortcuts);
             let recent_tool_limit =
                 recent_limit_from_params(&params)?.unwrap_or(current_recent_limit);
@@ -562,14 +562,16 @@ mod tests {
         assert_eq!(recent_limit_from_params(&json!({})).unwrap(), None);
         let old: PrefsFile = serde_json::from_str(r#"{"version":6}"#).unwrap();
         assert_eq!(old.recent_tool_limit, DEFAULT_RECENT_TOOL_LIMIT);
+        assert!(!old.recent_collapsed);
         let directory =
             std::env::temp_dir().join(format!("toolbox-recent-limit-{}", Uuid::new_v4()));
         fs::create_dir_all(&directory).unwrap();
         let path = directory.join("prefs.json");
-        fs::write(&path, serde_json::to_vec(&json!({"version":7,"recentToolLimit":20,"recentToolIds":(0..20).map(|i| format!("tool-{i}")).collect::<Vec<_>>()})).unwrap()).unwrap();
+        fs::write(&path, serde_json::to_vec(&json!({"version":7,"recentToolLimit":20,"recentCollapsed":true,"recentToolIds":(0..20).map(|i| format!("tool-{i}")).collect::<Vec<_>>()})).unwrap()).unwrap();
         let prefs = read_preferences_at(&path).unwrap();
         assert_eq!(prefs.2.len(), 20);
-        assert_eq!(prefs.5, 20);
+        assert!(prefs.4);
+        assert_eq!(prefs.6, 20);
         fs::remove_dir_all(directory).unwrap();
     }
 
@@ -585,6 +587,7 @@ mod tests {
                 default_ids(),
                 DEFAULT_VAULT_AUTO_LOCK_MINUTES,
                 Vec::new(),
+                false,
                 false,
                 default_shortcuts(),
                 DEFAULT_RECENT_TOOL_LIMIT,
@@ -603,6 +606,7 @@ mod tests {
                 30,
                 Vec::new(),
                 false,
+                false,
                 default_shortcuts(),
                 DEFAULT_RECENT_TOOL_LIMIT,
             )
@@ -614,6 +618,7 @@ mod tests {
                 vec!["hash".to_string()],
                 30,
                 Vec::new(),
+                false,
                 false,
                 default_shortcuts(),
                 DEFAULT_RECENT_TOOL_LIMIT,
@@ -660,7 +665,10 @@ mod tests {
 
     #[test]
     fn current_sm4_and_sm2_tool_ids_are_not_collapsed_into_legacy_ids() {
-        assert_eq!(filter_known(vec!["sm4".into(), "sm2".into()]), vec!["sm4", "sm2"]);
+        assert_eq!(
+            filter_known(vec!["sm4".into(), "sm2".into()]),
+            vec!["sm4", "sm2"]
+        );
     }
 
     #[test]

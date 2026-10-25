@@ -25,7 +25,9 @@ fn read_file() -> Result<Map<String, Value>, PluginError> {
 
 fn write_file(values: &Map<String, Value>) -> Result<(), PluginError> {
     let file = path()?;
-    let parent = file.parent().ok_or_else(|| err("Invalid cipher defaults path"))?;
+    let parent = file
+        .parent()
+        .ok_or_else(|| err("Invalid cipher defaults path"))?;
     fs::create_dir_all(parent).map_err(|e| err(e.to_string()))?;
     let temp = file.with_extension("json.tmp");
     let raw = serde_json::to_vec_pretty(values).map_err(|e| err(e.to_string()))?;
@@ -34,7 +36,10 @@ fn write_file(values: &Map<String, Value>) -> Result<(), PluginError> {
 }
 
 fn key(params: &Value) -> Result<String, PluginError> {
-    let kind = params.get("kind").and_then(Value::as_str).ok_or_else(|| bad("kind must be a string"))?;
+    let kind = params
+        .get("kind")
+        .and_then(Value::as_str)
+        .ok_or_else(|| bad("kind must be a string"))?;
     let tool_id = params.get("toolId").and_then(Value::as_str).unwrap_or(kind);
     if kind.len() > 64 || tool_id.len() > 128 || !kind.is_ascii() || !tool_id.is_ascii() {
         return Err(bad("Invalid cipher defaults key"));
@@ -43,14 +48,26 @@ fn key(params: &Value) -> Result<String, PluginError> {
 }
 
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
-    let _guard = LOCK.lock().map_err(|_| err("Cipher defaults lock is poisoned"))?;
+    let _guard = LOCK
+        .lock()
+        .map_err(|_| err("Cipher defaults lock is poisoned"))?;
     let key = key(&params)?;
     let mut values = read_file()?;
     match method {
-        "toolbox/cipher-defaults/get" => Ok(json!({ "options": values.remove(&key).unwrap_or_else(|| json!({})) })),
+        "toolbox/cipher-defaults/get" => {
+            Ok(json!({ "options": values.remove(&key).unwrap_or_else(|| json!({})) }))
+        }
         "toolbox/cipher-defaults/set" => {
-            let options = params.get("options").cloned().ok_or_else(|| bad("options are required"))?;
-            if !options.is_object() || serde_json::to_vec(&options).map_err(|e| err(e.to_string()))?.len() > 16 * 1024 {
+            let options = params
+                .get("options")
+                .cloned()
+                .ok_or_else(|| bad("options are required"))?;
+            if !options.is_object()
+                || serde_json::to_vec(&options)
+                    .map_err(|e| err(e.to_string()))?
+                    .len()
+                    > 16 * 1024
+            {
                 return Err(bad("Invalid cipher defaults options"));
             }
             values.insert(key, options.clone());

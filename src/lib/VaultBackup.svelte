@@ -161,7 +161,7 @@
 
 <style>
   .backup { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-  .vault-required { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--color-warning, #d97706) 35%, var(--color-border)); border-radius: 9px; background: color-mix(in srgb, var(--color-warning, #d97706) 8%, var(--color-card)); }
+  .vault-required { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--color-warning) 35%, var(--color-border)); border-radius: 9px; background: color-mix(in srgb, var(--color-warning) 8%, var(--color-card)); }
   .vault-required strong { font-size: 13px; }
   .vault-required p { margin: 4px 0 0; color: var(--color-muted-foreground); font-size: 12px; line-height: 1.55; }
   .inline-unlock { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
@@ -193,8 +193,8 @@
   .restore-stat { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 10px 11px; border: 1px solid var(--color-border); border-radius: 7px; background: var(--color-background); }
   .restore-stat span { color: var(--color-muted-foreground); font-size: 11px; line-height: 1.35; overflow-wrap: anywhere; }
   .restore-stat strong { color: var(--color-foreground); font-size: 17px; font-variant-numeric: tabular-nums; line-height: 1.2; }
-  .restore-stat--success { border-color: color-mix(in srgb, var(--color-success, #16a34a) 35%, var(--color-border)); }
-  .restore-stat--success strong { color: var(--color-success, #16a34a); }
+  .restore-stat--success { border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border)); }
+  .restore-stat--success strong { color: var(--color-success); }
   .restore-stat--muted strong { color: var(--color-muted-foreground); }
   .feedback { padding: 10px 12px; border-radius: 7px; background: var(--color-muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
   .error { color: var(--color-destructive); }

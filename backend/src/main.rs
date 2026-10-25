@@ -1,5 +1,5 @@
-mod crypto;
 mod cipher_defaults;
+mod crypto;
 mod data_dir;
 mod fsutil;
 mod helpers;
