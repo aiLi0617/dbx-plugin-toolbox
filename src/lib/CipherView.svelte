@@ -8,7 +8,7 @@
   import { INPUT_LIMITS, inputLimitError } from "./inputLimits.js";
   import { keyCtx } from "./keySource.js";
   import { AES_ALGORITHMS, AES_MODES, SM4_MODES } from "./cipherProfile.js";
-  import { readCipherDefaults, saveCipherDefaults, clearCipherDefaults, resolveCipherDefaults } from "./cipherDefaults.js";
+  import { readCipherDefaults, loadCipherDefaults, persistCipherDefaults, clearPersistedCipherDefaults, resolveCipherDefaults } from "./cipherDefaults.js";
   import { parameterSupportLevel } from "./cryptoCapabilities.js";
   import { runAsymmetric, runSymmetricDetailed, runXor, RSA_OAEP_HASHES, RSA_PADDINGS } from "./tools/encode.js";
 
@@ -44,6 +44,7 @@
   let busy = $state(false);
   let configStatus = $state("");
   let configError = $state(false);
+  let configOpen = $state(false);
   const sm4Tool = $derived(kind === "aes" && toolId === "sm4");
   const fixedRsaPadding = $derived(toolId === "rsa-oaep" ? "oaep" : toolId === "rsa-pkcs1" ? "pkcs1" : "");
   const requiredPurpose = $derived(kind === "aes" ? (sm4Tool ? "sm4-cipher" : "aes-cipher") : kind === "rsa" ? (algorithm === "sm2" ? "sm2-encrypt" : "rsa-encrypt") : kind === "xor" ? "debug-xor" : "");
@@ -54,8 +55,15 @@
     const nextToolId = toolId;
     const options = initialOptions;
     untrack(() => {
-      applyConfiguration(resolveCipherDefaults(nextKind, nextToolId, readCipherDefaults(nextKind, nextToolId), options));
+      const localSaved = readCipherDefaults(nextKind, nextToolId);
+      const effective = options?.demo ? options : { ...options, ...localSaved };
+      applyConfiguration(resolveCipherDefaults(nextKind, nextToolId, effective));
       configStatus = "";
+      void loadCipherDefaults(nextKind, nextToolId).then((saved) => {
+        if (kind !== nextKind || toolId !== nextToolId) return;
+        const effectiveSaved = options?.demo ? options : { ...options, ...saved };
+        applyConfiguration(resolveCipherDefaults(nextKind, nextToolId, effectiveSaved));
+      });
     });
   });
 
@@ -67,22 +75,24 @@
     aad = "";
   }
 
-  function saveConfiguration() {
+  async function saveConfiguration() {
     try {
-      saveCipherDefaults(kind, toolId, { op, algorithm, mode, sm4Mode, padding, oaepHash,
+      const persistent = await persistCipherDefaults(kind, toolId, { op, algorithm, mode, sm4Mode, padding, oaepHash,
         outputEncoding, inputHex, source, keyEncoding, payloadFormat, cipherEncoding,
-        parameterEncoding, plainEncoding, aadEncoding });
+        parameterEncoding, plainEncoding, aadEncoding }, true);
       configError = false;
-      configStatus = t("已保存，下次打开此工具时生效。", "Saved for the next time you open this tool.");
+      configStatus = persistent
+        ? t("已保存，下次打开此工具时生效。", "Saved for the next time you open this tool.")
+        : t("已保存到当前会话；浏览器存储不可用。", "Saved for this session; browser storage is unavailable.");
     } catch {
       configError = true;
       configStatus = t("无法保存配置，请检查本地存储是否可用。", "Could not save configuration. Check that local storage is available.");
     }
   }
 
-  function resetConfiguration() {
+  async function resetConfiguration() {
     try {
-      clearCipherDefaults(kind, toolId);
+      await clearPersistedCipherDefaults(kind, toolId);
       applyConfiguration(resolveCipherDefaults(kind, toolId));
       configError = false;
       configStatus = t("已恢复初始配置，并清除已保存的默认配置。", "Restored initial settings and removed saved defaults.");
@@ -141,7 +151,7 @@
     } else if (kind === "rsa" && algorithm === "rsa") {
       level = padding === "pkcs1" ? "compatibility" : parameterSupportLevel("rsa-oaep", "hash", oaepHash) || "";
     }
-    if (level) onSupportLevelChange?.(level);
+    onSupportLevelChange?.(level);
   });
 
   function useXorHexAsInput() {
@@ -218,13 +228,32 @@
 
 <div class="page">
   <div class="config-toolbar">
-    <span class="dbx-hint">{t("默认配置仅保存选项，不保存密钥或输入内容。", "Defaults save options only, without keys or input content.")}</span>
-    <div class="config-actions">
-      <button class="dbx-btn" type="button" onclick={saveConfiguration}>{t("保存为默认配置", "Save as default")}</button>
-      <button class="dbx-btn" type="button" onclick={resetConfiguration}>{t("恢复初始配置", "Restore initial settings")}</button>
+    <div class="config-menu" class:open={configOpen}>
+      <button
+        class="config-trigger"
+        type="button"
+        aria-label={t("选项配置", "Option settings")}
+        aria-expanded={configOpen}
+        aria-haspopup="menu"
+        onclick={() => (configOpen = !configOpen)}
+      >
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
+          <circle cx="16" cy="7" r="2" />
+          <circle cx="8" cy="17" r="2" />
+        </svg>
+      </button>
+      {#if configOpen}
+      <div class="config-popover" role="menu" aria-label={t("选项配置", "Option settings")}>
+        <div class="config-actions">
+          <button class="dbx-btn" role="menuitem" type="button" onclick={saveConfiguration}>{t("保存当前选项配置", "Save current options")}</button>
+          <button class="dbx-btn" role="menuitem" type="button" onclick={resetConfiguration}>{t("恢复初始选项配置", "Restore initial options")}</button>
+        </div>
+        {#if configStatus}<p class:error={configError} class="config-feedback" role="status">{configStatus}</p>{/if}
+      </div>
+      {/if}
     </div>
   </div>
-  {#if configStatus}<p class:error={configError} class="dbx-hint" role="status">{configStatus}</p>{/if}
   <div class="options">
     {#if kind !== "xor"}
       <div class="field">
@@ -478,9 +507,84 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-  .config-toolbar { justify-content: space-between; }
-  .config-toolbar .dbx-hint { margin: 0; }
+  .config-toolbar {
+    position: absolute;
+    z-index: 15;
+    top: 0;
+    right: 0;
+    justify-content: flex-end;
+    min-height: 30px;
+  }
+  .config-menu { position: relative; width: fit-content; max-width: 100%; }
+  .config-trigger {
+    display: inline-grid;
+    place-items: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--dbx-control-border);
+    border-radius: var(--radius-md);
+    background: var(--dbx-control-background);
+    color: var(--dbx-control-foreground);
+    cursor: pointer;
+    font-size: 11px;
+  }
+  .config-trigger:hover,
+  .config-menu.open .config-trigger { background: var(--dbx-hover-background); color: var(--dbx-hover-foreground); }
+  .config-trigger:focus-visible { outline: none; box-shadow: var(--dbx-focus-ring); }
+  .config-popover {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    right: 0;
+    width: min(280px, calc(100vw - 16px));
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 8px;
+    border: 1px solid var(--dbx-control-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-popover, var(--color-background));
+    box-shadow: none;
+  }
+  .config-actions { display: grid; gap: 4px; }
+  .config-actions .dbx-btn {
+    width: 100%;
+    min-height: 30px;
+    padding: 0 9px;
+    justify-content: flex-start;
+    font-size: 11px;
+    text-align: left;
+  }
+  .config-actions .dbx-btn:hover { background: var(--dbx-hover-background); color: var(--dbx-hover-foreground); }
+  .config-actions .dbx-btn:focus-visible { outline: none; box-shadow: var(--dbx-focus-ring); }
+  .config-feedback {
+    margin: 3px 0 0;
+    padding: 5px 7px;
+    border: 1px solid var(--dbx-control-border);
+    border-radius: var(--radius-sm);
+    background: var(--dbx-active-background);
+    color: var(--dbx-selection-foreground);
+    font-size: 11px;
+    line-height: 1.45;
+    white-space: normal;
+  }
+  .config-feedback.error {
+    border-color: var(--color-destructive);
+    background: color-mix(in srgb, var(--color-destructive) 9%, transparent);
+    color: var(--color-destructive);
+  }
+  @media (max-width: 560px) {
+    .config-toolbar { position: static; width: 100%; min-height: 30px; }
+    .config-menu,
+    .config-menu[open] { width: 100%; }
+    .config-trigger { margin-left: auto; }
+    .config-popover { position: static; margin-top: 6px; width: min(280px, 100%); max-width: none; margin-left: auto; }
+    .config-actions { gap: 4px; }
+  }
   .page {
+    position: relative;
     flex: 1;
     min-height: 0;
     overflow-y: auto;

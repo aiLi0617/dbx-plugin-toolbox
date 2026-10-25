@@ -1,4 +1,5 @@
 mod crypto;
+mod cipher_defaults;
 mod data_dir;
 mod fsutil;
 mod helpers;
@@ -47,6 +48,9 @@ impl PluginHandler for Plugin {
         }
         if method.starts_with("toolbox/prefs/") {
             return prefs::handle(method, params);
+        }
+        if method.starts_with("toolbox/cipher-defaults/") {
+            return cipher_defaults::handle(method, params);
         }
         if method.starts_with("toolbox/hash-stream/") {
             let mut sessions = self

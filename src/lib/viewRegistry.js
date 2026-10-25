@@ -59,6 +59,7 @@ export const VIEW_LOADERS = {
   "specialized-crypto": () => import("./SpecializedCryptoView.svelte"),
   kem: () => import("./KemView.svelte"),
   'developer-expansion': () => import('./DeveloperExpansionView.svelte'),
+  'ipv6-ula': () => import('./Ipv6UlaView.svelte'),
   'basic-auth': () => import('./BasicAuthView.svelte'),
   'wifi-qr': () => import('./WifiQrView.svelte'),
   'calculator-suite': () => import('./CalculatorSuiteView.svelte'),
@@ -76,6 +77,10 @@ export const FILL_VIEWS = new Set([
 ]);
 
 // Keep these established utilities free of per-tool workflow and editing guards.
+export function fillsToolPane(tool) {
+  return tool?.id === "yaml-tree" || FILL_VIEWS.has(tool?.view);
+}
+
 export const SIMPLE_TOOL_IDS = new Set(['json','data-convert','spreadsheet','whitespace','regex','base64','image-ocr']);
 
 export const BACKGROUND_TOOL_IDS = new Set(tools.filter(tool => ['pdf-tool', 'gif-editor', 'gif-tools', 'image-ocr'].includes(tool.view)).map(tool => tool.id));
@@ -161,8 +166,8 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   demoPreset: tool.demoPreset,
   actions: Object.freeze([...(tool.actions || [])]),
   ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id) || EPHEMERAL_TOOL_IDS.has(tool.parentId),
-  fill: FILL_VIEWS.has(tool.view),
-  limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || (tool.view==='pdf-tool'?{inputBytes:50_000_000}:tool.view==='gif-editor'?{inputBytes:30_000_000}:tool.view?.includes('expansion')||['basic-auth','wifi-qr','calculator-suite','speech'].includes(tool.view)?{inputBytes:1_000_000}:null),
+  fill: fillsToolPane(tool),
+  limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || (tool.view==='pdf-tool'?{inputBytes:50_000_000}:tool.view==='gif-editor'?{inputBytes:30_000_000}:tool.view?.includes('expansion')||['basic-auth','wifi-qr','calculator-suite','speech','ipv6-ula'].includes(tool.view)?{inputBytes:1_000_000}:null),
   layoutKind: layoutKind(tool),
   executionKind: DEBOUNCED_CRYPTO_IDS.has(tool.id) || DEBOUNCED_CRYPTO_IDS.has(tool.parentId) ? "debounced" : EXPLICIT_IDS.has(tool.id) || EXPLICIT_IDS.has(tool.parentId) ? "explicit" : LIVE_IDS.has(tool.id) ? "live" : "debounced",
 })));

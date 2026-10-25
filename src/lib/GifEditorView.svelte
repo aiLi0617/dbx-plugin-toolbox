@@ -3,8 +3,9 @@
   import { createTaskScope, taskAbortError } from "./taskManager.js";
   import Worker from "./gifEditorWorker.js?worker&inline";
   import { pick, localizeError } from "./i18n.js";
+  import Select from "./Select.svelte";
   import { saveBlobThroughHost } from "./fileSave.js";
-  let { toolId, locale = "zh-CN", onStateChange } = $props();
+  let { toolId, locale = "zh-CN", onStateChange, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   const taskScope = createTaskScope(untrack(() => toolId), "gif");
   let worker, timeout, pending;
@@ -244,12 +245,15 @@
       },
     });
   }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    example();
+  });
 </script>
 
 <div class="expansion-page">
-  <button class="dbx-btn" onclick={example} disabled={busy}
-    >{t("示例", "Example")}</button
-  >
   <label
     >{t("导入 GIF", "Import GIF")}<input
       type="file"
@@ -376,12 +380,7 @@
             }}>{t("删除", "Delete")}</button
           >
         </div>{/each}<label
-        >{t("提取帧", "Extract frame")}<select
-          class="dbx-input"
-          bind:value={selected}
-          >{#each frames as _, i}<option value={i}>{i + 1}</option
-            >{/each}</select
-        ></label
+        >{t("提取帧", "Extract frame")}<Select bind:value={selected} ariaLabel={t("提取帧", "Extract frame")} options={frames.map((_, i) => ({value:i,label:String(i + 1)}))} /></label
       ><button class="dbx-btn" onclick={extract} disabled={busy}
         >{t("导出 PNG", "Export PNG")}</button
       ><canvas bind:this={canvas} hidden></canvas>{/if}

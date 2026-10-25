@@ -2,7 +2,6 @@
   import { onDestroy } from "svelte";
   import { pick, localizeError } from "./i18n.js";
   import { loadAssetModule } from "./assetModules.js";
-  import { numeronym } from "./tools/text.js";
   import {
     normalizeEmailList,
     extractLinks,
@@ -10,7 +9,11 @@
     EMOJI,
   } from "./contentExpansion.js";
   import CopyButton from "./CopyButton.svelte";
-  let { toolId, locale = "zh-CN" } = $props();
+  import NumeronymView from "./NumeronymView.svelte";
+  import Select from "./Select.svelte";
+  import FigletView from "./FigletView.svelte";
+  import EnglishNounsView from "./EnglishNounsView.svelte";
+  let { toolId, locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
     output = $state(""),
@@ -57,8 +60,7 @@
     busy = true;
     try {
       let result;
-      if (toolId === "numeronym") result = numeronym(input);
-      else if (toolId === "email-normalizer")
+      if (toolId === "email-normalizer")
         result = normalizeEmailList(input, { gmail, stripPlus, lowerLocal });
       else if (toolId === "url-extractor")
         result = extractLinks(input, { keepQuery, group });
@@ -97,7 +99,6 @@
     input =
       {
         figlet: "DBX",
-        numeronym: "internationalization accessibility kubernetes",
         "english-plural": "child mouse sheep",
         "email-normalizer": "User@EXAMPLE.COM",
         "url-extractor":
@@ -107,6 +108,12 @@
     output = "";
     error = "";
   }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    example();
+  });
   // Rich text is built from native DOM editing; pasted HTML is always converted to text.
   function paste(event) {
     event.preventDefault();
@@ -144,27 +151,24 @@
   }
 </script>
 
-<div class="expansion-page">
-  {#if toolId === "emoji-picker"}
+{#if toolId === "figlet"}
+  <FigletView {locale} {demoRequest} />
+{:else if toolId === "english-plural"}
+  <EnglishNounsView {locale} {demoRequest} />
+{:else}
+<div class="expansion-page" class:content-workspace={!["numeronym", "emoji-picker", "rich-text", "lunar-calendar"].includes(toolId)} class:numeronym-page={toolId === "numeronym"} class:email-normalizer-page={toolId === "email-normalizer"}>
+  {#if toolId === "numeronym"}
+    <NumeronymView {locale} {demoRequest} />
+  {:else if toolId === "emoji-picker"}
     <label
       >{t("搜索", "Search")}<input
         class="dbx-input"
         bind:value={input}
       /></label
     ><label
-      >{t("类别", "Category")}<select
-        class="dbx-input"
-        bind:value={emojiCategory}
-        >{#each ["all", "faces", "people", "symbols", "nature", "objects", "food"] as cat}<option
-            >{cat}</option
-          >{/each}</select
-      ></label
+      >{t("类别", "Category")}<Select bind:value={emojiCategory} ariaLabel={t("类别", "Category")} options={["all", "faces", "people", "symbols", "nature", "objects", "food"].map((value) => ({value,label:value}))} /></label
     ><label
-      >{t("肤色", "Skin tone")}<select class="dbx-input" bind:value={skin}
-        >{#each ["", "🏻", "🏼", "🏽", "🏾", "🏿"] as tone}<option value={tone}
-            >{tone || t("默认", "Default")}</option
-          >{/each}</select
-      ></label
+      >{t("肤色", "Skin tone")}<Select bind:value={skin} ariaLabel={t("肤色", "Skin tone")} options={["", "🏻", "🏼", "🏽", "🏾", "🏿"].map((value) => ({value,label:value || t("默认", "Default")}))} /></label
     >
     <div class="emoji-grid">
       {#each emoji as [value, name, , supportsSkin]}<button
@@ -225,18 +229,8 @@
           type="color"
           bind:value={color}
         /></label
-      ><select class="dbx-input" bind:value={scheme}
-        >{#each ["complementary", "analogous", "triadic", "tetradic", "monochrome"] as value}<option
-            >{value}</option
-          >{/each}</select
-      >
-    {:else if toolId === "lunar-calendar"}<select
-        class="dbx-input"
-        bind:value={direction}
-        ><option value="solar">{t("阳历转农历", "Solar to lunar")}</option
-        ><option value="lunar">{t("农历转阳历", "Lunar to solar")}</option
-        ></select
-      >
+      ><Select bind:value={scheme} ariaLabel={t("配色方案", "Color scheme")} options={["complementary", "analogous", "triadic", "tetradic", "monochrome"].map((value) => ({value,label:value}))} />
+      {:else if toolId === "lunar-calendar"}<Select bind:value={direction} ariaLabel={t("转换方向", "Direction")} options={[{value:"solar",label:t("阳历转农历", "Solar to lunar")},{value:"lunar",label:t("农历转阳历", "Lunar to solar")}]} />
       <p>1900–2100</p>
       {#if direction === "solar"}<input
           class="dbx-input"
@@ -279,10 +273,7 @@
           maxlength={toolId === "figlet" ? 200 : 100000}
           rows="6"></textarea></label
       >{/if}
-    {#if toolId === "figlet"}<select class="dbx-input" bind:value={font}
-        >{#each ["Standard", "Slant", "Small"] as value}<option>{value}</option
-          >{/each}</select
-      ><label
+    {#if toolId === "figlet"}<Select bind:value={font} ariaLabel={t("字体", "Font")} options={["Standard", "Slant", "Small"].map((value) => ({value,label:value}))} /><label
         >{t("宽度", "Width")}<input
           class="dbx-input"
           type="number"
@@ -290,16 +281,9 @@
           max="200"
           bind:value={width}
         /></label
-      ><select class="dbx-input" bind:value={align}
-        >{#each ["left", "center", "right"] as value}<option>{value}</option
-          >{/each}</select
-      >{/if}
-    {#if toolId === "english-plural"}<select class="dbx-input" bind:value={mode}
-        ><option value="plural">{t("转复数", "Pluralize")}</option><option
-          value="singular">{t("转单数", "Singularize")}</option
-        ></select
-      >{/if}
-    {#if toolId === "email-normalizer"}<label
+      ><Select bind:value={align} ariaLabel={t("对齐", "Alignment")} options={["left", "center", "right"].map((value) => ({value,label:value}))} />{/if}
+    {#if toolId === "english-plural"}<Select bind:value={mode} ariaLabel={t("模式", "Mode")} options={[{value:"plural",label:t("转复数", "Pluralize")},{value:"singular",label:t("转单数", "Singularize")}]} />{/if}
+    {#if toolId === "email-normalizer"}<div class="tool-options email-options" role="group" aria-label="Email normalization options"><label
         ><input type="checkbox" bind:checked={gmail} />{t(
           "启用 Gmail 专属规则",
           "Enable Gmail-specific rules",
@@ -314,7 +298,7 @@
           "用户名转小写（可能改变含义）",
           "Lowercase local part (may change meaning)",
         )}</label
-      >{/if}
+      ></div>{/if}
     {#if toolId === "url-extractor"}<label
         ><input type="checkbox" bind:checked={keepQuery} />{t(
           "保留查询参数",
@@ -330,7 +314,6 @@
       <button class="dbx-btn dbx-btn--primary" onclick={run} disabled={busy}
         >{t("执行", "Run")}</button
       ><CopyButton {locale} text={output} />
-      <button class="dbx-btn" onclick={example}>{t("示例", "Example")}</button>
     </div>
     {#if toolId === "color-palette"}<div class="swatches">
         {#each colors as item}<div
@@ -339,7 +322,7 @@
           ></div>{/each}
       </div>{/if}
     {#if output}<textarea
-        class="dbx-textarea mono"
+        class="dbx-textarea mono result-panel"
         value={output}
         readonly
         rows="12"
@@ -347,6 +330,7 @@
   {/if}
   {#if error}<p role="alert">{error}</p>{/if}
 </div>
+{/if}
 
 <style>
   .emoji-grid {
@@ -371,4 +355,28 @@
   .mono {
     font-family: var(--font-mono);
   }
+  .content-workspace{max-width:1100px}
+  .numeronym-page{max-width:1180px;padding:24px 28px}
+  @media (max-width:600px){.numeronym-page{padding:16px}}
+  @container (min-width: 760px){
+    .content-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);align-content:start}
+    .content-workspace>.expansion-actions,.content-workspace>[role="alert"]{grid-column:1/-1}
+    .content-workspace>.result-panel{grid-column:2;grid-row:1 / span 5;min-height:260px}
+  }
+  .email-normalizer-page{max-width:1180px;padding:22px 28px;gap:16px}
+  .email-normalizer-page>.email-options{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+  .email-options label{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:7px 11px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-card);font-size:12px;cursor:pointer;transition:border-color 120ms ease,background 120ms ease}
+  .email-options label:hover{border-color:var(--color-ring);background:var(--dbx-hover-background);color:var(--dbx-hover-foreground)}
+  .email-options label:has(input:checked){border-color:var(--dbx-selection-border);background:color-mix(in srgb,var(--dbx-selection-background) 10%,var(--color-card))}
+  .email-options label:has(input:disabled){opacity:.55;cursor:not-allowed}
+  .email-options input{margin:0!important;accent-color:var(--color-primary)}
+  .email-normalizer-page .expansion-actions{padding-top:2px}
+  .email-normalizer-page .expansion-actions .dbx-btn{min-width:72px}
+  .email-normalizer-page>.result-panel{min-height:320px;max-height:520px;resize:vertical}
+  @container (min-width:760px){
+    .email-normalizer-page{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.95fr);align-content:start}
+    .email-normalizer-page>.email-options,.email-normalizer-page>.expansion-actions,.email-normalizer-page>[role=alert]{grid-column:1}
+    .email-normalizer-page>.result-panel{grid-column:2;grid-row:1 / span 3;height:100%;min-height:360px}
+  }
+  @container (max-width:759px){.email-normalizer-page>.result-panel{min-height:220px}}
 </style>

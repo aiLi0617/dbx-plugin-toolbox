@@ -30,6 +30,7 @@
     tools = [],
     favorites = [],
     sidebarCollapsed = false,
+    recentCollapsed = false,
     recentToolLimit = DEFAULT_RECENT_TOOL_LIMIT,
     vaultAutoLockMinutes = 15,
     preferencesVersion = null,
@@ -43,6 +44,7 @@
   const initial = untrack(() => ({
     shortcuts: { ...shortcuts },
     sidebarCollapsed,
+    recentCollapsed,
     recentToolLimit,
     vaultAutoLockMinutes,
     favoriteToolIds: [...favorites],
@@ -253,6 +255,7 @@
   }
   function resetInterface() {
     draft.sidebarCollapsed = false;
+    draft.recentCollapsed = false;
     draft.recentToolLimit = DEFAULT_RECENT_TOOL_LIMIT;
   }
   function resetVault() {
@@ -347,6 +350,25 @@
                   : t("已展开", "Expanded")}</button
               >
             </div>
+            <div class="setting-row">
+              <span
+                ><strong>{t("最近使用分组", "Recent tools section")}</strong
+                ><small
+                  >{t(
+                    "控制左侧最近使用列表默认是否折叠。",
+                    "Whether the recent tools list starts collapsed.",
+                  )}</small
+                ></span
+              ><button
+                class="dbx-btn"
+                type="button"
+                aria-pressed={draft.recentCollapsed}
+                onclick={() => (draft.recentCollapsed = !draft.recentCollapsed)}
+                >{draft.recentCollapsed
+                  ? t("已收起", "Collapsed")
+                  : t("已展开", "Expanded")}</button
+              >
+            </div>
             <div class="setting-row readonly">
               <span
                 ><strong>{t("语言", "Language")}</strong><small
@@ -368,7 +390,7 @@
               ><span class="setting-value">{appearance === "dark" ? t("深色", "Dark") : t("浅色", "Light")}</span>
             </div>
             <button
-              class="dbx-btn dbx-btn--ghost"
+              class="dbx-btn dbx-btn--ghost reset-interface"
               type="button"
               onclick={resetInterface}
               >{t("恢复界面默认", "Reset interface")}</button
@@ -424,6 +446,7 @@
             <VaultBackup {locale} bind:dirty={backupDirty} bind:updating={backupBusy} />
           {:else}
             <h3>{t("数据与诊断", "Data & diagnostics")}</h3>
+            <p class="hint data-help">{t("偏好导出只包含界面、快捷键、收藏和锁定时长；密钥与 TOTP 请使用“备份与恢复”中的加密备份。", "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.")}</p>
             <div class="actions">
               <button
                 class="dbx-btn dbx-btn--primary"
@@ -512,7 +535,7 @@
               )}
             </p>
           {/if}
-          {#if notice}<p class="notice" role="status">
+            {#if notice && tab === "data"}<p class="notice" role="status">
               {notice}
             </p>{/if}{#if error}<p class="error" role="alert">{error}</p>{/if}
         </main>
@@ -692,6 +715,14 @@
   .settings-content h3 {
     margin-bottom: 16px;
     font-size: 16px;
+  }
+  .reset-interface {
+    margin-top: 16px;
+  }
+  .data-help {
+    max-width: 620px;
+    margin: -8px 0 16px;
+    line-height: 1.6;
   }
   .setting-row {
     display: flex;

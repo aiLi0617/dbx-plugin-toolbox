@@ -44,12 +44,15 @@ const LEGACY_LOCAL_KEY = "toolbox.enabledToolIds";
 const VAULT_AUTO_LOCK_KEY = "toolbox.vaultAutoLockMinutes";
 const RECENT_KEY = "toolbox.recentToolIds";
 const SIDEBAR_KEY = "toolbox.sidebarCollapsed";
+const RECENT_COLLAPSED_KEY = "toolbox.recentCollapsed";
 const SHORTCUTS_KEY = "toolbox.shortcuts";
 const RECENT_LIMIT_KEY = "toolbox.recentToolLimit";
 export const DEFAULT_VAULT_AUTO_LOCK_MINUTES = 15;
 export const VAULT_AUTO_LOCK_MINUTES = [0, 5, 15, 30, 60];
 export const RECENT_TOOL_LIMITS = [5, 8, 10, 15, 20];
 export const DEFAULT_RECENT_TOOL_LIMIT = 10;
+
+let recentWriteChain = Promise.resolve();
 
 export function sanitizeRecentToolLimit(value) {
   const limit = Number(value);
@@ -176,6 +179,7 @@ export async function setVaultAutoLockMinutes(value) {
 function readLocalWorkspace(defaultCollapsed = false) {
   let recentToolIds = [];
   let sidebarCollapsed = Boolean(defaultCollapsed);
+  let recentCollapsed = false;
   let shortcuts = { ...DEFAULT_SHORTCUTS };
   let recentToolLimit = DEFAULT_RECENT_TOOL_LIMIT;
   try { recentToolIds = sanitize(JSON.parse(localStorage.getItem(RECENT_KEY) || "[]")).slice(0, 20); } catch { /* ignore */ }
@@ -183,15 +187,20 @@ function readLocalWorkspace(defaultCollapsed = false) {
     const saved = localStorage.getItem(SIDEBAR_KEY);
     if (saved != null) sidebarCollapsed = saved === "true";
   } catch { /* ignore */ }
+  try {
+    const saved = localStorage.getItem(RECENT_COLLAPSED_KEY);
+    if (saved != null) recentCollapsed = saved === "true";
+  } catch { /* ignore */ }
   try { shortcuts = sanitizeShortcuts(JSON.parse(localStorage.getItem(SHORTCUTS_KEY) || "{}")); } catch { /* ignore */ }
   try { recentToolLimit = sanitizeRecentToolLimit(localStorage.getItem(RECENT_LIMIT_KEY)); } catch { /* ignore */ }
-  return { recentToolIds, sidebarCollapsed, shortcuts, recentToolLimit };
+  return { recentToolIds, sidebarCollapsed, recentCollapsed, shortcuts, recentToolLimit };
 }
 
-function writeLocalWorkspace({ recentToolIds, sidebarCollapsed, shortcuts, recentToolLimit }) {
+function writeLocalWorkspace({ recentToolIds, sidebarCollapsed, recentCollapsed, shortcuts, recentToolLimit }) {
   try {
     if (recentToolIds) localStorage.setItem(RECENT_KEY, JSON.stringify(recentToolIds));
     if (typeof sidebarCollapsed === "boolean") localStorage.setItem(SIDEBAR_KEY, String(sidebarCollapsed));
+    if (typeof recentCollapsed === "boolean") localStorage.setItem(RECENT_COLLAPSED_KEY, String(recentCollapsed));
     if (shortcuts) localStorage.setItem(SHORTCUTS_KEY, JSON.stringify(sanitizeShortcuts(shortcuts)));
     if (recentToolLimit != null) localStorage.setItem(RECENT_LIMIT_KEY, String(sanitizeRecentToolLimit(recentToolLimit)));
   } catch { /* sandboxed or unavailable storage */ }
@@ -203,12 +212,15 @@ export async function getWorkspacePreferences(defaultCollapsed = false) {
   try {
     const result = await invoke("toolbox/prefs/get");
     const next = {
-      recentToolIds: Array.isArray(result?.recentToolIds)
-        ? (result?.recentToolLimit == null && local.recentToolLimit > 10 ? retainKnownExtras(result.recentToolIds, local.recentToolIds) : sanitize(result.recentToolIds)).slice(0, 20)
+      recentToolIds: Array.isArray(result?.recentToolIds) && (Number(result?.version) >= 7 || result?.recentToolLimit != null || result.recentToolIds.length > 0)
+        ? sanitize(result.recentToolIds).slice(0, 20)
         : local.recentToolIds,
       sidebarCollapsed: typeof result?.sidebarCollapsed === "boolean"
         ? result.sidebarCollapsed
         : local.sidebarCollapsed,
+      recentCollapsed: typeof result?.recentCollapsed === "boolean"
+        ? result.recentCollapsed
+        : local.recentCollapsed,
       shortcuts: result?.shortcuts && typeof result.shortcuts === "object"
         ? sanitizeShortcuts(result.shortcuts)
         : local.shortcuts,
@@ -238,17 +250,22 @@ export async function setRecentToolLimit(value) {
 export async function setRecentToolIds(ids) {
   const recentToolIds = sanitize(ids).slice(0, 20);
   writeLocalWorkspace({ recentToolIds });
-  try {
-    const result = await invoke("toolbox/prefs/set", { recentToolIds });
-    const saved = Array.isArray(result?.recentToolIds)
-      ? (result?.recentToolLimit == null && recentToolIds.length > 10 ? retainKnownExtras(result.recentToolIds, recentToolIds) : sanitize(result.recentToolIds)).slice(0, 20)
-      : recentToolIds;
-    writeLocalWorkspace({ recentToolIds: saved });
-    return saved;
-  } catch (err) {
-    if (window.dbxPlugin?.invoke) throw err;
-    return recentToolIds;
-  }
+  const operation = recentWriteChain.then(async () => {
+    try {
+      const result = await invoke("toolbox/prefs/set", { recentToolIds });
+      const supportsRecentPersistence = Number(result?.version) >= 7 || result?.recentToolLimit != null || (Array.isArray(result?.recentToolIds) && result.recentToolIds.length > 0);
+      const saved = supportsRecentPersistence && Array.isArray(result?.recentToolIds)
+        ? sanitize(result.recentToolIds).slice(0, 20)
+        : recentToolIds;
+      writeLocalWorkspace({ recentToolIds: saved });
+      return saved;
+    } catch (err) {
+      if (window.dbxPlugin?.invoke) throw err;
+      return recentToolIds;
+    }
+  });
+  recentWriteChain = operation.catch(() => {});
+  return operation;
 }
 
 export async function setSidebarCollapsed(value) {
@@ -262,6 +279,20 @@ export async function setSidebarCollapsed(value) {
   } catch (err) {
     if (window.dbxPlugin?.invoke) throw err;
     return sidebarCollapsed;
+  }
+}
+
+export async function setRecentCollapsed(value) {
+  const recentCollapsed = Boolean(value);
+  writeLocalWorkspace({ recentCollapsed });
+  try {
+    const result = await invoke("toolbox/prefs/set", { recentCollapsed });
+    const saved = typeof result?.recentCollapsed === "boolean" ? result.recentCollapsed : recentCollapsed;
+    writeLocalWorkspace({ recentCollapsed: saved });
+    return saved;
+  } catch (err) {
+    if (window.dbxPlugin?.invoke) throw err;
+    return recentCollapsed;
   }
 }
 

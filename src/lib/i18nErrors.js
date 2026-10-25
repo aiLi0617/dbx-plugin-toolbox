@@ -116,6 +116,20 @@ errorGroup(
 );
 
 errorGroup(
+  ["Invalid cipher defaults path", "kind must be a string", "Invalid cipher defaults key", "options are required", "Invalid cipher defaults options", "Cipher defaults lock is poisoned"],
+  "The saved tool options are invalid or cannot be accessed.",
+  "工具选项配置无效或无法访问。",
+  "工具選項設定無效或無法存取。",
+  "Las opciones guardadas no son válidas o no se pueden acceder.",
+  "Le opzioni salvate non sono valide o non sono accessibili.",
+  "保存されたツール設定が無効か、アクセスできません。",
+  "As opções salvas são inválidas ou não podem ser acessadas.",
+  "저장된 도구 옵션이 잘못되었거나 액세스할 수 없습니다.",
+  "Kaydedilen araç seçenekleri geçersiz veya erişilemiyor.",
+  "Saxlanmış alət seçimləri yanlışdır və ya onlara giriş mümkün deyil.",
+);
+
+errorGroup(
   [
     "Unsupported hash algorithm",
     "Unsupported modern cipher algorithm",
@@ -837,6 +851,7 @@ errorGroup(
     "recentToolIds must be an array",
     "recentToolIds must be strings",
     "sidebarCollapsed must be a boolean",
+    "recentCollapsed must be a boolean",
     "Invalid preferences file",
   ],
   "The saved tool or sidebar preferences are invalid. Reload the page and try changing the preference again.",

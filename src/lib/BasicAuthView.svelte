@@ -2,7 +2,7 @@
   import { pick, localizeError } from "./i18n.js";
   import { basicAuth } from "./developerExpansion.js";
   import CopyButton from "./CopyButton.svelte";
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let username = $state(""),
     password = $state(""),
@@ -17,6 +17,18 @@
       error = localizeError(locale, e);
     }
   }
+  function loadDemo() {
+    username = "Aladdin";
+    password = "open sesame";
+    output = "";
+    error = "";
+  }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    loadDemo();
+  });
 </script>
 
 <div class="expansion-page">
@@ -47,15 +59,6 @@
   </p>
   <button class="dbx-btn dbx-btn--primary" onclick={generate}
     >{t("生成认证头", "Generate header")}</button
-  >
-  <button
-    class="dbx-btn"
-    onclick={() => {
-      username = "Aladdin";
-      password = "open sesame";
-      output = "";
-      error = "";
-    }}>{t("示例", "Example")}</button
   >
   {#if error}<p role="alert">{error}</p>{/if}
   {#if output}<textarea class="dbx-textarea" readonly value={output}

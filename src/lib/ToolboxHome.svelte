@@ -1,7 +1,4 @@
 <script>
-  import SearchObjectFilter from "./SearchObjectFilter.svelte";
-  import { matchesObject } from "./searchObjects.js";
-  let searchObject = $state("all");
   import { CATEGORY_ORDER, searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
   import { HOME_INTENT_EXAMPLES, HOME_SEARCH_TEXT } from "./searchIntent.js";
@@ -28,7 +25,7 @@
       .slice(0, 8)
       .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const searchResults = $derived(searchQuery.trim() ? searchToolMatches(searchQuery, locale, visibleTools).filter(match => matchesObject(match.tool, searchObject)).slice(0, 8) : defaultSearchMatches);
+  const searchResults = $derived(searchQuery.trim() ? searchToolMatches(searchQuery, locale, visibleTools).slice(0, 8) : defaultSearchMatches);
 
   $effect(() => { searchQuery; searchSelected = 0; });
 
@@ -164,7 +161,6 @@
           <kbd>Ctrl K</kbd>
         {/if}
       </div>
-      {#if searchQuery.trim()}<SearchObjectFilter {locale} value={searchObject} onChange={value => { searchObject = value; searchActive = true; }}/>{/if}
       {#if searchActive}
         <div class="home-search-results" id="home-search-results" role="listbox" aria-label={t(chrome.searchResultsLabel)}>
           <div class="search-result-label">{searchQuery.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
@@ -184,7 +180,7 @@
               <em>{pick(locale, categories[match.tool.category])}</em>
             </button>
           {:else}
-            <p class="search-empty">{t(chrome.empty)}</p><button type="button" onclick={() => { searchObject = "all"; searchQuery = "JSON → CSV"; }}>{pick(locale, "试试 JSON → CSV", "Try JSON → CSV")}</button>
+            <p class="search-empty">{t(chrome.empty)}</p><button type="button" onclick={() => { searchQuery = "JSON → CSV"; }}>{pick(locale, "试试 JSON → CSV", "Try JSON → CSV")}</button>
           {/each}
         </div>
       {/if}

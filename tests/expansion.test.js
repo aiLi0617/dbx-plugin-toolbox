@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   basicAuth,
   jsonStructureDiff,
+  treeRows,
   yamlDocuments,
   decodeSafeLink,
   toRoman,
@@ -68,12 +69,40 @@ test("JSON diff ignores key order and distinguishes absence from null", () => {
   );
   assert.equal(jsonStructureDiff("[1,2]", "[2,1]").length, 2);
 });
+
+test("YAML tree data preserves documents, paths, empty values and nested containers", () => {
+  const [first, second] = yamlDocuments("name: DBX\nitems:\n  - id: 1\n  - id: 2\nempty: null\n---\nactive: true");
+  const tree = treeRows(first, "document[1]");
+  assert.equal(second.active, true);
+  assert.equal(tree.value, "Object");
+  assert.equal(tree.children.find((node) => node.path === 'document[1]["items"]')?.value, "Array (2)");
+  assert.equal(tree.children.find((node) => node.path === 'document[1]["empty"]')?.value, "null");
+  assert.equal(tree.children.find((node) => node.path === 'document[1]["items"]')?.children[1].children[0].path, 'document[1]["items"][1]["id"]');
+});
+
+test("YAML tree parsing reports source location and remains read-only data", () => {
+  assert.throws(() => yamlDocuments("name: [broken"), (error) => {
+    assert.equal(typeof error.line, "number");
+    assert.equal(typeof error.column, "number");
+    return true;
+  });
+  const tree = treeRows({ value: 1 });
+  assert.deepEqual(Object.keys(tree).sort(), ["children", "path", "value"]);
+});
 test("YAML supports multi-documents, anchors, and bounded aliases", () => {
   assert.deepEqual(yamlDocuments("a: &a [1, 2]\nb: *a\n---\ntrue"), [
     { a: [1, 2], b: [1, 2] },
     true,
   ]);
   assert.throws(() => yamlDocuments("a: [wrong"), error => error.line === 1 && error.column > 0);
+});
+test("YAML tree paths distinguish array indexes from object keys", () => {
+  const tree = treeRows({ list: ["one", { nested: true }], "0": "key" }, "document[1]");
+  const list = tree.children.find((node) => node.path === 'document[1]["list"]');
+  assert.ok(list);
+  assert.equal(list.children[0].path, 'document[1]["list"][0]');
+  assert.equal(list.children[1].children[0].path, 'document[1]["list"][1]["nested"]');
+  assert.ok(tree.children.some((node) => node.path === 'document[1]["0"]'));
 });
 test("SafeLink parsing is host-bound and never follows arbitrary URL parameters", () => {
   assert.equal(

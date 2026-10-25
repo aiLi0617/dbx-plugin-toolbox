@@ -10,6 +10,7 @@
     getVaultAutoLockMinutes,
     setFavoriteToolIds,
     setRecentToolIds,
+    setRecentCollapsed,
     setSettingsPreferences,
     sanitizeRecentToolLimit,
     DEFAULT_RECENT_TOOL_LIMIT,
@@ -17,7 +18,7 @@
   } from "./lib/prefs.js";
   import { moveToolId, navigationTargetFromContext, pushRecent, sanitizeToolIds, toolOptionsForQuery } from "./lib/navigation.js";
   import { createSidebarState } from "./lib/sidebarState.js";
-  import { SIMPLE_TOOL_IDS, BACKGROUND_TOOL_IDS, EPHEMERAL_TOOL_IDS, FILL_VIEWS, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
+  import { SIMPLE_TOOL_IDS, BACKGROUND_TOOL_IDS, EPHEMERAL_TOOL_IDS, fillsToolPane, VIEW_LOADERS, viewPropsForTool } from "./lib/viewRegistry.js";
   import { loadVaultKeys } from "./lib/keySource.js";
   import ToolboxSidebar from "./lib/ToolboxSidebar.svelte";
   import ToolboxHome from "./lib/ToolboxHome.svelte";
@@ -46,6 +47,7 @@
   let toolOptions = $state({});
   let favoriteIds = $state([...DEFAULT_ENABLED_IDS]);
   let recentIds = $state([]);
+  let recentTouched = false;
   let catalogCategory = $state("all");
   let launcherOpen = $state(false);
   let sidebarCollapsed = $state(false);
@@ -55,6 +57,8 @@
   let settingsInitialTab = $state("general");
   let settingsVersion = $state(null);
   let recentToolLimit = $state(DEFAULT_RECENT_TOOL_LIMIT);
+  let recentCollapsed = $state(false);
+  let recentCollapsedTouched = false;
   const sidebarState = createSidebarState();
   let mobileSidebarOpen = $state(false);
   let savingPrefs = $state(false);
@@ -100,7 +104,7 @@
   });
   const sessionTools = $derived(toolsByIds(sessionToolIds));
   const settingsLabel = $derived(pick(locale, chrome.settings));
-  const fillPane = $derived(page === "vault" || (page === "tool" && FILL_VIEWS.has(tool?.view)));
+  const fillPane = $derived(page === "vault" || (page === "tool" && fillsToolPane(tool)));
   const title = $derived.by(() => {
     if (page === "home") return pick(locale, chrome.home);
     if (page === "catalog") return pick(locale, chrome.allTools);
@@ -162,7 +166,13 @@
       favoriteIds = savedFavorites;
       vaultAutoLockMinutes = savedAutoLock;
       recentToolLimit = sanitizeRecentToolLimit(workspacePrefs.recentToolLimit);
-      recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, recentToolLimit);
+      if (recentTouched) {
+        recentIds = sanitizeToolIds([...recentIds, ...workspacePrefs.recentToolIds], recentToolLimit);
+        void setRecentToolIds(recentIds).catch(() => {});
+      } else {
+        recentIds = sanitizeToolIds(workspacePrefs.recentToolIds, recentToolLimit);
+      }
+      if (!recentCollapsedTouched) recentCollapsed = Boolean(workspacePrefs.recentCollapsed);
       sidebarCollapsed = sidebarState.restore(workspacePrefs.sidebarCollapsed);
       preferredSidebarCollapsed = workspacePrefs.sidebarCollapsed;
       shortcuts = workspacePrefs.shortcuts;
@@ -191,8 +201,14 @@
   });
 
   function persistRecent(next) {
+    recentTouched = true;
     recentIds = sanitizeToolIds(next, recentToolLimit);
     void setRecentToolIds(recentIds).catch(() => {});
+  }
+  function toggleRecentCollapsed(next = !recentCollapsed) {
+    recentCollapsedTouched = true;
+    recentCollapsed = Boolean(next);
+    void setRecentCollapsed(recentCollapsed).catch(() => {});
   }
   function setCollapsed(next) {
     sidebarCollapsed = sidebarState.select(next);
@@ -376,6 +392,8 @@
     favoriteIds = saved.favoriteToolIds;
     recentToolLimit = saved.recentToolLimit;
     recentIds = options?.clearRecent ? [] : sanitizeToolIds(recentIds, recentToolLimit);
+    recentCollapsed = saved.recentCollapsed;
+    recentCollapsedTouched = true;
     sidebarCollapsed = sidebarState.select(saved.sidebarCollapsed);
     preferredSidebarCollapsed = saved.sidebarCollapsed;
     vaultAutoLockMinutes = saved.vaultAutoLockMinutes;
@@ -418,9 +436,9 @@
 
 <div class="app" class:sidebar-collapsed={sidebarCollapsed} class:mobile-sidebar-open={mobileSidebarOpen} inert={settingsOpen}>
   {#if mobileSidebarOpen}<button class="sidebar-scrim" type="button" aria-label={pick(locale, chrome.collapseSidebar)} onclick={() => mobileSidebarOpen = false}></button>{/if}
-  <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {vaultUnlocked} searchShortcut={shortcutLabel(shortcuts.search)}
+  <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {recentCollapsed} {vaultUnlocked} searchShortcut={shortcutLabel(shortcuts.search)}
     onHome={openHome} onCatalog={() => openCatalog("all")} onSearch={openLauncher} onTool={openTool} onVault={openVault}
-    onToggleCollapse={() => setCollapsed(!sidebarCollapsed)} onMoveFavorite={moveFavorite} />
+    onToggleCollapse={() => setCollapsed(!sidebarCollapsed)} onToggleRecentCollapsed={toggleRecentCollapsed} onMoveFavorite={moveFavorite} />
   <section class="main">
     <div class="toolbar">
       <button class="dbx-btn dbx-btn--ghost icon-btn mobile-menu" type="button" aria-label={pick(locale, chrome.expandSidebar)} onclick={() => mobileSidebarOpen = !mobileSidebarOpen}>☰</button>
@@ -452,7 +470,7 @@
         {/key}
       {/if}
       {#each sessionTools as item (item.id)}
-        <div class="tool-session" class:fill={FILL_VIEWS.has(item.view)} hidden={page !== "tool" || activeToolId !== item.id}>
+        <div class="tool-session" class:fill={fillsToolPane(item)} hidden={page !== "tool" || activeToolId !== item.id}>
           {#if SIMPLE_TOOL_IDS.has(item.id) || SIMPLE_TOOL_IDS.has(item.parentId)}
             {@render renderTool(item)}
           {:else}
@@ -465,7 +483,7 @@
 </div>
 
 {#if launcherOpen}<ToolLauncher {locale} {tools} favorites={favoriteTools} recents={launcherRecentTools} onClose={() => (launcherOpen = false)} onTool={openTool} />{/if}
-{#if settingsOpen}<SettingsDialog {locale} initialTab={settingsInitialTab} {shortcuts} tools={catalogTools} favorites={favoriteIds} sidebarCollapsed={preferredSidebarCollapsed} {recentToolLimit} {vaultAutoLockMinutes} preferencesVersion={settingsVersion}
+{#if settingsOpen}<SettingsDialog {locale} initialTab={settingsInitialTab} {shortcuts} tools={catalogTools} favorites={favoriteIds} sidebarCollapsed={preferredSidebarCollapsed} {recentCollapsed} {recentToolLimit} {vaultAutoLockMinutes} preferencesVersion={settingsVersion}
   onClose={() => (settingsOpen = false)} onSave={applySettings}
   onOpenVault={() => { settingsOpen = false; openVault(); }} />{/if}
 

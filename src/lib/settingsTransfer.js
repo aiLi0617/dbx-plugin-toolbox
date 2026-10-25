@@ -3,7 +3,7 @@ import { DEFAULT_SHORTCUTS, SHORTCUT_ACTIONS, sanitizeShortcut, shortcutConflict
 
 export const SETTINGS_SCHEMA = "io.github.aili0617.toolbox.preferences";
 export const SETTINGS_EXPORT_VERSION = 1;
-export const SETTINGS_FIELDS = ["shortcuts", "sidebarCollapsed", "recentToolLimit", "vaultAutoLockMinutes", "favoriteToolIds"];
+export const SETTINGS_FIELDS = ["shortcuts", "sidebarCollapsed", "recentCollapsed", "recentToolLimit", "vaultAutoLockMinutes", "favoriteToolIds"];
 export const MAX_SETTINGS_BYTES = 128 * 1024;
 const knownTools = new Set(tools.map((tool) => tool.id));
 const invalid = () => { throw new Error("Invalid preferences file"); };
@@ -14,8 +14,9 @@ function object(value, fields) {
 /** Strict allow-list shared by file import, export and the settings save boundary. */
 export function validateSettings(value) {
   object(value, SETTINGS_FIELDS);
-  if (SETTINGS_FIELDS.some((key) => !Object.hasOwn(value, key))) invalid();
-  if (typeof value.sidebarCollapsed !== "boolean" || ![5, 8, 10, 15, 20].includes(value.recentToolLimit)
+  if (SETTINGS_FIELDS.filter((key) => key !== "recentCollapsed").some((key) => !Object.hasOwn(value, key))) invalid();
+  const recentCollapsed = value.recentCollapsed ?? false;
+  if (typeof value.sidebarCollapsed !== "boolean" || typeof recentCollapsed !== "boolean" || ![5, 8, 10, 15, 20].includes(value.recentToolLimit)
     || ![0, 5, 15, 30, 60].includes(value.vaultAutoLockMinutes)) invalid();
   if (!Array.isArray(value.favoriteToolIds) || value.favoriteToolIds.length > knownTools.size
     || value.favoriteToolIds.some((id) => !knownTools.has(id))
@@ -29,7 +30,7 @@ export function validateSettings(value) {
     shortcuts[action] = sanitizeShortcut(binding);
   }
   if (shortcutConflicts(shortcuts).size) invalid();
-  return { shortcuts, sidebarCollapsed: value.sidebarCollapsed, recentToolLimit: value.recentToolLimit,
+  return { shortcuts, sidebarCollapsed: value.sidebarCollapsed, recentCollapsed, recentToolLimit: value.recentToolLimit,
     vaultAutoLockMinutes: value.vaultAutoLockMinutes, favoriteToolIds: [...value.favoriteToolIds] };
 }
 
@@ -50,6 +51,6 @@ export function exportSettings(value) {
 }
 
 export function defaultSettings() {
-  return { shortcuts: { ...DEFAULT_SHORTCUTS }, sidebarCollapsed: false, recentToolLimit: 10,
+  return { shortcuts: { ...DEFAULT_SHORTCUTS }, sidebarCollapsed: false, recentCollapsed: false, recentToolLimit: 10,
     vaultAutoLockMinutes: 15, favoriteToolIds: [] };
 }

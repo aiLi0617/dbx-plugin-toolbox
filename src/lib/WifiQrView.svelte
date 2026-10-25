@@ -4,7 +4,8 @@
   import { pick, localizeError } from "./i18n.js";
   import { wifiPayload } from "./developerExpansion.js";
   import { saveBlobThroughHost } from "./fileSave.js";
-  let { locale = "zh-CN" } = $props();
+  import Select from "./Select.svelte";
+  let { locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let ssid = $state(""),
     password = $state(""),
@@ -28,6 +29,19 @@
     svg = "";
     png = null;
   }
+  function loadDemo() {
+    clear();
+    ssid = "DBX Guest";
+    password = "public-demo";
+    encryption = "WPA";
+    hidden = false;
+  }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    loadDemo();
+  });
   async function generate() {
     const token = ++revision;
     busy = true;
@@ -86,13 +100,7 @@
     /></label
   >
   <label
-    >{t("加密方式", "Encryption")}<select
-      class="dbx-input"
-      bind:value={encryption}
-      onchange={clear}
-      ><option value="WPA">WPA / WPA2</option><option value="WEP">WEP</option
-      ><option value="nopass">{t("开放网络", "Open network")}</option></select
-    ></label
+    >{t("加密方式", "Encryption")}<Select bind:value={encryption} ariaLabel={t("加密方式", "Encryption")} onchange={clear} options={[{value:"WPA",label:"WPA / WPA2"},{value:"WEP",label:"WEP"},{value:"nopass",label:t("开放网络", "Open network")}]} /></label
   >
   {#if encryption !== "nopass"}<label
       >{t("密码", "Password")}<input
@@ -135,17 +143,6 @@
   >
   <button class="dbx-btn dbx-btn--primary" onclick={generate} disabled={busy}
     >{t("生成二维码", "Generate QR code")}</button
-  >
-  <button
-    class="dbx-btn"
-    disabled={busy}
-    onclick={() => {
-      clear();
-      ssid = "DBX Guest";
-      password = "public-demo";
-      encryption = "WPA";
-      hidden = false;
-    }}>{t("示例", "Example")}</button
   >
   {#if error}<p role="alert">{error}</p>{/if}
   {#if preview}<img

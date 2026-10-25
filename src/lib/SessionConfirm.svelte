@@ -1,6 +1,7 @@
 <script>
   import { onMount, untrack } from 'svelte';
   import { pick } from './i18n.js';
+  import Select from './Select.svelte';
   let { locale = 'zh-CN', request, onAnswer } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let dialog, working = $state(false), error = $state(''), selected = $state(untrack(() => request.ids?.[0] || request.id));
@@ -15,7 +16,7 @@
 <dialog bind:this={dialog} oncancel={(event) => { event.preventDefault(); if (!working) onAnswer({ action: 'cancel' }); }} aria-labelledby="session-confirm-title">
   <h2 id="session-confirm-title">{t('保留当前工作', 'Protect your work')}</h2>
   <p>{request.busy ? t('任务仍在运行。可以保留任务并隐藏页面，或取消任务后关闭。', 'A task is still running. Keep it in the background or cancel it before closing.') : t('此操作会释放或覆盖未保存内容。内容仅在当前工作台会话保留。', 'This action will release or replace unsaved content. Content is kept only in this workbench session.')}</p>
-  {#if request.ids}<label>{t('选择要关闭的页面', 'Choose a page to close')}<select class="dbx-input" bind:value={selected}>{#each request.ids as id}<option value={id}>{request.name(id)}</option>{/each}</select></label>{/if}
+  {#if request.ids}<label>{t('选择要关闭的页面', 'Choose a page to close')}<Select bind:value={selected} ariaLabel={t('选择要关闭的页面', 'Choose a page to close')} options={request.ids.map((id) => ({value:id,label:request.name(id)}))} /></label>{/if}
   {#if error}<p role="alert">{error}</p>{/if}
   <div class="actions">
     <button class="dbx-btn" type="button" disabled={working} onclick={() => onAnswer({ action: 'cancel' })}>{t('取消', 'Cancel')}</button>

@@ -4,7 +4,8 @@
   import { loadAssetModule } from "./assetModules.js";
   import { validateIban } from "./securityExpansion.js";
   import CopyButton from "./CopyButton.svelte";
-  let { toolId, locale = "zh-CN" } = $props();
+  import Select from "./Select.svelte";
+  let { toolId, locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
     auxiliary = $state(""),
@@ -68,20 +69,17 @@
     output = "";
     error = "";
   }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    example();
+  });
 </script>
 
 <div class="expansion-page">
   {#if toolId === "bcrypt" || toolId === "bip39"}<label
-      >{t("模式", "Mode")}<select
-        class="dbx-input"
-        bind:value={mode}
-        onchange={() => (output = "")}
-        ><option value="generate">{t("生成", "Generate")}</option><option
-          value="verify">{t("校验", "Validate")}</option
-        >{#if toolId === "bip39"}<option value="seed"
-            >{t("派生种子", "Derive seed")}</option
-          >{/if}</select
-      ></label
+      >{t("模式", "Mode")}<Select bind:value={mode} ariaLabel={t("模式", "Mode")} onchange={() => (output = "")} options={[{value:"generate",label:t("生成", "Generate")},{value:"verify",label:t("校验", "Validate")},...(toolId === "bip39" ? [{value:"seed",label:t("派生种子", "Derive seed")}] : [])]} /></label
     >{/if}
   <label
     >{toolId === "iban"
@@ -125,13 +123,8 @@
       )}
     </p>
     <label
-      >{t("词表", "Wordlist")}<select class="dbx-input" bind:value={language}
-        ><option value="en">English</option><option value="zh">简体中文</option
-        ></select
-      ></label
-    >{#if mode === "generate"}<select class="dbx-input" bind:value={count}
-        >{#each [12, 15, 18, 21, 24] as n}<option>{n}</option>{/each}</select
-      >{/if}{#if mode === "seed"}<label
+      >{t("词表", "Wordlist")}<Select bind:value={language} ariaLabel={t("词表", "Wordlist")} options={[{value:"en",label:"English"},{value:"zh",label:"简体中文"}]} /></label
+    >{#if mode === "generate"}<Select bind:value={count} ariaLabel={t("单词数量", "Word count")} options={[12,15,18,21,24].map((value) => ({value,label:String(value)}))} />{/if}{#if mode === "seed"}<label
         >{t("可选口令", "Optional passphrase")}<input
           class="dbx-input"
           type="password"
@@ -148,8 +141,6 @@
     </p>{/if}
   <button class="dbx-btn dbx-btn--primary" onclick={run} disabled={busy}
     >{busy ? t("处理中…", "Working…") : t("执行", "Run")}</button
-  ><button class="dbx-btn" onclick={example} disabled={busy}
-    >{t("示例", "Example")}</button
   >{#if error}<p role="alert">{error}</p>{/if}{#if output}<textarea
       class="dbx-textarea"
       readonly

@@ -2,6 +2,7 @@
   import { onDestroy } from "svelte";
   import { pick, localizeError } from "./i18n.js";
   import CopyButton from "./CopyButton.svelte";
+  import Select from "./Select.svelte";
   import {
     number,
     precision,
@@ -15,7 +16,7 @@
     compareBenchmarks,
   } from "./calculators.js";
   import { saveBlobThroughHost } from "./fileSave.js";
-  let { toolId, locale = "zh-CN" } = $props();
+  let { toolId, locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
     a = $state(""),
@@ -163,6 +164,12 @@
     }[toolId] || ["", "", ""];
     [a, b, c] = values;
   }
+  let appliedDemoRequest = 0;
+  $effect(() => {
+    if (!demoRequest || demoRequest === appliedDemoRequest) return;
+    appliedDemoRequest = demoRequest;
+    example();
+  });
   const fieldLabels = {
     percentage: [
       ["X", "X"],
@@ -227,12 +234,9 @@
               : ""}></textarea></label
       >{/if}
     {#if toolId === "business-days"}<label
-        >{t("模式", "Mode")}<select class="dbx-input" bind:value={mode}
-          ><option value="difference"
-            >{t("工作日差", "Working day difference")}</option
-          ><option value="add">{t("增加工作日", "Add working days")}</option
-          ></select
-        ></label
+        >{t("模式", "Mode")}<Select bind:value={mode} ariaLabel={t("模式", "Mode")} options={[
+          {value:"difference",label:t("工作日差", "Working day difference")},{value:"add",label:t("增加工作日", "Add working days")},
+        ]} /></label
       ><label
         >{t("周末（0=周日，6=周六）", "Weekends (0=Sunday, 6=Saturday)")}<input
           class="dbx-input"
@@ -258,37 +262,18 @@
           /></label
         >{/if}{/if}
     {#if toolId === "unit-converter"}<label
-        >{t("类别", "Category")}<select
-          class="dbx-input"
-          bind:value={category}
-          onchange={() => {
+      >{t("类别", "Category")}<Select bind:value={category} ariaLabel={t("类别", "Category")} onchange={() => {
             from = Object.keys(UNITS[category])[0];
             to = Object.keys(UNITS[category])[1];
-          }}
-          >{#each Object.keys(UNITS) as key}<option value={key}>{key}</option
-            >{/each}</select
-        ></label
+          }} options={Object.keys(UNITS).map((value) => ({value,label:value}))} /></label
       ><label
-        >{t("从", "From")}<select class="dbx-input" bind:value={from}
-          >{#each Object.keys(UNITS[category]) as key}<option>{key}</option
-            >{/each}</select
-        ></label
+        >{t("从", "From")}<Select bind:value={from} ariaLabel={t("从", "From")} options={Object.keys(UNITS[category]).map((value) => ({value,label:value}))} /></label
       ><label
-        >{t("到", "To")}<select class="dbx-input" bind:value={to}
-          >{#each Object.keys(UNITS[category]) as key}<option>{key}</option
-            >{/each}</select
-        ></label
+        >{t("到", "To")}<Select bind:value={to} ariaLabel={t("到", "To")} options={Object.keys(UNITS[category]).map((value) => ({value,label:value}))} /></label
       >{/if}
-    {#if toolId === "temperature"}<select class="dbx-input" bind:value={scale}
-        >{#each ["C", "F", "K", "R"] as s}<option>{s}</option>{/each}</select
-      >{/if}
+    {#if toolId === "temperature"}<Select bind:value={scale} ariaLabel={t("温标", "Scale")} options={["C","F","K","R"].map((value) => ({value,label:value}))} />{/if}
     {#if toolId === "compound-interest"}<label
-        >{t("每年计息次数", "Compounding periods per year")}<select
-          class="dbx-input"
-          bind:value={d}
-          >{#each [1, 2, 4, 12, 365] as value}<option>{value}</option
-            >{/each}</select
-        ></label
+        >{t("每年计息次数", "Compounding periods per year")}<Select bind:value={d} ariaLabel={t("每年计息次数", "Compounding periods per year")} options={[1,2,4,12,365].map((value) => ({value,label:String(value)}))} /></label
       ><label
         >{t("每月月底投入", "Monthly contribution at month end")}<input
           class="dbx-input"
@@ -314,7 +299,6 @@
       <button class="dbx-btn dbx-btn--primary" onclick={run}
         >{t("计算", "Calculate")}</button
       ><CopyButton {locale} text={output} />
-      <button class="dbx-btn" onclick={example}>{t("示例", "Example")}</button>
     </div>
     {#if output}<textarea class="dbx-textarea" value={output} readonly rows="12"
       ></textarea>{/if}

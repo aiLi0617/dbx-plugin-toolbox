@@ -360,11 +360,17 @@ const BASE_TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW,
   };
 });
 
+const EXPANSION_DEMO_IDS = new Set([
+  "basic-auth", "json-diff", "yaml-tree", "safelink", "roman", "mac-generator", "ipv4-range",
+  "figlet", "numeronym", "english-plural", "email-normalizer", "url-extractor", "color-palette", "lunar-calendar",
+  "math-expression", "unit-converter", "percentage", "statistics", "business-days", "temperature", "eta", "stopwatch", "benchmark", "compound-interest",
+  "bcrypt", "password-strength", "iban", "bip39", "gif-compress", "gif-crop", "gif-frames", "wifi-qr",
+]);
 const expansionDefs = EXPANSION_TOOLS.map(([id,category,zh,en,view,,summary])=>({
   id,category,name:{...L(en,zh,...EXPANSION_NAMES[id].slice(0,5)),ko:EXPANSION_NAMES[id][5],tr:EXPANSION_NAMES[id][6],az:EXPANSION_NAMES[id][7]},view,
   aliases:[en,zh,...(id==='wifi-qr'?['wifi','wi-fi','无线网络二维码']:id==='figlet'?['figlet','ASCII art']:[])],
   kind:['numeronym','english-plural','email-normalizer','url-extractor'].includes(id)?'shortcut':'tool',parentId:['numeronym','english-plural','email-normalizer','url-extractor'].includes(id)?'whitespace':null,defaultOptions:['numeronym','english-plural','email-normalizer','url-extractor'].includes(id)?{action: {'numeronym':'numeronym','english-plural':'pluralize','email-normalizer':'email-normalize','url-extractor':'extract-url'}[id]}:{},catalogVisible:true,capabilityId:null,supportLevel:null,lockOptions:[],
-  demoPreset:id.startsWith('pdf-')?id:null,actions:id.startsWith('pdf-')?['demo','reset','copy','save','drop']:['reset','copy','save','drop'],
+  demoPreset:(id.startsWith('pdf-') || EXPANSION_DEMO_IDS.has(id))?id:null,actions:(id.startsWith('pdf-') || EXPANSION_DEMO_IDS.has(id))?['demo','reset','copy','save','drop']:['reset','copy','save','drop'],
   summary: {...L(EXPANSION_TOOLS.find(row=>row[0]===id)[5],summary,
     `本機工具：${EXPANSION_NAMES[id][0]}`,
     `Herramienta local: ${EXPANSION_NAMES[id][1]}`,

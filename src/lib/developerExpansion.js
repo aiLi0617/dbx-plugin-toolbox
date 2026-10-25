@@ -64,9 +64,25 @@ export function yamlDocuments(source) {
     return doc.toJS({ maxAliasCount: 100 });
   });
 }
-export function treeRows(value, path = "$", depth = 0) {
+export function formatYaml(source) {
+  const documents = parseAllDocuments(boundedText(source), { keepSourceTokens: true });
+  for (const doc of documents) {
+    if (doc.errors.length) {
+      const error = new Error(doc.errors.map((e) => e.message).join("\n"));
+      const position = doc.errors[0].linePos?.[0];
+      if (position) Object.assign(error, { line: position.line, column: position.col });
+      throw error;
+    }
+  }
+  return documents.map((doc) => doc.toString({ indent: 2 })).join("");
+}
+export function treeRows(value, path = "$", depth = 0, key = null) {
   if (depth > 100) throw new Error("Maximum nesting depth exceeded");
-  return {
+  const childPath = (key) =>
+    Array.isArray(value) && Number.isInteger(Number(key))
+      ? `${path}[${key}]`
+      : `${path}[${JSON.stringify(key)}]`;
+  const row = {
     path,
     value:
       value && typeof value === "object"
@@ -77,10 +93,15 @@ export function treeRows(value, path = "$", depth = 0) {
     children:
       value && typeof value === "object"
         ? Object.entries(value).map(([k, v]) =>
-            treeRows(v, `${path}[${JSON.stringify(k)}]`, depth + 1),
+            treeRows(v, childPath(k), depth + 1, k),
           )
         : [],
   };
+  Object.defineProperties(row, {
+    key: { value: key, enumerable: false },
+    size: { value: value && typeof value === "object" ? Object.keys(value).length : 0, enumerable: false },
+  });
+  return row;
 }
 export function decodeSafeLink(value) {
   let current = new URL(boundedText(value.trim(), 32_768));
@@ -246,13 +267,34 @@ export function wifiPayload(
 }
 
 export const REGEX_REFERENCE = [
+  // The fifth item is the recommended flag set used by the "open in tester" action.
+  ["字面量与转义", "Literals and escaping", "\\.", "a.b a-b"],
+  ["任意字符", "Any character", ".+", "hello\nworld"],
   ["字符类", "Character classes", "[A-Za-z]+", "Hello 123"],
+  ["否定字符类", "Negated character class", "[^\\s]+", "hello world"],
   ["数字", "Digits", "\\d+", "id=42"],
-  ["锚点", "Anchors", "^Hello$", "Hello"],
-  ["量词", "Quantifiers", "a{2,4}", "aaaaa"],
-  ["分组", "Groups", "(?<name>[A-Za-z]+)", "Alice"],
+  ["非数字", "Non-digits", "\\D+", "id=42;"],
+  ["单词字符", "Word characters", "\\w+", "user_name-42"],
+  ["空白字符", "Whitespace", "\\s+", "one   two"],
+  ["单词边界", "Word boundary", "\\bcat\\b", "cat scatter"],
+  ["行首与行尾", "String anchors", "^Hello$", "Hello"],
+  ["多行锚点", "Multiline anchors", "^\\w+", "one\ntwo", "gm"],
+  ["或分支", "Alternation", "cat|dog", "a cat and a dog"],
+  ["可选", "Optional", "colou?r", "color colour"],
+  ["零次或多次", "Zero or more", "ab*", "a ab abb"],
+  ["一次或多次", "One or more", "ab+", "a ab abb"],
+  ["指定次数", "Exact repetition", "\\d{4}", "2026 42"],
+  ["次数范围", "Repetition range", "a{2,4}", "a aaaa aaaaa"],
+  ["分组", "Capturing groups", "(\\w+)@(\\w+\\.\\w+)", "alice@example.com"],
+  ["非捕获组", "Non-capturing groups", "(?:https?|ftp)://", "https://example.com ftp://host"],
+  ["命名捕获组", "Named capture group", "(?<user>[A-Za-z]+)", "Alice 42"],
   ["反向引用", "Backreferences", "(\\w+)\\s+\\1", "hello hello"],
-  ["正向预查", "Lookahead", "\\d+(?=px)", "12px 5em"],
-  ["反向预查", "Lookbehind", "(?<=#)[A-Fa-f0-9]+", "#ff00aa"],
+  ["命名反向引用", "Named backreference", "(?<q>['\"]) .*? \\k<q>", "'quoted' \"text\""],
+  ["正向预查", "Positive lookahead", "\\d+(?=px)", "12px 5em"],
+  ["负向预查", "Negative lookahead", "\\d+(?!px)", "12px 5em"],
+  ["正向后查", "Positive lookbehind", "(?<=#)[A-Fa-f0-9]+", "#ff00aa 123456"],
+  ["负向后查", "Negative lookbehind", "(?<!#)\\b[0-9a-f]{6}\\b", "#ff00aa 123456"],
   ["非贪婪", "Lazy matching", "<.+?>", "<b>text</b>"],
+  ["Unicode 属性类", "Unicode property escapes", "\\p{Script=Han}+", "中文 ABC", "gu"],
+  ["点号匹配换行", "DotAll mode", ".+", "first\nsecond", "gs"],
 ];

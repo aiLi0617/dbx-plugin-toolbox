@@ -41,6 +41,20 @@ test("component theme tokens do not pin DBX colors to hex fallbacks", () => {
   assert.deepEqual(violations, []);
 });
 
+test("all Svelte controls use the themed custom select", () => {
+  const expansionViews = [
+    "ContentExpansionView.svelte", "DeveloperExpansionView.svelte",
+    "CalculatorSuiteView.svelte", "SecurityExpansionView.svelte",
+    "SpeechView.svelte", "WifiQrView.svelte", "GifEditorView.svelte",
+    "PdfToolView.svelte", "NetworkCalcView.svelte", "PortProcessesView.svelte",
+    "SessionConfirm.svelte", "ColorConvertView.svelte",
+  ];
+  const nativeSelects = expansionViews
+    .map((name) => path.join(sourceRoot, "lib", name))
+    .filter((file) => fs.readFileSync(file, "utf8").includes("<select"));
+  assert.deepEqual(nativeSelects, [], nativeSelects.join("\n"));
+});
+
 test("non-semantic shadows do not derive from the theme foreground", () => {
   const violations = [];
 

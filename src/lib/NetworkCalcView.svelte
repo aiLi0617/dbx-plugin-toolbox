@@ -1,5 +1,6 @@
 <script>
   import { localizeError, pick } from "./i18n.js";
+  import Select from "./Select.svelte";
   import { calculateIpv4, calculateIpv6, integerToIpv4, maskToPrefix, previewSubnets, expandIpv4Range, generateIpv6Ula, generateMacAddress, lookupOui } from "./network.js";
 
   let { locale = "zh-CN" } = $props();
@@ -56,7 +57,7 @@
 <div class="page">
   <section class="panel primary">
     <div class="fields">
-      <label class="field family"><span>{t("地址族", "Address family")}</span><select class="dbx-input" value={addressFamily} onchange={(event) => setAddressFamily(event.currentTarget.value)}><option value="ipv4">IPv4</option><option value="ipv6">IPv6</option></select></label>
+      <label class="field family"><span>{t("地址族", "Address family")}</span><Select value={addressFamily} onchange={setAddressFamily} ariaLabel={t("地址族", "Address family")} options={[{value:"ipv4",label:"IPv4"},{value:"ipv6",label:"IPv6"}]} /></label>
       <label class="field grow"><span>{addressFamily === "ipv6" ? t("IPv6 或 CIDR", "IPv6 or CIDR") : t("IPv4 或 CIDR", "IPv4 or CIDR")}</span><input class="dbx-input mono" bind:value={input} placeholder={addressFamily === "ipv6" ? t("例如 2001:db8::1/64", "For example, 2001:db8::1/64") : t("例如 192.168.1.10/24", "For example, 192.168.1.10/24")} /></label>
       <label class="field prefix"><span>{t("默认前缀", "Default prefix")}</span><input class="dbx-input" type="number" min="0" max={addressFamily === "ipv6" ? 128 : 32} bind:value={fallbackPrefix} /></label>
     </div>

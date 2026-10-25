@@ -1,4 +1,5 @@
 import { asymmetricCipherProfile, symmetricCipherProfile } from "./cipherProfile.js";
+import { invoke } from "./host.js";
 
 const choices = {
   op: ["encrypt", "decrypt"],
@@ -18,6 +19,10 @@ const choices = {
   aadEncoding: ["utf8", "hex", "base64"],
 };
 
+// Some embedded hosts expose localStorage but reject writes from a sandboxed
+// frame. Keep a session-scoped fallback so the control remains usable there.
+const memoryDefaults = new Map();
+
 // Only enum settings may be persisted. Keys, messages, IVs, tags and AAD never enter storage.
 export function sanitizeCipherDefaults(value) {
   return Object.fromEntries(Object.entries(choices)
@@ -30,19 +35,64 @@ function storageKey(kind, toolId) {
 }
 
 export function readCipherDefaults(kind, toolId) {
+  const key = storageKey(kind, toolId);
+  if (memoryDefaults.has(key)) return memoryDefaults.get(key);
   try {
-    return sanitizeCipherDefaults(JSON.parse(localStorage.getItem(storageKey(kind, toolId)) || "{}"));
+    return sanitizeCipherDefaults(JSON.parse(globalThis.localStorage?.getItem(key) || "{}"));
   } catch {
     return {};
   }
 }
 
-export function saveCipherDefaults(kind, toolId, options) {
-  localStorage.setItem(storageKey(kind, toolId), JSON.stringify(sanitizeCipherDefaults(options)));
+export function saveCipherDefaults(kind, toolId, options, allowSessionFallback = false) {
+  const key = storageKey(kind, toolId);
+  const clean = sanitizeCipherDefaults(options);
+  try {
+    globalThis.localStorage?.setItem(key, JSON.stringify(clean));
+    memoryDefaults.set(key, clean);
+    return true;
+  } catch (error) {
+    if (!allowSessionFallback) throw error;
+    memoryDefaults.set(key, clean);
+    return false;
+  }
 }
 
-export function clearCipherDefaults(kind, toolId) {
-  localStorage.removeItem(storageKey(kind, toolId));
+export function clearCipherDefaults(kind, toolId, allowSessionFallback = false) {
+  const key = storageKey(kind, toolId);
+  memoryDefaults.delete(key);
+  try { globalThis.localStorage?.removeItem(key); }
+  catch (error) { if (!allowSessionFallback) throw error; }
+}
+
+export async function loadCipherDefaults(kind, toolId) {
+  try {
+    const result = await invoke("toolbox/cipher-defaults/get", { kind, toolId });
+    return sanitizeCipherDefaults(result?.options || {});
+  } catch {
+    return readCipherDefaults(kind, toolId);
+  }
+}
+
+export async function persistCipherDefaults(kind, toolId, options) {
+  const clean = sanitizeCipherDefaults(options);
+  try {
+    await invoke("toolbox/cipher-defaults/set", { kind, toolId, options: clean });
+    return true;
+  } catch {
+    return saveCipherDefaults(kind, toolId, clean, true);
+  }
+}
+
+export async function clearPersistedCipherDefaults(kind, toolId) {
+  try {
+    await invoke("toolbox/cipher-defaults/clear", { kind, toolId });
+    clearCipherDefaults(kind, toolId, true);
+    return true;
+  } catch {
+    clearCipherDefaults(kind, toolId, true);
+    return false;
+  }
 }
 
 export function resolveCipherDefaults(kind, toolId, saved = {}, initial = {}) {

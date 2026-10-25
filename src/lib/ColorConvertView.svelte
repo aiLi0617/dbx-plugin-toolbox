@@ -669,11 +669,11 @@
           </label>
           <label>
             <span>{t("单位", "Unit")}</span>
-            <select class="dbx-input" bind:value={fontUnit}><option value="px">px</option><option value="pt">pt</option><option value="rem">rem</option></select>
+            <Select class="font-unit-select" bind:value={fontUnit} ariaLabel={t("字体单位", "Font unit")} options={["px","pt","rem"].map((value) => ({value,label:value}))} />
           </label>
           <label>
             <span>{t("字重", "Weight")}</span>
-            <select class="dbx-input" bind:value={fontWeight}><option value="400">400</option><option value="500">500</option><option value="600">600</option><option value="700">700</option><option value="800">800</option><option value="900">900</option></select>
+            <Select class="font-weight-select" bind:value={fontWeight} ariaLabel={t("字体粗细", "Font weight")} options={["400","500","600","700","800","900"].map((value) => ({value,label:value}))} />
           </label>
           <div class="type-classification">
             <span>{t("自动分类", "Classification")}</span>

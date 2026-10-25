@@ -575,7 +575,7 @@
 <style>
   .totp-page { width:100%; max-width:1200px; display:flex; flex-direction:column; gap:16px; container-type:inline-size; }
   .workspace { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; }
-  .accounts-panel,.input-panel,.management-panel { min-width:0; border:1px solid var(--color-border); border-radius:10px; background:var(--color-card,var(--color-background)); }
+  .accounts-panel,.input-panel { min-width:0; border:1px solid var(--color-border); border-radius:10px; background:var(--color-card,var(--color-background)); }
   .accounts-panel { display:flex; flex-direction:column; overflow:hidden; }
   .panel-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:34px; }
   .heading-title { flex:1; display:flex; gap:8px; align-items:center; min-width:0; }
@@ -660,8 +660,6 @@
   .window-heading { display:flex; justify-content:space-between; gap:6px; font-size:11px; margin-bottom:8px; }
   .window-heading small { font-size:10px; }
   .adjacent-panel p { font-size:11px; line-height:1.6; }
-  .management-panel { padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
-  .management-panel form { display:flex; flex-direction:column; gap:14px; }
   .migration-dialog,.account-dialog { width:min(420px,calc(100% - 32px)); max-height:calc(100% - 32px); padding:24px; box-sizing:border-box; border:1px solid var(--color-border); border-radius:14px; color:var(--color-foreground); background:var(--color-background); box-shadow:0 20px 70px #0003; }
   .migration-dialog::backdrop,.account-dialog::backdrop { background:#0005; }
   .account-dialog { width:min(460px,calc(100% - 32px)); }
@@ -671,11 +669,8 @@
   .account-form .inline-error { padding:0; }
   .field-limit { margin-top:-10px; text-align:right; font-size:11px; color:var(--color-muted-foreground); }
   .migration-form { display:flex; flex-direction:column; gap:16px; }
-  .dialog-icon { display:grid; place-items:center; width:42px; height:42px; border-radius:12px; color:var(--color-primary); background:color-mix(in srgb,var(--color-primary) 9%,var(--color-background)); }
   .migration-form h2 { margin:0; font-size:17px; font-weight:600; }
   .migration-form p { margin:0; font-size:12px; line-height:1.8; color:var(--color-muted-foreground); }
-  .migration-form .password-hint { margin-top:-8px; font-size:11px; }
-  .migration-form .inline-error { padding:0; color:var(--color-destructive); }
   .migration-form .form-actions { margin-top:4px; }
   .loading-note { padding:32px 20px; text-align:center; color:var(--color-muted-foreground); font-size:12px; }
   .edit-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }

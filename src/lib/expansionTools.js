@@ -77,7 +77,7 @@ export const EXPANSION_TOOLS = [
     "network",
     "IPv6 ULA 生成",
     "IPv6 ULA generator",
-    "developer-expansion",
+    "ipv6-ula",
     "Generate private IPv6 prefixes",
     "生成私有 IPv6 ULA 前缀",
   ],

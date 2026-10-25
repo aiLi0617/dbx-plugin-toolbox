@@ -161,10 +161,6 @@
     "en": "Generate header",
     "zh-CN": "生成认证头"
   },
-  "Example": {
-    "en": "Example",
-    "zh-CN": "示例"
-  },
   "Pause": {
     "en": "Pause",
     "zh-CN": "暂停"
@@ -248,6 +244,10 @@
     "it": "A",
     "ja": "へ",
     "pt-BR": "Para"
+  },
+  "Scale": {
+    "en": "Scale",
+    "zh-CN": "温标"
   },
   "Compounding periods per year": {
     "en": "Compounding periods per year",
@@ -959,17 +959,17 @@
     "en": "Enter up to 3 octal umask digits, optionally prefixed with 0",
     "zh-CN": "请输入最多 3 位八进制 umask（可带前导 0）"
   },
-  "Defaults save options only, without keys or input content.": {
-    "en": "Defaults save options only, without keys or input content.",
-    "zh-CN": "默认配置仅保存选项，不保存密钥或输入内容。"
+  "Option settings": {
+    "en": "Option settings",
+    "zh-CN": "选项配置"
   },
-  "Save as default": {
-    "en": "Save as default",
-    "zh-CN": "保存为默认配置"
+  "Save current options": {
+    "en": "Save current options",
+    "zh-CN": "保存当前选项配置"
   },
-  "Restore initial settings": {
-    "en": "Restore initial settings",
-    "zh-CN": "恢复初始配置"
+  "Restore initial options": {
+    "en": "Restore initial options",
+    "zh-CN": "恢复初始选项配置"
   },
   "Operation": {
     "en": "Operation",
@@ -1157,6 +1157,10 @@
   "Saved for the next time you open this tool.": {
     "en": "Saved for the next time you open this tool.",
     "zh-CN": "已保存，下次打开此工具时生效。"
+  },
+  "Saved for this session; browser storage is unavailable.": {
+    "en": "Saved for this session; browser storage is unavailable.",
+    "zh-CN": "已保存到当前会话；浏览器存储不可用。"
   },
   "Could not save configuration. Check that local storage is available.": {
     "en": "Could not save configuration. Check that local storage is available.",
@@ -1356,9 +1360,17 @@
     "en": "Unit",
     "zh-CN": "单位"
   },
+  "Font unit": {
+    "en": "Font unit",
+    "zh-CN": "字体单位"
+  },
   "Weight": {
     "en": "Weight",
     "zh-CN": "字重"
+  },
+  "Font weight": {
+    "en": "Font weight",
+    "zh-CN": "字体粗细"
   },
   "Classification": {
     "en": "Classification",
@@ -1556,6 +1568,19 @@
     "en": "Base color",
     "zh-CN": "基础色"
   },
+  "Color scheme": {
+    "en": "Color scheme",
+    "zh-CN": "配色方案"
+  },
+  "Direction": {
+    "en": "Direction",
+    "zh-CN": "方向",
+    "zh-TW": "方向",
+    "es": "Dirección",
+    "it": "Direzione",
+    "ja": "方向",
+    "pt-BR": "Direção"
+  },
   "Solar to lunar": {
     "en": "Solar to lunar",
     "zh-CN": "阳历转农历"
@@ -1580,9 +1605,17 @@
     "en": "Leap month",
     "zh-CN": "闰月"
   },
+  "Font": {
+    "en": "Font",
+    "zh-CN": "字体"
+  },
   "Width": {
     "en": "Width",
     "zh-CN": "全半角"
+  },
+  "Alignment": {
+    "en": "Alignment",
+    "zh-CN": "对齐"
   },
   "Pluralize": {
     "en": "Pluralize",
@@ -2059,6 +2092,10 @@
     "en": "Output format",
     "zh-CN": "输出格式"
   },
+  "Format notes": {
+    "en": "Format notes",
+    "zh-CN": "格式说明"
+  },
   "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.": {
     "en": "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.",
     "zh-CN": "CSV/TSV 按首行作为列名，值按文本读取；NDJSON 每行是一个 JSON 值。CSV/TSV 嵌套值输出为 JSON 文本；XML 使用 @_ 属性，多个顶层字段包在 root 中，数组包在 root/item 中。跨格式不保证保留注释。"
@@ -2179,9 +2216,66 @@
     "en": "Save failed",
     "zh-CN": "保存失败"
   },
-  "Open in regex tester": {
-    "en": "Open in regex tester",
-    "zh-CN": "在正则测试中打开"
+  "DEVELOPER REFERENCE": {
+    "en": "DEVELOPER REFERENCE",
+    "zh-CN": "DEVELOPER REFERENCE"
+  },
+  "Regex reference": {
+    "en": "Regex reference",
+    "zh-CN": "正则语法速查",
+    "zh-TW": "正規表示式速查",
+    "es": "Referencia de expresiones regulares",
+    "it": "Guida espressioni regolari",
+    "ja": "正規表現リファレンス",
+    "pt-BR": "Referência de expressões regulares",
+    "ko": "정규식 참조",
+    "tr": "Düzenli ifade başvurusu",
+    "az": "Müntəzəm ifadələr bələdçisi"
+  },
+  "Find syntax by use case, copy it, and verify it in the tester.": {
+    "en": "Find syntax by use case, copy it, and verify it in the tester.",
+    "zh-CN": "按场景快速查找语法，复制后即可在测试器中验证。"
+  },
+  "rules": {
+    "en": "rules",
+    "zh-CN": "条规则"
+  },
+  "Search regex syntax": {
+    "en": "Search regex syntax",
+    "zh-CN": "搜索正则语法"
+  },
+  "Search name, syntax, or example…": {
+    "en": "Search name, syntax, or example…",
+    "zh-CN": "搜索名称、语法或示例…"
+  },
+  "Clear search": {
+    "en": "Clear search",
+    "zh-CN": "清空搜索",
+    "zh-TW": "清空搜尋",
+    "es": "Borrar búsqueda",
+    "it": "Cancella ricerca",
+    "ja": "検索をクリア",
+    "pt-BR": "Limpar pesquisa"
+  },
+  "Categories": {
+    "en": "Categories",
+    "zh-CN": "分类"
+  },
+  "Example": {
+    "en": "Example",
+    "zh-CN": "示例"
+  },
+  "Open tester": {
+    "en": "Open tester",
+    "zh-CN": "打开测试器"
+  },
+  "No matching syntax": {
+    "en": "No matching syntax",
+    "zh-CN": "没有找到匹配的语法"
+  },
+  "Try another keyword or clear the filters.": {
+    "en": "Try another keyword or clear the filters.",
+    "zh-CN": "换个关键词或清除筛选试试。"
   },
   "Summarize CIDRs": {
     "en": "Summarize CIDRs",
@@ -2206,6 +2300,19 @@
   "Count": {
     "en": "Count",
     "zh-CN": "数量"
+  },
+  "Separator": {
+    "en": "Separator",
+    "zh-CN": "分隔符"
+  },
+  "Difference": {
+    "en": "Difference",
+    "zh-CN": "时间差",
+    "zh-TW": "時間差",
+    "es": "Diferencia",
+    "it": "Differenza",
+    "ja": "時間差",
+    "pt-BR": "Diferença"
   },
   "Informational": {
     "en": "Informational",
@@ -2273,11 +2380,11 @@
   },
   "Left": {
     "en": "Left",
-    "zh-CN": "左侧"
+    "zh-CN": "左对齐"
   },
   "Right": {
     "en": "Right",
-    "zh-CN": "右侧"
+    "zh-CN": "右对齐"
   },
   "Working…": {
     "en": "Working…",
@@ -2372,14 +2479,93 @@
     "en": "Right input",
     "zh-CN": "右侧输入"
   },
-  "Direction": {
-    "en": "Direction",
-    "zh-CN": "方向",
-    "zh-TW": "方向",
-    "es": "Dirección",
-    "it": "Direzione",
-    "ja": "方向",
-    "pt-BR": "Direção"
+  "English singular and plural": {
+    "en": "English singular and plural",
+    "zh-CN": "英文单复数转换",
+    "zh-TW": "英文單複數轉換",
+    "es": "Singular y plural en inglés",
+    "it": "Singolare e plurale inglese",
+    "ja": "英語の単数形と複数形",
+    "pt-BR": "Singular e plural em inglês",
+    "ko": "영어 단수 및 복수",
+    "tr": "İngilizce tekil ve çoğul",
+    "az": "İngilis dilində tək və cəm"
+  },
+  "Convert English nouns in bulk, including irregular and uncountable nouns.": {
+    "en": "Convert English nouns in bulk, including irregular and uncountable nouns.",
+    "zh-CN": "批量转换英文名词，支持不规则变化与不可数名词。"
+  },
+  "Auto convert": {
+    "en": "Auto convert",
+    "zh-CN": "自动转换"
+  },
+  "Singular → Plural": {
+    "en": "Singular → Plural",
+    "zh-CN": "单数 → 复数"
+  },
+  "Plural → Singular": {
+    "en": "Plural → Singular",
+    "zh-CN": "复数 → 单数"
+  },
+  "Use example": {
+    "en": "Use example",
+    "zh-CN": "使用示例"
+  },
+  "Separate with spaces, commas or line breaks": {
+    "en": "Separate with spaces, commas or line breaks",
+    "zh-CN": "支持空格、逗号或换行分隔"
+  },
+  "words": {
+    "en": "words",
+    "zh-CN": "词"
+  },
+  "Plural result": {
+    "en": "Plural result",
+    "zh-CN": "复数结果"
+  },
+  "Singular result": {
+    "en": "Singular result",
+    "zh-CN": "单数结果"
+  },
+  "Copy result": {
+    "en": "Copy result",
+    "zh-CN": "复制结果"
+  },
+  "Conversion failed": {
+    "en": "Conversion failed",
+    "zh-CN": "转换失败"
+  },
+  "Your result appears here": {
+    "en": "Your result appears here",
+    "zh-CN": "转换结果将在这里显示"
+  },
+  "Enter text or use an example to convert automatically.": {
+    "en": "Enter text or use an example to convert automatically.",
+    "zh-CN": "输入内容或填入示例，即可自动转换。"
+  },
+  "words changed": {
+    "en": "words changed",
+    "zh-CN": "个单词已变化"
+  },
+  "Waiting for input": {
+    "en": "Waiting for input",
+    "zh-CN": "等待输入"
+  },
+  "Reverse conversion": {
+    "en": "Reverse conversion",
+    "zh-CN": "反向转换"
+  },
+  "Conversion preview": {
+    "en": "Conversion preview",
+    "zh-CN": "转换预览"
+  },
+  "Unchanged": {
+    "en": "Unchanged",
+    "zh-CN": "未变化"
+  },
+  "Preserves capitalization, punctuation and line breaks. Processes words individually without sentence grammar analysis; noun lists work best.": {
+    "en": "Preserves capitalization, punctuation and line breaks. Processes words individually without sentence grammar analysis; noun lists work best.",
+    "zh-CN": "保留原有大小写、标点和换行。逐词处理，不进行句子语法分析；建议输入名词列表。"
   },
   "Escaped text": {
     "en": "Escaped text",
@@ -2424,6 +2610,86 @@
   "NATO phonetic": {
     "en": "NATO phonetic",
     "zh-CN": "NATO 拼读"
+  },
+  "Figlet banner": {
+    "en": "Figlet banner",
+    "zh-CN": "Figlet 字符横幅",
+    "zh-TW": "Figlet 字元橫幅",
+    "es": "Banner Figlet",
+    "it": "Banner di testo Figlet",
+    "ja": "Figlet 文字バナー",
+    "pt-BR": "Faixa de texto Figlet",
+    "ko": "Figlet 문자 배너",
+    "tr": "Figlet metin afişi",
+    "az": "Figlet mətn banneri"
+  },
+  "Turn text into ASCII art for terminals, comments and README files.": {
+    "en": "Turn text into ASCII art for terminals, comments and README files.",
+    "zh-CN": "将文字转换为 ASCII 艺术字，适用于终端、注释与 README。"
+  },
+  "Input text": {
+    "en": "Input text",
+    "zh-CN": "输入文字"
+  },
+  "Use letters, numbers, ASCII symbols and line breaks, up to 200 characters.": {
+    "en": "Use letters, numbers, ASCII symbols and line breaks, up to 200 characters.",
+    "zh-CN": "支持英文字母、数字、半角符号与换行，最多 200 个字符。"
+  },
+  "Standard · Classic": {
+    "en": "Standard · Classic",
+    "zh-CN": "Standard · 经典"
+  },
+  "Slant · Slanted": {
+    "en": "Slant · Slanted",
+    "zh-CN": "Slant · 斜体"
+  },
+  "Small · Compact": {
+    "en": "Small · Compact",
+    "zh-CN": "Small · 紧凑"
+  },
+  "Banner width": {
+    "en": "Banner width",
+    "zh-CN": "横幅宽度"
+  },
+  "Measured in character columns. Longer text wraps to fit.": {
+    "en": "Measured in character columns. Longer text wraps to fit.",
+    "zh-CN": "以字符列计，较长文字将按宽度换行。"
+  },
+  "Center": {
+    "en": "Center",
+    "zh-CN": "居中"
+  },
+  "Updates automatically": {
+    "en": "Updates automatically",
+    "zh-CN": "修改后自动生成"
+  },
+  "Banner preview": {
+    "en": "Banner preview",
+    "zh-CN": "横幅预览"
+  },
+  "Generating…": {
+    "en": "Generating…",
+    "zh-CN": "生成中…"
+  },
+  "Check your text or settings": {
+    "en": "Check your text or settings",
+    "zh-CN": "请调整输入或参数"
+  },
+  "Give your text character": {
+    "en": "Give your text character",
+    "zh-CN": "让文字更有表现力"
+  },
+  "Enter text in the input panel to preview your ASCII banner here.": {
+    "en": "Enter text in the input panel to preview your ASCII banner here.",
+    "zh-CN": "在左侧输入文字，即可在这里预览字符横幅。"
+  },
+  "Try an example": {
+    "en": "Try an example",
+    "zh-CN": "试试示例"
+  },
+  "Monospace · Preserves spaces and line breaks": {
+    "en": "Monospace · Preserves spaces and line breaks",
+    "zh-CN": "等宽显示 · 保留空格与换行"
   },
   "Identifying…": {
     "en": "Identifying…",
@@ -2785,15 +3051,6 @@
   "Try 404, Not Found, Too Many Requests, or 5xx": {
     "en": "Try 404, Not Found, Too Many Requests, or 5xx",
     "zh-CN": "例如：404、未找到、Too Many Requests、5xx"
-  },
-  "Clear search": {
-    "en": "Clear search",
-    "zh-CN": "清空搜索",
-    "zh-TW": "清空搜尋",
-    "es": "Borrar búsqueda",
-    "it": "Cancella ricerca",
-    "ja": "検索をクリア",
-    "pt-BR": "Limpar pesquisa"
   },
   "Status code classes": {
     "en": "Status code classes",
@@ -4115,6 +4372,18 @@
     "ko": "단축키 설정이 잘못되었습니다. 유효한 키 조합을 선택하고 다시 시도하세요.",
     "tr": "Kısayol ayarları geçersiz. Geçerli bir tuş birleşimi seçip yeniden deneyin.",
     "az": "Qısayol parametrləri yanlışdır. Düzgün düymə kombinasiyası seçib yenidən cəhd edin."
+  },
+  "The saved tool options are invalid or cannot be accessed.": {
+    "en": "The saved tool options are invalid or cannot be accessed.",
+    "zh-CN": "工具选项配置无效或无法访问。",
+    "zh-TW": "工具選項設定無效或無法存取。",
+    "es": "Las opciones guardadas no son válidas o no se pueden acceder.",
+    "it": "Le opzioni salvate non sono valide o non sono accessibili.",
+    "ja": "保存されたツール設定が無効か、アクセスできません。",
+    "pt-BR": "As opções salvas são inválidas ou não podem ser acessadas.",
+    "ko": "저장된 도구 옵션이 잘못되었거나 액세스할 수 없습니다.",
+    "tr": "Kaydedilen araç seçenekleri geçersiz veya erişilemiyor.",
+    "az": "Saxlanmış alət seçimləri yanlışdır və ya onlara giriş mümkün deyil."
   },
   "The selected algorithm is not supported. Choose a supported algorithm.": {
     "en": "The selected algorithm is not supported. Choose a supported algorithm.",
@@ -6065,10 +6334,6 @@
     "en": "Target",
     "zh-CN": "目标"
   },
-  "Generating…": {
-    "en": "Generating…",
-    "zh-CN": "生成中…"
-  },
   "Generate": {
     "en": "Generate",
     "zh-CN": "随机生成"
@@ -6676,10 +6941,6 @@
     "en": "Layout",
     "zh-CN": "布局"
   },
-  "Alignment": {
-    "en": "Alignment",
-    "zh-CN": "对齐"
-  },
   "Columns": {
     "en": "Columns",
     "zh-CN": "列数"
@@ -6841,9 +7102,209 @@
     "ja": "{0}は {1} 文字までに制限されています",
     "pt-BR": "{0} está limitado a {1} caracteres"
   },
+  "IPv6 ULA generator": {
+    "en": "IPv6 ULA generator",
+    "zh-CN": "IPv6 ULA 生成",
+    "zh-TW": "IPv6 ULA 產生",
+    "es": "Generador IPv6 ULA",
+    "it": "Generatore IPv6 ULA",
+    "ja": "IPv6 ULA 生成",
+    "pt-BR": "Gerador IPv6 ULA",
+    "ko": "IPv6 ULA 생성",
+    "tr": "IPv6 ULA oluşturucu",
+    "az": "IPv6 ULA generatoru"
+  },
+  "Generate address blocks and assign consecutive subnets to your network.": {
+    "en": "Generate address blocks and assign consecutive subnets to your network.",
+    "zh-CN": "生成独立地址块，再为内网分配连续子网。"
+  },
+  "Generate blocks": {
+    "en": "Generate blocks",
+    "zh-CN": "生成地址块"
+  },
+  "Number of prefixes": {
+    "en": "Number of prefixes",
+    "zh-CN": "生成数量"
+  },
+  "Regenerate": {
+    "en": "Regenerate",
+    "zh-CN": "重新生成"
+  },
+  "Select a block to plan its /64 subnets.": {
+    "en": "Select a block to plan its /64 subnets.",
+    "zh-CN": "点击地址块，在右侧规划其 /64 子网。"
+  },
+  "Generate fd-prefixed /48 blocks using secure randomness.": {
+    "en": "Generate fd-prefixed /48 blocks using secure randomness.",
+    "zh-CN": "使用安全随机源生成 fd 开头的 /48 地址块。"
+  },
+  "ULA address block": {
+    "en": "ULA address block",
+    "zh-CN": "ULA 地址块"
+  },
+  "Active": {
+    "en": "Active",
+    "zh-CN": "已生效"
+  },
+  "Create your network block": {
+    "en": "Create your network block",
+    "zh-CN": "创建你的内网地址块"
+  },
+  "Start with one /48, with room for 65,536 /64 subnets.": {
+    "en": "Start with one /48, with room for 65,536 /64 subnets.",
+    "zh-CN": "从一个 /48 开始，可划分 65,536 个 /64 子网。"
+  },
+  "Regenerating replaces all blocks on this page.": {
+    "en": "Regenerating replaces all blocks on this page.",
+    "zh-CN": "重新生成将替换本页的全部地址块。"
+  },
+  "Plan subnets": {
+    "en": "Plan subnets",
+    "zh-CN": "规划子网"
+  },
+  "Selected block": {
+    "en": "Selected block",
+    "zh-CN": "当前地址块"
+  },
+  "Starting subnet ID": {
+    "en": "Starting subnet ID",
+    "zh-CN": "起始子网 ID"
+  },
+  "Subnet count": {
+    "en": "Subnet count",
+    "zh-CN": "子网数量"
+  },
+  "ID range: 0000–ffff. Parameters update subnets without changing the block.": {
+    "en": "ID range: 0000–ffff. Parameters update subnets without changing the block.",
+    "zh-CN": "ID 范围 0000–ffff；修改参数自动更新，地址块保持不变。"
+  },
+  "subnets": {
+    "en": "subnets",
+    "zh-CN": "个子网"
+  },
+  "Subnet list": {
+    "en": "Subnet list",
+    "zh-CN": "子网列表"
+  },
+  "Subnet ID": {
+    "en": "Subnet ID",
+    "zh-CN": "子网 ID"
+  },
+  "Subnet prefix": {
+    "en": "Subnet prefix",
+    "zh-CN": "子网前缀"
+  },
+  "Choose an address block": {
+    "en": "Choose an address block",
+    "zh-CN": "等待选择地址块"
+  },
+  "Generate a /48 block to start assigning subnets here.": {
+    "en": "Generate a /48 block to start assigning subnets here.",
+    "zh-CN": "先生成 /48 地址块，即可在这里分配子网。"
+  },
+  "ULA is for internal communication and is not routed on the public Internet. Results stay on this page; copy them for use.": {
+    "en": "ULA is for internal communication and is not routed on the public Internet. Results stay on this page; copy them for use.",
+    "zh-CN": "ULA 用于内网通信，不在公网路由。生成结果仅保存在当前页面，请复制后使用。"
+  },
+  "Enter a hexadecimal subnet ID from 0000 to ffff.": {
+    "en": "Enter a hexadecimal subnet ID from 0000 to ffff.",
+    "zh-CN": "子网 ID 请输入 0000–ffff 的十六进制数。"
+  },
+  "Subnet count must be an integer from 1 to 1000.": {
+    "en": "Subnet count must be an integer from 1 to 1000.",
+    "zh-CN": "子网数量必须是 1–1000 的整数。"
+  },
+  "Subnet range exceeds ffff. Reduce the starting ID or count.": {
+    "en": "Subnet range exceeds ffff. Reduce the starting ID or count.",
+    "zh-CN": "子网范围超出 ffff，请减小起始 ID 或数量。"
+  },
+  "Select a valid ULA /48 block.": {
+    "en": "Select a valid ULA /48 block.",
+    "zh-CN": "请选择有效的 ULA /48 地址块。"
+  },
   "JSON text editor": {
     "en": "JSON text editor",
     "zh-CN": "JSON 文本编辑器"
+  },
+  "Compare JSON by field, ignoring object key order; arrays are compared by index.": {
+    "en": "Compare JSON by field, ignoring object key order; arrays are compared by index.",
+    "zh-CN": "按字段比较 JSON，忽略对象键的顺序；数组按索引比较。"
+  },
+  "Swap sides": {
+    "en": "Swap sides",
+    "zh-CN": "交换左右"
+  },
+  "Compare": {
+    "en": "Compare",
+    "zh-CN": "开始对比"
+  },
+  "Original JSON": {
+    "en": "Original JSON",
+    "zh-CN": "原始 JSON"
+  },
+  "Updated JSON": {
+    "en": "Updated JSON",
+    "zh-CN": "对比 JSON"
+  },
+  "Comparison results": {
+    "en": "Comparison results",
+    "zh-CN": "对比结果"
+  },
+  "Filter differences": {
+    "en": "Filter differences",
+    "zh-CN": "筛选差异"
+  },
+  "Input changed. Compare again.": {
+    "en": "Input changed. Compare again.",
+    "zh-CN": "输入已更新，请重新对比"
+  },
+  "Ready to compare": {
+    "en": "Ready to compare",
+    "zh-CN": "等待对比"
+  },
+  "Enter two JSON documents above and select Compare to see field differences.": {
+    "en": "Enter two JSON documents above and select Compare to see field differences.",
+    "zh-CN": "在上方输入两份 JSON，点击「开始对比」查看字段差异。"
+  },
+  "The JSON documents are equal": {
+    "en": "The JSON documents are equal",
+    "zh-CN": "两份 JSON 内容一致"
+  },
+  "No field differences found. Object key order does not affect the result.": {
+    "en": "No field differences found. Object key order does not affect the result.",
+    "zh-CN": "未发现字段差异，对象键的顺序不影响结果。"
+  },
+  "No differences in this category": {
+    "en": "No differences in this category",
+    "zh-CN": "此分类下没有差异"
+  },
+  "Original value": {
+    "en": "Original value",
+    "zh-CN": "原始值"
+  },
+  "Absent": {
+    "en": "Absent",
+    "zh-CN": "不存在"
+  },
+  "Updated value": {
+    "en": "Updated value",
+    "zh-CN": "对比值"
+  },
+  "Modified": {
+    "en": "Modified",
+    "zh-CN": "修改"
+  },
+  "Added": {
+    "en": "Added",
+    "zh-CN": "新增"
+  },
+  "Removed": {
+    "en": "Removed",
+    "zh-CN": "删除"
+  },
+  "Enter JSON": {
+    "en": "Enter JSON",
+    "zh-CN": "请输入 JSON"
   },
   "new_key": {
     "en": "new_key",
@@ -7036,7 +7497,7 @@
   },
   "Document": {
     "en": "Document",
-    "zh-CN": "数据"
+    "zh-CN": "文档"
   },
   "Enter JSON and a schema to validate automatically": {
     "en": "Enter JSON and a schema to validate automatically",
@@ -7093,10 +7554,6 @@
   "Not expired": {
     "en": "Not expired",
     "zh-CN": "未过期"
-  },
-  "Active": {
-    "en": "Active",
-    "zh-CN": "已生效"
   },
   "Not active yet": {
     "en": "Not active yet",
@@ -7446,10 +7903,6 @@
     "tr": "Markdown",
     "az": "Markdown"
   },
-  "words": {
-    "en": "words",
-    "zh-CN": "词"
-  },
   "Export HTML": {
     "en": "Export HTML",
     "zh-CN": "导出 HTML"
@@ -7698,10 +8151,6 @@
     "en": "Target prefix",
     "zh-CN": "目标前缀"
   },
-  "Subnet count": {
-    "en": "Subnet count",
-    "zh-CN": "子网数量"
-  },
   "At most 64 subnets are shown to keep the browser responsive.": {
     "en": "At most 64 subnets are shown to keep the browser responsive.",
     "zh-CN": "为避免浏览器卡顿，最多显示 64 个子网。"
@@ -7754,9 +8203,81 @@
     "en": "Decrease",
     "zh-CN": "减少"
   },
-  "Regenerate": {
-    "en": "Regenerate",
-    "zh-CN": "重新生成"
+  "Numeronym": {
+    "en": "Numeronym",
+    "zh-CN": "数字缩写",
+    "zh-TW": "數字縮寫",
+    "es": "Abreviatura numérica",
+    "it": "Abbreviazione numerica",
+    "ja": "数字略語",
+    "pt-BR": "Abreviação numérica",
+    "ko": "숫자 약어",
+    "tr": "Sayısal kısaltma",
+    "az": "Rəqəmli ixtisar"
+  },
+  "Keep the first and last letters and replace the letters between them with a number. Converts as you type.": {
+    "en": "Keep the first and last letters and replace the letters between them with a number. Converts as you type.",
+    "zh-CN": "保留单词首尾字母，用数字替换中间字母。输入即转换。"
+  },
+  "Live conversion": {
+    "en": "Live conversion",
+    "zh-CN": "实时转换"
+  },
+  "Common examples": {
+    "en": "Common examples",
+    "zh-CN": "常用示例"
+  },
+  "Try it": {
+    "en": "Try it",
+    "zh-CN": "试一试"
+  },
+  "Type or paste English words, sentences, or multiple lines…": {
+    "en": "Type or paste English words, sentences, or multiple lines…",
+    "zh-CN": "输入或粘贴英文单词、句子，支持多行文本…"
+  },
+  "characters": {
+    "en": "characters",
+    "zh-CN": "字符"
+  },
+  "Preserves formatting and case": {
+    "en": "Preserves formatting and case",
+    "zh-CN": "保留格式与大小写"
+  },
+  "Converted text": {
+    "en": "Converted text",
+    "zh-CN": "转换结果"
+  },
+  "Your converted text appears here as you type": {
+    "en": "Your converted text appears here as you type",
+    "zh-CN": "转换结果将在这里实时显示"
+  },
+  "Saved": {
+    "en": "Saved",
+    "zh-CN": "已保存"
+  },
+  "Enter text or choose an example above to start.": {
+    "en": "Enter text or choose an example above to start.",
+    "zh-CN": "输入文本或点击上方示例开始转换。"
+  },
+  "Abbreviated": {
+    "en": "Abbreviated",
+    "zh-CN": "已缩写"
+  },
+  "No eligible words found. The original text is preserved.": {
+    "en": "No eligible words found. The original text is preserved.",
+    "zh-CN": "没有可缩写的单词，原文已保留。"
+  },
+  "Word breakdown": {
+    "en": "Word breakdown",
+    "zh-CN": "逐词对照"
+  },
+  "Showing the first 100 unique words; the result above contains all conversions.": {
+    "en": "Showing the first 100 unique words; the result above contains all conversions.",
+    "zh-CN": "仅展示前 100 个不同单词；上方结果包含全部转换。"
+  },
+  "Only English words with 4 or more letters are abbreviated. Short words, numbers, punctuation, and line breaks stay unchanged. The original word cannot be recovered from its abbreviation.": {
+    "en": "Only English words with 4 or more letters are abbreviated. Short words, numbers, punctuation, and line breaks stay unchanged. The original word cannot be recovered from its abbreviation.",
+    "zh-CN": "转换规则：仅缩写 4 个及以上字母的英文单词。短词、数字、标点和换行保持不变；此转换不能还原原词。"
   },
   "Password character options": {
     "en": "Password character options",
@@ -7997,6 +8518,10 @@
   "New opening password": {
     "en": "New opening password",
     "zh-CN": "新的打开密码"
+  },
+  "Image format": {
+    "en": "Image format",
+    "zh-CN": "图片格式"
   },
   "Render scale": {
     "en": "Render scale",
@@ -8270,10 +8795,6 @@
     "en": "Use automatic size",
     "zh-CN": "改用自动尺寸"
   },
-  "Saved": {
-    "en": "Saved",
-    "zh-CN": "已保存"
-  },
   "Downloaded": {
     "en": "Downloaded",
     "zh-CN": "已下载"
@@ -8431,15 +8952,6 @@
     "ja": "抽出",
     "pt-BR": "Extrair"
   },
-  "Difference": {
-    "en": "Difference",
-    "zh-CN": "时间差",
-    "zh-TW": "時間差",
-    "es": "Diferencia",
-    "it": "Differenza",
-    "ja": "時間差",
-    "pt-BR": "Diferença"
-  },
   "Arithmetic": {
     "en": "Arithmetic",
     "zh-CN": "日期加减",
@@ -8524,6 +9036,10 @@
   "Wordlist": {
     "en": "Wordlist",
     "zh-CN": "词表"
+  },
+  "Word count": {
+    "en": "Word count",
+    "zh-CN": "单词数量"
   },
   "Optional passphrase": {
     "en": "Optional passphrase",
@@ -8717,6 +9233,14 @@
     "en": "Expanded",
     "zh-CN": "已展开"
   },
+  "Recent tools section": {
+    "en": "Recent tools section",
+    "zh-CN": "最近使用分组"
+  },
+  "Whether the recent tools list starts collapsed.": {
+    "en": "Whether the recent tools list starts collapsed.",
+    "zh-CN": "控制左侧最近使用列表默认是否折叠。"
+  },
   "Controlled by the DBX host.": {
     "en": "Controlled by the DBX host.",
     "zh-CN": "由 DBX 宿主控制。"
@@ -8756,6 +9280,10 @@
   "Open key vault": {
     "en": "Open key vault",
     "zh-CN": "打开密钥库"
+  },
+  "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.": {
+    "en": "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.",
+    "zh-CN": "偏好导出只包含界面、快捷键、收藏和锁定时长；密钥与 TOTP 请使用“备份与恢复”中的加密备份。"
   },
   "Export preferences": {
     "en": "Export preferences",
@@ -9145,6 +9673,10 @@
     "en": "Install a local voice pack in your system language and speech settings, then retry.",
     "zh-CN": "请在系统语言与语音设置中安装本地语音包，然后重试。"
   },
+  "Voice": {
+    "en": "Voice",
+    "zh-CN": "语音"
+  },
   "Rate": {
     "en": "Rate",
     "zh-CN": "语速"
@@ -9468,10 +10000,6 @@
   "Zero-pad width": {
     "en": "Zero-pad width",
     "zh-CN": "补零位数"
-  },
-  "Separator": {
-    "en": "Separator",
-    "zh-CN": "分隔符"
   },
   "Column": {
     "en": "Column",
@@ -9963,7 +10491,7 @@
   },
   "Confirm master password": {
     "en": "Confirm master password",
-    "zh-CN": "确认主密码"
+    "zh-CN": "再次输入主密码"
   },
   "Unlock": {
     "en": "Unlock",
@@ -10417,10 +10945,6 @@
     "en": "Parse number",
     "zh-CN": "解析号码"
   },
-  "Use example": {
-    "en": "Use example",
-    "zh-CN": "使用示例"
-  },
   "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.": {
     "en": "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.",
     "zh-CN": "支持空格、短横线、括号，以及以 + 或 00 开头的国际号码。"
@@ -10661,17 +11185,33 @@
     "en": "Save chart",
     "zh-CN": "保存图表"
   },
-  "Backups include all keys and TOTP accounts. Restore requires the master password used for that backup; password changes do not update old backups.": {
-    "en": "Backups include all keys and TOTP accounts. Restore requires the master password used for that backup; password changes do not update old backups.",
-    "zh-CN": "备份包含全部密钥和 TOTP。恢复需要备份时的主密码；以后改密不会更新旧备份。"
+  "Encrypted backups include all keys and TOTP accounts. Export uses your current master password; import requires the password used when that backup was created. Preferences exports do not contain key material.": {
+    "en": "Encrypted backups include all keys and TOTP accounts. Export uses your current master password; import requires the password used when that backup was created. Preferences exports do not contain key material.",
+    "zh-CN": "加密备份包含全部密钥和 TOTP。导出使用当前主密码；导入必须输入创建该备份时的主密码。偏好设置导出不包含这些密钥材料。"
   },
-  "Backup master password": {
-    "en": "Backup master password",
-    "zh-CN": "备份文件的主密码"
+  "Unlock the vault to continue": {
+    "en": "Unlock the vault to continue",
+    "zh-CN": "需要先解锁密钥库"
   },
-  "Current master password": {
-    "en": "Current master password",
-    "zh-CN": "当前主密码"
+  "Encrypted backups read or append keys and TOTP accounts. Create or unlock the vault, then continue here.": {
+    "en": "Encrypted backups read or append keys and TOTP accounts. Create or unlock the vault, then continue here.",
+    "zh-CN": "加密备份会读取或追加密钥和 TOTP。请先创建或解锁密钥库，再回来继续。"
+  },
+  "Create or unlock here": {
+    "en": "Create or unlock here",
+    "zh-CN": "在此创建或解锁"
+  },
+  "Enter the master password to continue.": {
+    "en": "Enter the master password to continue.",
+    "zh-CN": "输入主密码后即可继续备份。"
+  },
+  "Set a master password of at least 8 characters to continue.": {
+    "en": "Set a master password of at least 8 characters to continue.",
+    "zh-CN": "设置至少 8 位主密码后即可继续备份。"
+  },
+  "Unlock and continue": {
+    "en": "Unlock and continue",
+    "zh-CN": "解锁并继续"
   },
   "Choose encrypted backup": {
     "en": "Choose encrypted backup",
@@ -10681,17 +11221,69 @@
     "en": "Export encrypted backup",
     "zh-CN": "导出加密备份"
   },
-  "Keys / TOTP / Added / Duplicates skipped": {
-    "en": "Keys / TOTP / Added / Duplicates skipped",
-    "zh-CN": "密钥 / TOTP / 新增 / 跳过重复"
+  "Save the current vault and TOTP accounts as a .dbxvault file.": {
+    "en": "Save the current vault and TOTP accounts as a .dbxvault file.",
+    "zh-CN": "把当前密钥库和 TOTP 保存为 .dbxvault 文件。"
   },
-  "Confirm append restore": {
-    "en": "Confirm append restore",
+  "Current master password (for export)": {
+    "en": "Current master password (for export)",
+    "zh-CN": "当前主密码（用于导出）"
+  },
+  "Import encrypted backup": {
+    "en": "Import encrypted backup",
+    "zh-CN": "导入加密备份"
+  },
+  "Choose a .dbxvault file first, then enter the master password used to create it.": {
+    "en": "Choose a .dbxvault file first, then enter the master password used to create it.",
+    "zh-CN": "先选择 .dbxvault 文件，再输入该文件创建时使用的主密码。"
+  },
+  "Choose backup file": {
+    "en": "Choose backup file",
+    "zh-CN": "选择备份文件"
+  },
+  "Verify and preview import": {
+    "en": "Verify and preview import",
+    "zh-CN": "验证并预览导入"
+  },
+  "Enter the backup password to preview what will be added or skipped.": {
+    "en": "Enter the backup password to preview what will be added or skipped.",
+    "zh-CN": "输入备份文件的主密码，先预览将新增和跳过的项目。"
+  },
+  "Backup file password (for import)": {
+    "en": "Backup file password (for import)",
+    "zh-CN": "备份文件的主密码（用于导入）"
+  },
+  "Backup contents": {
+    "en": "Backup contents",
+    "zh-CN": "备份内容"
+  },
+  "Backup contents summary": {
+    "en": "Backup contents summary",
+    "zh-CN": "备份内容统计"
+  },
+  "Keys": {
+    "en": "Keys",
+    "zh-CN": "密钥"
+  },
+  "To add": {
+    "en": "To add",
+    "zh-CN": "新增"
+  },
+  "Duplicates skipped": {
+    "en": "Duplicates skipped",
+    "zh-CN": "跳过重复"
+  },
+  "Confirm and append": {
+    "en": "Confirm and append",
     "zh-CN": "确认追加恢复"
   },
-  "Preview restore": {
-    "en": "Preview restore",
-    "zh-CN": "预览恢复"
+  "Verify password and preview": {
+    "en": "Verify password and preview",
+    "zh-CN": "验证密码并预览"
+  },
+  "Choose another": {
+    "en": "Choose another",
+    "zh-CN": "重新选择"
   },
   "Create or unlock the vault first.": {
     "en": "Create or unlock the vault first.",
@@ -11020,6 +11612,14 @@
   "Export SVG": {
     "en": "Export SVG",
     "zh-CN": "导出 SVG"
+  },
+  "document(s)": {
+    "en": "document(s)",
+    "zh-CN": "个文档"
+  },
+  "Enter YAML to view its tree.": {
+    "en": "Enter YAML to view its tree.",
+    "zh-CN": "输入 YAML 后显示树形结构。"
   },
   "Development": {
     "en": "Development",
@@ -13193,18 +13793,6 @@
     "tr": "Yerel araç: SafeLink çözümleyici",
     "az": "Yerli alət: SafeLink dekoderi"
   },
-  "Regex reference": {
-    "en": "Regex reference",
-    "zh-CN": "正则语法速查",
-    "zh-TW": "正規表示式速查",
-    "es": "Referencia de expresiones regulares",
-    "it": "Guida espressioni regolari",
-    "ja": "正規表現リファレンス",
-    "pt-BR": "Referência de expressões regulares",
-    "ko": "정규식 참조",
-    "tr": "Düzenli ifade başvurusu",
-    "az": "Müntəzəm ifadələr bələdçisi"
-  },
   "Browse syntax and try examples": {
     "en": "Browse syntax and try examples",
     "zh-CN": "查阅正则语法并测试示例",
@@ -13288,18 +13876,6 @@
     "ko": "로컬 도구: MAC 주소 생성",
     "tr": "Yerel araç: MAC adresi oluşturucu",
     "az": "Yerli alət: MAC ünvan generatoru"
-  },
-  "IPv6 ULA generator": {
-    "en": "IPv6 ULA generator",
-    "zh-CN": "IPv6 ULA 生成",
-    "zh-TW": "IPv6 ULA 產生",
-    "es": "Generador IPv6 ULA",
-    "it": "Generatore IPv6 ULA",
-    "ja": "IPv6 ULA 生成",
-    "pt-BR": "Gerador IPv6 ULA",
-    "ko": "IPv6 ULA 생성",
-    "tr": "IPv6 ULA oluşturucu",
-    "az": "IPv6 ULA generatoru"
   },
   "Generate private IPv6 prefixes": {
     "en": "Generate private IPv6 prefixes",
@@ -13673,18 +14249,6 @@
     "tr": "Yerel araç: BIP39 anımsatıcı",
     "az": "Yerli alət: BIP39 yaddaş ifadəsi"
   },
-  "Figlet banner": {
-    "en": "Figlet banner",
-    "zh-CN": "Figlet 字符横幅",
-    "zh-TW": "Figlet 字元橫幅",
-    "es": "Banner Figlet",
-    "it": "Banner di testo Figlet",
-    "ja": "Figlet 文字バナー",
-    "pt-BR": "Faixa de texto Figlet",
-    "ko": "Figlet 문자 배너",
-    "tr": "Figlet metin afişi",
-    "az": "Figlet mətn banneri"
-  },
   "Render ASCII banners with bundled Figlet fonts": {
     "en": "Render ASCII banners with bundled Figlet fonts",
     "zh-CN": "使用内置 Figlet 字体生成多行 ASCII 艺术字",
@@ -13697,18 +14261,6 @@
     "tr": "Yerel araç: Figlet metin afişi",
     "az": "Yerli alət: Figlet mətn banneri"
   },
-  "Numeronym": {
-    "en": "Numeronym",
-    "zh-CN": "数字缩写",
-    "zh-TW": "數字縮寫",
-    "es": "Abreviatura numérica",
-    "it": "Abbreviazione numerica",
-    "ja": "数字略語",
-    "pt-BR": "Abreviação numérica",
-    "ko": "숫자 약어",
-    "tr": "Sayısal kısaltma",
-    "az": "Rəqəmli ixtisar"
-  },
   "Abbreviate words into numeronyms such as i18n and a11y": {
     "en": "Abbreviate words into numeronyms such as i18n and a11y",
     "zh-CN": "把长单词转换为 i18n、a11y 等数字缩写",
@@ -13720,18 +14272,6 @@
     "ko": "로컬 도구: 숫자 약어",
     "tr": "Yerel araç: Sayısal kısaltma",
     "az": "Yerli alət: Rəqəmli ixtisar"
-  },
-  "English singular and plural": {
-    "en": "English singular and plural",
-    "zh-CN": "英文单复数转换",
-    "zh-TW": "英文單複數轉換",
-    "es": "Singular y plural en inglés",
-    "it": "Singolare e plurale inglese",
-    "ja": "英語の単数形と複数形",
-    "pt-BR": "Singular e plural em inglês",
-    "ko": "영어 단수 및 복수",
-    "tr": "İngilizce tekil ve çoğul",
-    "az": "İngilis dilində tək və cəm"
   },
   "Convert English singular and plural nouns including irregular forms": {
     "en": "Convert English singular and plural nouns including irregular forms",

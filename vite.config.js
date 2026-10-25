@@ -30,7 +30,10 @@ export default defineConfig({
     outDir: "ui",
     emptyOutDir: true,
     cssCodeSplit: false,
-    chunkSizeWarningLimit: 2500,
+    // The DBX sandbox requires one self-contained entry chunk. Keep the
+    // warning below the host's 8 MiB hard limit while allowing the current
+    // bundled entry (about 3 MiB) without a misleading warning.
+    chunkSizeWarningLimit: 3500,
     rollupOptions: {
       output: {
         inlineDynamicImports: true,

@@ -40,6 +40,8 @@ struct PrefsFile {
     recent_tool_limit: usize,
     #[serde(rename = "sidebarCollapsed", default)]
     sidebar_collapsed: bool,
+    #[serde(rename = "recentCollapsed", default)]
+    recent_collapsed: bool,
     #[serde(default = "default_shortcuts")]
     shortcuts: BTreeMap<String, String>,
 }
@@ -48,6 +50,7 @@ type Preferences = (
     Vec<String>,
     u32,
     Vec<String>,
+    bool,
     bool,
     BTreeMap<String, String>,
     usize,
@@ -162,9 +165,7 @@ fn canonical_id(id: String) -> String {
         "duration" => "timestamp".to_string(),
         "hex" | "base32" | "base58" => "base64".to_string(),
         "unicode" => "html-entities".to_string(),
-        "sm4" => "aes".to_string(),
         "hmac-sm3" => "hmac-sha256".to_string(),
-        "sm2" => "rsa".to_string(),
         "ssh-fingerprint" => "cert".to_string(),
         "sql" | "xml" | "yaml" | "html" | "css" => "code-format".to_string(),
         "ulid" | "nanoid" => "uuid".to_string(),
@@ -232,6 +233,7 @@ fn read_preferences_at(path: &Path) -> Result<Preferences, PluginError> {
                 DEFAULT_VAULT_AUTO_LOCK_MINUTES,
                 Vec::new(),
                 false,
+                false,
                 default_shortcuts(),
                 DEFAULT_RECENT_TOOL_LIMIT,
             ))
@@ -262,6 +264,7 @@ fn read_preferences_file(path: &Path) -> Result<Preferences, PluginError> {
         auto_lock_minutes,
         recent_tool_ids,
         parsed.sidebar_collapsed,
+        parsed.recent_collapsed,
         sanitize_shortcuts(parsed.shortcuts),
         recent_tool_limit,
     ))
@@ -281,6 +284,7 @@ fn write_preferences(
     vault_auto_lock_minutes: u32,
     recent_tool_ids: Vec<String>,
     sidebar_collapsed: bool,
+    recent_collapsed: bool,
     shortcuts: BTreeMap<String, String>,
     recent_tool_limit: usize,
 ) -> Result<Preferences, PluginError> {
@@ -305,6 +309,7 @@ fn write_preferences(
         recent_tool_ids: recent_tool_ids.clone(),
         recent_tool_limit,
         sidebar_collapsed,
+        recent_collapsed,
         shortcuts: shortcuts.clone(),
     };
     let text = serde_json::to_string_pretty(&payload).map_err(|error| err(error.to_string()))?;
@@ -314,6 +319,7 @@ fn write_preferences(
         auto_lock_minutes,
         recent_tool_ids,
         sidebar_collapsed,
+        recent_collapsed,
         shortcuts,
         recent_tool_limit,
     ))
@@ -428,6 +434,15 @@ fn sidebar_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
         .ok_or_else(|| bad("sidebarCollapsed must be a boolean"))
 }
 
+fn recent_collapsed_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
+    let Some(raw) = params.get("recentCollapsed") else {
+        return Ok(None);
+    };
+    raw.as_bool()
+        .map(Some)
+        .ok_or_else(|| bad("recentCollapsed must be a boolean"))
+}
+
 fn shortcuts_from_params(params: &Value) -> Result<Option<BTreeMap<String, String>>, PluginError> {
     let Some(raw) = params.get("shortcuts") else {
         return Ok(None);
@@ -462,6 +477,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 auto_lock_minutes,
                 recent_tool_ids,
                 sidebar_collapsed,
+                recent_collapsed,
                 shortcuts,
                 recent_tool_limit,
             ) = read_preferences()?;
@@ -471,6 +487,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 "vaultAutoLockMinutes": auto_lock_minutes,
                 "recentToolIds": recent_tool_ids,
                 "sidebarCollapsed": sidebar_collapsed,
+                "recentCollapsed": recent_collapsed,
                 "shortcuts": shortcuts,
                 "recentToolLimit": recent_tool_limit,
             }))
@@ -481,6 +498,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 current_auto_lock_minutes,
                 current_recent,
                 current_sidebar,
+                current_recent_collapsed,
                 current_shortcuts,
                 current_recent_limit,
             ) = read_preferences()?;
@@ -489,6 +507,8 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 auto_lock_from_params(&params)?.unwrap_or(current_auto_lock_minutes);
             let recent_tool_ids = recent_from_params(&params)?.unwrap_or(current_recent);
             let sidebar_collapsed = sidebar_from_params(&params)?.unwrap_or(current_sidebar);
+            let recent_collapsed = recent_collapsed_from_params(&params)?
+                .unwrap_or(current_recent_collapsed);
             let shortcuts = shortcuts_from_params(&params)?.unwrap_or(current_shortcuts);
             let recent_tool_limit =
                 recent_limit_from_params(&params)?.unwrap_or(current_recent_limit);
@@ -497,6 +517,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 auto_lock_minutes,
                 recent_tool_ids,
                 sidebar_collapsed,
+                recent_collapsed,
                 shortcuts,
                 recent_tool_limit,
             ) = write_preferences(
@@ -504,6 +525,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 auto_lock_minutes,
                 recent_tool_ids,
                 sidebar_collapsed,
+                recent_collapsed,
                 shortcuts,
                 recent_tool_limit,
             )?;
@@ -513,6 +535,7 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
                 "vaultAutoLockMinutes": auto_lock_minutes,
                 "recentToolIds": recent_tool_ids,
                 "sidebarCollapsed": sidebar_collapsed,
+                "recentCollapsed": recent_collapsed,
                 "shortcuts": shortcuts,
                 "recentToolLimit": recent_tool_limit,
             }))
@@ -633,6 +656,11 @@ mod tests {
                 "uuid".to_string()
             ]
         );
+    }
+
+    #[test]
+    fn current_sm4_and_sm2_tool_ids_are_not_collapsed_into_legacy_ids() {
+        assert_eq!(filter_known(vec!["sm4".into(), "sm2".into()]), vec!["sm4", "sm2"]);
     }
 
     #[test]

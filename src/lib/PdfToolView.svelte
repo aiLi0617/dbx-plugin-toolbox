@@ -16,6 +16,7 @@
   import { createTaskScope } from "./taskManager.js";
   import { createPdfWorkerClient } from "./pdfWorkerClient.js";
   import CopyButton from "./CopyButton.svelte";
+  import Select from "./Select.svelte";
   let { toolId, locale = "zh-CN", demoRequest = 0, onStateChange, visible = true } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   const taskScope = createTaskScope(
@@ -1040,14 +1041,7 @@
               </article>{/each}
           </div>{/if}
         {#if operation === "rotate" || operation === "watermark"}<label
-            >{t("角度", "Angle")}<select
-              class="dbx-input"
-              bind:value={angle}
-              onchange={clearOutput}
-              >{#each operation === "rotate" ? [90, 180, 270] : [0, 45, 90, 135, 180, 270, 315] as n}<option
-                  >{n}</option
-                >{/each}</select
-            ></label
+            >{t("角度", "Angle")}<Select bind:value={angle} onchange={clearOutput} ariaLabel={t("角度", "Angle")} options={(operation === "rotate" ? [90,180,270] : [0,45,90,135,180,270,315]).map((value) => ({value,label:String(value)}))} /></label
           >{/if}
         {#if operation === "watermark"}<label
             >{t("水印文字", "Watermark text")}<input
@@ -1221,13 +1215,7 @@
               oninput={clearOutput}
             /></label
           >{/if}
-        {#if operation === "images"}<select
-            class="dbx-input"
-            bind:value={imageFormat}
-            onchange={clearOutput}
-            ><option value="png">PNG</option><option value="jpeg">JPEG</option
-            ></select
-          ><label
+        {#if operation === "images"}<Select bind:value={imageFormat} onchange={clearOutput} ariaLabel={t("图片格式", "Image format")} options={[{value:"png",label:"PNG"},{value:"jpeg",label:"JPEG"}]} /><label
             >{t("渲染倍率", "Render scale")}<input
               class="dbx-input"
               type="number"

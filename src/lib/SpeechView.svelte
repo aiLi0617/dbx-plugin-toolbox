@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { pick } from "./i18n.js";
+  import Select from "./Select.svelte";
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
@@ -45,11 +46,7 @@
       rows="10"></textarea></label
   >{#if !voices.length}<p role="status">
       {t("没有可用的本地语音", "No local voices are available")}<br/>{t("请在系统语言与语音设置中安装本地语音包，然后重试。", "Install a local voice pack in your system language and speech settings, then retry.")}<button class="dbx-btn" type="button" onclick={refresh}>{t("重试", "Retry")}</button>
-    </p>{:else}<select class="dbx-input" bind:value={voiceId}
-      >{#each voices as voice}<option value={voice.voiceURI}
-          >{voice.name} ({voice.lang})</option
-        >{/each}</select
-    >{/if}<label
+    </p>{:else}<Select bind:value={voiceId} ariaLabel={t("语音", "Voice")} options={voices.map((voice) => ({value:voice.voiceURI,label:`${voice.name} (${voice.lang})`}))} />{/if}<label
     >{t("语速", "Rate")}<input
       type="range"
       min="0.5"

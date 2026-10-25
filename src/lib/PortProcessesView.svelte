@@ -2,6 +2,7 @@
   import { localizeError, pick } from "./i18n.js";
   import { invoke } from "./host.js";
   import { localizePortState } from "./portStates.js";
+  import Select from "./Select.svelte";
 
   let { locale = "zh-CN" } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -83,7 +84,7 @@
   <details><summary>{t("环境要求与排错", "Requirements and troubleshooting")}</summary><p class="dbx-hint">{t("Windows 使用系统端口查询；macOS / Linux 需要 lsof。Linux 可通过系统包管理器安装 lsof。权限不足时只显示可访问的进程；安装或调整权限后重新查询。", "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.")}</p></details>
   <div class="port-form">
     <label>{t("端口号", "Port number")}<input class="dbx-input" inputmode="numeric" bind:value={port} oninput={reset} onkeydown={(event) => { if (event.key === "Enter") search(); }} disabled={busy} placeholder="3000" /></label>
-    <label>{t("协议", "Protocol")}<select class="dbx-input" bind:value={protocol} onchange={reset} disabled={busy}><option value="tcp">TCP</option><option value="udp">UDP</option></select></label>
+    <label>{t("协议", "Protocol")}<Select bind:value={protocol} onchange={reset} disabled={busy} ariaLabel={t("协议", "Protocol")} options={[{value:"tcp",label:"TCP"},{value:"udp",label:"UDP"}]} /></label>
     <button class="dbx-btn dbx-btn--primary" type="button" onclick={search} disabled={busy || !valid}>{busy ? t("处理中…", "Working…") : t("查询端口", "Find port")}</button>
     <button class="dbx-btn" type="button" onclick={recommend} disabled={busy}>{t("推荐空闲端口", "Recommend free ports")}</button>
   </div>
