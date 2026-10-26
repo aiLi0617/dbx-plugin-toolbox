@@ -65,13 +65,13 @@ test("actual PDF view handlers cross the binary bridge to the Rust Sidecar for a
   globalThis.window = { dbxPlugin: host };
   const source = readFileSync(new URL("../src/lib/PdfToolView.svelte", import.meta.url), "utf8");
   const section = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
-  const code = section("  function clearOutput()", "  async function clearPreview()") + section("  async function load()", "  function setPagePreset") + section("  async function run()", "  async function save()") + section("  function resultName()", "</script>");
+  const code = section("  let pendingRelease =", "  async function closeOccupied") + section("  function clearOutput()", "  async function clearPreview()") + section("  async function load()", "  function setPagePreset") + section("  async function run()", "  async function save()") + section("  function resultName()", "</script>");
   try {
     await host.invoke("plugin/initialize", { host: { protocolVersions: [1] } });
     for (const operation of bridge.PDF_NATIVE_OPERATIONS) {
       const scope = createTaskScope(`pdf-${operation}`, "pdf");
       const state = {
-        ...bridge, validatePdfFiles, operation, nativeOperation: true, nativeSession: "", files: operation === "merge" ? [fixture(), fixture()] : [fixture()],
+        ...bridge, validatePdfFiles, operation, toolId: `pdf-${operation}`, nativeOperation: true, nativeSession: "", pdfSessionActive: false, savedOutput: null, savedReport: "", occupiedTools: [], files: operation === "merge" ? [fixture(), fixture()] : [fixture()],
         info: null, order: [], buffers: [], thumbs: [], report: "", output: null, busy: false, error: "", progress: "", password: "", newPassword: "test-password", pages: "1-2", angle: 90, top: 5, bottom: 5, left: 5, right: 5,
         revision: 0, disposed: false, locale: "en", pageRangeState: { error: "" },
         formatBytes: String, t: (_, en) => en, localizeError: (_, error) => error.message,
@@ -82,6 +82,7 @@ test("actual PDF view handlers cross the binary bridge to the Rust Sidecar for a
         await vm.runInContext("load()", state);
         assert.equal(state.error, "", `${operation}: load`);
         assert.equal(state.info.count, operation === "merge" ? 6 : 3);
+        assert.equal(state.pdfSessionActive, true, `${operation}: session active after load`);
         const uploadedId = state.nativeSession;
         state.order = new Proxy(state.order, {});
         await vm.runInContext("clearOutput(); run()", state);
@@ -91,7 +92,12 @@ test("actual PDF view handlers cross the binary bridge to the Rust Sidecar for a
         // Repeating processing exercises session reuse without re-uploading.
         await vm.runInContext("run()", state);
         assert.equal(state.error, "", `${operation}: repeat`);
-      } finally { scope.dispose(); await bridge.cancelNativePdf(state.nativeSession); }
+      } finally {
+        scope.dispose();
+        await vm.runInContext("releaseNative()", state);
+        assert.equal(state.nativeSession, "", `${operation}: released session`);
+        assert.equal(state.pdfSessionActive, false, `${operation}: session inactive after release`);
+      }
     }
   } finally { globalThis.window = previous; await host.close(); }
 });
