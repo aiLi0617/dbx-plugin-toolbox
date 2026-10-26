@@ -213,18 +213,6 @@
     "en": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
     "zh-CN": "Basic Auth 仅对凭据进行 Base64 编码，不提供加密保护。请通过 HTTPS 传输，避免泄露认证头。"
   },
-  "Password hashing": {
-    "en": "Password hashing",
-    "zh-CN": "密码哈希"
-  },
-  "Generate a salted hash or check a password against an existing hash.": {
-    "en": "Generate a salted hash or check a password against an existing hash.",
-    "zh-CN": "生成带盐哈希，或校验密码与已有哈希是否匹配。"
-  },
-  "Processed locally": {
-    "en": "Processed locally",
-    "zh-CN": "本地处理"
-  },
   "Mode": {
     "en": "Mode",
     "zh-CN": "模式",
@@ -249,14 +237,6 @@
   "Enter a password": {
     "en": "Enter a password",
     "zh-CN": "输入需要处理的密码"
-  },
-  "Hide": {
-    "en": "Hide",
-    "zh-CN": "隐藏"
-  },
-  "Show": {
-    "en": "Show",
-    "zh-CN": "显示"
   },
   "Password exceeds 72 UTF-8 bytes. Shorten it and try again.": {
     "en": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
@@ -12396,6 +12376,14 @@
   "TOTP secret": {
     "en": "TOTP secret",
     "zh-CN": "TOTP 密钥"
+  },
+  "Hide": {
+    "en": "Hide",
+    "zh-CN": "隐藏"
+  },
+  "Show": {
+    "en": "Show",
+    "zh-CN": "显示"
   },
   "Note": {
     "en": "Note",
