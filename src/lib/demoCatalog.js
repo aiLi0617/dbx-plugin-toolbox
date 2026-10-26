@@ -89,6 +89,7 @@ export function createToolDemo(tool) {
   const id = tool?.id || "";
   const view = tool?.view || "";
   const options = { ...(tool?.defaultOptions || {}) };
+  if (id === "phone") return { input: "138 0013 8000", region: "CN", options };
   if (view === "whitespace") return { input: TEXT, modes: TEXT_MODE_SAMPLES, options };
   if (view === "gzip") return {
     input: "DBX 工具箱 Gzip 示例\nHello, world!",

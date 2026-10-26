@@ -1,4 +1,5 @@
 <script>
+  import YamlTreeNode from "./YamlTreeNode.svelte";
   let { node, collapsed = {}, toggle, locale = "zh-CN", root = false } = $props();
   const isContainer = $derived(node.children?.length > 0);
   const folded = $derived(Boolean(collapsed[node.path]));
@@ -18,7 +19,7 @@
   {/if}
   {#if isContainer && !folded}
     <div class:yaml-children={!root} class:yaml-root-children={root}>
-      {#each node.children as child (child.path)}<svelte:self node={child} {collapsed} {toggle} {locale} />{/each}
+      {#each node.children as child (child.path)}<YamlTreeNode node={child} {collapsed} {toggle} {locale} />{/each}
     </div>
   {/if}
 </div>

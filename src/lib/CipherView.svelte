@@ -594,8 +594,7 @@
   }
   @media (max-width: 560px) {
     .config-toolbar { position: static; width: 100%; min-height: 30px; }
-    .config-menu,
-    .config-menu[open] { width: 100%; }
+    .config-menu { width: 100%; }
     .config-trigger { margin-left: auto; }
     .config-popover { position: static; margin-top: 6px; width: min(280px, 100%); max-width: none; margin-left: auto; }
     .config-actions { gap: 4px; }

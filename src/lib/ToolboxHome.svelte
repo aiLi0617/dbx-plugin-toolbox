@@ -201,7 +201,7 @@
 
   {#if recents.length}
     <section class="home-section">
-      <div class="section-head"><div><h3>{t(chrome.recent)}</h3><p>{t(chrome.recentHint)}</p></div></div>
+      <div class="section-head"><div><h3>{t(chrome.recent)}</h3></div></div>
       <div class="recent-grid">
         {#each recents as item (item.id)}
           <button type="button" onclick={() => onTool?.(item)}><strong>{pick(locale, item.name)}</strong><span>{pick(locale, categories[item.category])}</span></button>
@@ -213,7 +213,7 @@
   {#if favorites.length}
   <section class="home-section">
     <div class="section-head">
-      <div><h3>{t(chrome.pinned)}</h3><p>{t(chrome.pinnedHint)}</p></div>
+      <div><h3>{t(chrome.pinned)}</h3></div>
       <div class="section-actions">
         {#if favorites.length > FAVORITE_PREVIEW_LIMIT}
           <button class="text-btn" type="button" onclick={() => (showAllFavorites = !showAllFavorites)}>
@@ -280,7 +280,7 @@
   .home-page { container-type:inline-size; width:min(1080px,100%); margin:0 auto; padding:28px; display:flex; flex-direction:column; gap:28px; }
   .hero { display:grid; grid-template-columns:minmax(190px,.8fr) minmax(280px,1.6fr); align-items:center; gap:24px; padding:24px; border:1px solid var(--color-border); border-radius:12px; background:linear-gradient(135deg,color-mix(in srgb,var(--color-primary) 8%,var(--color-card)),var(--color-card)); }
   .hero-copy { min-width:0; }
-  h2,h3,p { margin:0; } h2 { font-size:20px; line-height:1.3; text-wrap:balance; } h3 { font-size:14px; } .hero p,.section-head p { margin-top:7px; color:var(--color-muted-foreground); font-size:12px; line-height:1.55; }
+  h2,h3,p { margin:0; } h2 { font-size:20px; line-height:1.3; text-wrap:balance; } h3 { font-size:14px; } .hero p,
   .home-search { position:relative; min-width:0; }
   .home-search-box { display:flex; align-items:center; gap:9px; height:42px; padding:0 12px; border:1px solid var(--color-input); border-radius:8px; background:var(--color-background); color:var(--color-muted-foreground); }
   .home-search-box:has(input:focus-visible) { border-color:var(--color-ring,var(--color-primary)); box-shadow:none; }

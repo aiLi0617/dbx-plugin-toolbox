@@ -20,10 +20,6 @@
   let result = $state(null), error = $state(""), busy = $state(false);
   let appliedDemoRequest = 0;
   const monthNames = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"];
-  const json = $derived(result ? JSON.stringify(result, null, 2) : "");
-  const requestJson = $derived(JSON.stringify(direction === "solar"
-    ? { direction, solarDate }
-    : { direction, year: Number(year), month: Number(month), day: Number(day), leap }, null, 2));
   const text = $derived(result ? `${t("公历", "Solar date")}: ${result.solar}\n${t("农历", "Lunar date")}: ${result.description}` : "");
   const weekday = $derived(result ? new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" }).format(new Date(`${result.solar}T12:00:00Z`)) : "");
   const canSelectLeap = $derived(direction === "lunar" && leapMonth > 0 && Number(month) === leapMonth);
@@ -128,15 +124,16 @@
       <footer><button class="reverse" disabled={!result || busy} onclick={reverse}>{t("以此结果反向转换", "Convert this result back")} <span aria-hidden="true">↔</span></button></footer>
     </section>
   </div>
-  <details class="json-panel"><summary>{t("原始数据", "Raw data")}</summary><div class="json-grid"><div class="json-block"><div class="json-heading"><span><small>{t("输入载荷", "Input payload")}</small></span><CopyButton {locale} text={requestJson} labelZh="复制请求 JSON" labelEn="Copy request JSON" /></div><pre>{requestJson}</pre></div><div class="json-block"><div class="json-heading"><span><small>{t("转换响应", "Conversion response")}</small></span><CopyButton {locale} text={json} labelZh="复制响应 JSON" labelEn="Copy response JSON" /></div><pre>{json || "{}"}</pre></div></div></details>
 </div>
 
 <style>
   .calendar-page{width:min(1180px,100%);margin:0 auto;padding:24px 28px;color:var(--color-foreground);container-type:inline-size}
   .toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-  .mode-switch{display:flex;gap:4px;padding:4px;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-muted)}
-  .mode-switch button{font:inherit;font-size:12px;padding:9px 18px;border:1px solid transparent;border-radius:var(--radius-md);background:transparent;color:var(--color-muted-foreground);cursor:pointer}
-  .mode-switch button.active{background:var(--color-card);border-color:var(--color-border);color:var(--color-primary);box-shadow:0 1px 3px rgb(0 0 0 / 4%)}
+  .mode-switch{display:inline-flex;height:30px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-muted);overflow:hidden}
+  .mode-switch button{font:inherit;font-size:12px;height:100%;padding:0 12px;border:0;border-right:1px solid var(--color-border);border-radius:0;background:transparent;color:var(--color-foreground);cursor:pointer}
+  .mode-switch button:last-child{border-right:0}
+  .mode-switch button:hover:not(.active){background:var(--dbx-hover-background);color:var(--dbx-hover-foreground)}
+  .mode-switch button.active{background:var(--dbx-selection-background);border-color:var(--dbx-selection-border);color:var(--dbx-selection-foreground);font-weight:600}
   .range{font-size:11px;color:var(--color-muted-foreground)}.range b{font-weight:500;font-variant-numeric:tabular-nums;margin-left:6px}
   .workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px}
   .panel{min-width:0;display:flex;flex-direction:column;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-card);overflow:hidden}.input-panel{position:relative;z-index:2;overflow:visible}.result-panel{position:relative;z-index:1}
@@ -151,9 +148,8 @@
   dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding-top:20px;border-top:1px solid var(--color-border)}dt{font-size:11px;color:var(--color-muted-foreground)}dd{font-size:16px;margin:8px 0 0;font-weight:500}
   .reverse{font:inherit;color:var(--color-primary);background:none;border:0;padding:0;cursor:pointer;display:flex;align-items:center;gap:8px}.reverse:disabled{opacity:.45;cursor:default}
   .empty{min-height:192px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--color-muted-foreground);gap:12px}.empty>span{font-size:32px;opacity:.5}.empty strong{font-size:13px;font-weight:500}.empty p{font-size:12px;margin:0}
-  .json-panel{margin-top:18px;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:color-mix(in srgb,var(--color-muted) 35%,var(--color-card))}summary{padding:15px 18px;font-size:12px;color:var(--color-foreground);font-weight:600;cursor:pointer}.json-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--color-border)}.json-block{min-width:0}.json-block+.json-block{border-left:1px solid var(--color-border)}.json-heading{display:flex;align-items:center;justify-content:space-between;padding:9px 12px 5px;font-size:10px;color:var(--color-muted-foreground)}.json-heading span{display:flex;flex-direction:column;gap:2px}.json-heading small{font-size:10px;font-weight:400}pre{margin:0;padding:6px 12px 16px;font:12px/1.8 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--color-foreground)}
-  button:focus-visible,summary:focus-visible{outline:2px solid var(--color-ring);outline-offset:2px}
-  @container(max-width:720px){.workspace,.json-grid{grid-template-columns:1fr}.json-block+.json-block{border-left:0;border-top:1px solid var(--color-border)}.result-body{min-height:230px}.mode-switch button{padding:8px 12px}}
+  button:focus-visible{outline:1px solid var(--color-ring);outline-offset:-1px}
+  @container(max-width:720px){.workspace{grid-template-columns:1fr}.result-body{min-height:230px}}
   @media(max-width:600px){.calendar-page{padding:18px 14px}.result-body,.input-body{padding:22px 18px}.copy>span{display:none}}
 .calendar-page{padding:0}.toolbar{margin-bottom:12px}.workspace{gap:12px}.input-body,.result-body{padding:16px}.result-body{min-height:180px}.secondary-date{margin-bottom:12px}
 </style>

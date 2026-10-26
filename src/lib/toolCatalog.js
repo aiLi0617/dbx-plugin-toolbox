@@ -336,7 +336,7 @@ const utilityRows = [
 ];
 
 const DEMO_VIEWS = new Set(["json-workbench", "whitespace", "gzip", "base64", "code-format", "data-convert", "live-io", "developer-utility"]);
-const DEMO_IDS = new Set(["docker-convert"]);
+const DEMO_IDS = new Set(["docker-convert", "phone"]);
 const NO_DEMO_IDS = new Set(["uuid", "color", "cron", "timestamp", "chmod", "http-status"]);
 
 const BASE_TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW, en, view, aliases, metadata = {}]) => {
@@ -362,7 +362,7 @@ const BASE_TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW,
 
 const EXPANSION_DEMO_IDS = new Set([
   "basic-auth", "json-diff", "yaml-tree", "safelink", "roman", "mac-generator", "ipv4-range",
-  "figlet", "numeronym", "english-plural", "email-normalizer", "url-extractor", "color-palette", "lunar-calendar",
+  "figlet", "numeronym", "english-plural", "email-normalizer", "url-extractor", "color-palette", "lunar-calendar", "rich-text",
   "math-expression", "unit-converter", "percentage", "statistics", "business-days", "temperature", "eta", "stopwatch", "benchmark", "compound-interest", "text-speech",
   "bcrypt", "password-strength", "iban", "bip39", "gif-compress", "gif-crop", "gif-frames", "wifi-qr",
 ]);

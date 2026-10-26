@@ -407,6 +407,30 @@
     "tr": "{0} kopyala",
     "az": "{0} kopyala"
   },
+  "Credentials": {
+    "en": "Credentials",
+    "zh-CN": "认证凭据",
+    "zh-TW": "Credentials",
+    "es": "Credentials",
+    "it": "Credentials",
+    "ja": "Credentials",
+    "pt-BR": "Credentials",
+    "ko": "Credentials",
+    "tr": "Credentials",
+    "az": "Credentials"
+  },
+  "Enter a username and password to generate an HTTP Basic header.": {
+    "en": "Enter a username and password to generate an HTTP Basic header.",
+    "zh-CN": "输入用户名和密码，生成 HTTP Basic 认证头。",
+    "zh-TW": "Enter a username and password to generate an HTTP Basic header.",
+    "es": "Enter a username and password to generate an HTTP Basic header.",
+    "it": "Enter a username and password to generate an HTTP Basic header.",
+    "ja": "Enter a username and password to generate an HTTP Basic header.",
+    "pt-BR": "Enter a username and password to generate an HTTP Basic header.",
+    "ko": "Enter a username and password to generate an HTTP Basic header.",
+    "tr": "Enter a username and password to generate an HTTP Basic header.",
+    "az": "Enter a username and password to generate an HTTP Basic header."
+  },
   "Username": {
     "en": "Username",
     "zh-CN": "用户名",
@@ -418,6 +442,30 @@
     "ko": "Username",
     "tr": "Username",
     "az": "Username"
+  },
+  "Enter username": {
+    "en": "Enter username",
+    "zh-CN": "输入用户名",
+    "zh-TW": "Enter username",
+    "es": "Enter username",
+    "it": "Enter username",
+    "ja": "Enter username",
+    "pt-BR": "Enter username",
+    "ko": "Enter username",
+    "tr": "Enter username",
+    "az": "Enter username"
+  },
+  "The username cannot contain a colon (:)": {
+    "en": "The username cannot contain a colon (:)",
+    "zh-CN": "用户名不能包含冒号（:）",
+    "zh-TW": "The username cannot contain a colon (:)",
+    "es": "The username cannot contain a colon (:)",
+    "it": "The username cannot contain a colon (:)",
+    "ja": "The username cannot contain a colon (:)",
+    "pt-BR": "The username cannot contain a colon (:)",
+    "ko": "The username cannot contain a colon (:)",
+    "tr": "The username cannot contain a colon (:)",
+    "az": "The username cannot contain a colon (:)"
   },
   "Password": {
     "en": "Password",
@@ -431,17 +479,41 @@
     "tr": "Password",
     "az": "Password"
   },
-  "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.": {
-    "en": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "zh-CN": "UTF-8 编码；Basic Auth 是编码，不提供加密保护。",
-    "zh-TW": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "es": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "it": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "ja": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "pt-BR": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "ko": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "tr": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them.",
-    "az": "UTF-8 encoding; Basic Auth encodes credentials and does not encrypt them."
+  "Enter password": {
+    "en": "Enter password",
+    "zh-CN": "输入密码",
+    "zh-TW": "Enter password",
+    "es": "Enter password",
+    "it": "Enter password",
+    "ja": "Enter password",
+    "pt-BR": "Enter password",
+    "ko": "Enter password",
+    "tr": "Enter password",
+    "az": "Enter password"
+  },
+  "Show password": {
+    "en": "Show password",
+    "zh-CN": "显示密码",
+    "zh-TW": "Show password",
+    "es": "Show password",
+    "it": "Show password",
+    "ja": "Show password",
+    "pt-BR": "Show password",
+    "ko": "Show password",
+    "tr": "Show password",
+    "az": "Show password"
+  },
+  "Hide password": {
+    "en": "Hide password",
+    "zh-CN": "隐藏密码",
+    "zh-TW": "Hide password",
+    "es": "Hide password",
+    "it": "Hide password",
+    "ja": "Hide password",
+    "pt-BR": "Hide password",
+    "ko": "Hide password",
+    "tr": "Hide password",
+    "az": "Hide password"
   },
   "Generate header": {
     "en": "Generate header",
@@ -454,6 +526,474 @@
     "ko": "Generate header",
     "tr": "Generate header",
     "az": "Generate header"
+  },
+  "Authorization header": {
+    "en": "Authorization header",
+    "zh-CN": "认证头",
+    "zh-TW": "Authorization header",
+    "es": "Authorization header",
+    "it": "Authorization header",
+    "ja": "Authorization header",
+    "pt-BR": "Authorization header",
+    "ko": "Authorization header",
+    "tr": "Authorization header",
+    "az": "Authorization header"
+  },
+  "Copy this header into your HTTP request.": {
+    "en": "Copy this header into your HTTP request.",
+    "zh-CN": "复制后用于 HTTP 请求的 Authorization 字段。",
+    "zh-TW": "Copy this header into your HTTP request.",
+    "es": "Copy this header into your HTTP request.",
+    "it": "Copy this header into your HTTP request.",
+    "ja": "Copy this header into your HTTP request.",
+    "pt-BR": "Copy this header into your HTTP request.",
+    "ko": "Copy this header into your HTTP request.",
+    "tr": "Copy this header into your HTTP request.",
+    "az": "Copy this header into your HTTP request."
+  },
+  "Ready to generate": {
+    "en": "Ready to generate",
+    "zh-CN": "等待生成认证头",
+    "zh-TW": "Ready to generate",
+    "es": "Ready to generate",
+    "it": "Ready to generate",
+    "ja": "Ready to generate",
+    "pt-BR": "Ready to generate",
+    "ko": "Ready to generate",
+    "tr": "Ready to generate",
+    "az": "Ready to generate"
+  },
+  "Enter your credentials, then select Generate header.": {
+    "en": "Enter your credentials, then select Generate header.",
+    "zh-CN": "填写左侧凭据后，点击「生成认证头」。",
+    "zh-TW": "Enter your credentials, then select Generate header.",
+    "es": "Enter your credentials, then select Generate header.",
+    "it": "Enter your credentials, then select Generate header.",
+    "ja": "Enter your credentials, then select Generate header.",
+    "pt-BR": "Enter your credentials, then select Generate header.",
+    "ko": "Enter your credentials, then select Generate header.",
+    "tr": "Enter your credentials, then select Generate header.",
+    "az": "Enter your credentials, then select Generate header."
+  },
+  "Generated and ready to copy": {
+    "en": "Generated and ready to copy",
+    "zh-CN": "已生成，可复制使用",
+    "zh-TW": "Generated and ready to copy",
+    "es": "Generated and ready to copy",
+    "it": "Generated and ready to copy",
+    "ja": "Generated and ready to copy",
+    "pt-BR": "Generated and ready to copy",
+    "ko": "Generated and ready to copy",
+    "tr": "Generated and ready to copy",
+    "az": "Generated and ready to copy"
+  },
+  "Your generated header will appear here": {
+    "en": "Your generated header will appear here",
+    "zh-CN": "生成结果将在此处显示",
+    "zh-TW": "Your generated header will appear here",
+    "es": "Your generated header will appear here",
+    "it": "Your generated header will appear here",
+    "ja": "Your generated header will appear here",
+    "pt-BR": "Your generated header will appear here",
+    "ko": "Your generated header will appear here",
+    "tr": "Your generated header will appear here",
+    "az": "Your generated header will appear here"
+  },
+  "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.": {
+    "en": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "zh-CN": "Basic Auth 仅对凭据进行 Base64 编码，不提供加密保护。请通过 HTTPS 传输，避免泄露认证头。",
+    "zh-TW": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "es": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "it": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "ja": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "pt-BR": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "ko": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "tr": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private.",
+    "az": "Basic Auth only Base64-encodes credentials; it does not encrypt them. Use HTTPS and keep the header private."
+  },
+  "Password hashing": {
+    "en": "Password hashing",
+    "zh-CN": "密码哈希",
+    "zh-TW": "Password hashing",
+    "es": "Password hashing",
+    "it": "Password hashing",
+    "ja": "Password hashing",
+    "pt-BR": "Password hashing",
+    "ko": "Password hashing",
+    "tr": "Password hashing",
+    "az": "Password hashing"
+  },
+  "Generate a salted hash or check a password against an existing hash.": {
+    "en": "Generate a salted hash or check a password against an existing hash.",
+    "zh-CN": "生成带盐哈希，或校验密码与已有哈希是否匹配。",
+    "zh-TW": "Generate a salted hash or check a password against an existing hash.",
+    "es": "Generate a salted hash or check a password against an existing hash.",
+    "it": "Generate a salted hash or check a password against an existing hash.",
+    "ja": "Generate a salted hash or check a password against an existing hash.",
+    "pt-BR": "Generate a salted hash or check a password against an existing hash.",
+    "ko": "Generate a salted hash or check a password against an existing hash.",
+    "tr": "Generate a salted hash or check a password against an existing hash.",
+    "az": "Generate a salted hash or check a password against an existing hash."
+  },
+  "Processed locally": {
+    "en": "Processed locally",
+    "zh-CN": "本地处理",
+    "zh-TW": "Processed locally",
+    "es": "Processed locally",
+    "it": "Processed locally",
+    "ja": "Processed locally",
+    "pt-BR": "Processed locally",
+    "ko": "Processed locally",
+    "tr": "Processed locally",
+    "az": "Processed locally"
+  },
+  "Mode": {
+    "en": "Mode",
+    "zh-CN": "模式",
+    "zh-TW": "模式",
+    "es": "Modo",
+    "it": "Modalità",
+    "ja": "モード",
+    "pt-BR": "Modo",
+    "ko": "모드",
+    "tr": "Mod",
+    "az": "Rejim"
+  },
+  "Generate hash": {
+    "en": "Generate hash",
+    "zh-CN": "生成哈希",
+    "zh-TW": "Generate hash",
+    "es": "Generate hash",
+    "it": "Generate hash",
+    "ja": "Generate hash",
+    "pt-BR": "Generate hash",
+    "ko": "Generate hash",
+    "tr": "Generate hash",
+    "az": "Generate hash"
+  },
+  "Verify password": {
+    "en": "Verify password",
+    "zh-CN": "校验密码",
+    "zh-TW": "Verify password",
+    "es": "Verify password",
+    "it": "Verify password",
+    "ja": "Verify password",
+    "pt-BR": "Verify password",
+    "ko": "Verify password",
+    "tr": "Verify password",
+    "az": "Verify password"
+  },
+  "bytes": {
+    "en": "bytes",
+    "zh-CN": "字节",
+    "zh-TW": "位元組",
+    "es": "bytes",
+    "it": "byte",
+    "ja": "バイト",
+    "tr": "bayt",
+    "az": "bayt",
+    "pt-BR": "bytes",
+    "ko": "바이트"
+  },
+  "Enter a password": {
+    "en": "Enter a password",
+    "zh-CN": "输入需要处理的密码",
+    "zh-TW": "Enter a password",
+    "es": "Enter a password",
+    "it": "Enter a password",
+    "ja": "Enter a password",
+    "pt-BR": "Enter a password",
+    "ko": "Enter a password",
+    "tr": "Enter a password",
+    "az": "Enter a password"
+  },
+  "Hide": {
+    "en": "Hide",
+    "zh-CN": "隐藏",
+    "zh-TW": "Hide",
+    "es": "Hide",
+    "it": "Hide",
+    "ja": "Hide",
+    "pt-BR": "Hide",
+    "ko": "Hide",
+    "tr": "Hide",
+    "az": "Hide"
+  },
+  "Show": {
+    "en": "Show",
+    "zh-CN": "显示",
+    "zh-TW": "Show",
+    "es": "Show",
+    "it": "Show",
+    "ja": "Show",
+    "pt-BR": "Show",
+    "ko": "Show",
+    "tr": "Show",
+    "az": "Show"
+  },
+  "Password exceeds 72 UTF-8 bytes. Shorten it and try again.": {
+    "en": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "zh-CN": "密码超过 72 个 UTF-8 字节，请缩短后重试。",
+    "zh-TW": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "es": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "it": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "ja": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "pt-BR": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "ko": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "tr": "Password exceeds 72 UTF-8 bytes. Shorten it and try again.",
+    "az": "Password exceeds 72 UTF-8 bytes. Shorten it and try again."
+  },
+  "Up to 72 UTF-8 bytes. Some characters use more than one byte.": {
+    "en": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "zh-CN": "最多 72 个 UTF-8 字节，中文等字符会占用多个字节。",
+    "zh-TW": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "es": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "it": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "ja": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "pt-BR": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "ko": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "tr": "Up to 72 UTF-8 bytes. Some characters use more than one byte.",
+    "az": "Up to 72 UTF-8 bytes. Some characters use more than one byte."
+  },
+  "Cost factor": {
+    "en": "Cost factor",
+    "zh-CN": "成本因子",
+    "zh-TW": "Cost factor",
+    "es": "Cost factor",
+    "it": "Cost factor",
+    "ja": "Cost factor",
+    "pt-BR": "Cost factor",
+    "ko": "Cost factor",
+    "tr": "Cost factor",
+    "az": "Cost factor"
+  },
+  "Range 4–12, default 10. Each increment roughly doubles the work.": {
+    "en": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "zh-CN": "范围 4–12，默认 10。数值每增加 1，计算量约翻倍。",
+    "zh-TW": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "es": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "it": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "ja": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "pt-BR": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "ko": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "tr": "Range 4–12, default 10. Each increment roughly doubles the work.",
+    "az": "Range 4–12, default 10. Each increment roughly doubles the work."
+  },
+  "Existing hash": {
+    "en": "Existing hash",
+    "zh-CN": "已有哈希",
+    "zh-TW": "Existing hash",
+    "es": "Existing hash",
+    "it": "Existing hash",
+    "ja": "Existing hash",
+    "pt-BR": "Existing hash",
+    "ko": "Existing hash",
+    "tr": "Existing hash",
+    "az": "Existing hash"
+  },
+  "Enter a 60-character Bcrypt hash with a cost factor of 4–12.": {
+    "en": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "zh-CN": "请输入 60 位 Bcrypt 哈希，成本因子需为 4–12。",
+    "zh-TW": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "es": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "it": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "ja": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "pt-BR": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "ko": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "tr": "Enter a 60-character Bcrypt hash with a cost factor of 4–12.",
+    "az": "Enter a 60-character Bcrypt hash with a cost factor of 4–12."
+  },
+  "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.": {
+    "en": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "zh-CN": "支持 $2a$、$2b$、$2y$，成本因子从哈希中读取。",
+    "zh-TW": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "es": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "it": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "ja": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "pt-BR": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "ko": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "tr": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash.",
+    "az": "Supports $2a$, $2b$ and $2y$. The cost factor is read from the hash."
+  },
+  "A random salt is generated automatically": {
+    "en": "A random salt is generated automatically",
+    "zh-CN": "自动生成随机盐值",
+    "zh-TW": "A random salt is generated automatically",
+    "es": "A random salt is generated automatically",
+    "it": "A random salt is generated automatically",
+    "ja": "A random salt is generated automatically",
+    "pt-BR": "A random salt is generated automatically",
+    "ko": "A random salt is generated automatically",
+    "tr": "A random salt is generated automatically",
+    "az": "A random salt is generated automatically"
+  },
+  "Check whether the password matches the hash": {
+    "en": "Check whether the password matches the hash",
+    "zh-CN": "密码与哈希匹配校验",
+    "zh-TW": "Check whether the password matches the hash",
+    "es": "Check whether the password matches the hash",
+    "it": "Check whether the password matches the hash",
+    "ja": "Check whether the password matches the hash",
+    "pt-BR": "Check whether the password matches the hash",
+    "ko": "Check whether the password matches the hash",
+    "tr": "Check whether the password matches the hash",
+    "az": "Check whether the password matches the hash"
+  },
+  "Working…": {
+    "en": "Working…",
+    "zh-CN": "处理中…",
+    "zh-TW": "在職的…",
+    "es": "Laboral…",
+    "it": "Lavorando…",
+    "ja": "働く…",
+    "pt-BR": "Trabalhando…",
+    "ko": "일하고 있는…",
+    "tr": "Çalışma…",
+    "az": "İşləyir..."
+  },
+  "Result": {
+    "en": "Result",
+    "zh-CN": "结果",
+    "zh-TW": "結果",
+    "es": "Resultado",
+    "it": "Risultato",
+    "ja": "結果",
+    "pt-BR": "Resultado",
+    "ko": "결과",
+    "tr": "Sonuç",
+    "az": "Nəticə"
+  },
+  "Verification result": {
+    "en": "Verification result",
+    "zh-CN": "校验结果",
+    "zh-TW": "Verification result",
+    "es": "Verification result",
+    "it": "Verification result",
+    "ja": "Verification result",
+    "pt-BR": "Verification result",
+    "ko": "Verification result",
+    "tr": "Verification result",
+    "az": "Verification result"
+  },
+  "Hash result": {
+    "en": "Hash result",
+    "zh-CN": "哈希结果",
+    "zh-TW": "Hash result",
+    "es": "Hash result",
+    "it": "Hash result",
+    "ja": "Hash result",
+    "pt-BR": "Hash result",
+    "ko": "Hash result",
+    "tr": "Hash result",
+    "az": "Hash result"
+  },
+  "Computing, please wait…": {
+    "en": "Computing, please wait…",
+    "zh-CN": "正在计算，请稍候…",
+    "zh-TW": "Computing, please wait…",
+    "es": "Computing, please wait…",
+    "it": "Computing, please wait…",
+    "ja": "Computing, please wait…",
+    "pt-BR": "Computing, please wait…",
+    "ko": "Computing, please wait…",
+    "tr": "Computing, please wait…",
+    "az": "Computing, please wait…"
+  },
+  "Result is outdated. Run again before copying.": {
+    "en": "Result is outdated. Run again before copying.",
+    "zh-CN": "结果已过期，请重新执行后复制。",
+    "zh-TW": "結果已過期，請重新執行後複製。",
+    "es": "Resultado desactualizado. Ejecuta de nuevo antes de copiar.",
+    "it": "Risultato obsoleto. Esegui di nuovo prima di copiare.",
+    "ja": "結果が古くなっています。再実行してからコピーしてください。",
+    "pt-BR": "Resultado desatualizado. Execute novamente antes de copiar.",
+    "ko": "결과가 오래되었습니다. 복사 전에 다시 실행하세요.",
+    "tr": "Sonuç güncel değil. Kopyalamadan önce yeniden çalıştırın.",
+    "az": "Nəticə köhnəlib. Köçürməzdən əvvəl yenidən icra edin."
+  },
+  "Each hash uses a different salt, so the same password produces different hashes.": {
+    "en": "Each hash uses a different salt, so the same password produces different hashes.",
+    "zh-CN": "每次生成使用不同盐值，相同密码的哈希也会不同。",
+    "zh-TW": "Each hash uses a different salt, so the same password produces different hashes.",
+    "es": "Each hash uses a different salt, so the same password produces different hashes.",
+    "it": "Each hash uses a different salt, so the same password produces different hashes.",
+    "ja": "Each hash uses a different salt, so the same password produces different hashes.",
+    "pt-BR": "Each hash uses a different salt, so the same password produces different hashes.",
+    "ko": "Each hash uses a different salt, so the same password produces different hashes.",
+    "tr": "Each hash uses a different salt, so the same password produces different hashes.",
+    "az": "Each hash uses a different salt, so the same password produces different hashes."
+  },
+  "Password matches": {
+    "en": "Password matches",
+    "zh-CN": "密码匹配",
+    "zh-TW": "Password matches",
+    "es": "Password matches",
+    "it": "Password matches",
+    "ja": "Password matches",
+    "pt-BR": "Password matches",
+    "ko": "Password matches",
+    "tr": "Password matches",
+    "az": "Password matches"
+  },
+  "Password does not match": {
+    "en": "Password does not match",
+    "zh-CN": "密码不匹配",
+    "zh-TW": "Password does not match",
+    "es": "Password does not match",
+    "it": "Password does not match",
+    "ja": "Password does not match",
+    "pt-BR": "Password does not match",
+    "ko": "Password does not match",
+    "tr": "Password does not match",
+    "az": "Password does not match"
+  },
+  "The password matches the supplied hash.": {
+    "en": "The password matches the supplied hash.",
+    "zh-CN": "该密码与提供的哈希一致。",
+    "zh-TW": "The password matches the supplied hash.",
+    "es": "The password matches the supplied hash.",
+    "it": "The password matches the supplied hash.",
+    "ja": "The password matches the supplied hash.",
+    "pt-BR": "The password matches the supplied hash.",
+    "ko": "The password matches the supplied hash.",
+    "tr": "The password matches the supplied hash.",
+    "az": "The password matches the supplied hash."
+  },
+  "The password does not match the supplied hash.": {
+    "en": "The password does not match the supplied hash.",
+    "zh-CN": "该密码与提供的哈希不一致。",
+    "zh-TW": "The password does not match the supplied hash.",
+    "es": "The password does not match the supplied hash.",
+    "it": "The password does not match the supplied hash.",
+    "ja": "The password does not match the supplied hash.",
+    "pt-BR": "The password does not match the supplied hash.",
+    "ko": "The password does not match the supplied hash.",
+    "tr": "The password does not match the supplied hash.",
+    "az": "The password does not match the supplied hash."
+  },
+  "Your generated hash will appear here": {
+    "en": "Your generated hash will appear here",
+    "zh-CN": "生成的哈希将显示在这里",
+    "zh-TW": "Your generated hash will appear here",
+    "es": "Your generated hash will appear here",
+    "it": "Your generated hash will appear here",
+    "ja": "Your generated hash will appear here",
+    "pt-BR": "Your generated hash will appear here",
+    "ko": "Your generated hash will appear here",
+    "tr": "Your generated hash will appear here",
+    "az": "Your generated hash will appear here"
+  },
+  "Your verification result will appear here": {
+    "en": "Your verification result will appear here",
+    "zh-CN": "校验结果将显示在这里",
+    "zh-TW": "Your verification result will appear here",
+    "es": "Your verification result will appear here",
+    "it": "Your verification result will appear here",
+    "ja": "Your verification result will appear here",
+    "pt-BR": "Your verification result will appear here",
+    "ko": "Your verification result will appear here",
+    "tr": "Your verification result will appear here",
+    "az": "Your verification result will appear here"
   },
   "Comparison metric": {
     "en": "Comparison metric",
@@ -898,6 +1438,222 @@
     "ko": "Values exceed the calculation range. Use smaller numbers and try again.",
     "tr": "Values exceed the calculation range. Use smaller numbers and try again.",
     "az": "Values exceed the calculation range. Use smaller numbers and try again."
+  },
+  "Wordlist": {
+    "en": "Wordlist",
+    "zh-CN": "词表",
+    "zh-TW": "Wordlist",
+    "es": "Wordlist",
+    "it": "Wordlist",
+    "ja": "Wordlist",
+    "pt-BR": "Wordlist",
+    "ko": "Wordlist",
+    "tr": "Wordlist",
+    "az": "Wordlist"
+  },
+  "Word count": {
+    "en": "Word count",
+    "zh-CN": "单词数量",
+    "zh-TW": "單字數量",
+    "es": "Número de palabras",
+    "it": "Numero di parole",
+    "ja": "単語数",
+    "pt-BR": "Número de palavras",
+    "ko": "단어 수",
+    "tr": "Sözcük sayısı",
+    "az": "Söz sayı"
+  },
+  "Mnemonic": {
+    "en": "Mnemonic",
+    "zh-CN": "助记词",
+    "zh-TW": "Mnemonic",
+    "es": "Mnemonic",
+    "it": "Mnemonic",
+    "ja": "Mnemonic",
+    "pt-BR": "Mnemonic",
+    "ko": "Mnemonic",
+    "tr": "Mnemonic",
+    "az": "Mnemonic"
+  },
+  "words": {
+    "en": "words",
+    "zh-CN": "词",
+    "zh-TW": "字",
+    "es": "palabras",
+    "it": "parole",
+    "ja": "言葉",
+    "pt-BR": "palavras",
+    "ko": "단어",
+    "tr": "kelimeler",
+    "az": "sözlər"
+  },
+  "Enter mnemonic words separated by spaces": {
+    "en": "Enter mnemonic words separated by spaces",
+    "zh-CN": "输入助记词，以空格分隔",
+    "zh-TW": "Enter mnemonic words separated by spaces",
+    "es": "Enter mnemonic words separated by spaces",
+    "it": "Enter mnemonic words separated by spaces",
+    "ja": "Enter mnemonic words separated by spaces",
+    "pt-BR": "Enter mnemonic words separated by spaces",
+    "ko": "Enter mnemonic words separated by spaces",
+    "tr": "Enter mnemonic words separated by spaces",
+    "az": "Enter mnemonic words separated by spaces"
+  },
+  "Optional passphrase": {
+    "en": "Optional passphrase",
+    "zh-CN": "可选口令",
+    "zh-TW": "Optional passphrase",
+    "es": "Optional passphrase",
+    "it": "Optional passphrase",
+    "ja": "Optional passphrase",
+    "pt-BR": "Optional passphrase",
+    "ko": "Optional passphrase",
+    "tr": "Optional passphrase",
+    "az": "Optional passphrase"
+  },
+  "Generate mnemonic": {
+    "en": "Generate mnemonic",
+    "zh-CN": "生成助记词",
+    "zh-TW": "Generate mnemonic",
+    "es": "Generate mnemonic",
+    "it": "Generate mnemonic",
+    "ja": "Generate mnemonic",
+    "pt-BR": "Generate mnemonic",
+    "ko": "Generate mnemonic",
+    "tr": "Generate mnemonic",
+    "az": "Generate mnemonic"
+  },
+  "Validate mnemonic": {
+    "en": "Validate mnemonic",
+    "zh-CN": "校验助记词",
+    "zh-TW": "Validate mnemonic",
+    "es": "Validate mnemonic",
+    "it": "Validate mnemonic",
+    "ja": "Validate mnemonic",
+    "pt-BR": "Validate mnemonic",
+    "ko": "Validate mnemonic",
+    "tr": "Validate mnemonic",
+    "az": "Validate mnemonic"
+  },
+  "Derive seed": {
+    "en": "Derive seed",
+    "zh-CN": "派生种子",
+    "zh-TW": "Derive seed",
+    "es": "Derive seed",
+    "it": "Derive seed",
+    "ja": "Derive seed",
+    "pt-BR": "Derive seed",
+    "ko": "Derive seed",
+    "tr": "Derive seed",
+    "az": "Derive seed"
+  },
+  "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.": {
+    "en": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "zh-CN": "助记词和种子具有资产控制权，请只在可信环境中处理。离开页面后清除。",
+    "zh-TW": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "es": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "it": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "ja": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "pt-BR": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "ko": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "tr": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
+    "az": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page."
+  },
+  "Validation result": {
+    "en": "Validation result",
+    "zh-CN": "校验结果",
+    "zh-TW": "Validation result",
+    "es": "Validation result",
+    "it": "Validation result",
+    "ja": "Validation result",
+    "pt-BR": "Validation result",
+    "ko": "Validation result",
+    "tr": "Validation result",
+    "az": "Validation result"
+  },
+  "Seed": {
+    "en": "Seed",
+    "zh-CN": "随机种子",
+    "zh-TW": "Seed",
+    "es": "Seed",
+    "it": "Seed",
+    "ja": "Seed",
+    "pt-BR": "Seed",
+    "ko": "Seed",
+    "tr": "Seed",
+    "az": "Seed"
+  },
+  "Copy": {
+    "en": "Copy",
+    "zh-CN": "复制",
+    "zh-TW": "複製",
+    "es": "Copiar",
+    "it": "Copia",
+    "ja": "コピー",
+    "pt-BR": "Copiar",
+    "ko": "복사",
+    "tr": "Kopyala",
+    "az": "Kopyala"
+  },
+  "Result matches the current parameters": {
+    "en": "Result matches the current parameters",
+    "zh-CN": "结果与当前参数一致",
+    "zh-TW": "結果與目前參數一致",
+    "es": "Resultado acorde con los parámetros actuales",
+    "it": "Risultato coerente con i parametri attuali",
+    "ja": "結果は現在のパラメーターに対応しています",
+    "pt-BR": "Resultado corresponde aos parâmetros atuais",
+    "ko": "현재 매개변수와 일치하는 결과",
+    "tr": "Sonuç mevcut parametrelerle eşleşiyor",
+    "az": "Nəticə cari parametrlərə uyğundur"
+  },
+  "Valid mnemonic": {
+    "en": "Valid mnemonic",
+    "zh-CN": "助记词有效",
+    "zh-TW": "Valid mnemonic",
+    "es": "Valid mnemonic",
+    "it": "Valid mnemonic",
+    "ja": "Valid mnemonic",
+    "pt-BR": "Valid mnemonic",
+    "ko": "Valid mnemonic",
+    "tr": "Valid mnemonic",
+    "az": "Valid mnemonic"
+  },
+  "Invalid mnemonic": {
+    "en": "Invalid mnemonic",
+    "zh-CN": "助记词无效",
+    "zh-TW": "Invalid mnemonic",
+    "es": "Invalid mnemonic",
+    "it": "Invalid mnemonic",
+    "ja": "Invalid mnemonic",
+    "pt-BR": "Invalid mnemonic",
+    "ko": "Invalid mnemonic",
+    "tr": "Invalid mnemonic",
+    "az": "Invalid mnemonic"
+  },
+  "Generate": {
+    "en": "Generate",
+    "zh-CN": "随机生成",
+    "zh-TW": "產生",
+    "es": "Generar",
+    "it": "Generare",
+    "ja": "生成する",
+    "pt-BR": "Gerar",
+    "ko": "생성",
+    "tr": "Üret",
+    "az": "Yarat"
+  },
+  "Validate": {
+    "en": "Validate",
+    "zh-CN": "校验",
+    "zh-TW": "驗證",
+    "es": "Validar",
+    "it": "Convalida",
+    "ja": "検証",
+    "pt-BR": "Validar",
+    "ko": "검증",
+    "tr": "Doğrula",
+    "az": "Yoxla"
   },
   "Calculation mode": {
     "en": "Calculation mode",
@@ -2723,18 +3479,6 @@
     "tr": "Algoritma",
     "az": "Alqoritm"
   },
-  "Mode": {
-    "en": "Mode",
-    "zh-CN": "模式",
-    "zh-TW": "模式",
-    "es": "Modo",
-    "it": "Modalità",
-    "ja": "モード",
-    "pt-BR": "Modo",
-    "ko": "모드",
-    "tr": "Mod",
-    "az": "Rejim"
-  },
   "Ciphertext format": {
     "en": "Ciphertext format",
     "zh-CN": "密文格式",
@@ -3359,18 +4103,6 @@
     "tr": "Biçimlendir",
     "az": "Formatla"
   },
-  "Validate": {
-    "en": "Validate",
-    "zh-CN": "校验",
-    "zh-TW": "驗證",
-    "es": "Validar",
-    "it": "Convalida",
-    "ja": "検証",
-    "pt-BR": "Validar",
-    "ko": "검증",
-    "tr": "Doğrula",
-    "az": "Yoxla"
-  },
   "Indent": {
     "en": "Indent",
     "zh-CN": "缩进",
@@ -3430,18 +4162,6 @@
     "ko": "소스",
     "tr": "Kaynak",
     "az": "Mənbə"
-  },
-  "Result": {
-    "en": "Result",
-    "zh-CN": "结果",
-    "zh-TW": "結果",
-    "es": "Resultado",
-    "it": "Risultato",
-    "ja": "結果",
-    "pt-BR": "Resultado",
-    "ko": "결과",
-    "tr": "Sonuç",
-    "az": "Nəticə"
   },
   "Processing…": {
     "en": "Processing…",
@@ -4151,17 +4871,17 @@
     "tr": "Ekrandan seçin, çarkı sürükleyin veya sola yazın",
     "az": "Ekrandan seçin, çarxı sürükləyin və ya solda yazın"
   },
-  "Eyedropper unavailable; opened the system color picker": {
-    "en": "Eyedropper unavailable; opened the system color picker",
-    "zh-CN": "屏幕取色不可用，已打开系统调色板",
-    "zh-TW": "滴管不可用，已開啟系統色彩選擇器",
-    "es": "Cuentagotas no disponible; se abrió el selector del sistema",
-    "it": "Contagocce non disponibile; aperto il selettore di sistema",
-    "ja": "スポイトを使用できないため、システムの色選択を開きました",
-    "pt-BR": "Conta-gotas indisponível; seletor do sistema aberto",
-    "ko": "스포이드를 사용할 수 없어 시스템 색상 선택기를 열었습니다",
-    "tr": "Damlalık kullanılamıyor; sistem renk seçicisi açıldı",
-    "az": "Damcı aləti əlçatan deyil; sistem rəng seçicisi açıldı"
+  "Choose color": {
+    "en": "Choose color",
+    "zh-CN": "选择颜色",
+    "zh-TW": "Choose color",
+    "es": "Choose color",
+    "it": "Choose color",
+    "ja": "Choose color",
+    "pt-BR": "Choose color",
+    "ko": "Choose color",
+    "tr": "Choose color",
+    "az": "Choose color"
   },
   "Color picking is not available here": {
     "en": "Color picking is not available here",
@@ -4174,6 +4894,450 @@
     "ko": "여기서는 색상을 선택할 수 없습니다",
     "tr": "Burada renk seçilemiyor",
     "az": "Burada rəng seçmək mümkün deyil"
+  },
+  "Palette settings": {
+    "en": "Palette settings",
+    "zh-CN": "配色设置",
+    "zh-TW": "Palette settings",
+    "es": "Palette settings",
+    "it": "Palette settings",
+    "ja": "Palette settings",
+    "pt-BR": "Palette settings",
+    "ko": "Palette settings",
+    "tr": "Palette settings",
+    "az": "Palette settings"
+  },
+  "Base color": {
+    "en": "Base color",
+    "zh-CN": "基础色",
+    "zh-TW": "Base color",
+    "es": "Base color",
+    "it": "Base color",
+    "ja": "Base color",
+    "pt-BR": "Base color",
+    "ko": "Base color",
+    "tr": "Base color",
+    "az": "Base color"
+  },
+  "Choose base color": {
+    "en": "Choose base color",
+    "zh-CN": "选择基础色",
+    "zh-TW": "Choose base color",
+    "es": "Choose base color",
+    "it": "Choose base color",
+    "ja": "Choose base color",
+    "pt-BR": "Choose base color",
+    "ko": "Choose base color",
+    "tr": "Choose base color",
+    "az": "Choose base color"
+  },
+  "Color scheme": {
+    "en": "Color scheme",
+    "zh-CN": "配色方案",
+    "zh-TW": "配色方案",
+    "es": "Esquema de colores",
+    "it": "Schema di colori",
+    "ja": "配色",
+    "pt-BR": "Esquema de cores",
+    "ko": "색 구성표",
+    "tr": "Renk düzeni",
+    "az": "Rəng sxemi"
+  },
+  "Color count (up to 12)": {
+    "en": "Color count (up to 12)",
+    "zh-CN": "颜色数量（最多 12 色）",
+    "zh-TW": "Color count (up to 12)",
+    "es": "Color count (up to 12)",
+    "it": "Color count (up to 12)",
+    "ja": "Color count (up to 12)",
+    "pt-BR": "Color count (up to 12)",
+    "ko": "Color count (up to 12)",
+    "tr": "Color count (up to 12)",
+    "az": "Color count (up to 12)"
+  },
+  "Color count": {
+    "en": "Color count",
+    "zh-CN": "颜色数量",
+    "zh-TW": "Color count",
+    "es": "Color count",
+    "it": "Color count",
+    "ja": "Color count",
+    "pt-BR": "Color count",
+    "ko": "Color count",
+    "tr": "Color count",
+    "az": "Color count"
+  },
+  "Quick inspiration": {
+    "en": "Quick inspiration",
+    "zh-CN": "灵感起点",
+    "zh-TW": "Quick inspiration",
+    "es": "Quick inspiration",
+    "it": "Quick inspiration",
+    "ja": "Quick inspiration",
+    "pt-BR": "Quick inspiration",
+    "ko": "Quick inspiration",
+    "tr": "Quick inspiration",
+    "az": "Quick inspiration"
+  },
+  "Use color": {
+    "en": "Use color",
+    "zh-CN": "使用颜色",
+    "zh-TW": "Use color",
+    "es": "Use color",
+    "it": "Use color",
+    "ja": "Use color",
+    "pt-BR": "Use color",
+    "ko": "Use color",
+    "tr": "Use color",
+    "az": "Use color"
+  },
+  "Surprise me": {
+    "en": "Surprise me",
+    "zh-CN": "随机灵感",
+    "zh-TW": "Surprise me",
+    "es": "Surprise me",
+    "it": "Surprise me",
+    "ja": "Surprise me",
+    "pt-BR": "Surprise me",
+    "ko": "Surprise me",
+    "tr": "Surprise me",
+    "az": "Surprise me"
+  },
+  "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.": {
+    "en": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "zh-CN": "请输入 3 位或 6 位 HEX 颜色，例如 #15988F。预览保留上一个有效颜色。",
+    "zh-TW": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "es": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "it": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "ja": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "pt-BR": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "ko": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "tr": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color.",
+    "az": "Enter a 3- or 6-digit HEX color, e.g. #15988F. The preview keeps the last valid color."
+  },
+  "Palette preview": {
+    "en": "Palette preview",
+    "zh-CN": "配色预览",
+    "zh-TW": "Palette preview",
+    "es": "Palette preview",
+    "it": "Palette preview",
+    "ja": "Palette preview",
+    "pt-BR": "Palette preview",
+    "ko": "Palette preview",
+    "tr": "Palette preview",
+    "az": "Palette preview"
+  },
+  "colors": {
+    "en": "colors",
+    "zh-CN": "色",
+    "zh-TW": "colors",
+    "es": "colors",
+    "it": "colors",
+    "ja": "colors",
+    "pt-BR": "colors",
+    "ko": "colors",
+    "tr": "colors",
+    "az": "colors"
+  },
+  "Text contrast": {
+    "en": "Text contrast",
+    "zh-CN": "文字对比度",
+    "zh-TW": "Text contrast",
+    "es": "Text contrast",
+    "it": "Text contrast",
+    "ja": "Text contrast",
+    "pt-BR": "Text contrast",
+    "ko": "Text contrast",
+    "tr": "Text contrast",
+    "az": "Text contrast"
+  },
+  "Use as base": {
+    "en": "Use as base",
+    "zh-CN": "设为基础色",
+    "zh-TW": "Use as base",
+    "es": "Use as base",
+    "it": "Use as base",
+    "ja": "Use as base",
+    "pt-BR": "Use as base",
+    "ko": "Use as base",
+    "tr": "Use as base",
+    "az": "Use as base"
+  },
+  "Extra colors extend the base harmony with lightness variations.": {
+    "en": "Extra colors extend the base harmony with lightness variations.",
+    "zh-CN": "超出基础色数时，以明度变化扩展配色。",
+    "zh-TW": "Extra colors extend the base harmony with lightness variations.",
+    "es": "Extra colors extend the base harmony with lightness variations.",
+    "it": "Extra colors extend the base harmony with lightness variations.",
+    "ja": "Extra colors extend the base harmony with lightness variations.",
+    "pt-BR": "Extra colors extend the base harmony with lightness variations.",
+    "ko": "Extra colors extend the base harmony with lightness variations.",
+    "tr": "Extra colors extend the base harmony with lightness variations.",
+    "az": "Extra colors extend the base harmony with lightness variations."
+  },
+  "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.": {
+    "en": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "zh-CN": "对比度按色块背景与示例文字的黑色或白色计算；AA ≥ 4.5，AAA ≥ 7（普通文字）。",
+    "zh-TW": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "es": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "it": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "ja": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "pt-BR": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "ko": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "tr": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text.",
+    "az": "Contrast compares each swatch with its black or white sample text; AA ≥ 4.5, AAA ≥ 7 for normal text."
+  },
+  "Take your palette with you": {
+    "en": "Take your palette with you",
+    "zh-CN": "带走这组配色",
+    "zh-TW": "Take your palette with you",
+    "es": "Take your palette with you",
+    "it": "Take your palette with you",
+    "ja": "Take your palette with you",
+    "pt-BR": "Take your palette with you",
+    "ko": "Take your palette with you",
+    "tr": "Take your palette with you",
+    "az": "Take your palette with you"
+  },
+  "Export format": {
+    "en": "Export format",
+    "zh-CN": "导出格式",
+    "zh-TW": "Export format",
+    "es": "Export format",
+    "it": "Export format",
+    "ja": "Export format",
+    "pt-BR": "Export format",
+    "ko": "Export format",
+    "tr": "Export format",
+    "az": "Export format"
+  },
+  "Exporting…": {
+    "en": "Exporting…",
+    "zh-CN": "正在导出…",
+    "zh-TW": "出口…",
+    "es": "Exportador…",
+    "it": "Esportazione…",
+    "ja": "エクスポート中…",
+    "pt-BR": "Exportador…",
+    "ko": "내보내는 중…",
+    "tr": "Dışa aktarılıyor…",
+    "az": "İxrac edilir…"
+  },
+  "Export file": {
+    "en": "Export file",
+    "zh-CN": "导出文件",
+    "zh-TW": "Export file",
+    "es": "Export file",
+    "it": "Export file",
+    "ja": "Export file",
+    "pt-BR": "Export file",
+    "ko": "Export file",
+    "tr": "Export file",
+    "az": "Export file"
+  },
+  "Palette code": {
+    "en": "Palette code",
+    "zh-CN": "配色代码",
+    "zh-TW": "Palette code",
+    "es": "Palette code",
+    "it": "Palette code",
+    "ja": "Palette code",
+    "pt-BR": "Palette code",
+    "ko": "Palette code",
+    "tr": "Palette code",
+    "az": "Palette code"
+  },
+  "Complementary": {
+    "en": "Complementary",
+    "zh-CN": "互补色",
+    "zh-TW": "Complementary",
+    "es": "Complementary",
+    "it": "Complementary",
+    "ja": "Complementary",
+    "pt-BR": "Complementary",
+    "ko": "Complementary",
+    "tr": "Complementary",
+    "az": "Complementary"
+  },
+  "Opposite hues, 180° apart, for a bold contrast.": {
+    "en": "Opposite hues, 180° apart, for a bold contrast.",
+    "zh-CN": "色相相差 180°，营造鲜明对比。",
+    "zh-TW": "Opposite hues, 180° apart, for a bold contrast.",
+    "es": "Opposite hues, 180° apart, for a bold contrast.",
+    "it": "Opposite hues, 180° apart, for a bold contrast.",
+    "ja": "Opposite hues, 180° apart, for a bold contrast.",
+    "pt-BR": "Opposite hues, 180° apart, for a bold contrast.",
+    "ko": "Opposite hues, 180° apart, for a bold contrast.",
+    "tr": "Opposite hues, 180° apart, for a bold contrast.",
+    "az": "Opposite hues, 180° apart, for a bold contrast."
+  },
+  "Analogous": {
+    "en": "Analogous",
+    "zh-CN": "邻近色",
+    "zh-TW": "Analogous",
+    "es": "Analogous",
+    "it": "Analogous",
+    "ja": "Analogous",
+    "pt-BR": "Analogous",
+    "ko": "Analogous",
+    "tr": "Analogous",
+    "az": "Analogous"
+  },
+  "Three neighboring hues for a harmonious palette.": {
+    "en": "Three neighboring hues for a harmonious palette.",
+    "zh-CN": "相邻的三种色相，柔和而协调。",
+    "zh-TW": "Three neighboring hues for a harmonious palette.",
+    "es": "Three neighboring hues for a harmonious palette.",
+    "it": "Three neighboring hues for a harmonious palette.",
+    "ja": "Three neighboring hues for a harmonious palette.",
+    "pt-BR": "Three neighboring hues for a harmonious palette.",
+    "ko": "Three neighboring hues for a harmonious palette.",
+    "tr": "Three neighboring hues for a harmonious palette.",
+    "az": "Three neighboring hues for a harmonious palette."
+  },
+  "Triadic": {
+    "en": "Triadic",
+    "zh-CN": "三角色",
+    "zh-TW": "Triadic",
+    "es": "Triadic",
+    "it": "Triadic",
+    "ja": "Triadic",
+    "pt-BR": "Triadic",
+    "ko": "Triadic",
+    "tr": "Triadic",
+    "az": "Triadic"
+  },
+  "Three evenly spaced hues for a balanced, vibrant palette.": {
+    "en": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "zh-CN": "色环上等距的三种颜色，平衡又活泼。",
+    "zh-TW": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "es": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "it": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "ja": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "pt-BR": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "ko": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "tr": "Three evenly spaced hues for a balanced, vibrant palette.",
+    "az": "Three evenly spaced hues for a balanced, vibrant palette."
+  },
+  "Tetradic": {
+    "en": "Tetradic",
+    "zh-CN": "四角色",
+    "zh-TW": "Tetradic",
+    "es": "Tetradic",
+    "it": "Tetradic",
+    "ja": "Tetradic",
+    "pt-BR": "Tetradic",
+    "ko": "Tetradic",
+    "tr": "Tetradic",
+    "az": "Tetradic"
+  },
+  "Four evenly spaced hues for a rich visual hierarchy.": {
+    "en": "Four evenly spaced hues for a rich visual hierarchy.",
+    "zh-CN": "四种等距色相，适合丰富的视觉层次。",
+    "zh-TW": "Four evenly spaced hues for a rich visual hierarchy.",
+    "es": "Four evenly spaced hues for a rich visual hierarchy.",
+    "it": "Four evenly spaced hues for a rich visual hierarchy.",
+    "ja": "Four evenly spaced hues for a rich visual hierarchy.",
+    "pt-BR": "Four evenly spaced hues for a rich visual hierarchy.",
+    "ko": "Four evenly spaced hues for a rich visual hierarchy.",
+    "tr": "Four evenly spaced hues for a rich visual hierarchy.",
+    "az": "Four evenly spaced hues for a rich visual hierarchy."
+  },
+  "Monochromatic": {
+    "en": "Monochromatic",
+    "zh-CN": "单色阶",
+    "zh-TW": "Monochromatic",
+    "es": "Monochromatic",
+    "it": "Monochromatic",
+    "ja": "Monochromatic",
+    "pt-BR": "Monochromatic",
+    "ko": "Monochromatic",
+    "tr": "Monochromatic",
+    "az": "Monochromatic"
+  },
+  "One hue with different lightness levels.": {
+    "en": "One hue with different lightness levels.",
+    "zh-CN": "保留色相，以不同明度构建层次。",
+    "zh-TW": "One hue with different lightness levels.",
+    "es": "One hue with different lightness levels.",
+    "it": "One hue with different lightness levels.",
+    "ja": "One hue with different lightness levels.",
+    "pt-BR": "One hue with different lightness levels.",
+    "ko": "One hue with different lightness levels.",
+    "tr": "One hue with different lightness levels.",
+    "az": "One hue with different lightness levels."
+  },
+  "Palette exported": {
+    "en": "Palette exported",
+    "zh-CN": "配色方案已导出",
+    "zh-TW": "Palette exported",
+    "es": "Palette exported",
+    "it": "Palette exported",
+    "ja": "Palette exported",
+    "pt-BR": "Palette exported",
+    "ko": "Palette exported",
+    "tr": "Palette exported",
+    "az": "Palette exported"
+  },
+  "Close": {
+    "en": "Close",
+    "zh-CN": "关闭",
+    "zh-TW": "關閉",
+    "es": "Cerrar",
+    "it": "Chiudi",
+    "ja": "閉じる",
+    "pt-BR": "Fechar",
+    "ko": "닫기",
+    "tr": "Kapat",
+    "az": "Bağla"
+  },
+  "Saturation and brightness": {
+    "en": "Saturation and brightness",
+    "zh-CN": "饱和度与明亮度",
+    "zh-TW": "Saturation and brightness",
+    "es": "Saturation and brightness",
+    "it": "Saturation and brightness",
+    "ja": "Saturation and brightness",
+    "pt-BR": "Saturation and brightness",
+    "ko": "Saturation and brightness",
+    "tr": "Saturation and brightness",
+    "az": "Saturation and brightness"
+  },
+  "Hue": {
+    "en": "Hue",
+    "zh-CN": "色相",
+    "zh-TW": "Hue",
+    "es": "Hue",
+    "it": "Hue",
+    "ja": "Hue",
+    "pt-BR": "Hue",
+    "ko": "Hue",
+    "tr": "Hue",
+    "az": "Hue"
+  },
+  "Pick screen color": {
+    "en": "Pick screen color",
+    "zh-CN": "屏幕取色",
+    "zh-TW": "Pick screen color",
+    "es": "Pick screen color",
+    "it": "Pick screen color",
+    "ja": "Pick screen color",
+    "pt-BR": "Pick screen color",
+    "ko": "Pick screen color",
+    "tr": "Pick screen color",
+    "az": "Pick screen color"
+  },
+  "Color picking failed": {
+    "en": "Color picking failed",
+    "zh-CN": "取色失败",
+    "zh-TW": "Color picking failed",
+    "es": "Color picking failed",
+    "it": "Color picking failed",
+    "ja": "Color picking failed",
+    "pt-BR": "Color picking failed",
+    "ko": "Color picking failed",
+    "tr": "Color picking failed",
+    "az": "Color picking failed"
   },
   "Color wheel: hue and saturation": {
     "en": "Color wheel: hue and saturation",
@@ -4667,78 +5831,6 @@
     "tr": "Daily · 365 times",
     "az": "Daily · 365 times"
   },
-  "Link URL": {
-    "en": "Link URL",
-    "zh-CN": "链接地址",
-    "zh-TW": "Link URL",
-    "es": "Link URL",
-    "it": "Link URL",
-    "ja": "Link URL",
-    "pt-BR": "Link URL",
-    "ko": "Link URL",
-    "tr": "Link URL",
-    "az": "Link URL"
-  },
-  "Insert link": {
-    "en": "Insert link",
-    "zh-CN": "插入链接",
-    "zh-TW": "Insert link",
-    "es": "Insert link",
-    "it": "Insert link",
-    "ja": "Insert link",
-    "pt-BR": "Insert link",
-    "ko": "Insert link",
-    "tr": "Insert link",
-    "az": "Insert link"
-  },
-  "Rich text content": {
-    "en": "Rich text content",
-    "zh-CN": "富文本内容",
-    "zh-TW": "Rich text content",
-    "es": "Rich text content",
-    "it": "Rich text content",
-    "ja": "Rich text content",
-    "pt-BR": "Rich text content",
-    "ko": "Rich text content",
-    "tr": "Rich text content",
-    "az": "Rich text content"
-  },
-  "HTML source": {
-    "en": "HTML source",
-    "zh-CN": "HTML 源码",
-    "zh-TW": "HTML source",
-    "es": "HTML source",
-    "it": "HTML source",
-    "ja": "HTML source",
-    "pt-BR": "HTML source",
-    "ko": "HTML source",
-    "tr": "HTML source",
-    "az": "HTML source"
-  },
-  "Base color": {
-    "en": "Base color",
-    "zh-CN": "基础色",
-    "zh-TW": "Base color",
-    "es": "Base color",
-    "it": "Base color",
-    "ja": "Base color",
-    "pt-BR": "Base color",
-    "ko": "Base color",
-    "tr": "Base color",
-    "az": "Base color"
-  },
-  "Color scheme": {
-    "en": "Color scheme",
-    "zh-CN": "配色方案",
-    "zh-TW": "配色方案",
-    "es": "Esquema de colores",
-    "it": "Schema di colori",
-    "ja": "配色",
-    "pt-BR": "Esquema de cores",
-    "ko": "색 구성표",
-    "tr": "Renk düzeni",
-    "az": "Rəng sxemi"
-  },
   "Font": {
     "en": "Font",
     "zh-CN": "字体",
@@ -4870,18 +5962,6 @@
     "ko": "실행",
     "tr": "Çalıştır",
     "az": "İşlət"
-  },
-  "Copy": {
-    "en": "Copy",
-    "zh-CN": "复制",
-    "zh-TW": "複製",
-    "es": "Copiar",
-    "it": "Copia",
-    "ja": "コピー",
-    "pt-BR": "Copiar",
-    "ko": "복사",
-    "tr": "Kopyala",
-    "az": "Kopyala"
   },
   "Quartz": {
     "en": "Quartz",
@@ -6695,18 +7775,6 @@
     "tr": "Sonraki ay",
     "az": "Sonrakı ay"
   },
-  "Close": {
-    "en": "Close",
-    "zh-CN": "关闭",
-    "zh-TW": "關閉",
-    "es": "Cerrar",
-    "it": "Chiudi",
-    "ja": "閉じる",
-    "pt-BR": "Fechar",
-    "ko": "닫기",
-    "tr": "Kapat",
-    "az": "Bağla"
-  },
   "Today": {
     "en": "Today",
     "zh-CN": "今天",
@@ -6718,54 +7786,6 @@
     "ko": "Today",
     "tr": "Today",
     "az": "Today"
-  },
-  "DEVELOPER REFERENCE": {
-    "en": "DEVELOPER REFERENCE",
-    "zh-CN": "DEVELOPER REFERENCE",
-    "zh-TW": "開發者參考",
-    "es": "REFERENCIA PARA DESARROLLADORES",
-    "it": "RIFERIMENTI PER SVILUPPATORI",
-    "ja": "開発者向けリファレンス",
-    "pt-BR": "REFERÊNCIA PARA DESENVOLVEDORES",
-    "ko": "개발자 참고 자료",
-    "tr": "GELİŞTİRİCİ BAŞVURUSU",
-    "az": "TƏRTİBATÇI ÜÇÜN ARAYIŞ"
-  },
-  "Regex reference": {
-    "en": "Regex reference",
-    "zh-CN": "正则语法速查",
-    "zh-TW": "正規表示式速查",
-    "es": "Referencia de expresiones regulares",
-    "it": "Guida espressioni regolari",
-    "ja": "正規表現リファレンス",
-    "pt-BR": "Referência de expressões regulares",
-    "ko": "정규식 참조",
-    "tr": "Düzenli ifade başvurusu",
-    "az": "Müntəzəm ifadələr bələdçisi"
-  },
-  "Find syntax by use case, copy it, and verify it in the tester.": {
-    "en": "Find syntax by use case, copy it, and verify it in the tester.",
-    "zh-CN": "按场景快速查找语法，复制后即可在测试器中验证。",
-    "zh-TW": "依使用情境尋找語法，複製後即可在測試器中驗證。",
-    "es": "Busca la sintaxis según el caso, cópiala y compruébala en el probador.",
-    "it": "Trova la sintassi per caso d'uso, copiala e verificala nel tester.",
-    "ja": "用途に合った構文を探し、コピーしてテスターで確認できます。",
-    "pt-BR": "Encontre a sintaxe por caso de uso, copie e verifique no testador.",
-    "ko": "용도에 맞는 구문을 찾아 복사하고 테스트 도구에서 확인하세요.",
-    "tr": "Kullanım durumuna göre sözdizimini bulun, kopyalayın ve test aracında doğrulayın.",
-    "az": "İstifadə halına uyğun sintaksisi tapın, köçürün və sınaq alətində yoxlayın."
-  },
-  "rules": {
-    "en": "rules",
-    "zh-CN": "条规则",
-    "zh-TW": "條規則",
-    "es": "reglas",
-    "it": "regole",
-    "ja": "件のルール",
-    "pt-BR": "regras",
-    "ko": "개 규칙",
-    "tr": "kural",
-    "az": "qayda"
   },
   "Search regex syntax": {
     "en": "Search regex syntax",
@@ -6815,6 +7835,18 @@
     "tr": "Kategoriler",
     "az": "Kateqoriyalar"
   },
+  "rules": {
+    "en": "rules",
+    "zh-CN": "条规则",
+    "zh-TW": "條規則",
+    "es": "reglas",
+    "it": "regole",
+    "ja": "件のルール",
+    "pt-BR": "regras",
+    "ko": "개 규칙",
+    "tr": "kural",
+    "az": "qayda"
+  },
   "Example": {
     "en": "Example",
     "zh-CN": "示例",
@@ -6863,6 +7895,150 @@
     "tr": "Başka bir anahtar sözcük deneyin veya filtreleri temizleyin.",
     "az": "Başqa açar söz sınayın və ya filtrləri təmizləyin."
   },
+  "Extract the original URL from an Outlook SafeLink locally in your browser.": {
+    "en": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "zh-CN": "提取 Outlook SafeLink 中的原始网址，整个过程在本地完成。",
+    "zh-TW": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "es": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "it": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "ja": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "pt-BR": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "ko": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "tr": "Extract the original URL from an Outlook SafeLink locally in your browser.",
+    "az": "Extract the original URL from an Outlook SafeLink locally in your browser."
+  },
+  "Local only": {
+    "en": "Local only",
+    "zh-CN": "本地处理",
+    "zh-TW": "Local only",
+    "es": "Local only",
+    "it": "Local only",
+    "ja": "Local only",
+    "pt-BR": "Local only",
+    "ko": "Local only",
+    "tr": "Local only",
+    "az": "Local only"
+  },
+  "SafeLink input": {
+    "en": "SafeLink input",
+    "zh-CN": "输入 SafeLink",
+    "zh-TW": "SafeLink input",
+    "es": "SafeLink input",
+    "it": "SafeLink input",
+    "ja": "SafeLink input",
+    "pt-BR": "SafeLink input",
+    "ko": "SafeLink input",
+    "tr": "SafeLink input",
+    "az": "SafeLink input"
+  },
+  "One link per line": {
+    "en": "One link per line",
+    "zh-CN": "每行一个链接",
+    "zh-TW": "One link per line",
+    "es": "One link per line",
+    "it": "One link per line",
+    "ja": "One link per line",
+    "pt-BR": "One link per line",
+    "ko": "One link per line",
+    "tr": "One link per line",
+    "az": "One link per line"
+  },
+  "chars": {
+    "en": "chars",
+    "zh-CN": "字",
+    "zh-TW": "字元",
+    "es": "caracteres",
+    "it": "caratteri",
+    "ja": "文字",
+    "ko": "자",
+    "tr": "karakter",
+    "az": "simvol",
+    "pt-BR": "car."
+  },
+  "Paste a safelinks.protection.outlook.com link…": {
+    "en": "Paste a safelinks.protection.outlook.com link…",
+    "zh-CN": "粘贴 safelinks.protection.outlook.com 链接…",
+    "zh-TW": "Paste a safelinks.protection.outlook.com link…",
+    "es": "Paste a safelinks.protection.outlook.com link…",
+    "it": "Paste a safelinks.protection.outlook.com link…",
+    "ja": "Paste a safelinks.protection.outlook.com link…",
+    "pt-BR": "Paste a safelinks.protection.outlook.com link…",
+    "ko": "Paste a safelinks.protection.outlook.com link…",
+    "tr": "Paste a safelinks.protection.outlook.com link…",
+    "az": "Paste a safelinks.protection.outlook.com link…"
+  },
+  "Decode links": {
+    "en": "Decode links",
+    "zh-CN": "解码链接",
+    "zh-TW": "Decode links",
+    "es": "Decode links",
+    "it": "Decode links",
+    "ja": "Decode links",
+    "pt-BR": "Decode links",
+    "ko": "Decode links",
+    "tr": "Decode links",
+    "az": "Decode links"
+  },
+  "Decoded result": {
+    "en": "Decoded result",
+    "zh-CN": "解码结果",
+    "zh-TW": "Decoded result",
+    "es": "Decoded result",
+    "it": "Decoded result",
+    "ja": "Decoded result",
+    "pt-BR": "Decoded result",
+    "ko": "Decoded result",
+    "tr": "Decoded result",
+    "az": "Decoded result"
+  },
+  "Original destination": {
+    "en": "Original destination",
+    "zh-CN": "原始目标地址",
+    "zh-TW": "Original destination",
+    "es": "Original destination",
+    "it": "Original destination",
+    "ja": "Original destination",
+    "pt-BR": "Original destination",
+    "ko": "Original destination",
+    "tr": "Original destination",
+    "az": "Original destination"
+  },
+  "Decoded links will appear here": {
+    "en": "Decoded links will appear here",
+    "zh-CN": "解码结果将在这里显示",
+    "zh-TW": "Decoded links will appear here",
+    "es": "Decoded links will appear here",
+    "it": "Decoded links will appear here",
+    "ja": "Decoded links will appear here",
+    "pt-BR": "Decoded links will appear here",
+    "ko": "Decoded links will appear here",
+    "tr": "Decoded links will appear here",
+    "az": "Decoded links will appear here"
+  },
+  "Paste a link and choose “Decode links”": {
+    "en": "Paste a link and choose “Decode links”",
+    "zh-CN": "粘贴链接后点击“解码链接”",
+    "zh-TW": "Paste a link and choose “Decode links”",
+    "es": "Paste a link and choose “Decode links”",
+    "it": "Paste a link and choose “Decode links”",
+    "ja": "Paste a link and choose “Decode links”",
+    "pt-BR": "Paste a link and choose “Decode links”",
+    "ko": "Paste a link and choose “Decode links”",
+    "tr": "Paste a link and choose “Decode links”",
+    "az": "Paste a link and choose “Decode links”"
+  },
+  "Your links stay in this browser and are never opened or uploaded.": {
+    "en": "Your links stay in this browser and are never opened or uploaded.",
+    "zh-CN": "不会上传链接，也不会访问目标网站。",
+    "zh-TW": "Your links stay in this browser and are never opened or uploaded.",
+    "es": "Your links stay in this browser and are never opened or uploaded.",
+    "it": "Your links stay in this browser and are never opened or uploaded.",
+    "ja": "Your links stay in this browser and are never opened or uploaded.",
+    "pt-BR": "Your links stay in this browser and are never opened or uploaded.",
+    "ko": "Your links stay in this browser and are never opened or uploaded.",
+    "tr": "Your links stay in this browser and are never opened or uploaded.",
+    "az": "Your links stay in this browser and are never opened or uploaded."
+  },
   "Summarize CIDRs": {
     "en": "Summarize CIDRs",
     "zh-CN": "汇总 CIDR",
@@ -6887,17 +8063,77 @@
     "tr": "Expand address range",
     "az": "Expand address range"
   },
-  "MAC prefix (optional)": {
-    "en": "MAC prefix (optional)",
-    "zh-CN": "MAC 前缀（可留空）",
-    "zh-TW": "MAC prefix (optional)",
-    "es": "MAC prefix (optional)",
-    "it": "MAC prefix (optional)",
-    "ja": "MAC prefix (optional)",
-    "pt-BR": "MAC prefix (optional)",
-    "ko": "MAC prefix (optional)",
-    "tr": "MAC prefix (optional)",
-    "az": "MAC prefix (optional)"
+  "MAC generator settings": {
+    "en": "MAC generator settings",
+    "zh-CN": "MAC 地址生成设置",
+    "zh-TW": "MAC generator settings",
+    "es": "MAC generator settings",
+    "it": "MAC generator settings",
+    "ja": "MAC generator settings",
+    "pt-BR": "MAC generator settings",
+    "ko": "MAC generator settings",
+    "tr": "MAC generator settings",
+    "az": "MAC generator settings"
+  },
+  "MAC prefix": {
+    "en": "MAC prefix",
+    "zh-CN": "MAC 前缀",
+    "zh-TW": "MAC prefix",
+    "es": "MAC prefix",
+    "it": "MAC prefix",
+    "ja": "MAC prefix",
+    "pt-BR": "MAC prefix",
+    "ko": "MAC prefix",
+    "tr": "MAC prefix",
+    "az": "MAC prefix"
+  },
+  "Optional": {
+    "en": "Optional",
+    "zh-CN": "可选下载",
+    "zh-TW": "Optional",
+    "es": "Optional",
+    "it": "Optional",
+    "ja": "Optional",
+    "pt-BR": "Optional",
+    "ko": "Optional",
+    "tr": "Optional",
+    "az": "Optional"
+  },
+  "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.": {
+    "en": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "zh-CN": "留空可生成任意本地管理地址，例如 AA:BB:CC。",
+    "zh-TW": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "es": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "it": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "ja": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "pt-BR": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "ko": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "tr": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC.",
+    "az": "Leave empty for any locally administered address, or enter a prefix such as AA:BB:CC."
+  },
+  "Count": {
+    "en": "Count",
+    "zh-CN": "数量",
+    "zh-TW": "數數",
+    "es": "Contar",
+    "it": "Contare",
+    "ja": "カウント",
+    "ko": "개수",
+    "tr": "Sayı",
+    "az": "Say",
+    "pt-BR": "Contagem"
+  },
+  "One CIDR per line, for example 192.168.1.0/25": {
+    "en": "One CIDR per line, for example 192.168.1.0/25",
+    "zh-CN": "每行一个 CIDR，例如 192.168.1.0/25",
+    "zh-TW": "One CIDR per line, for example 192.168.1.0/25",
+    "es": "One CIDR per line, for example 192.168.1.0/25",
+    "it": "One CIDR per line, for example 192.168.1.0/25",
+    "ja": "One CIDR per line, for example 192.168.1.0/25",
+    "pt-BR": "One CIDR per line, for example 192.168.1.0/25",
+    "ko": "One CIDR per line, for example 192.168.1.0/25",
+    "tr": "One CIDR per line, for example 192.168.1.0/25",
+    "az": "One CIDR per line, for example 192.168.1.0/25"
   },
   "Second JSON": {
     "en": "Second JSON",
@@ -6923,29 +8159,17 @@
     "tr": "End address",
     "az": "End address"
   },
-  "Count": {
-    "en": "Count",
-    "zh-CN": "数量",
-    "zh-TW": "數數",
-    "es": "Contar",
-    "it": "Contare",
-    "ja": "カウント",
-    "ko": "개수",
-    "tr": "Sayı",
-    "az": "Say",
-    "pt-BR": "Contagem"
-  },
-  "Separator": {
-    "en": "Separator",
-    "zh-CN": "分隔符",
-    "zh-TW": "分離器",
-    "es": "Separador",
-    "it": "Separatore",
-    "ja": "セパレータ",
-    "pt-BR": "Separador",
-    "ko": "분리 기호",
-    "tr": "Ayırıcı",
-    "az": "Ayırıcı"
+  "Generate addresses": {
+    "en": "Generate addresses",
+    "zh-CN": "生成地址",
+    "zh-TW": "Generate addresses",
+    "es": "Generate addresses",
+    "it": "Generate addresses",
+    "ja": "Generate addresses",
+    "pt-BR": "Generate addresses",
+    "ko": "Generate addresses",
+    "tr": "Generate addresses",
+    "az": "Generate addresses"
   },
   "Difference": {
     "en": "Difference",
@@ -6958,6 +8182,30 @@
     "ko": "차이점",
     "tr": "Fark",
     "az": "Fərq"
+  },
+  "Generated addresses": {
+    "en": "Generated addresses",
+    "zh-CN": "生成结果",
+    "zh-TW": "Generated addresses",
+    "es": "Generated addresses",
+    "it": "Generated addresses",
+    "ja": "Generated addresses",
+    "pt-BR": "Generated addresses",
+    "ko": "Generated addresses",
+    "tr": "Generated addresses",
+    "az": "Generated addresses"
+  },
+  "MAC address results": {
+    "en": "MAC address results",
+    "zh-CN": "MAC 地址结果",
+    "zh-TW": "MAC address results",
+    "es": "MAC address results",
+    "it": "MAC address results",
+    "ja": "MAC address results",
+    "pt-BR": "MAC address results",
+    "ko": "MAC address results",
+    "tr": "MAC address results",
+    "az": "MAC address results"
   },
   "Informational": {
     "en": "Informational",
@@ -7175,18 +8423,6 @@
     "tr": "Sağ",
     "az": "Sağa"
   },
-  "Working…": {
-    "en": "Working…",
-    "zh-CN": "处理中…",
-    "zh-TW": "在職的…",
-    "es": "Laboral…",
-    "it": "Lavorando…",
-    "ja": "働く…",
-    "pt-BR": "Trabalhando…",
-    "ko": "일하고 있는…",
-    "tr": "Çalışma…",
-    "az": "İşləyir..."
-  },
   "Input exceeds this tool's safe limit": {
     "en": "Input exceeds this tool's safe limit",
     "zh-CN": "输入内容超过此工具的安全上限",
@@ -7321,7 +8557,7 @@
   },
   "Characters": {
     "en": "Characters",
-    "zh-CN": "字符",
+    "zh-CN": "字符数",
     "zh-TW": "人物",
     "es": "Personajes",
     "it": "Caratteri",
@@ -7822,18 +9058,6 @@
     "ko": "공백, 쉼표 또는 줄바꿈으로 구분하세요",
     "tr": "Boşluk, virgül veya satır sonuyla ayırın",
     "az": "Boşluq, vergül və ya sətirsonu ilə ayırın"
-  },
-  "words": {
-    "en": "words",
-    "zh-CN": "词",
-    "zh-TW": "字",
-    "es": "palabras",
-    "it": "parole",
-    "ja": "言葉",
-    "pt-BR": "palavras",
-    "ko": "단어",
-    "tr": "kelimeler",
-    "az": "sözlər"
   },
   "Plural result": {
     "en": "Plural result",
@@ -9358,30 +10582,6 @@
     "ko": "핸들을 드래그하여 프레임 순서 변경",
     "tr": "Kareleri sıralamak için tutamacı sürükleyin",
     "az": "Kadrları sıralamaq üçün tutacağı sürükləyin"
-  },
-  "Move up": {
-    "en": "Move up",
-    "zh-CN": "上移",
-    "zh-TW": "上移",
-    "es": "Subir",
-    "it": "Sposta su",
-    "ja": "上へ移動",
-    "pt-BR": "Mover para cima",
-    "ko": "위로 이동",
-    "tr": "Yukarı taşı",
-    "az": "Yuxarı köçür"
-  },
-  "Move down": {
-    "en": "Move down",
-    "zh-CN": "下移",
-    "zh-TW": "下移",
-    "es": "Bajar",
-    "it": "Sposta giù",
-    "ja": "下へ移動",
-    "pt-BR": "Mover para baixo",
-    "ko": "아래로 이동",
-    "tr": "Aşağı taşı",
-    "az": "Aşağı köçür"
   },
   "Delete": {
     "en": "Delete",
@@ -14591,18 +15791,6 @@
     "az": "Hədəf",
     "ko": "대상"
   },
-  "Generate": {
-    "en": "Generate",
-    "zh-CN": "随机生成",
-    "zh-TW": "產生",
-    "es": "Generar",
-    "it": "Generare",
-    "ja": "生成する",
-    "pt-BR": "Gerar",
-    "ko": "생성",
-    "tr": "Üret",
-    "az": "Yarat"
-  },
   "Download": {
     "en": "Download",
     "zh-CN": "下载当前",
@@ -14950,18 +16138,6 @@
     "ko": "Accurate extension",
     "tr": "Accurate extension",
     "az": "Accurate extension"
-  },
-  "Optional": {
-    "en": "Optional",
-    "zh-CN": "可选下载",
-    "zh-TW": "Optional",
-    "es": "Optional",
-    "it": "Optional",
-    "ja": "Optional",
-    "pt-BR": "Optional",
-    "ko": "Optional",
-    "tr": "Optional",
-    "az": "Optional"
   },
   "Click again to confirm": {
     "en": "Click again to confirm",
@@ -15563,18 +16739,6 @@
     "az": "Hamısını təmizlə",
     "ko": "모두 지우기"
   },
-  "Exporting…": {
-    "en": "Exporting…",
-    "zh-CN": "正在导出…",
-    "zh-TW": "出口…",
-    "es": "Exportador…",
-    "it": "Esportazione…",
-    "ja": "エクスポート中…",
-    "pt-BR": "Exportador…",
-    "ko": "내보내는 중…",
-    "tr": "Dışa aktarılıyor…",
-    "az": "İxrac edilir…"
-  },
   "Export all ({0})": {
     "en": "Export all ({0})",
     "zh-CN": "导出全部（{0}）",
@@ -15994,18 +17158,6 @@
     "ko": "Border color",
     "tr": "Border color",
     "az": "Border color"
-  },
-  "Pick screen color": {
-    "en": "Pick screen color",
-    "zh-CN": "屏幕取色",
-    "zh-TW": "Pick screen color",
-    "es": "Pick screen color",
-    "it": "Pick screen color",
-    "ja": "Pick screen color",
-    "pt-BR": "Pick screen color",
-    "ko": "Pick screen color",
-    "tr": "Pick screen color",
-    "az": "Pick screen color"
   },
   "Quality": {
     "en": "Quality",
@@ -17183,18 +18335,6 @@
     "tr": "Tarafları değiştir",
     "az": "Tərəfləri dəyiş"
   },
-  "Compare": {
-    "en": "Compare",
-    "zh-CN": "开始对比",
-    "zh-TW": "開始比較",
-    "es": "Comparar",
-    "it": "Confronta",
-    "ja": "比較",
-    "pt-BR": "Comparar",
-    "ko": "비교",
-    "tr": "Karşılaştır",
-    "az": "Müqayisə et"
-  },
   "Original JSON": {
     "en": "Original JSON",
     "zh-CN": "原始 JSON",
@@ -17255,18 +18395,6 @@
     "tr": "Farkları filtrele",
     "az": "Fərqləri süzgəcdən keçir"
   },
-  "Input changed. Compare again.": {
-    "en": "Input changed. Compare again.",
-    "zh-CN": "输入已更新，请重新对比",
-    "zh-TW": "輸入已更新，請重新比較。",
-    "es": "La entrada ha cambiado. Compara de nuevo.",
-    "it": "L'input è cambiato. Ripeti il confronto.",
-    "ja": "入力が変更されました。再度比較してください。",
-    "pt-BR": "A entrada mudou. Compare novamente.",
-    "ko": "입력이 변경되었습니다. 다시 비교하세요.",
-    "tr": "Girdi değişti. Yeniden karşılaştırın.",
-    "az": "Giriş dəyişdi. Yenidən müqayisə edin."
-  },
   "Ready to compare": {
     "en": "Ready to compare",
     "zh-CN": "等待对比",
@@ -17279,17 +18407,17 @@
     "tr": "Karşılaştırmaya hazır",
     "az": "Müqayisəyə hazırdır"
   },
-  "Enter two JSON documents above and select Compare to see field differences.": {
-    "en": "Enter two JSON documents above and select Compare to see field differences.",
-    "zh-CN": "在上方输入两份 JSON，点击「开始对比」查看字段差异。",
-    "zh-TW": "在上方輸入兩份 JSON，按「開始比較」查看欄位差異。",
-    "es": "Introduce dos documentos JSON arriba y selecciona Comparar para ver las diferencias entre campos.",
-    "it": "Inserisci due documenti JSON sopra e seleziona Confronta per vedere le differenze tra i campi.",
-    "ja": "上に 2 つの JSON を入力し、「比較」を選択するとフィールドの差分を確認できます。",
-    "pt-BR": "Insira dois documentos JSON acima e selecione Comparar para ver as diferenças entre campos.",
-    "ko": "위에 JSON 문서 두 개를 입력하고 비교를 선택하면 필드 차이를 확인할 수 있습니다.",
-    "tr": "Yukarıya iki JSON belgesi girin ve alan farklarını görmek için Karşılaştır'ı seçin.",
-    "az": "Yuxarıda iki JSON sənədi daxil edin və sahə fərqlərini görmək üçün Müqayisə et seçin."
+  "Enter two valid JSON documents above to update field differences automatically.": {
+    "en": "Enter two valid JSON documents above to update field differences automatically.",
+    "zh-CN": "在上方输入两份有效 JSON，字段差异将自动更新。",
+    "zh-TW": "Enter two valid JSON documents above to update field differences automatically.",
+    "es": "Enter two valid JSON documents above to update field differences automatically.",
+    "it": "Enter two valid JSON documents above to update field differences automatically.",
+    "ja": "Enter two valid JSON documents above to update field differences automatically.",
+    "pt-BR": "Enter two valid JSON documents above to update field differences automatically.",
+    "ko": "Enter two valid JSON documents above to update field differences automatically.",
+    "tr": "Enter two valid JSON documents above to update field differences automatically.",
+    "az": "Enter two valid JSON documents above to update field differences automatically."
   },
   "The JSON documents are equal": {
     "en": "The JSON documents are equal",
@@ -19379,42 +20507,6 @@
     "tr": "Convert this result back",
     "az": "Convert this result back"
   },
-  "Raw data": {
-    "en": "Raw data",
-    "zh-CN": "原始数据",
-    "zh-TW": "Raw data",
-    "es": "Raw data",
-    "it": "Raw data",
-    "ja": "Raw data",
-    "pt-BR": "Raw data",
-    "ko": "Raw data",
-    "tr": "Raw data",
-    "az": "Raw data"
-  },
-  "Input payload": {
-    "en": "Input payload",
-    "zh-CN": "输入载荷",
-    "zh-TW": "Input payload",
-    "es": "Input payload",
-    "it": "Input payload",
-    "ja": "Input payload",
-    "pt-BR": "Input payload",
-    "ko": "Input payload",
-    "tr": "Input payload",
-    "az": "Input payload"
-  },
-  "Conversion response": {
-    "en": "Conversion response",
-    "zh-CN": "转换响应",
-    "zh-TW": "Conversion response",
-    "es": "Conversion response",
-    "it": "Conversion response",
-    "ja": "Conversion response",
-    "pt-BR": "Conversion response",
-    "ko": "Conversion response",
-    "tr": "Conversion response",
-    "az": "Conversion response"
-  },
   "Enter a valid solar date between 1900 and 2100.": {
     "en": "Enter a valid solar date between 1900 and 2100.",
     "zh-CN": "请输入 1900–2100 年间的有效公历日期。",
@@ -20219,6 +21311,54 @@
     "tr": "Target key type does not match the output length",
     "az": "Target key type does not match the output length"
   },
+  "Runs offline": {
+    "en": "Runs offline",
+    "zh-CN": "离线运行",
+    "zh-TW": "Runs offline",
+    "es": "Runs offline",
+    "it": "Runs offline",
+    "ja": "Runs offline",
+    "pt-BR": "Runs offline",
+    "ko": "Runs offline",
+    "tr": "Runs offline",
+    "az": "Runs offline"
+  },
+  "Network analysis": {
+    "en": "Network analysis",
+    "zh-CN": "网段分析",
+    "zh-TW": "Network analysis",
+    "es": "Network analysis",
+    "it": "Network analysis",
+    "ja": "Network analysis",
+    "pt-BR": "Network analysis",
+    "ko": "Network analysis",
+    "tr": "Network analysis",
+    "az": "Network analysis"
+  },
+  "Enter an address or CIDR to begin": {
+    "en": "Enter an address or CIDR to begin",
+    "zh-CN": "输入一个地址或 CIDR 开始",
+    "zh-TW": "Enter an address or CIDR to begin",
+    "es": "Enter an address or CIDR to begin",
+    "it": "Enter an address or CIDR to begin",
+    "ja": "Enter an address or CIDR to begin",
+    "pt-BR": "Enter an address or CIDR to begin",
+    "ko": "Enter an address or CIDR to begin",
+    "tr": "Enter an address or CIDR to begin",
+    "az": "Enter an address or CIDR to begin"
+  },
+  "Copy CIDR": {
+    "en": "Copy CIDR",
+    "zh-CN": "复制 CIDR",
+    "zh-TW": "Copy CIDR",
+    "es": "Copy CIDR",
+    "it": "Copy CIDR",
+    "ja": "Copy CIDR",
+    "pt-BR": "Copy CIDR",
+    "ko": "Copy CIDR",
+    "tr": "Copy CIDR",
+    "az": "Copy CIDR"
+  },
   "Address family": {
     "en": "Address family",
     "zh-CN": "地址族",
@@ -20291,6 +21431,18 @@
     "tr": "Varsayılan önek",
     "az": "Defolt prefiks"
   },
+  "Try": {
+    "en": "Try",
+    "zh-CN": "试试：",
+    "zh-TW": "Try",
+    "es": "Try",
+    "it": "Try",
+    "ja": "Try",
+    "pt-BR": "Try",
+    "ko": "Try",
+    "tr": "Try",
+    "az": "Try"
+  },
   "This is the broadcast address of the subnet.": {
     "en": "This is the broadcast address of the subnet.",
     "zh-CN": "这是当前网段的广播地址。",
@@ -20314,6 +21466,30 @@
     "ko": "이는 {0}에 속하며 일반적으로 호스트에 할당될 수 없습니다.",
     "tr": "{0}'a aittir ve normalde bir ana bilgisayara atanamaz.",
     "az": "O, {0}-a məxsusdur və adətən hosta təyin edilə bilməz."
+  },
+  "Calculated values": {
+    "en": "Calculated values",
+    "zh-CN": "计算结果",
+    "zh-TW": "Calculated values",
+    "es": "Calculated values",
+    "it": "Calculated values",
+    "ja": "Calculated values",
+    "pt-BR": "Calculated values",
+    "ko": "Calculated values",
+    "tr": "Calculated values",
+    "az": "Calculated values"
+  },
+  "Live": {
+    "en": "Live",
+    "zh-CN": "实时更新",
+    "zh-TW": "Live",
+    "es": "Live",
+    "it": "Live",
+    "ja": "Live",
+    "pt-BR": "Live",
+    "ko": "Live",
+    "tr": "Live",
+    "az": "Live"
   },
   "Subnet": {
     "en": "Subnet",
@@ -21431,30 +22607,6 @@
     "tr": "Source password",
     "az": "Source password"
   },
-  "Hide password": {
-    "en": "Hide password",
-    "zh-CN": "隐藏密码",
-    "zh-TW": "Hide password",
-    "es": "Hide password",
-    "it": "Hide password",
-    "ja": "Hide password",
-    "pt-BR": "Hide password",
-    "ko": "Hide password",
-    "tr": "Hide password",
-    "az": "Hide password"
-  },
-  "Show password": {
-    "en": "Show password",
-    "zh-CN": "显示密码",
-    "zh-TW": "Show password",
-    "es": "Show password",
-    "it": "Show password",
-    "ja": "Show password",
-    "pt-BR": "Show password",
-    "ko": "Show password",
-    "tr": "Show password",
-    "az": "Show password"
-  },
   "Read and configure": {
     "en": "Read and configure",
     "zh-CN": "读取并配置",
@@ -21743,18 +22895,6 @@
     "tr": "Upload signature image",
     "az": "Upload signature image"
   },
-  "Handwritten signature area": {
-    "en": "Handwritten signature area",
-    "zh-CN": "手写签名区域",
-    "zh-TW": "Handwritten signature area",
-    "es": "Handwritten signature area",
-    "it": "Handwritten signature area",
-    "ja": "Handwritten signature area",
-    "pt-BR": "Handwritten signature area",
-    "ko": "Handwritten signature area",
-    "tr": "Handwritten signature area",
-    "az": "Handwritten signature area"
-  },
   "Clear signature": {
     "en": "Clear signature",
     "zh-CN": "清空签名",
@@ -21766,6 +22906,18 @@
     "ko": "Clear signature",
     "tr": "Clear signature",
     "az": "Clear signature"
+  },
+  "Handwritten signature area": {
+    "en": "Handwritten signature area",
+    "zh-CN": "手写签名区域",
+    "zh-TW": "Handwritten signature area",
+    "es": "Handwritten signature area",
+    "it": "Handwritten signature area",
+    "ja": "Handwritten signature area",
+    "pt-BR": "Handwritten signature area",
+    "ko": "Handwritten signature area",
+    "tr": "Handwritten signature area",
+    "az": "Handwritten signature area"
   },
   "Signature width": {
     "en": "Signature width",
@@ -21946,30 +23098,6 @@
     "ko": "The Sidecar is processing temporary files…",
     "tr": "The Sidecar is processing temporary files…",
     "az": "The Sidecar is processing temporary files…"
-  },
-  "Two values, three perspectives": {
-    "en": "Two values, three perspectives",
-    "zh-CN": "两个数，三种百分比",
-    "zh-TW": "Two values, three perspectives",
-    "es": "Two values, three perspectives",
-    "it": "Two values, three perspectives",
-    "ja": "Two values, three perspectives",
-    "pt-BR": "Two values, three perspectives",
-    "ko": "Two values, three perspectives",
-    "tr": "Two values, three perspectives",
-    "az": "Two values, three perspectives"
-  },
-  "Enter X and Y to calculate a percentage, proportion and change instantly.": {
-    "en": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "zh-CN": "输入 X 和 Y，实时查看百分数值、占比与变化率。",
-    "zh-TW": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "es": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "it": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "ja": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "pt-BR": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "ko": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "tr": "Enter X and Y to calculate a percentage, proportion and change instantly.",
-    "az": "Enter X and Y to calculate a percentage, proportion and change instantly."
   },
   "Value X": {
     "en": "Value X",
@@ -22199,30 +23327,6 @@
     "ko": "Windows, macOS 및 Linux에서 로컬 TCP / UDP 포트 소유자를 검색합니다.",
     "tr": "Windows, macOS ve Linux üzerinde yerel TCP / UDP bağlantı noktası sahiplerini bulun."
   },
-  "Requirements and troubleshooting": {
-    "en": "Requirements and troubleshooting",
-    "zh-CN": "环境要求与排错",
-    "zh-TW": "環境需求與排錯",
-    "es": "Requisitos y solución de problemas",
-    "it": "Requisiti e risoluzione problemi",
-    "ja": "動作要件とトラブル対処",
-    "pt-BR": "Requisitos e solução de problemas",
-    "ko": "환경 요구 사항 및 문제 해결",
-    "tr": "Gereksinimler ve sorun giderme",
-    "az": "Tələblər və problemlərin həlli"
-  },
-  "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.": {
-    "en": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
-    "zh-CN": "Windows 使用系统端口查询；macOS / Linux 需要 lsof。Linux 可通过系统包管理器安装 lsof。权限不足时只显示可访问的进程；安装或调整权限后重新查询。",
-    "zh-TW": "Windows 使用系統查詢；macOS / Linux 需要 lsof。Linux 可用系統套件管理器安裝。只顯示可存取的程序；完成安裝或調整權限後重試。",
-    "es": "Windows usa consultas del sistema; macOS y Linux requieren lsof. En Linux instálalo con el gestor de paquetes. Solo se muestran procesos accesibles; reintenta tras instalarlo o ajustar permisos.",
-    "it": "Windows usa le query di sistema; macOS e Linux richiedono lsof. Su Linux installalo col gestore pacchetti. Sono mostrati solo i processi accessibili; riprova dopo installazione o modifica dei permessi.",
-    "ja": "Windowsはシステム機能を使用し、macOSとLinuxはlsofが必要です。Linuxではパッケージ管理から導入してください。アクセス可能なプロセスのみ表示されます。導入や権限変更後に再試行してください。",
-    "pt-BR": "Windows usa consultas do sistema; macOS e Linux exigem lsof. No Linux instale pelo gerenciador de pacotes. Apenas processos acessíveis são exibidos; tente após instalar ou ajustar permissões.",
-    "ko": "Windows는 시스템 조회를 사용하고 macOS와 Linux는 lsof가 필요합니다. Linux에서는 패키지 관리자로 설치하세요. 접근 가능한 프로세스만 표시되며 설치 또는 권한 변경 후 다시 시도하세요.",
-    "tr": "Windows sistem sorgularını kullanır; macOS ve Linux lsof gerektirir. Linux'ta paket yöneticisiyle kurun. Yalnızca erişilebilir işlemler görünür; kurulum veya izin değişikliği sonrası tekrar deneyin.",
-    "az": "Windows sistem sorğularından istifadə edir; macOS və Linux üçün lsof lazımdır. Linux-da paket meneceri ilə quraşdırın. Yalnız icazəli proseslər görünür; quraşdırma və ya icazə dəyişikliyindən sonra yenidən sınayın."
-  },
   "Port number": {
     "en": "Port number",
     "zh-CN": "端口号",
@@ -22270,6 +23374,18 @@
     "ko": "Recommend free ports",
     "tr": "Recommend free ports",
     "az": "Recommend free ports"
+  },
+  "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.": {
+    "en": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "zh-CN": "Windows 使用系统端口查询；macOS / Linux 需要 lsof。Linux 可通过系统包管理器安装 lsof。权限不足时只显示可访问的进程；安装或调整权限后重新查询。",
+    "zh-TW": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "es": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "it": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "ja": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "pt-BR": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "ko": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "tr": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions.",
+    "az": "Windows uses system port queries; macOS and Linux require lsof. On Linux, install lsof with the system package manager. Only accessible processes are shown; retry after installing dependencies or adjusting permissions."
   },
   "Verified free ports": {
     "en": "Verified free ports",
@@ -23315,6 +24431,390 @@
     "tr": "{0} eşleşme",
     "az": "{0} uyğunluq(lar)"
   },
+  "Rich text content": {
+    "en": "Rich text content",
+    "zh-CN": "富文本内容",
+    "zh-TW": "Rich text content",
+    "es": "Rich text content",
+    "it": "Rich text content",
+    "ja": "Rich text content",
+    "pt-BR": "Rich text content",
+    "ko": "Rich text content",
+    "tr": "Rich text content",
+    "az": "Rich text content"
+  },
+  "Formatting tools": {
+    "en": "Formatting tools",
+    "zh-CN": "排版工具",
+    "zh-TW": "Formatting tools",
+    "es": "Formatting tools",
+    "it": "Formatting tools",
+    "ja": "Formatting tools",
+    "pt-BR": "Formatting tools",
+    "ko": "Formatting tools",
+    "tr": "Formatting tools",
+    "az": "Formatting tools"
+  },
+  "Undo": {
+    "en": "Undo",
+    "zh-CN": "撤销",
+    "zh-TW": "撤銷",
+    "es": "Deshacer",
+    "it": "Disfare",
+    "ja": "元に戻す",
+    "tr": "Geri al",
+    "az": "Geri qaytar",
+    "pt-BR": "Desfazer",
+    "ko": "실행 취소"
+  },
+  "Redo": {
+    "en": "Redo",
+    "zh-CN": "恢复",
+    "zh-TW": "重做",
+    "es": "Rehacer",
+    "it": "Rifare",
+    "ja": "やり直し",
+    "tr": "Yinele",
+    "az": "Təkrar et",
+    "pt-BR": "Refazer",
+    "ko": "다시 실행"
+  },
+  "Paragraph style": {
+    "en": "Paragraph style",
+    "zh-CN": "段落样式",
+    "zh-TW": "Paragraph style",
+    "es": "Paragraph style",
+    "it": "Paragraph style",
+    "ja": "Paragraph style",
+    "pt-BR": "Paragraph style",
+    "ko": "Paragraph style",
+    "tr": "Paragraph style",
+    "az": "Paragraph style"
+  },
+  "Paragraph": {
+    "en": "Paragraph",
+    "zh-CN": "正文",
+    "zh-TW": "Paragraph",
+    "es": "Paragraph",
+    "it": "Paragraph",
+    "ja": "Paragraph",
+    "pt-BR": "Paragraph",
+    "ko": "Paragraph",
+    "tr": "Paragraph",
+    "az": "Paragraph"
+  },
+  "Quote": {
+    "en": "Quote",
+    "zh-CN": "引用",
+    "zh-TW": "Quote",
+    "es": "Quote",
+    "it": "Quote",
+    "ja": "Quote",
+    "pt-BR": "Quote",
+    "ko": "Quote",
+    "tr": "Quote",
+    "az": "Quote"
+  },
+  "Code block": {
+    "en": "Code block",
+    "zh-CN": "代码块",
+    "zh-TW": "Code block",
+    "es": "Code block",
+    "it": "Code block",
+    "ja": "Code block",
+    "pt-BR": "Code block",
+    "ko": "Code block",
+    "tr": "Code block",
+    "az": "Code block"
+  },
+  "Link URL": {
+    "en": "Link URL",
+    "zh-CN": "链接地址",
+    "zh-TW": "Link URL",
+    "es": "Link URL",
+    "it": "Link URL",
+    "ja": "Link URL",
+    "pt-BR": "Link URL",
+    "ko": "Link URL",
+    "tr": "Link URL",
+    "az": "Link URL"
+  },
+  "Insert link": {
+    "en": "Insert link",
+    "zh-CN": "插入链接",
+    "zh-TW": "Insert link",
+    "es": "Insert link",
+    "it": "Insert link",
+    "ja": "Insert link",
+    "pt-BR": "Insert link",
+    "ko": "Insert link",
+    "tr": "Insert link",
+    "az": "Insert link"
+  },
+  "Start typing here, or use the Demo action…": {
+    "en": "Start typing here, or use the Demo action…",
+    "zh-CN": "在这里开始输入，或点击「来个 DEMO」…",
+    "zh-TW": "Start typing here, or use the Demo action…",
+    "es": "Start typing here, or use the Demo action…",
+    "it": "Start typing here, or use the Demo action…",
+    "ja": "Start typing here, or use the Demo action…",
+    "pt-BR": "Start typing here, or use the Demo action…",
+    "ko": "Start typing here, or use the Demo action…",
+    "tr": "Start typing here, or use the Demo action…",
+    "az": "Start typing here, or use the Demo action…"
+  },
+  "Pastes as plain text": {
+    "en": "Pastes as plain text",
+    "zh-CN": "粘贴时保留纯文本",
+    "zh-TW": "Pastes as plain text",
+    "es": "Pastes as plain text",
+    "it": "Pastes as plain text",
+    "ja": "Pastes as plain text",
+    "pt-BR": "Pastes as plain text",
+    "ko": "Pastes as plain text",
+    "tr": "Pastes as plain text",
+    "az": "Pastes as plain text"
+  },
+  "HTML source": {
+    "en": "HTML source",
+    "zh-CN": "HTML 源码",
+    "zh-TW": "HTML source",
+    "es": "HTML source",
+    "it": "HTML source",
+    "ja": "HTML source",
+    "pt-BR": "HTML source",
+    "ko": "HTML source",
+    "tr": "HTML source",
+    "az": "HTML source"
+  },
+  "Apply source": {
+    "en": "Apply source",
+    "zh-CN": "应用源码",
+    "zh-TW": "Apply source",
+    "es": "Apply source",
+    "it": "Apply source",
+    "ja": "Apply source",
+    "pt-BR": "Apply source",
+    "ko": "Apply source",
+    "tr": "Apply source",
+    "az": "Apply source"
+  },
+  "Discard changes": {
+    "en": "Discard changes",
+    "zh-CN": "放弃更改",
+    "zh-TW": "放棄變更",
+    "es": "Descartar cambios",
+    "it": "Scarta modifiche",
+    "ja": "変更を破棄",
+    "pt-BR": "Descartar alterações",
+    "ko": "변경 사항 삭제",
+    "tr": "Değişiklikleri sil",
+    "az": "Dəyişiklikləri ləğv et"
+  },
+  "Source has unapplied changes. Apply or discard them to continue rich text editing.": {
+    "en": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "zh-CN": "源码有未应用的修改。应用或放弃后可继续编辑富文本。",
+    "zh-TW": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "es": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "it": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "ja": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "pt-BR": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "ko": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "tr": "Source has unapplied changes. Apply or discard them to continue rich text editing.",
+    "az": "Source has unapplied changes. Apply or discard them to continue rich text editing."
+  },
+  "Source updates as you type. Applying source filters scripts and unsupported tags.": {
+    "en": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "zh-CN": "源码随编辑实时更新；应用源码时会过滤脚本和不支持的标签。",
+    "zh-TW": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "es": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "it": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "ja": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "pt-BR": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "ko": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "tr": "Source updates as you type. Applying source filters scripts and unsupported tags.",
+    "az": "Source updates as you type. Applying source filters scripts and unsupported tags."
+  },
+  "Bold": {
+    "en": "Bold",
+    "zh-CN": "加粗",
+    "zh-TW": "Bold",
+    "es": "Bold",
+    "it": "Bold",
+    "ja": "Bold",
+    "pt-BR": "Bold",
+    "ko": "Bold",
+    "tr": "Bold",
+    "az": "Bold"
+  },
+  "Italic": {
+    "en": "Italic",
+    "zh-CN": "斜体",
+    "zh-TW": "Italic",
+    "es": "Italic",
+    "it": "Italic",
+    "ja": "Italic",
+    "pt-BR": "Italic",
+    "ko": "Italic",
+    "tr": "Italic",
+    "az": "Italic"
+  },
+  "Underline": {
+    "en": "Underline",
+    "zh-CN": "下划线",
+    "zh-TW": "Underline",
+    "es": "Underline",
+    "it": "Underline",
+    "ja": "Underline",
+    "pt-BR": "Underline",
+    "ko": "Underline",
+    "tr": "Underline",
+    "az": "Underline"
+  },
+  "Strikethrough": {
+    "en": "Strikethrough",
+    "zh-CN": "删除线",
+    "zh-TW": "Strikethrough",
+    "es": "Strikethrough",
+    "it": "Strikethrough",
+    "ja": "Strikethrough",
+    "pt-BR": "Strikethrough",
+    "ko": "Strikethrough",
+    "tr": "Strikethrough",
+    "az": "Strikethrough"
+  },
+  "Bulleted list": {
+    "en": "Bulleted list",
+    "zh-CN": "无序列表",
+    "zh-TW": "Bulleted list",
+    "es": "Bulleted list",
+    "it": "Bulleted list",
+    "ja": "Bulleted list",
+    "pt-BR": "Bulleted list",
+    "ko": "Bulleted list",
+    "tr": "Bulleted list",
+    "az": "Bulleted list"
+  },
+  "Numbered list": {
+    "en": "Numbered list",
+    "zh-CN": "有序列表",
+    "zh-TW": "Numbered list",
+    "es": "Numbered list",
+    "it": "Numbered list",
+    "ja": "Numbered list",
+    "pt-BR": "Numbered list",
+    "ko": "Numbered list",
+    "tr": "Numbered list",
+    "az": "Numbered list"
+  },
+  "Align left": {
+    "en": "Align left",
+    "zh-CN": "左对齐",
+    "zh-TW": "Align left",
+    "es": "Align left",
+    "it": "Align left",
+    "ja": "Align left",
+    "pt-BR": "Align left",
+    "ko": "Align left",
+    "tr": "Align left",
+    "az": "Align left"
+  },
+  "Align center": {
+    "en": "Align center",
+    "zh-CN": "居中",
+    "zh-TW": "Align center",
+    "es": "Align center",
+    "it": "Align center",
+    "ja": "Align center",
+    "pt-BR": "Align center",
+    "ko": "Align center",
+    "tr": "Align center",
+    "az": "Align center"
+  },
+  "Align right": {
+    "en": "Align right",
+    "zh-CN": "右对齐",
+    "zh-TW": "Align right",
+    "es": "Align right",
+    "it": "Align right",
+    "ja": "Align right",
+    "pt-BR": "Align right",
+    "ko": "Align right",
+    "tr": "Align right",
+    "az": "Align right"
+  },
+  "Remove formatting": {
+    "en": "Remove formatting",
+    "zh-CN": "清除格式",
+    "zh-TW": "Remove formatting",
+    "es": "Remove formatting",
+    "it": "Remove formatting",
+    "ja": "Remove formatting",
+    "pt-BR": "Remove formatting",
+    "ko": "Remove formatting",
+    "tr": "Remove formatting",
+    "az": "Remove formatting"
+  },
+  "Remove link": {
+    "en": "Remove link",
+    "zh-CN": "移除链接",
+    "zh-TW": "Remove link",
+    "es": "Remove link",
+    "it": "Remove link",
+    "ja": "Remove link",
+    "pt-BR": "Remove link",
+    "ko": "Remove link",
+    "tr": "Remove link",
+    "az": "Remove link"
+  },
+  "Unable to apply formatting. Select the text in the editor again.": {
+    "en": "Unable to apply formatting. Select the text in the editor again.",
+    "zh-CN": "无法应用格式，请重新选择编辑区中的文字。",
+    "zh-TW": "Unable to apply formatting. Select the text in the editor again.",
+    "es": "Unable to apply formatting. Select the text in the editor again.",
+    "it": "Unable to apply formatting. Select the text in the editor again.",
+    "ja": "Unable to apply formatting. Select the text in the editor again.",
+    "pt-BR": "Unable to apply formatting. Select the text in the editor again.",
+    "ko": "Unable to apply formatting. Select the text in the editor again.",
+    "tr": "Unable to apply formatting. Select the text in the editor again.",
+    "az": "Unable to apply formatting. Select the text in the editor again."
+  },
+  "Enter a valid link: a web address, mailto: or tel:.": {
+    "en": "Enter a valid link: a web address, mailto: or tel:.",
+    "zh-CN": "请输入有效链接，支持网页地址、mailto: 和 tel:。",
+    "zh-TW": "Enter a valid link: a web address, mailto: or tel:.",
+    "es": "Enter a valid link: a web address, mailto: or tel:.",
+    "it": "Enter a valid link: a web address, mailto: or tel:.",
+    "ja": "Enter a valid link: a web address, mailto: or tel:.",
+    "pt-BR": "Enter a valid link: a web address, mailto: or tel:.",
+    "ko": "Enter a valid link: a web address, mailto: or tel:.",
+    "tr": "Enter a valid link: a web address, mailto: or tel:.",
+    "az": "Enter a valid link: a web address, mailto: or tel:."
+  },
+  "Source applied; only safe text, links and formatting are retained.": {
+    "en": "Source applied; only safe text, links and formatting are retained.",
+    "zh-CN": "源码已应用；仅保留安全的文字、链接和排版。",
+    "zh-TW": "Source applied; only safe text, links and formatting are retained.",
+    "es": "Source applied; only safe text, links and formatting are retained.",
+    "it": "Source applied; only safe text, links and formatting are retained.",
+    "ja": "Source applied; only safe text, links and formatting are retained.",
+    "pt-BR": "Source applied; only safe text, links and formatting are retained.",
+    "ko": "Source applied; only safe text, links and formatting are retained.",
+    "tr": "Source applied; only safe text, links and formatting are retained.",
+    "az": "Source applied; only safe text, links and formatting are retained."
+  },
+  "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>": {
+    "en": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "zh-CN": "<h2>让想法有条理</h2><p>选中文字，试试<strong>加粗</strong>、<em>斜体</em>或添加链接。</p><ul><li>编辑富文本</li><li>查看和修改 HTML 源码</li><li>复制结果</li></ul>",
+    "zh-TW": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "es": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "it": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "ja": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "pt-BR": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "ko": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "tr": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>",
+    "az": "<h2>Give your ideas structure</h2><p>Select text to try <strong>bold</strong>, <em>italic</em> or a link.</p><ul><li>Edit rich text</li><li>View and edit HTML source</li><li>Copy the result</li></ul>"
+  },
   "Convert integers and Roman numerals in either direction. One value per line, automatically detected.": {
     "en": "Convert integers and Roman numerals in either direction. One value per line, automatically detected.",
     "zh-CN": "整数与罗马数字双向转换，每行一项，自动识别。",
@@ -23507,137 +25007,17 @@
     "tr": "Tekilleştirme",
     "az": "Dedupe"
   },
-  "Derive seed": {
-    "en": "Derive seed",
-    "zh-CN": "派生种子",
-    "zh-TW": "Derive seed",
-    "es": "Derive seed",
-    "it": "Derive seed",
-    "ja": "Derive seed",
-    "pt-BR": "Derive seed",
-    "ko": "Derive seed",
-    "tr": "Derive seed",
-    "az": "Derive seed"
-  },
-  "Mnemonic": {
-    "en": "Mnemonic",
-    "zh-CN": "助记词",
-    "zh-TW": "Mnemonic",
-    "es": "Mnemonic",
-    "it": "Mnemonic",
-    "ja": "Mnemonic",
-    "pt-BR": "Mnemonic",
-    "ko": "Mnemonic",
-    "tr": "Mnemonic",
-    "az": "Mnemonic"
-  },
-  "Existing hash": {
-    "en": "Existing hash",
-    "zh-CN": "已有哈希",
-    "zh-TW": "Existing hash",
-    "es": "Existing hash",
-    "it": "Existing hash",
-    "ja": "Existing hash",
-    "pt-BR": "Existing hash",
-    "ko": "Existing hash",
-    "tr": "Existing hash",
-    "az": "Existing hash"
-  },
-  "Cost factor": {
-    "en": "Cost factor",
-    "zh-CN": "成本因子",
-    "zh-TW": "Cost factor",
-    "es": "Cost factor",
-    "it": "Cost factor",
-    "ja": "Cost factor",
-    "pt-BR": "Cost factor",
-    "ko": "Cost factor",
-    "tr": "Cost factor",
-    "az": "Cost factor"
-  },
-  "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.": {
-    "en": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "zh-CN": "助记词和种子具有资产控制权，请只在可信环境中处理。离开页面后清除。",
-    "zh-TW": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "es": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "it": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "ja": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "pt-BR": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "ko": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "tr": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page.",
-    "az": "Mnemonics and seeds control assets. Use a trusted environment. Values are cleared when leaving this page."
-  },
-  "Wordlist": {
-    "en": "Wordlist",
-    "zh-CN": "词表",
-    "zh-TW": "Wordlist",
-    "es": "Wordlist",
-    "it": "Wordlist",
-    "ja": "Wordlist",
-    "pt-BR": "Wordlist",
-    "ko": "Wordlist",
-    "tr": "Wordlist",
-    "az": "Wordlist"
-  },
-  "Word count": {
-    "en": "Word count",
-    "zh-CN": "单词数量",
-    "zh-TW": "單字數量",
-    "es": "Número de palabras",
-    "it": "Numero di parole",
-    "ja": "単語数",
-    "pt-BR": "Número de palavras",
-    "ko": "단어 수",
-    "tr": "Sözcük sayısı",
-    "az": "Söz sayı"
-  },
-  "Optional passphrase": {
-    "en": "Optional passphrase",
-    "zh-CN": "可选口令",
-    "zh-TW": "Optional passphrase",
-    "es": "Optional passphrase",
-    "it": "Optional passphrase",
-    "ja": "Optional passphrase",
-    "pt-BR": "Optional passphrase",
-    "ko": "Optional passphrase",
-    "tr": "Optional passphrase",
-    "az": "Optional passphrase"
-  },
-  "Checks syntax and checksum only, not account existence or ownership.": {
-    "en": "Checks syntax and checksum only, not account existence or ownership.",
-    "zh-CN": "仅校验格式和校验和，不验证账号存在或归属。",
-    "zh-TW": "Checks syntax and checksum only, not account existence or ownership.",
-    "es": "Checks syntax and checksum only, not account existence or ownership.",
-    "it": "Checks syntax and checksum only, not account existence or ownership.",
-    "ja": "Checks syntax and checksum only, not account existence or ownership.",
-    "pt-BR": "Checks syntax and checksum only, not account existence or ownership.",
-    "ko": "Checks syntax and checksum only, not account existence or ownership.",
-    "tr": "Checks syntax and checksum only, not account existence or ownership.",
-    "az": "Checks syntax and checksum only, not account existence or ownership."
-  },
-  "Result is outdated. Run again before copying.": {
-    "en": "Result is outdated. Run again before copying.",
-    "zh-CN": "结果已过期，请重新执行后复制。",
-    "zh-TW": "結果已過期，請重新執行後複製。",
-    "es": "Resultado desactualizado. Ejecuta de nuevo antes de copiar.",
-    "it": "Risultato obsoleto. Esegui di nuovo prima di copiare.",
-    "ja": "結果が古くなっています。再実行してからコピーしてください。",
-    "pt-BR": "Resultado desatualizado. Execute novamente antes de copiar.",
-    "ko": "결과가 오래되었습니다. 복사 전에 다시 실행하세요.",
-    "tr": "Sonuç güncel değil. Kopyalamadan önce yeniden çalıştırın.",
-    "az": "Nəticə köhnəlib. Köçürməzdən əvvəl yenidən icra edin."
-  },
-  "Result matches the current parameters": {
-    "en": "Result matches the current parameters",
-    "zh-CN": "结果与当前参数一致",
-    "zh-TW": "結果與目前參數一致",
-    "es": "Resultado acorde con los parámetros actuales",
-    "it": "Risultato coerente con i parametri attuali",
-    "ja": "結果は現在のパラメーターに対応しています",
-    "pt-BR": "Resultado corresponde aos parâmetros atuais",
-    "ko": "현재 매개변수와 일치하는 결과",
-    "tr": "Sonuç mevcut parametrelerle eşleşiyor",
-    "az": "Nəticə cari parametrlərə uyğundur"
+  "Use a longer, unique password": {
+    "en": "Use a longer, unique password",
+    "zh-CN": "建议使用更长且独一无二的密码",
+    "zh-TW": "Use a longer, unique password",
+    "es": "Use a longer, unique password",
+    "it": "Use a longer, unique password",
+    "ja": "Use a longer, unique password",
+    "pt-BR": "Use a longer, unique password",
+    "ko": "Use a longer, unique password",
+    "tr": "Use a longer, unique password",
+    "az": "Use a longer, unique password"
   },
   "Valid IBAN": {
     "en": "Valid IBAN",
@@ -23663,6 +25043,30 @@
     "tr": "Geçersiz IBAN",
     "az": "Etibarsız IBAN"
   },
+  "Checks syntax and checksum only, not account existence or ownership.": {
+    "en": "Checks syntax and checksum only, not account existence or ownership.",
+    "zh-CN": "仅校验格式和校验和，不验证账号存在或归属。",
+    "zh-TW": "Checks syntax and checksum only, not account existence or ownership.",
+    "es": "Checks syntax and checksum only, not account existence or ownership.",
+    "it": "Checks syntax and checksum only, not account existence or ownership.",
+    "ja": "Checks syntax and checksum only, not account existence or ownership.",
+    "pt-BR": "Checks syntax and checksum only, not account existence or ownership.",
+    "ko": "Checks syntax and checksum only, not account existence or ownership.",
+    "tr": "Checks syntax and checksum only, not account existence or ownership.",
+    "az": "Checks syntax and checksum only, not account existence or ownership."
+  },
+  "Analyze password strength": {
+    "en": "Analyze password strength",
+    "zh-CN": "分析密码强度",
+    "zh-TW": "Analyze password strength",
+    "es": "Analyze password strength",
+    "it": "Analyze password strength",
+    "ja": "Analyze password strength",
+    "pt-BR": "Analyze password strength",
+    "ko": "Analyze password strength",
+    "tr": "Analyze password strength",
+    "az": "Analyze password strength"
+  },
   "Country code": {
     "en": "Country code",
     "zh-CN": "国家代码",
@@ -23674,18 +25078,6 @@
     "ko": "국가 코드",
     "tr": "Ülke kodu",
     "az": "Ölkə kodu"
-  },
-  "Length / expected length": {
-    "en": "Length / expected length",
-    "zh-CN": "长度 / 预期长度",
-    "zh-TW": "長度 / 預期長度",
-    "es": "Longitud / longitud esperada",
-    "it": "Lunghezza / lunghezza prevista",
-    "ja": "長さ / 想定の長さ",
-    "pt-BR": "Comprimento / comprimento esperado",
-    "ko": "길이 / 예상 길이",
-    "tr": "Uzunluk / beklenen uzunluk",
-    "az": "Uzunluq / gözlənilən uzunluq"
   },
   "Checksum": {
     "en": "Checksum",
@@ -23723,17 +25115,53 @@
     "tr": "Başarısız",
     "az": "Uğursuz"
   },
-  "Very weak": {
-    "en": "Very weak",
-    "zh-CN": "非常弱",
-    "zh-TW": "非常弱",
-    "es": "Muy débil",
-    "it": "Molto debole",
-    "ja": "非常に弱い",
-    "pt-BR": "Muito fraca",
-    "ko": "매우 약함",
-    "tr": "Çok zayıf",
-    "az": "Çox zəif"
+  "Analysis result": {
+    "en": "Analysis result",
+    "zh-CN": "分析结果",
+    "zh-TW": "Analysis result",
+    "es": "Analysis result",
+    "it": "Analysis result",
+    "ja": "Analysis result",
+    "pt-BR": "Analysis result",
+    "ko": "Analysis result",
+    "tr": "Analysis result",
+    "az": "Analysis result"
+  },
+  "Password strength": {
+    "en": "Password strength",
+    "zh-CN": "密码强度分析",
+    "zh-TW": "密碼強度分析",
+    "es": "Seguridad de contraseña",
+    "it": "Robustezza password",
+    "ja": "パスワード強度",
+    "pt-BR": "Força da senha",
+    "ko": "비밀번호 강도",
+    "tr": "Parola gücü",
+    "az": "Şifrə gücü"
+  },
+  "Password length": {
+    "en": "Password length",
+    "zh-CN": "密码长度",
+    "zh-TW": "Password length",
+    "es": "Password length",
+    "it": "Password length",
+    "ja": "Password length",
+    "pt-BR": "Password length",
+    "ko": "Password length",
+    "tr": "Password length",
+    "az": "Password length"
+  },
+  "UTF-8 bytes": {
+    "en": "UTF-8 bytes",
+    "zh-CN": "UTF-8 字节数",
+    "zh-TW": "UTF-8 bytes",
+    "es": "UTF-8 bytes",
+    "it": "UTF-8 bytes",
+    "ja": "UTF-8 bytes",
+    "pt-BR": "UTF-8 bytes",
+    "ko": "UTF-8 bytes",
+    "tr": "UTF-8 bytes",
+    "az": "UTF-8 bytes"
   },
   "Estimated guesses": {
     "en": "Estimated guesses",
@@ -23770,6 +25198,18 @@
     "ko": "원본 결과",
     "tr": "Ham sonuç",
     "az": "Xam nəticə"
+  },
+  "Very weak": {
+    "en": "Very weak",
+    "zh-CN": "非常弱",
+    "zh-TW": "非常弱",
+    "es": "Muy débil",
+    "it": "Molto debole",
+    "ja": "非常に弱い",
+    "pt-BR": "Muito fraca",
+    "ko": "매우 약함",
+    "tr": "Çok zayıf",
+    "az": "Çox zəif"
   },
   "Versions": {
     "en": "Versions",
@@ -24742,6 +26182,18 @@
     "ko": "저장하지 않은 변경 사항을 삭제할까요?",
     "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
     "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
+  },
+  "Restore the default sidebar and recent tools section settings. Click “Save changes” to apply.": {
+    "en": "Restore the default sidebar and recent tools section settings. Click “Save changes” to apply.",
+    "zh-CN": "将恢复侧栏和最近使用分组的默认状态。点击“保存更改”后生效。",
+    "zh-TW": "將恢復側欄和最近使用分組的預設狀態。點擊「儲存變更」後生效。",
+    "es": "Se restaurarán los ajustes predeterminados de la barra lateral y de las herramientas recientes. Haz clic en «Guardar cambios» para aplicarlos.",
+    "it": "Ripristina le impostazioni predefinite della barra laterale e degli strumenti recenti. Fai clic su «Salva modifiche» per applicarle.",
+    "ja": "サイドバーと最近使用したツールの設定を初期状態に戻します。「変更を保存」をクリックすると適用されます。",
+    "pt-BR": "Restaura as configurações padrão da barra lateral e das ferramentas recentes. Clique em “Salvar alterações” para aplicar.",
+    "ko": "사이드바와 최근 도구 섹션의 설정을 기본값으로 복원합니다. “변경 사항 저장”을 클릭하면 적용됩니다.",
+    "tr": "Kenar çubuğu ve son kullanılan araçlar bölümünün varsayılan ayarlarını geri yükler. Uygulamak için “Değişiklikleri kaydet” düğmesine tıklayın.",
+    "az": "Yan panel və son istifadə edilən alətlər bölməsinin standart parametrlərini bərpa edir. Tətbiq etmək üçün “Dəyişiklikləri saxla” düyməsinə klikləyin."
   },
   "Keep editing": {
     "en": "Keep editing",
@@ -26027,18 +27479,6 @@
     "tr": "Son değişikliği geri al",
     "az": "Son dəyişikliyi ləğv edin"
   },
-  "Undo": {
-    "en": "Undo",
-    "zh-CN": "撤销",
-    "zh-TW": "撤銷",
-    "es": "Deshacer",
-    "it": "Disfare",
-    "ja": "元に戻す",
-    "tr": "Geri al",
-    "az": "Geri qaytar",
-    "pt-BR": "Desfazer",
-    "ko": "실행 취소"
-  },
   "Restore the undone change": {
     "en": "Restore the undone change",
     "zh-CN": "恢复刚才撤销的更改",
@@ -26050,18 +27490,6 @@
     "ko": "실행 취소된 변경 사항 복원",
     "tr": "Geri alınan değişikliği geri yükle",
     "az": "Geri qaytarılmış dəyişikliyi bərpa edin"
-  },
-  "Redo": {
-    "en": "Redo",
-    "zh-CN": "恢复",
-    "zh-TW": "重做",
-    "es": "Rehacer",
-    "it": "Rifare",
-    "ja": "やり直し",
-    "tr": "Yinele",
-    "az": "Təkrar et",
-    "pt-BR": "Refazer",
-    "ko": "다시 실행"
   },
   "Export HTML table": {
     "en": "Export HTML table",
@@ -27287,6 +28715,18 @@
     "tr": "Sıfır ped genişliği",
     "az": "Sıfır-pad eni"
   },
+  "Separator": {
+    "en": "Separator",
+    "zh-CN": "分隔符",
+    "zh-TW": "分離器",
+    "es": "Separador",
+    "it": "Separatore",
+    "ja": "セパレータ",
+    "pt-BR": "Separador",
+    "ko": "분리 기호",
+    "tr": "Ayırıcı",
+    "az": "Ayırıcı"
+  },
   "Column": {
     "en": "Column",
     "zh-CN": "列号",
@@ -27335,18 +28775,6 @@
     "tr": "Maksimum uzunluk (sınır olmadığı için boş)",
     "az": "Maksimum uzunluq (məhdudiyyətsiz boş)"
   },
-  "chars": {
-    "en": "chars",
-    "zh-CN": "字",
-    "zh-TW": "字元",
-    "es": "caracteres",
-    "it": "caratteri",
-    "ja": "文字",
-    "ko": "자",
-    "tr": "karakter",
-    "az": "simvol",
-    "pt-BR": "car."
-  },
   "lines": {
     "en": "lines",
     "zh-CN": "行",
@@ -27358,18 +28786,6 @@
     "ko": "윤곽",
     "tr": "çizgiler",
     "az": "xətlər"
-  },
-  "bytes": {
-    "en": "bytes",
-    "zh-CN": "字节",
-    "zh-TW": "位元組",
-    "es": "bytes",
-    "it": "byte",
-    "ja": "バイト",
-    "tr": "bayt",
-    "az": "bayt",
-    "pt-BR": "bytes",
-    "ko": "바이트"
   },
   "Clean": {
     "en": "Clean",
@@ -28330,30 +29746,6 @@
     "ko": "TOTP 비밀 키",
     "tr": "TOTP anahtarı",
     "az": "TOTP açarı"
-  },
-  "Hide": {
-    "en": "Hide",
-    "zh-CN": "隐藏",
-    "zh-TW": "Hide",
-    "es": "Hide",
-    "it": "Hide",
-    "ja": "Hide",
-    "pt-BR": "Hide",
-    "ko": "Hide",
-    "tr": "Hide",
-    "az": "Hide"
-  },
-  "Show": {
-    "en": "Show",
-    "zh-CN": "显示",
-    "zh-TW": "Show",
-    "es": "Show",
-    "it": "Show",
-    "ja": "Show",
-    "pt-BR": "Show",
-    "ko": "Show",
-    "tr": "Show",
-    "az": "Show"
   },
   "Note": {
     "en": "Note",
@@ -29795,18 +31187,6 @@
     "tr": "Extract links from plain text, HTML, or Markdown.",
     "az": "Extract links from plain text, HTML, or Markdown."
   },
-  "Live": {
-    "en": "Live",
-    "zh-CN": "实时更新",
-    "zh-TW": "Live",
-    "es": "Live",
-    "it": "Live",
-    "ja": "Live",
-    "pt-BR": "Live",
-    "ko": "Live",
-    "tr": "Live",
-    "az": "Live"
-  },
   "Extraction options": {
     "en": "Extraction options",
     "zh-CN": "提取选项",
@@ -29830,18 +31210,6 @@
     "ko": "Remove duplicates",
     "tr": "Remove duplicates",
     "az": "Remove duplicates"
-  },
-  "One link per line": {
-    "en": "One link per line",
-    "zh-CN": "每行一个链接",
-    "zh-TW": "One link per line",
-    "es": "One link per line",
-    "it": "One link per line",
-    "ja": "One link per line",
-    "pt-BR": "One link per line",
-    "ko": "One link per line",
-    "tr": "One link per line",
-    "az": "One link per line"
   },
   "Query parameters and fragments (#) will be removed.": {
     "en": "Query parameters and fragments (#) will be removed.",
@@ -30671,42 +32039,6 @@
     "tr": "Updates as data or settings change",
     "az": "Updates as data or settings change"
   },
-  "NUMBER NORMALIZER": {
-    "en": "NUMBER NORMALIZER",
-    "zh-CN": "号码规范化",
-    "zh-TW": "NUMBER NORMALIZER",
-    "es": "NUMBER NORMALIZER",
-    "it": "NUMBER NORMALIZER",
-    "ja": "NUMBER NORMALIZER",
-    "pt-BR": "NUMBER NORMALIZER",
-    "ko": "NUMBER NORMALIZER",
-    "tr": "NUMBER NORMALIZER",
-    "az": "NUMBER NORMALIZER"
-  },
-  "Normalize phone numbers into consistent, copy-ready formats": {
-    "en": "Normalize phone numbers into consistent, copy-ready formats",
-    "zh-CN": "把电话号码转换为统一、可复制的格式",
-    "zh-TW": "Normalize phone numbers into consistent, copy-ready formats",
-    "es": "Normalize phone numbers into consistent, copy-ready formats",
-    "it": "Normalize phone numbers into consistent, copy-ready formats",
-    "ja": "Normalize phone numbers into consistent, copy-ready formats",
-    "pt-BR": "Normalize phone numbers into consistent, copy-ready formats",
-    "ko": "Normalize phone numbers into consistent, copy-ready formats",
-    "tr": "Normalize phone numbers into consistent, copy-ready formats",
-    "az": "Normalize phone numbers into consistent, copy-ready formats"
-  },
-  "Parsing stays on this device. The default region is only used when a country calling code is missing.": {
-    "en": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "zh-CN": "所有解析均在本地完成。默认地区仅用于没有国际区号的号码。",
-    "zh-TW": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "es": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "it": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "ja": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "pt-BR": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "ko": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "tr": "Parsing stays on this device. The default region is only used when a country calling code is missing.",
-    "az": "Parsing stays on this device. The default region is only used when a country calling code is missing."
-  },
   "Enter number": {
     "en": "Enter number",
     "zh-CN": "输入号码",
@@ -30742,30 +32074,6 @@
     "ko": "전화번호",
     "tr": "Telefon numarası",
     "az": "Telefon nömrəsi"
-  },
-  "Parse number": {
-    "en": "Parse number",
-    "zh-CN": "解析号码",
-    "zh-TW": "Parse number",
-    "es": "Parse number",
-    "it": "Parse number",
-    "ja": "Parse number",
-    "pt-BR": "Parse number",
-    "ko": "Parse number",
-    "tr": "Parse number",
-    "az": "Parse number"
-  },
-  "Use example": {
-    "en": "Use example",
-    "zh-CN": "使用示例",
-    "zh-TW": "Use example",
-    "es": "Use example",
-    "it": "Use example",
-    "ja": "Use example",
-    "pt-BR": "Use example",
-    "ko": "Use example",
-    "tr": "Use example",
-    "az": "Use example"
   },
   "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.": {
     "en": "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.",
@@ -30862,42 +32170,6 @@
     "ko": "The normalized formats will appear here",
     "tr": "The normalized formats will appear here",
     "az": "The normalized formats will appear here"
-  },
-  "TRANSFER PLANNING": {
-    "en": "TRANSFER PLANNING",
-    "zh-CN": "带宽规划",
-    "zh-TW": "TRANSFER PLANNING",
-    "es": "TRANSFER PLANNING",
-    "it": "TRANSFER PLANNING",
-    "ja": "TRANSFER PLANNING",
-    "pt-BR": "TRANSFER PLANNING",
-    "ko": "TRANSFER PLANNING",
-    "tr": "TRANSFER PLANNING",
-    "az": "TRANSFER PLANNING"
-  },
-  "Estimate real-world transfer time": {
-    "en": "Estimate real-world transfer time",
-    "zh-CN": "估算真实传输耗时",
-    "zh-TW": "Estimate real-world transfer time",
-    "es": "Estimate real-world transfer time",
-    "it": "Estimate real-world transfer time",
-    "ja": "Estimate real-world transfer time",
-    "pt-BR": "Estimate real-world transfer time",
-    "ko": "Estimate real-world transfer time",
-    "tr": "Estimate real-world transfer time",
-    "az": "Estimate real-world transfer time"
-  },
-  "Distinguish bits from bytes and include protocol overhead and file count.": {
-    "en": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "zh-CN": "区分 bit 与 Byte，并将协议损耗和文件数量计入结果。",
-    "zh-TW": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "es": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "it": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "ja": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "pt-BR": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "ko": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "tr": "Distinguish bits from bytes and include protocol overhead and file count.",
-    "az": "Distinguish bits from bytes and include protocol overhead and file count."
   },
   "Data volume": {
     "en": "Data volume",
@@ -31138,18 +32410,6 @@
     "ko": "Converts automatically when the input, direction, or service name changes",
     "tr": "Converts automatically when the input, direction, or service name changes",
     "az": "Converts automatically when the input, direction, or service name changes"
-  },
-  "Seed": {
-    "en": "Seed",
-    "zh-CN": "随机种子",
-    "zh-TW": "Seed",
-    "es": "Seed",
-    "it": "Seed",
-    "ja": "Seed",
-    "pt-BR": "Seed",
-    "ko": "Seed",
-    "tr": "Seed",
-    "az": "Seed"
   },
   "Fields (comma-separated)": {
     "en": "Fields (comma-separated)",
@@ -32411,18 +33671,6 @@
     "tr": "Anahtar türüne göre filtrele",
     "az": "Açar növünə görə süzgəc"
   },
-  "Discard changes": {
-    "en": "Discard changes",
-    "zh-CN": "放弃更改",
-    "zh-TW": "放棄變更",
-    "es": "Descartar cambios",
-    "it": "Scarta modifiche",
-    "ja": "変更を破棄",
-    "pt-BR": "Descartar alterações",
-    "ko": "변경 사항 삭제",
-    "tr": "Değişiklikleri sil",
-    "az": "Dəyişiklikləri ləğv et"
-  },
   "Legacy · confirmation needed": {
     "en": "Legacy · confirmation needed",
     "zh-CN": "历史兼容 · 待确认",
@@ -32555,6 +33803,42 @@
     "tr": "Uzay",
     "az": "Kosmos"
   },
+  "QR code settings": {
+    "en": "QR code settings",
+    "zh-CN": "二维码设置",
+    "zh-TW": "QR code settings",
+    "es": "QR code settings",
+    "it": "QR code settings",
+    "ja": "QR code settings",
+    "pt-BR": "QR code settings",
+    "ko": "QR code settings",
+    "tr": "QR code settings",
+    "az": "QR code settings"
+  },
+  "Network settings": {
+    "en": "Network settings",
+    "zh-CN": "网络设置",
+    "zh-TW": "Network settings",
+    "es": "Network settings",
+    "it": "Network settings",
+    "ja": "Network settings",
+    "pt-BR": "Network settings",
+    "ko": "Network settings",
+    "tr": "Network settings",
+    "az": "Network settings"
+  },
+  "These details are encoded into the QR code.": {
+    "en": "These details are encoded into the QR code.",
+    "zh-CN": "这些信息会写入二维码内容。",
+    "zh-TW": "These details are encoded into the QR code.",
+    "es": "These details are encoded into the QR code.",
+    "it": "These details are encoded into the QR code.",
+    "ja": "These details are encoded into the QR code.",
+    "pt-BR": "These details are encoded into the QR code.",
+    "ko": "These details are encoded into the QR code.",
+    "tr": "These details are encoded into the QR code.",
+    "az": "These details are encoded into the QR code."
+  },
   "Network name": {
     "en": "Network name",
     "zh-CN": "网络名称",
@@ -32603,6 +33887,18 @@
     "tr": "Hidden network",
     "az": "Hidden network"
   },
+  "Tune the size and colors.": {
+    "en": "Tune the size and colors.",
+    "zh-CN": "调整尺寸和颜色。",
+    "zh-TW": "Tune the size and colors.",
+    "es": "Tune the size and colors.",
+    "it": "Tune the size and colors.",
+    "ja": "Tune the size and colors.",
+    "pt-BR": "Tune the size and colors.",
+    "ko": "Tune the size and colors.",
+    "tr": "Tune the size and colors.",
+    "az": "Tune the size and colors."
+  },
   "Generate QR code": {
     "en": "Generate QR code",
     "zh-CN": "生成二维码",
@@ -32614,6 +33910,54 @@
     "ko": "Generate QR code",
     "tr": "Generate QR code",
     "az": "Generate QR code"
+  },
+  "QR code preview": {
+    "en": "QR code preview",
+    "zh-CN": "二维码预览",
+    "zh-TW": "QR code preview",
+    "es": "QR code preview",
+    "it": "QR code preview",
+    "ja": "QR code preview",
+    "pt-BR": "QR code preview",
+    "ko": "QR code preview",
+    "tr": "QR code preview",
+    "az": "QR code preview"
+  },
+  "QR preview": {
+    "en": "QR preview",
+    "zh-CN": "二维码预览",
+    "zh-TW": "QR preview",
+    "es": "QR preview",
+    "it": "QR preview",
+    "ja": "QR preview",
+    "pt-BR": "QR preview",
+    "ko": "QR preview",
+    "tr": "QR preview",
+    "az": "QR preview"
+  },
+  "Scan to connect to this network.": {
+    "en": "Scan to connect to this network.",
+    "zh-CN": "扫码即可连接此网络。",
+    "zh-TW": "Scan to connect to this network.",
+    "es": "Scan to connect to this network.",
+    "it": "Scan to connect to this network.",
+    "ja": "Scan to connect to this network.",
+    "pt-BR": "Scan to connect to this network.",
+    "ko": "Scan to connect to this network.",
+    "tr": "Scan to connect to this network.",
+    "az": "Scan to connect to this network."
+  },
+  "Your code will appear here after generating.": {
+    "en": "Your code will appear here after generating.",
+    "zh-CN": "生成后将在此处显示。",
+    "zh-TW": "Your code will appear here after generating.",
+    "es": "Your code will appear here after generating.",
+    "it": "Your code will appear here after generating.",
+    "ja": "Your code will appear here after generating.",
+    "pt-BR": "Your code will appear here after generating.",
+    "ko": "Your code will appear here after generating.",
+    "tr": "Your code will appear here after generating.",
+    "az": "Your code will appear here after generating."
   },
   "Wi-Fi connection QR code": {
     "en": "Wi-Fi connection QR code",
@@ -32638,6 +33982,30 @@
     "ko": "Export SVG",
     "tr": "Export SVG",
     "az": "Export SVG"
+  },
+  "Ready when you are": {
+    "en": "Ready when you are",
+    "zh-CN": "等待生成",
+    "zh-TW": "Ready when you are",
+    "es": "Ready when you are",
+    "it": "Ready when you are",
+    "ja": "Ready when you are",
+    "pt-BR": "Ready when you are",
+    "ko": "Ready when you are",
+    "tr": "Ready when you are",
+    "az": "Ready when you are"
+  },
+  "Click “Generate QR code” when ready": {
+    "en": "Click “Generate QR code” when ready",
+    "zh-CN": "设置完成后点击“生成二维码”",
+    "zh-TW": "Click “Generate QR code” when ready",
+    "es": "Click “Generate QR code” when ready",
+    "it": "Click “Generate QR code” when ready",
+    "ja": "Click “Generate QR code” when ready",
+    "pt-BR": "Click “Generate QR code” when ready",
+    "ko": "Click “Generate QR code” when ready",
+    "tr": "Click “Generate QR code” when ready",
+    "az": "Click “Generate QR code” when ready"
   },
   "document(s)": {
     "en": "document(s)",
@@ -34847,6 +36215,18 @@
     "tr": "Extract the original URL without visiting it",
     "az": "Extract the original URL without visiting it"
   },
+  "Regex reference": {
+    "en": "Regex reference",
+    "zh-CN": "正则语法速查",
+    "zh-TW": "正規表示式速查",
+    "es": "Referencia de expresiones regulares",
+    "it": "Guida espressioni regolari",
+    "ja": "正規表現リファレンス",
+    "pt-BR": "Referência de expressões regulares",
+    "ko": "정규식 참조",
+    "tr": "Düzenli ifade başvurusu",
+    "az": "Müntəzəm ifadələr bələdçisi"
+  },
   "Browse syntax and try examples": {
     "en": "Browse syntax and try examples",
     "zh-CN": "查阅正则语法并测试示例",
@@ -35242,18 +36622,6 @@
     "ko": "로컬 도구: Bcrypt 해시 및 검증",
     "tr": "Yerel araç: Bcrypt özeti ve doğrulama",
     "az": "Yerli alət: Bcrypt heş və yoxlama"
-  },
-  "Password strength": {
-    "en": "Password strength",
-    "zh-CN": "密码强度分析",
-    "zh-TW": "密碼強度分析",
-    "es": "Seguridad de contraseña",
-    "it": "Robustezza password",
-    "ja": "パスワード強度",
-    "pt-BR": "Força da senha",
-    "ko": "비밀번호 강도",
-    "tr": "Parola gücü",
-    "az": "Şifrə gücü"
   },
   "Estimate password strength locally and suggest improvements": {
     "en": "Estimate password strength locally and suggest improvements",

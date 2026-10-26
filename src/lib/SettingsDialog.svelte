@@ -254,10 +254,14 @@
       "Import loaded into draft. Save changes to apply.",
     );
   }
+  function requestInterfaceReset() {
+    confirmation = "interface";
+  }
   function resetInterface() {
     draft.sidebarCollapsed = false;
     draft.recentCollapsed = false;
     draft.recentToolLimit = DEFAULT_RECENT_TOOL_LIMIT;
+    confirmation = "";
   }
   function resetVault() {
     draft.vaultAutoLockMinutes = 15;
@@ -391,9 +395,9 @@
               ><span class="setting-value">{appearance === "dark" ? t("深色", "Dark") : t("浅色", "Light")}</span>
             </div>
             <button
-              class="dbx-btn dbx-btn--ghost reset-interface"
+              class="dbx-btn reset-interface"
               type="button"
-              onclick={resetInterface}
+              onclick={requestInterfaceReset}
               >{t("恢复界面默认", "Reset interface")}</button
             >
           {:else if tab === "shortcuts"}
@@ -571,12 +575,12 @@
 
 {#if confirmation}
   <SettingsConfirmation
-    title={confirmation === "discard" ? t("放弃未保存的更改？", "Discard unsaved changes?") : t("重置偏好设置", "Reset preferences")}
-    description={confirmation === "clear" ? t("恢复默认设置，并清空收藏和最近记录；密钥库内容保留。点击“保存更改”后生效。", "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.") : ""}
+    title={confirmation === "discard" ? t("放弃未保存的更改？", "Discard unsaved changes?") : confirmation === "interface" ? t("恢复界面默认", "Reset interface") : t("重置偏好设置", "Reset preferences")}
+    description={confirmation === "clear" ? t("恢复默认设置，并清空收藏和最近记录；密钥库内容保留。点击“保存更改”后生效。", "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.") : confirmation === "interface" ? t("将恢复侧栏和最近使用分组的默认状态。点击“保存更改”后生效。", "Restore the default sidebar and recent tools section settings. Click “Save changes” to apply.") : ""}
     cancelLabel={confirmation === "discard" ? t("继续编辑", "Keep editing") : t("取消", "Cancel")}
-    confirmLabel={confirmation === "discard" ? t("放弃更改", "Discard") : t("重置偏好设置", "Reset preferences")}
+    confirmLabel={confirmation === "discard" ? t("放弃更改", "Discard") : confirmation === "interface" ? t("恢复界面默认", "Reset interface") : t("重置偏好设置", "Reset preferences")}
     onCancel={() => (confirmation = "")}
-    onConfirm={confirmation === "discard" ? finishClose : clearPreferences}
+    onConfirm={confirmation === "discard" ? finishClose : confirmation === "interface" ? resetInterface : clearPreferences}
   />
 {/if}
 
@@ -714,7 +718,15 @@
     font-size: 16px;
   }
   .reset-interface {
-    margin-top: 16px;
+    display: block;
+    margin: 16px 0 0;
+    border-color: var(--color-destructive);
+    color: var(--color-destructive);
+  }
+  .reset-interface:hover:not(:disabled) {
+    border-color: var(--color-destructive);
+    background: color-mix(in srgb, var(--color-destructive) 10%, var(--color-background));
+    color: var(--color-destructive);
   }
   .backup-section,
   .preferences-reset {

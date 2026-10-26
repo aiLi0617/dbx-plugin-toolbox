@@ -29,7 +29,7 @@ function dialogState(initial = {}, onSave = async () => {}) {
     Object.assign(draft, initial.draft);
     busy = initial.busy ?? false; hasChanges = initial.hasChanges ?? true;
     ${handlers}
-    return {requestClose, finishClose, clearPreferences, acceptImport, resetInterface, resetVault, save, onImport, exportPreferences,
+    return {requestClose, finishClose, clearPreferences, acceptImport, requestInterfaceReset, resetInterface, resetVault, save, onImport, exportPreferences,
       key(event, position) {document.activeElement = position === 'first' ? first : position === 'last' ? last : dialog; keydown(event);},
       read: () => ({draft, clearRecent, pendingImport, confirmation, busy, notice, error, closed, vault, baseline, focus})};
   `)(initial, onSave, defaultSettings, parseSettingsFile, MAX_SETTINGS_BYTES, exportSettings);
@@ -110,6 +110,26 @@ test("shortcut conflicts disable the shared settings save across sections", asyn
   await state.save();
   assert.equal(calls, 0);
   assert.equal(state.read().busy, false);
+});
+
+test("interface reset requires confirmation, supports cancellation and stays in the draft", async () => {
+  let saves = 0;
+  const draft = {sidebarCollapsed: true, recentCollapsed: true, recentToolLimit: 20, vaultAutoLockMinutes: 60, favoriteToolIds: ["json"]};
+  const state = dialogState({draft}, async () => {saves++;});
+  const original = structuredClone(state.read().draft);
+  state.requestInterfaceReset();
+  assert.equal(state.read().confirmation, "interface");
+  assert.deepEqual(state.read().draft, original);
+  state.key({key: "Escape", preventDefault() {}, stopPropagation() {} });
+  assert.equal(state.read().confirmation, "");
+  assert.deepEqual(state.read().draft, original);
+  state.requestInterfaceReset();
+  state.resetInterface();
+  assert.equal(state.read().confirmation, "");
+  assert.deepEqual(state.read().draft, {...original, sidebarCollapsed: false, recentCollapsed: false, recentToolLimit: 10});
+  assert.equal(saves, 0);
+  await state.save();
+  assert.equal(saves, 1);
 });
 
 test("group resets are isolated and clearing preferences is staged", () => {

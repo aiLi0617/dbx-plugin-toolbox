@@ -1,4 +1,7 @@
 <script>
+  import ColorPaletteView from "./ColorPaletteView.svelte";
+  import ColorPicker from "./ColorPicker.svelte";
+  import RichTextView from "./RichTextView.svelte";
   import { onDestroy } from "svelte";
   import { pick, localizeError } from "./i18n.js";
   import { loadAssetModule } from "./assetModules.js";
@@ -32,12 +35,8 @@
     group = $state(false),
     color = $state("#15988f"),
     scheme = $state("complementary"),
-    colors = $state([]),
-    html = $state(""),
-    editor = $state(null),
-    link = $state("");
-  let disposed = false,
-    savedSelection;
+    colors = $state([]);
+  let disposed = false;
   onDestroy(() => {
     disposed = true;
   });
@@ -55,7 +54,7 @@
         colors = palette(color, scheme);
         result = {
           colors,
-          css: colors.map((x, i) => `--color-${i + 1}: ${x.css};`).join("\n"),
+          css: colors.map((x, i) => `--color-${i + 1}: ${x.hex};`).join("\n"),
         };
       } else {
         const lib = await loadAssetModule("content-tools");
@@ -91,41 +90,6 @@
     appliedDemoRequest = demoRequest;
     example();
   });
-  // Rich text is built from native DOM editing; pasted HTML is always converted to text.
-  function paste(event) {
-    event.preventDefault();
-    document.execCommand(
-      "insertText",
-      false,
-      event.clipboardData.getData("text/plain"),
-    );
-    html = editor.innerHTML;
-  }
-  function command(name, value) {
-    editor?.focus();
-    if (savedSelection) {
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(savedSelection);
-    }
-    document.execCommand(name, false, value);
-    html = editor.innerHTML;
-  }
-  function rememberSelection() {
-    const selection = window.getSelection();
-    if (selection?.rangeCount && editor?.contains(selection.anchorNode))
-      savedSelection = selection.getRangeAt(0).cloneRange();
-  }
-  function addLink() {
-    try {
-      const url = new URL(link);
-      if (!["http:", "https:", "mailto:"].includes(url.protocol))
-        throw new Error("Invalid link");
-      command("createLink", url.href);
-    } catch (e) {
-      error = localizeError(locale, e);
-    }
-  }
 </script>
 
 {#if toolId === "figlet"}
@@ -136,57 +100,21 @@
   <UrlExtractorView {locale} {demoRequest} />
 {:else if toolId === "emoji-picker"}
   <EmojiPickerView {locale} />
+{:else if toolId === "rich-text"}
+  <RichTextView {locale} {demoRequest} />
 {:else if toolId === "lunar-calendar"}
   <LunarCalendarView {locale} {demoRequest} />
+{:else if toolId === "color-palette"}
+  <ColorPaletteView {locale} {demoRequest} />
 {:else}
 <div class="expansion-page" class:content-workspace={!["numeronym", "emoji-picker", "rich-text", "lunar-calendar"].includes(toolId)} class:numeronym-page={toolId === "numeronym"} class:email-normalizer-page={toolId === "email-normalizer"}>
   {#if toolId === "numeronym"}
     <NumeronymView {locale} {demoRequest} />
-  {:else if toolId === "rich-text"}
-    <div class="expansion-actions">
-      {#each [["bold", "B"], ["italic", "I"], ["formatBlock", "H2"], ["insertUnorderedList", "•"], ["insertOrderedList", "1."]] as [cmd, label]}<button
-          class="dbx-btn"
-          onmousedown={(e) => e.preventDefault()}
-          onclick={() => command(cmd, cmd === "formatBlock" ? "h2" : undefined)}
-          >{label}</button
-        >{/each}
-    </div>
-    <label
-      >{t("链接地址", "Link URL")}<input
-        class="dbx-input"
-        bind:value={link}
-      /></label
-    ><button
-      class="dbx-btn"
-      onmousedown={(e) => e.preventDefault()}
-      onclick={addLink}>{t("插入链接", "Insert link")}</button
-    >
-    <div
-      class="editor dbx-textarea"
-      role="textbox"
-      aria-label={t("富文本内容", "Rich text content")}
-      contenteditable="true"
-      tabindex="0"
-      bind:this={editor}
-      onpaste={paste}
-      onkeyup={rememberSelection}
-      onmouseup={rememberSelection}
-      ondrop={(e) => e.preventDefault()}
-      oninput={() => (html = editor.innerHTML)}
-    ></div>
-    <label
-      >{t("HTML 源码", "HTML source")}<textarea
-        class="dbx-textarea"
-        value={html}
-        readonly
-        rows="8"></textarea></label
-    ><CopyButton {locale} text={html} />
   {:else}
     {#if toolId === "color-palette"}<label
-        >{t("基础色", "Base color")}<input
-          type="color"
+        >{t("基础色", "Base color")}<ColorPicker
           bind:value={color}
-        /></label
+        {locale} /></label
       ><Select bind:value={scheme} ariaLabel={t("配色方案", "Color scheme")} options={["complementary", "analogous", "triadic", "tetradic", "monochrome"].map((value) => ({value,label:value}))} />
     {:else}<label
         >{t("输入", "Input")}<textarea
@@ -239,8 +167,8 @@
     </div>
     {#if toolId === "color-palette"}<div class="swatches">
         {#each colors as item}<div
-            style:background={item.css}
-            title={item.css}
+            style:background={item.hex}
+            title={`${item.hex} · ${item.css}`}
           ></div>{/each}
       </div>{/if}
     {#if output}<textarea
@@ -261,10 +189,6 @@
   }
   .swatches div {
     flex: 1;
-  }
-  .editor {
-    min-height: 220px;
-    overflow: auto;
   }
   .mono {
     font-family: var(--font-mono);

@@ -1,4 +1,5 @@
 <script>
+  import ColorPicker from "./ColorPicker.svelte";
   import { onDestroy } from "svelte";
   import NumberInput from "./NumberInput.svelte";
   import Select from "./Select.svelte";
@@ -298,11 +299,11 @@
         <div class="opts">
           <label class="field">
             <span>{t("背景色", "Background")}</span>
-            <input class="color-input" type="color" bind:value={background} disabled={transparent && alphaSupported} aria-label={t("背景色", "Background")} />
+            <ColorPicker class="color-input" bind:value={background} disabled={transparent && alphaSupported} aria-label={t("背景色", "Background")} {locale} />
           </label>
           <label class="field">
             <span>{t("文字色", "Text color")}</span>
-            <input class="color-input" type="color" bind:value={foreground} aria-label={t("文字色", "Text color")} />
+            <ColorPicker class="color-input" bind:value={foreground} aria-label={t("文字色", "Text color")} {locale} />
           </label>
         </div>
         <div class="checks">
@@ -493,7 +494,7 @@
   }
   .preset:hover { border-color: var(--color-primary); color: var(--color-foreground); }
   .preset.active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background)); color: var(--color-primary); }
-  .color-input {
+  .page :global(.color-input) {
     width: 3.25rem;
     min-height: 30px;
     border: 1px solid var(--color-border);
@@ -501,7 +502,7 @@
     background: var(--color-background);
     padding: 2px;
   }
-  .color-input:disabled { opacity: 0.45; }
+  .page :global(.color-input):disabled { opacity: 0.45; }
   .check {
     display: inline-flex;
     align-items: center;

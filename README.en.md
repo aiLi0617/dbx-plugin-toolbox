@@ -11,7 +11,7 @@ DBX Toolbox is a Workbench plugin for [DBX](https://github.com/t8y2/dbx). It bri
 | Item | Value |
 | --- | --- |
 | Plugin ID | `io.github.aili0617.toolbox` |
-| Current version | `0.1.5` |
+| Current version | `0.1.6` |
 | Requirements | DBX `>= 0.5.68`, Host API `1` |
 | Source and homepage | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | License | [Apache-2.0](LICENSE) |

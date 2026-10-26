@@ -35,7 +35,8 @@ test("all tools declare navigation, action, and demo metadata", () => {
     if (tool.actions.includes("demo")) assert.ok(tool.demoPreset, `missing demo preset: ${tool.id}`);
     if (tool.kind === "shortcut") assert.ok(TOOL_IDS.includes(tool.parentId), `missing parent: ${tool.id}`);
   }
-  for (const id of ["uuid", "color", "cron", "timestamp", "chmod", "http-status", "chart", "phone", "bandwidth"]) {
+  assert.ok(TOOL_REGISTRY.find((tool) => tool.id === "phone").actions.includes("demo"));
+  for (const id of ["uuid", "color", "cron", "timestamp", "chmod", "http-status", "chart", "bandwidth"]) {
     assert.ok(!TOOL_REGISTRY.find((tool) => tool.id === id).actions.includes("demo"), `unexpected demo action: ${id}`);
   }
 });

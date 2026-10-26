@@ -15,6 +15,7 @@
   let ula = $state("");
   let mac = $state("");
   let ouiInput = $state("");
+  let copied = $state("");
   const rangeResult = $derived.by(() => { try { return { value: rangeInput ? expandIpv4Range(rangeInput) : [], error: "" }; } catch (error) { return { value: [], error: localizeError(locale, error) }; } });
   const ouiResult = $derived.by(() => { try { return { value: ouiInput ? lookupOui(ouiInput) : null, error: "" }; } catch (error) { return { value: null, error: localizeError(locale, error) }; } });
 
@@ -52,15 +53,30 @@
   };
   const typeLabel = (type) => t(...(typeLabels[type] || [type, type]));
   const number = (value) => new Intl.NumberFormat(locale).format(value);
+  const examples = ["192.168.1.10/24", "10.0.0.1/8", "172.16.20.5/20"];
+  async function copyValue(value, key) {
+    if (!value || !navigator.clipboard) return;
+    await navigator.clipboard.writeText(String(value));
+    copied = key;
+    setTimeout(() => { if (copied === key) copied = ""; }, 1400);
+  }
 </script>
 
 <div class="page">
+  <header class="intro">
+    <div class="intro-badge"><span class="status-dot"></span>{t("离线运行", "Runs offline")}</div>
+  </header>
   <section class="panel primary">
+    <div class="panel-heading">
+      <div><h2>{t("网段分析", "Network analysis")}</h2><span>{t("输入一个地址或 CIDR 开始", "Enter an address or CIDR to begin")}</span></div>
+      {#if result.value}<button class="copy-action" type="button" onclick={() => copyValue(result.value.cidr, "cidr")}>{copied === "cidr" ? t("已复制", "Copied") : t("复制 CIDR", "Copy CIDR")}</button>{/if}
+    </div>
     <div class="fields">
       <label class="field family"><span>{t("地址族", "Address family")}</span><Select value={addressFamily} onchange={setAddressFamily} ariaLabel={t("地址族", "Address family")} options={[{value:"ipv4",label:"IPv4"},{value:"ipv6",label:"IPv6"}]} /></label>
       <label class="field grow"><span>{addressFamily === "ipv6" ? t("IPv6 或 CIDR", "IPv6 or CIDR") : t("IPv4 或 CIDR", "IPv4 or CIDR")}</span><input class="dbx-input mono" bind:value={input} placeholder={addressFamily === "ipv6" ? t("例如 2001:db8::1/64", "For example, 2001:db8::1/64") : t("例如 192.168.1.10/24", "For example, 192.168.1.10/24")} /></label>
       <label class="field prefix"><span>{t("默认前缀", "Default prefix")}</span><input class="dbx-input" type="number" min="0" max={addressFamily === "ipv6" ? 128 : 32} bind:value={fallbackPrefix} /></label>
     </div>
+    {#if addressFamily === "ipv4"}<div class="examples"><span>{t("试试：", "Try")}</span>{#each examples as example}<button type="button" onclick={() => (input = example)}>{example}</button>{/each}</div>{/if}
     {#if result.error}<p class="error">{result.error}</p>{/if}
     {#if result.value}
       {#if result.value.isBroadcast}
@@ -69,6 +85,7 @@
           {t(` 所属网段为 ${result.value.cidr}，通常不能分配给主机。`, ` It belongs to ${result.value.cidr} and normally cannot be assigned to a host.`)}
         </p>
       {/if}
+      <div class="result-header"><span>{t("计算结果", "Calculated values")}</span><span class="result-meta">{t("实时更新", "Live")}</span></div>
       <div class="result-grid">
         <div><span>{t("所属网段", "Subnet")}</span><strong>{result.value.cidr}</strong></div>
         <div><span>{t("子网掩码", "Subnet mask")}</span><strong>{result.value.mask}</strong></div>
@@ -144,13 +161,26 @@
 </div>
 
 <style>
-  .page { display: flex; flex-direction: column; gap: 14px; }
-  .panel { border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-card); padding: 16px; }
+  .page { display: flex; flex-direction: column; gap: 16px; width: min(100%, 1040px); margin: 0 auto; padding: 8px 4px 28px; }
+  .intro { display: flex; align-items: flex-end; justify-content: flex-end; gap: 20px; padding: 8px 4px 4px; }
+  .intro-badge { display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--color-success) 28%, var(--color-border)); border-radius: 999px; background: var(--color-success-bg); color: var(--color-success); font-size: 11px; font-weight: 600; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .panel { border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-card); padding: 18px; box-shadow: 0 2px 8px rgb(0 0 0 / .025); }
   .primary { display: flex; flex-direction: column; gap: 14px; }
+  .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .panel-heading h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
+  .panel-heading span { display: block; margin-top: 3px; color: var(--color-muted-foreground); font-size: 12px; }
+  .copy-action { border: 1px solid var(--color-border); border-radius: 6px; background: transparent; color: var(--color-muted-foreground); padding: 5px 9px; font-size: 11px; cursor: pointer; }
+  .copy-action:hover { border-color: var(--color-primary); color: var(--color-foreground); background: var(--color-muted); }
   .fields, .secondary-grid { display: flex; gap: 12px; align-items: stretch; }
   .field { display: flex; flex-direction: column; gap: 6px; color: var(--color-muted-foreground); font-size: 12px; }
   .grow { flex: 1; }.prefix { width: 120px; }.family { width: 120px; }.hidden { display: none !important; }
+  .examples { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: -2px; color: var(--color-muted-foreground); font-size: 11px; }
+  .examples button { border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-muted); color: var(--color-foreground); padding: 4px 9px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; }
+  .examples button:hover { border-color: var(--color-primary); background: var(--color-background); }
   .mono, strong, output, dd { font-family: var(--font-mono, ui-monospace, monospace); }
+  .result-header { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; color: var(--color-muted-foreground); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .result-meta { margin: 0 !important; color: var(--color-success) !important; font-size: 10px !important; letter-spacing: .02em; }
   .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-border); }
   .result-grid div { display: flex; flex-direction: column; gap: 5px; background: var(--color-background); padding: 12px; }
   .result-grid span, dt { color: var(--color-muted-foreground); font-size: 12px; }
@@ -176,5 +206,5 @@
   details { font-size: 13px; } summary { cursor: pointer; color: var(--color-muted-foreground); }
   dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; margin: 12px 0 0; }
   dt, dd { margin: 0; } dd { overflow-wrap: anywhere; }
-  @media (max-width: 640px) { .fields, .secondary-grid { flex-direction: column; align-items: stretch; }.prefix { width: auto; }.compact-fields { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .page { padding-inline: 0; }.intro { align-items: flex-start; flex-direction: column; gap: 10px; }.intro-badge { align-self: flex-start; }.fields, .secondary-grid { flex-direction: column; align-items: stretch; }.prefix, .family { width: auto; }.compact-fields { grid-template-columns: 1fr; }.panel { padding: 14px; } }
 </style>

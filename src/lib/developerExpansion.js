@@ -9,7 +9,9 @@ export function boundedText(value, max = 1_000_000) {
 }
 
 export function basicAuth(username, password) {
-  if (username.includes(":") || /[\r\n\0]/.test(username + password))
+  username = String(username ?? "");
+  password = String(password ?? "");
+  if (username.includes(":") || /[\r\n\0\x7f]/.test(username + password))
     throw new Error("Invalid credentials");
   const bytes = new TextEncoder().encode(
     boundedText(`${username}:${password}`, 32_768),
@@ -107,7 +109,7 @@ export function treeRows(value, path = "$", depth = 0, key = null) {
   return row;
 }
 export function decodeSafeLink(value) {
-  let current = new URL(boundedText(value.trim(), 32_768));
+  let current = new URL(boundedText(value, 32_768).trim());
   for (let i = 0; i < 5; i++) {
     if (!/^https?:$/.test(current.protocol))
       throw new Error("HTTP(S) URL required");
@@ -163,7 +165,12 @@ export function fromRoman(input) {
 export function randomMac(count = 1, prefix = "", separator = ":") {
   if (!Number.isInteger(count) || count < 1 || count > 1000)
     throw new Error("Count must be between 1 and 1000");
-  const parts = prefix.trim() ? prefix.trim().split(/[:-]/) : [];
+  if (![":", "-", "."].includes(separator)) throw new Error("Invalid MAC separator");
+  const rawPrefix = prefix.trim().replace(/\./g, "");
+  if (prefix.trim() && !rawPrefix) throw new Error("Invalid MAC prefix");
+  if (rawPrefix && !/^(?:[\da-f]{2}[-:]?)+$/i.test(prefix.trim().replace(/\./g, "")))
+    throw new Error("Invalid MAC prefix");
+  const parts = rawPrefix ? rawPrefix.match(/[\da-f]{2}/gi) || [] : [];
   if (parts.length > 5 || parts.some((p) => !/^[\da-f]{2}$/i.test(p)))
     throw new Error("Invalid MAC prefix");
   if (parts.length && parseInt(parts[0], 16) & 1)
@@ -197,11 +204,14 @@ export function ipv4Number(ip) {
   return p.reduce((n, x) => n * 256 + Number(x), 0);
 }
 export function ipv4String(n) {
+  if (!Number.isInteger(n) || n < 0 || n > 0xffffffff) throw new Error("Invalid IPv4 number");
   return [24, 16, 8, 0].map((s) => Math.floor(n / 2 ** s) % 256).join(".");
 }
 export function ipv4Range(start, end, { expand = false } = {}) {
   let a = typeof start === "number" ? start : ipv4Number(start),
     b = typeof end === "number" ? end : ipv4Number(end);
+  if (![a, b].every((value) => Number.isInteger(value) && value >= 0 && value <= 0xffffffff))
+    throw new Error("Invalid IPv4 range");
   if (a > b) throw new Error("Range start must not exceed end");
   if (expand) {
     if (b - a + 1 > 65_536)
@@ -225,11 +235,12 @@ export function ipv4Range(start, end, { expand = false } = {}) {
 export function summarizeIpv4(source) {
   const ranges = boundedText(source)
     .trim()
+    .replace(/\s*-\s*/g, "-")
     .split(/[\s,]+/)
     .filter(Boolean)
     .map((item) => {
       if (item.includes("-")) {
-        const [a, b, ...extra] = item.split("-");
+        const [a, b, ...extra] = item.split("-").map((part) => part.trim());
         if (extra.length) throw new Error("Invalid range");
         return [ipv4Number(a), ipv4Number(b)];
       }
@@ -258,10 +269,13 @@ export function wifiPayload(
   encryption = "WPA",
   hidden = false,
 ) {
+  ssid = String(ssid ?? "");
+  password = String(password ?? "");
   if (
     !ssid ||
     new TextEncoder().encode(ssid).length > 32 ||
-    password.length > 256 ||
+    new TextEncoder().encode(password).length > 256 ||
+    /[\u0000-\u001f\u007f]/.test(ssid + password) ||
     !["WPA", "WEP", "nopass"].includes(encryption)
   )
     throw new Error("Invalid Wi-Fi configuration");

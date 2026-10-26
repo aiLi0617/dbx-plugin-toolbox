@@ -1,4 +1,5 @@
 <script>
+  import ColorPicker from "./ColorPicker.svelte";
   import { loadAssetModule } from "./assetModules.js";
   import CopyButton from "./CopyButton.svelte";
   import { chrome, localizeError, pick } from "./i18n.js";
@@ -618,11 +619,11 @@
         {/if}
         <label class="field">
           <span class="label">{t("前景色", "Foreground")}</span>
-          <input class="color" type="color" bind:value={dark} />
+          <ColorPicker class="color" bind:value={dark} {locale} />
         </label>
         <label class="field">
           <span class="label">{t("背景色", "Background")}</span>
-          <input class="color" type="color" bind:value={light} />
+          <ColorPicker class="color" bind:value={light} {locale} />
         </label>
       </div>
     {/if}
@@ -842,7 +843,7 @@
     grid-template-columns: auto auto;
     justify-content: start;
   }
-  .color {
+  .qr-workbench :global(.color) {
     width: 42px;
     height: 30px;
     padding: 2px;

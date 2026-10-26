@@ -61,7 +61,7 @@
   .yaml-tree-view{display:flex;min-height:0;flex:1;flex-direction:column;gap:8px;font-family:var(--font-mono);font-size:13px}
   .yaml-tree-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px;flex-shrink:0;color:var(--color-muted-foreground);font:12px var(--font-sans)}
   .yaml-tree-toolbar>div{display:flex;gap:6px;flex-wrap:wrap}.yaml-tree-toolbar .dbx-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-height:28px;padding:0}
-  .yaml-tree-content{flex:1;min-height:0;overflow:auto;padding:10px 12px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-card,var(--color-background))}.yaml-document{padding:0 0 14px}.yaml-document+h3{margin-top:12px}
+  .yaml-tree-content{flex:1;min-height:0;overflow:auto;padding:10px 12px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-card,var(--color-background))}.yaml-document{padding:0 0 14px}
   .yaml-document h3{margin:0 0 6px;color:var(--color-muted-foreground);font:600 11px var(--font-sans);text-transform:uppercase;letter-spacing:.04em}
   .yaml-empty{margin:0;color:var(--color-muted-foreground);font:12px var(--font-sans)}
 </style>

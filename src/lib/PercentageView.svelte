@@ -35,12 +35,6 @@
 </script>
 
 <div class="expansion-page percentage-page">
-  <header class="intro">
-    <span class="symbol" aria-hidden="true">%</span>
-    <div><h2>{t("两个数，三种百分比", "Two values, three perspectives")}</h2>
-      <p>{t("输入 X 和 Y，实时查看百分数值、占比与变化率。", "Enter X and Y to calculate a percentage, proportion and change instantly.")}</p></div>
-  </header>
-
   <section class="inputs" aria-label={t("计算参数", "Calculation inputs")}>
     <div class="values">
       <label><span>{t("数值 X", "Value X")}</span><input class="dbx-input" inputmode="decimal" bind:value={a} placeholder="20" aria-invalid={invalidA} />
@@ -78,11 +72,7 @@
 
 <style>
   .percentage-page { gap: 20px; padding: 28px 24px; }
-  .intro { display: flex; align-items: center; gap: 14px; }
-  .symbol { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-muted); font-size: 24px; }
-  h2, h3, p { margin: 0; }
-  h2 { font-size: 18px; font-weight: 600; }
-  .intro p { margin-top: 5px; line-height: 1.6; }
+  h3, p { margin: 0; }
   .inputs { border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-card); }
   .values { display: grid; grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr); gap: 18px; align-items: start; padding: 22px; }
   label { display: flex; flex-direction: column; gap: 9px; font-size: 13px; min-width: 0; }

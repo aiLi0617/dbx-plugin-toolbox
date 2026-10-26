@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from "svelte";
   import { pick, localizeError } from "./i18n.js";
   import { boundedText, jsonStructureDiff } from "./developerExpansion.js";
   import { parseLosslessJson, stringifyLosslessJson, isLosslessNumber } from "./jsonPrecision.js";
@@ -42,12 +43,12 @@
   function compare() {
     errors = ["", ""];
     result = null;
+    if (!left.trim() || !right.trim()) return;
     const a = parse(left, 0);
     const b = parse(right, 1);
     if (!a || !b) return;
     try {
       result = { left, right, rows: jsonStructureDiff(left, right) };
-      filter = "all";
     } catch (error) {
       errors[0] = localizeError(locale, error);
     }
@@ -69,15 +70,17 @@
   }
   function swap() {
     [left, right] = [right, left];
-    errors = ["", ""];
-    if (result) compare();
   }
+  $effect(() => {
+    // Track inputs only; comparison also reads and writes validation state.
+    left; right; locale;
+    untrack(compare);
+  });
   $effect(() => {
     if (!demoRequest || demoRequest === appliedDemoRequest) return;
     appliedDemoRequest = demoRequest;
     left = JSON.stringify({ name: "DBX", version: 1, features: ["JSON", "YAML"], debug: true }, null, 2);
     right = JSON.stringify({ name: "DBX", version: 2, features: ["JSON", "YAML", "XML"], active: true }, null, 2);
-    compare();
   });
 </script>
 
@@ -86,8 +89,11 @@
     <p>{t("按字段比较 JSON，忽略对象键的顺序；数组按索引比较。", "Compare JSON by field, ignoring object key order; arrays are compared by index.")}</p>
     <div class="actions">
       <button class="dbx-btn" onclick={swap} disabled={!left && !right}>{t("交换左右", "Swap sides")}</button>
-      <button class="dbx-btn dbx-btn--ghost" data-replaces-content onclick={clear} disabled={!left && !right}>{t("清空", "Clear")}</button>
-      <button class="dbx-btn dbx-btn--primary" onclick={compare} disabled={!left.trim() || !right.trim()}>{t("开始对比", "Compare")}</button>
+      <button class="dbx-btn dbx-btn--ghost icon-btn" data-replaces-content onclick={clear} disabled={!left && !right} title={t("清空", "Clear")} aria-label={t("清空", "Clear")}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" />
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -130,7 +136,7 @@
     </div>
     <div class="result-content">
       {#if !current}
-        <div class="empty" role="status"><span class="empty-symbol" aria-hidden="true">&#123; &#125;</span><strong>{result ? t("输入已更新，请重新对比", "Input changed. Compare again.") : t("等待对比", "Ready to compare")}</strong><p>{t("在上方输入两份 JSON，点击「开始对比」查看字段差异。", "Enter two JSON documents above and select Compare to see field differences.")}</p></div>
+        <div class="empty" role="status"><span class="empty-symbol" aria-hidden="true">&#123; &#125;</span><strong>{t("等待对比", "Ready to compare")}</strong><p>{t("在上方输入两份有效 JSON，字段差异将自动更新。", "Enter two valid JSON documents above to update field differences automatically.")}</p></div>
       {:else if !rows.length}
         <div class="empty success" role="status"><span class="empty-symbol" aria-hidden="true">✓</span><strong>{t("两份 JSON 内容一致", "The JSON documents are equal")}</strong><p>{t("未发现字段差异，对象键的顺序不影响结果。", "No field differences found. Object key order does not affect the result.")}</p></div>
       {:else if !visible.length}
@@ -173,7 +179,6 @@
   .workspace-toolbar,.panel-heading,.result-heading{justify-content:space-between;flex-wrap:wrap}
   .workspace-toolbar p{margin:0;color:var(--color-muted-foreground);font-size:12px;line-height:1.6}
   .actions{flex-wrap:wrap}.workspace-toolbar>.actions{margin-left:auto}
-  .workspace-toolbar .dbx-btn--primary{color:var(--color-primary-foreground)}
   .editors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;flex-shrink:0}
   .editor-panel,.results{min-width:0;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-card)}
   .panel-heading,.result-heading{min-height:48px;padding:8px 12px;border-bottom:1px solid var(--color-border)}

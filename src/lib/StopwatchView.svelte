@@ -94,7 +94,7 @@
 <style>
   .stopwatch-page { flex: 1 1 auto; min-height: 0; width: 100%; max-width: 920px; align-self: center; gap: 18px; padding: 20px 24px 32px; overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; }
   h3, p { margin: 0; }
-  .timer-card { padding: 22px 28px 28px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border)); border-radius:var(--radius-lg); background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 7%, var(--color-card)), var(--color-card) 58%); box-shadow:var(--dbx-shadow-sm); text-align: center; }
+  .timer-card { padding: 22px 28px 28px; border: 1px solid var(--color-border); border-radius:var(--radius-lg); background: var(--color-card); text-align: center; }
   .timer-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--color-muted-foreground); }
   .status { display: inline-flex; align-items: center; gap: 6px; background: var(--color-muted); padding: 5px 9px; border-radius: 20px; }
   .status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

@@ -81,7 +81,8 @@ export function extractLinks(text, { keepQuery = true, group = false, deduplicat
     : result;
 }
 export function palette(hex, scheme = "complementary") {
-  if (!/^#[\da-f]{6}$/i.test(hex)) throw new Error("Invalid color");
+  if (!/^#(?:[\da-f]{3}|[\da-f]{6})$/i.test(hex)) throw new Error("Invalid color");
+  if (hex.length === 4) hex = `#${[...hex.slice(1)].map((c) => c + c).join("")}`;
   const [r, g, b] = [1, 3, 5].map(
       (i) => parseInt(hex.slice(i, i + 2), 16) / 255,
     ),
@@ -109,10 +110,15 @@ export function palette(hex, scheme = "complementary") {
   return offsets.map((offset, i) => {
     const hue = (((h + offset) % 360) + 360) % 360;
     const light = scheme === "monochrome" ? 0.15 + i * 0.175 : l;
-    return {
-      css: `hsl(${hue.toFixed(1)} ${(s * 100).toFixed(1)}% ${(light * 100).toFixed(1)}%)`,
-    };
+    const css = `hsl(${hue.toFixed(1)} ${(s * 100).toFixed(1)}% ${(light * 100).toFixed(1)}%)`;
+    return { css, h: hue, s, l: light, hex: hslToHex(hue, s, light) };
   });
+}
+
+function hslToHex(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2;
+  const [r, g, b] = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+  return `#${[r, g, b].map((v) => Math.round((v + m) * 255).toString(16).padStart(2, "0")).join("")}`;
 }
 export const EMOJI = [
   ["😀", "笑脸 smile happy", "faces"],
