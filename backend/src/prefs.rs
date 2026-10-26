@@ -801,8 +801,16 @@ mod tests {
         );
         assert!(!shortcuts.contains_key("tool:../secret"));
         assert!(!shortcuts.contains_key("unknown"));
-        assert_eq!(shortcuts.get("calculate").map(String::as_str), Some("Alt+KeyR"));
-        assert_eq!(sanitize_shortcuts(BTreeMap::new()).get("calculate").map(String::as_str), Some("Mod+Enter"));
+        assert_eq!(
+            shortcuts.get("calculate").map(String::as_str),
+            Some("Alt+KeyR")
+        );
+        assert_eq!(
+            sanitize_shortcuts(BTreeMap::new())
+                .get("calculate")
+                .map(String::as_str),
+            Some("Mod+Enter")
+        );
     }
 
     #[test]
