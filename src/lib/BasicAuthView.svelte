@@ -118,7 +118,7 @@
   .result { display:flex; flex-direction:column; }
   .copy-action { flex-shrink:0; border:1px solid var(--color-border); border-radius:var(--radius-md); }
   .code-area { display:flex; flex-direction:column; flex:1; min-height:180px; border:1px solid var(--color-border); border-radius:var(--radius-md); background:var(--color-muted); overflow:hidden; }
-  .code-area:focus-within { border-color:var(--color-ring); box-shadow:var(--dbx-focus-ring); }
+  .code-area:has(.header-output:focus-visible) { border-color:var(--color-ring); box-shadow:var(--dbx-focus-ring); }
   .code-label { padding:12px 14px 0; color:var(--color-muted-foreground); font:10px var(--font-mono); letter-spacing:.08em; }
   .header-output { display:block; flex:1; width:100%; min-height:140px; resize:none; padding:14px; border:0; border-radius:0; background:transparent; color:var(--color-foreground); font:12px/1.9 var(--font-mono); overflow-wrap:anywhere; }
   .header-output:focus { outline:none; box-shadow:none; }
