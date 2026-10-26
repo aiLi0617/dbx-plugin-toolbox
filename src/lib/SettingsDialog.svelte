@@ -202,6 +202,7 @@
           fileName: "dbx-toolbox-preferences.json",
           extension: "json",
           mimeType: "application/json",
+          binary: true,
           title: t("导出偏好", "Export preferences"),
         });
         if (result?.cancelled || result?.canceled) return;
@@ -324,7 +325,7 @@
           >
           <button class:active={tab === "backup"} onclick={() => (tab = "backup")}>{t("备份与恢复", "Backup and restore")}</button>
           <button class:active={tab === "data"} onclick={() => (tab = "data")}
-            >{t("数据与诊断", "Data & diagnostics")}</button
+            >{t("诊断信息", "Diagnostics")}</button
           >
         </nav>
         <main class="settings-content">
@@ -443,67 +444,69 @@
               bind:updating={passwordBusy}
             />
           {:else if tab === "backup"}
-            <VaultBackup {locale} bind:dirty={backupDirty} bind:updating={backupBusy} />
-          {:else}
-            <h3>{t("数据与诊断", "Data & diagnostics")}</h3>
-            <p class="hint data-help">{t("偏好导出只包含界面、快捷键、收藏和锁定时长；密钥与 TOTP 请使用“备份与恢复”中的加密备份。", "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.")}</p>
-            <div class="actions">
-              <button
-                class="dbx-btn dbx-btn--primary"
-                type="button"
-                onclick={exportPreferences}
-                >{t("导出偏好", "Export preferences")}</button
-              ><button class="dbx-btn" type="button" onclick={importPreferences}
-                >{t("导入偏好", "Import preferences")}</button
-              >
-            </div>
-            <input
-              class="visually-hidden"
-              bind:this={fileInput}
-              type="file"
-              accept="application/json"
-              onchange={onImport}
-            />
-            {#if pendingImport}
-              <div class="diagnostic-card" role="status">
-                <strong>{t("导入预览", "Import preview")}</strong>
-                <p class="hint">
-                  {t(
-                    "将替换快捷键、界面、密钥库偏好及收藏，不修改密钥材料。",
-                    "Replaces shortcuts, interface, vault preferences and favorites. Key material is unchanged.",
-                  )}
-                </p>
-                <dl>
-                  <dt>{t("已绑定快捷键", "Assigned shortcuts")}</dt>
-                  <dd>
-                    {Object.values(pendingImport.shortcuts).filter(Boolean)
-                      .length}
-                  </dd>
-                  <dt>{t("收藏", "Favorites")}</dt>
-                  <dd>{pendingImport.favoriteToolIds.length}</dd>
-                  <dt>{t("自动锁定", "Auto-lock")}</dt>
-                  <dd>{pendingImport.vaultAutoLockMinutes} min</dd>
-                </dl>
-                <div class="actions">
-                  <button class="dbx-btn" type="button" onclick={acceptImport}
-                    >{t("载入草稿", "Load into draft")}</button
-                  ><button
-                    class="dbx-btn dbx-btn--ghost"
-                    type="button"
-                    onclick={() => (pendingImport = null)}
-                    >{t("取消", "Cancel")}</button
-                  >
-                </div>
+            <section class="preferences-transfer" aria-labelledby="preferences-title">
+              <h3 id="preferences-title">{t("偏好设置", "Preferences")}</h3>
+              <p class="hint data-help">{t("偏好导出只包含界面、快捷键、收藏和锁定时长；密钥与 TOTP 请使用“备份与恢复”中的加密备份。", "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.")}</p>
+              <div class="actions">
+                <button
+                  class="dbx-btn dbx-btn--primary"
+                  type="button"
+                  onclick={exportPreferences}
+                  >{t("导出偏好", "Export preferences")}</button
+                ><button class="dbx-btn" type="button" onclick={importPreferences}
+                  >{t("导入偏好", "Import preferences")}</button
+                >
               </div>
-            {/if}
-            <div class="actions">
-              <button
-                class="dbx-btn"
-                type="button"
-                onclick={() => (confirmation = "clear")}
-                >{t("清除偏好设置", "Clear preferences")}</button
-              >
+              <input
+                class="visually-hidden"
+                bind:this={fileInput}
+                type="file"
+                accept="application/json"
+                onchange={onImport}
+              />
+              {#if pendingImport}
+                <div class="diagnostic-card" role="status">
+                  <strong>{t("导入预览", "Import preview")}</strong>
+                  <p class="hint">
+                    {t(
+                      "将替换快捷键、界面、密钥库偏好及收藏，不修改密钥材料。",
+                      "Replaces shortcuts, interface, vault preferences and favorites. Key material is unchanged.",
+                    )}
+                  </p>
+                  <dl>
+                    <dt>{t("已绑定快捷键", "Assigned shortcuts")}</dt>
+                    <dd>
+                      {Object.values(pendingImport.shortcuts).filter(Boolean)
+                        .length}
+                    </dd>
+                    <dt>{t("收藏", "Favorites")}</dt>
+                    <dd>{pendingImport.favoriteToolIds.length}</dd>
+                    <dt>{t("自动锁定", "Auto-lock")}</dt>
+                    <dd>{pendingImport.vaultAutoLockMinutes} min</dd>
+                  </dl>
+                  <div class="actions">
+                    <button class="dbx-btn" type="button" onclick={acceptImport}
+                      >{t("载入草稿", "Load into draft")}</button
+                    ><button
+                      class="dbx-btn dbx-btn--ghost"
+                      type="button"
+                      onclick={() => (pendingImport = null)}
+                      >{t("取消", "Cancel")}</button
+                    >
+                  </div>
+                </div>
+              {/if}
+            </section>
+            <div class="backup-section">
+              <VaultBackup {locale} bind:dirty={backupDirty} bind:updating={backupBusy} />
             </div>
+            <section class="preferences-reset" aria-labelledby="preferences-reset-title">
+              <h3 id="preferences-reset-title">{t("重置偏好设置", "Reset preferences")}</h3>
+              <p class="hint">{t("恢复默认设置，并清空收藏和最近记录；密钥库内容保留。点击“保存更改”后生效。", "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.")}</p>
+              <button class="dbx-btn reset-preferences" type="button" onclick={() => (confirmation = "clear")}>{t("重置偏好设置", "Reset preferences")}</button>
+            </section>
+          {:else}
+            <h3>{t("诊断信息", "Diagnostics")}</h3>
             <div class="diagnostic-card">
               <strong>{t("诊断信息", "Diagnostics")}</strong><p>{t('插件版本', 'Plugin version')}: {manifest.version}</p><button class="dbx-btn" type="button" onclick={copyDiagnostics}>{t('复制脱敏诊断信息', 'Copy sanitized diagnostics')}</button>
               <dl>
@@ -528,14 +531,8 @@
               </dl>
             </div>
             <details><summary>{t('已知限制与更新说明', 'Known limits and release notes')}</summary><p>{t('本次更新：统一密钥库与 TOTP、加密备份恢复、会话保护和后台任务。', 'This update: unified vault and TOTP, encrypted backups, session protection and background tasks.')}</p><p>{t('工作台关闭后会话内容不会恢复。表格仅保留单元格值。OCR 模型由用户主动下载，处理内容保留在本机。', 'Session content is not restored after closing the workbench. Spreadsheets retain cell values only. OCR models download at your request; processed content stays local.')}</p></details>
-            <p class="hint">
-              {t(
-                "导出文件不包含密钥、口令或工具输入内容。",
-                "Exports exclude keys, passwords, and tool inputs.",
-              )}
-            </p>
           {/if}
-            {#if notice && tab === "data"}<p class="notice" role="status">
+            {#if notice}<p class="notice" role="status">
               {notice}
             </p>{/if}{#if error}<p class="error" role="alert">{error}</p>{/if}
         </main>
@@ -574,10 +571,10 @@
 
 {#if confirmation}
   <SettingsConfirmation
-    title={confirmation === "discard" ? t("放弃未保存的更改？", "Discard unsaved changes?") : t("清除偏好设置", "Clear preferences")}
-    description={confirmation === "clear" ? t("清除设置、收藏和最近记录？密钥库内容将保留。", "Clear settings, favorites and recents? Vault contents will be kept.") : ""}
+    title={confirmation === "discard" ? t("放弃未保存的更改？", "Discard unsaved changes?") : t("重置偏好设置", "Reset preferences")}
+    description={confirmation === "clear" ? t("恢复默认设置，并清空收藏和最近记录；密钥库内容保留。点击“保存更改”后生效。", "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.") : ""}
     cancelLabel={confirmation === "discard" ? t("继续编辑", "Keep editing") : t("取消", "Cancel")}
-    confirmLabel={confirmation === "discard" ? t("放弃更改", "Discard") : t("清除偏好设置", "Clear preferences")}
+    confirmLabel={confirmation === "discard" ? t("放弃更改", "Discard") : t("重置偏好设置", "Reset preferences")}
     onCancel={() => (confirmation = "")}
     onConfirm={confirmation === "discard" ? finishClose : clearPreferences}
   />
@@ -718,6 +715,19 @@
   }
   .reset-interface {
     margin-top: 16px;
+  }
+  .backup-section,
+  .preferences-reset {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+  }
+  .preferences-reset .hint {
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .reset-preferences {
+    color: var(--color-destructive);
   }
   .data-help {
     max-width: 620px;

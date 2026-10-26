@@ -27,7 +27,7 @@
   import VaultView from "./lib/VaultView.svelte";
   import { createToolDemo } from "./lib/demoCatalog.js";
   import { hasParameterSupportLevels, supportLabel } from "./lib/cryptoCapabilities.js";
-  import { DEFAULT_SHORTCUTS, isEditableTarget, shortcutLabel, shortcutMatches, toolIdFromShortcutAction } from "./lib/shortcuts.js";
+  import { DEFAULT_SHORTCUTS, currentToolPrimaryButton, isEditableTarget, shortcutLabel, shortcutMatches, toolIdFromShortcutAction } from "./lib/shortcuts.js";
   import SettingsDialog from "./lib/SettingsDialog.svelte";
   import ToolSession from "./lib/ToolSession.svelte";
   import SessionConfirm from "./lib/SessionConfirm.svelte";
@@ -140,8 +140,16 @@
     const onShortcut = (event) => {
       if (event.defaultPrevented || event.repeat || event.isComposing || settingsOpen) return;
       const action = Object.keys(shortcuts).find((name) => shortcutMatches(event, shortcuts[name]));
-      const editorSafe = action === "search" || action === "settings" || action?.startsWith("tool:");
+      const editorSafe = action === "search" || action === "settings" || action === "calculate" || action?.startsWith("tool:");
       if (!action || (isEditableTarget(event.target) && !editorSafe)) return;
+      if (action === "calculate") {
+        if (page !== "tool" || launcherOpen || document.hidden || document.querySelector('[role="dialog"][aria-modal="true"], dialog[open]')) return;
+        const button = currentToolPrimaryButton(document.querySelector(".pane"), event.target);
+        if (!button) return;
+        event.preventDefault();
+        button.click();
+        return;
+      }
       event.preventDefault();
       runShortcutAction(action);
     };
@@ -283,6 +291,7 @@
       if (answer.action === "hide") { openHome(); return; }
       taskManager.cancelTool(id);
     }
+    await sessionState.releaseResources(id);
     const remaining = sessionToolIds.filter((item) => item !== id);
     sessionToolIds = remaining;
     if (page === "tool" && activeToolId === id) {
@@ -421,7 +430,7 @@
   {@const initialOptions = toolOptions[item.id] || {}}
   {@const demo = demoByToolId.get(item.id)}
   {@const shortcut = false}
-  {@const activeProps = viewPropsForTool(item, { locale, initialOptions, shortcut, demo, demoRequest: demoRevisions[item.id] || 0, visible: page === "tool" && activeToolId === item.id, onStateChange: value => sessionState.update(item.id, value), onBeforeReplace: () => beforeReplace(item.id), onVaultChange: refreshKeys, onSupportLevelChange: supportLevelReporter(item.id), onOpenTool: (id, options) => openTool(tools.find(tool => tool.id === id), '', options) })}
+  {@const activeProps = viewPropsForTool(item, { locale, initialOptions, shortcut, calculateShortcut: shortcuts.calculate, demo, demoRequest: demoRevisions[item.id] || 0, visible: page === "tool" && activeToolId === item.id, onStateChange: value => sessionState.update(item.id, value), onCloseTool: closeSession, onBeforeReplace: () => beforeReplace(item.id), onVaultChange: refreshKeys, onSupportLevelChange: supportLevelReporter(item.id), onOpenTool: (id, options) => openTool(tools.find(tool => tool.id === id), '', options) })}
   {#if ActiveView}
     <ActiveView {...activeProps} />
   {:else if viewLoadErrors[item.view]}
@@ -479,6 +488,7 @@
         </div>
       {/each}
     </div>
+    <TaskCenter {locale} sessions={sessionMetadata} onTool={(id) => openTool(tools.find(item => item.id === id))} onClose={closeSession} />
   </section>
 </div>
 
@@ -487,7 +497,6 @@
   onClose={() => (settingsOpen = false)} onSave={applySettings}
   onOpenVault={() => { settingsOpen = false; openVault(); }} />{/if}
 
-<TaskCenter {locale} sessions={sessionMetadata} onTool={(id) => openTool(tools.find(item => item.id === id))} />
 {#if confirmRequest}<SessionConfirm {locale} request={confirmRequest} onAnswer={answerSession} />{/if}
 
 <style>

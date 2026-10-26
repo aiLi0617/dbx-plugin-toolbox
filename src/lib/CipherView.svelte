@@ -249,7 +249,18 @@
           <button class="dbx-btn" role="menuitem" type="button" onclick={saveConfiguration}>{t("保存当前选项配置", "Save current options")}</button>
           <button class="dbx-btn" role="menuitem" type="button" onclick={resetConfiguration}>{t("恢复初始选项配置", "Restore initial options")}</button>
         </div>
-        {#if configStatus}<p class:error={configError} class="config-feedback" role="status">{configStatus}</p>{/if}
+        {#if configStatus}
+          <p class:error={configError} class="config-feedback" role="status">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              {#if configError}
+                <circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" />
+              {:else}
+                <path d="m5 12 4 4L19 6" />
+              {/if}
+            </svg>
+            <span>{configStatus}</span>
+          </p>
+        {/if}
       </div>
       {/if}
     </div>
@@ -560,16 +571,22 @@
   .config-actions .dbx-btn:hover { background: var(--dbx-hover-background); color: var(--dbx-hover-foreground); }
   .config-actions .dbx-btn:focus-visible { outline: none; box-shadow: var(--dbx-focus-ring); }
   .config-feedback {
-    margin: 3px 0 0;
-    padding: 5px 7px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 5px 0 0;
+    padding: 9px 10px;
     border: 1px solid var(--dbx-control-border);
     border-radius: var(--radius-sm);
-    background: var(--dbx-active-background);
-    color: var(--dbx-selection-foreground);
-    font-size: 11px;
-    line-height: 1.45;
+    background: var(--color-muted);
+    color: var(--color-foreground);
+    font-size: 12px;
+    line-height: 1.6;
     white-space: normal;
+    overflow-wrap: anywhere;
   }
+  .config-feedback svg { flex: 0 0 16px; margin-top: 2px; }
+  .config-feedback span { min-width: 0; }
   .config-feedback.error {
     border-color: var(--color-destructive);
     background: color-mix(in srgb, var(--color-destructive) 9%, transparent);

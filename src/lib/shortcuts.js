@@ -9,13 +9,14 @@ export const SHORTCUT_ACTIONS = Object.freeze([
   "closeTool",
   "toggleFavorite",
   "loadDemo",
+  "calculate",
   "settings",
 ]);
 
 export const SHORTCUT_GROUPS = Object.freeze([
   Object.freeze({ id: "navigation", actions: Object.freeze(["search", "home", "catalog", "vault"]) }),
   Object.freeze({ id: "workspace", actions: Object.freeze(["toggleSidebar", "previousTool", "nextTool", "closeTool"]) }),
-  Object.freeze({ id: "tool", actions: Object.freeze(["toggleFavorite", "loadDemo"]) }),
+  Object.freeze({ id: "tool", actions: Object.freeze(["toggleFavorite", "loadDemo", "calculate"]) }),
   Object.freeze({ id: "settings", actions: Object.freeze(["settings"]) }),
 ]);
 
@@ -30,6 +31,8 @@ export const DEFAULT_SHORTCUTS = Object.freeze({
   closeTool: "Mod+KeyW",
   toggleFavorite: "Mod+Shift+KeyF",
   loadDemo: "Mod+Shift+KeyD",
+  // Keep the stored action ID for existing user bindings; it runs any tool's primary action.
+  calculate: "Mod+Enter",
   settings: "Mod+Comma",
 });
 
@@ -145,4 +148,19 @@ export function shortcutConflicts(shortcuts) {
 
 export function isEditableTarget(target) {
   return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true'], [role='textbox']"));
+}
+
+// Use the actual button so validation, busy state and click behavior stay shared.
+// An explicit marker can override the visual primary button in complex tools.
+export function currentToolPrimaryButton(root, target) {
+  if (!root) return null;
+  const visible = (button) => !button.closest('[hidden], [inert], [aria-hidden="true"]')
+    && button.getClientRects().length > 0;
+  const candidates = [...root.querySelectorAll('button[data-tool-primary], button.dbx-btn--primary, button[type="submit"]')].filter(visible);
+  const form = root.contains(target) ? target?.closest?.("form") : null;
+  const button = candidates.find(button => button.hasAttribute("data-tool-primary"))
+    || candidates.find(button => form?.contains(button))
+    || candidates[0];
+  // A disabled main action must not fall through to another operation.
+  return button && !button.matches(':disabled, [aria-disabled="true"]') ? button : null;
 }

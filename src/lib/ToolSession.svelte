@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import { saveBlobThroughHost } from "./fileSave.js";
   import { sessionState } from './sessionState.js';
+  import { shouldTrackEdit } from './sessionInteractions.js';
   let { toolId, sensitive = false, beforeReplace, children } = $props();
   let root;
   onMount(() => {
@@ -22,7 +23,7 @@
     };
     root.addEventListener('click', protectClear, true);
     const edit = (event) => {
-      if (sensitive || event.target.type === 'search' || event.target.closest('[data-navigation]')) return;
+      if (!shouldTrackEdit(event, sensitive)) return;
       sessionState.update(toolId, { dirty: true });
       if (!sessionState.get(toolId).canExport && root.querySelector('textarea')) sessionState.update(toolId, {export: async () => {
         const values = [...root.querySelectorAll('textarea')].map(el => el.value).filter(Boolean);

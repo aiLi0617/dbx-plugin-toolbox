@@ -1,6 +1,8 @@
 import { L } from "./locale.js";
 
 const additionalErrors = {};
+errorGroup(["Too many PDF sessions are active"], "PDF sessions are full. Save or close an open PDF tool, then retry.", "PDF 会话已满，请保存或关闭已打开的 PDF 工具后重试。", "PDF 工作階段已滿，請儲存或關閉已開啟的 PDF 工具後重試。", "Las sesiones PDF están llenas. Guarda o cierra una herramienta PDF y reintenta.", "Le sessioni PDF sono esaurite. Salva o chiudi uno strumento PDF e riprova.", "PDF セッションが満杯です。PDF ツールを保存または閉じて再試行してください。", "As sessões PDF estão cheias. Salve ou feche uma ferramenta PDF e tente novamente.", "PDF 세션이 가득 찼습니다. PDF 도구를 저장하거나 닫고 다시 시도하세요.", "PDF oturumları dolu. Açık bir PDF aracını kaydedip kapatın ve yeniden deneyin.", "PDF sessiyaları doludur. Açıq PDF alətini saxlayın və ya bağlayıb yenidən sınayın.");
+
 // Exact aliases only: never interpolate an untrusted backend error into UI copy.
 // Keep this copy in the existing error dictionary, with all ten host locales.
 function errorGroup(keys, ...copy) {
@@ -1106,7 +1108,6 @@ errorGroup(
     "PDF chunk count is invalid",
     "PDF input is too large",
     "PDF input exceeds the 1 GB total limit",
-    "Too many PDF sessions are active",
     "PDF page limit is 5000",
   ],
   "The PDF input exceeds the Sidecar limits. Reduce the file count, total size, or page count.",

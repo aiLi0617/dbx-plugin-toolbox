@@ -40,11 +40,16 @@
     requestAnimationFrame(() => searchInput?.focus());
   }
   function searchKeydown(event) {
+    if (event.isComposing || event.keyCode === 229) return;
+    if (!["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key)) return;
+    event.stopPropagation();
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      searchSelected = Math.min(searchResults.length - 1, searchSelected + 1);
+      searchActive = true;
+      searchSelected = Math.max(0, Math.min(searchResults.length - 1, searchSelected + 1));
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
+      searchActive = true;
       searchSelected = Math.max(0, searchSelected - 1);
     } else if (event.key === "Enter") {
       event.preventDefault();
@@ -172,7 +177,8 @@
               role="option"
               aria-selected={index === searchSelected}
               onfocus={() => (searchSelected = index)}
-              onmouseenter={() => (searchSelected = index)}
+              onmousemove={() => (searchSelected = index)}
+              onkeydown={searchKeydown}
               onmousedown={(event) => event.preventDefault()}
               onclick={() => chooseSearchResult(match)}
             >

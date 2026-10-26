@@ -25,6 +25,10 @@ export function createSessionState() {
       this.update(id, { dirty: false, hasUnsavedResult: false }); return true;
     },
     async retry(id) { return actions.get(id)?.retry?.(); },
+    async releaseResources(id) {
+      const action = actions.get(id);
+      if (action?.dispose) { await action.dispose(); action.dispose = undefined; }
+    },
     discard(id) {
       const cleanup = actions.get(id)?.dispose;
       states.delete(id); actions.delete(id);

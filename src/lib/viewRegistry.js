@@ -78,7 +78,7 @@ export const FILL_VIEWS = new Set([
 
 // Keep these established utilities free of per-tool workflow and editing guards.
 export function fillsToolPane(tool) {
-  return tool?.id === "yaml-tree" || FILL_VIEWS.has(tool?.view);
+  return tool?.id === "yaml-tree" || tool?.id === "roman" || FILL_VIEWS.has(tool?.view);
 }
 
 export const SIMPLE_TOOL_IDS = new Set(['json','data-convert','spreadsheet','whitespace','regex','base64','image-ocr']);
@@ -190,6 +190,7 @@ export function viewPropsForTool(tool, context = {}) {
     initialAction: initialOptions.action || "trim",
     focusedOperation: initialOptions.op || "",
     shortcut: Boolean(context.shortcut),
+    calculateShortcut: context.calculateShortcut,
     shortcutId: tool.id,
     capabilityId: tool.capabilityId || null,
     lockOptions: tool.lockOptions || [],
@@ -198,6 +199,7 @@ export function viewPropsForTool(tool, context = {}) {
     onVaultChange: context.onVaultChange,
     onSupportLevelChange: context.onSupportLevelChange,
     onOpenTool: context.onOpenTool,
+    onCloseTool: context.onCloseTool,
     onStateChange: context.onStateChange,
     onBeforeReplace: context.onBeforeReplace,
     visible: context.visible,

@@ -39,7 +39,7 @@
   <div class="intro"><strong>{t("MD5 碰撞检查", "MD5 collision check")}</strong><span>{t("只有“摘要相同、字节不同”才判定为碰撞；相同文件不会误报。", "A collision requires equal digests but different bytes; identical files are not reported as a collision.")}</span></div>
   <div class="files">
     {#each [0, 1] as index}
-      <label class="drop">
+      <label class="drop file-button">
         <input type="file" onchange={(event) => selectFile(index, event)} disabled={checking} />
         <strong>{files[index]?.name || t(`选择文件 ${index + 1}`, `Choose file ${index + 1}`)}</strong>
         {#if files[index]}<span>{size(files[index].size)}</span><code>{digests[index]}</code>{:else}<span>{t("点击选择，最大 16 MB", "Click to choose, up to 16 MB")}</span>{/if}

@@ -21,6 +21,7 @@
     previousTool: t("上一个已打开工具", "Previous open tool"), nextTool: t("下一个已打开工具", "Next open tool"),
     closeTool: t("关闭当前工具", "Close current tool"), toggleFavorite: t("收藏或取消收藏当前工具", "Toggle current tool favorite"),
     loadDemo: t("载入当前工具 Demo", "Load current tool demo"), settings: t("打开设置中心", "Open settings center"),
+    calculate: t("执行当前工具主操作（确定 / 计算等）", "Run current tool primary action (confirm, calculate, etc.)"),
   });
   const groupLabels = $derived({ navigation: t("导航", "Navigation"), workspace: t("工作区", "Workspace"), tool: t("当前工具", "Current tool"), settings: t("设置", "Settings") });
   const normalizedQuery = $derived(query.trim().toLocaleLowerCase());

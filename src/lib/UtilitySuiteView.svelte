@@ -664,4 +664,10 @@
     .diagnostic-card--capabilities{grid-column:1/-1}
   }
   .meta-output{display:flex;flex-direction:column}.meta-output textarea{height:auto;flex:1;min-height:180px;resize:none}
+
+  .git-reference{overflow:hidden}
+  .git-reference .reference-grid{flex:1;min-height:0;grid-auto-rows:max-content;align-content:start;overflow:auto}
+  .git-reference .git-card{flex-shrink:0;min-height:max-content}
+  .git-reference .git-card>header{flex-shrink:0}
+
 </style>

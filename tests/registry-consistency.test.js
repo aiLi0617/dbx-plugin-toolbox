@@ -60,8 +60,8 @@ test("every demo-aware view consumes each demo request only once", () => {
 
   assert.ok(demoViews.length > 0, "expected at least one demo-aware view");
   for (const { name, source } of demoViews) {
-    assert.match(source, /let\s+appliedDemoRequest\s*=\s*0/, `${name} must track the consumed demo request`);
-    assert.match(source, /demoRequest\s*===\s*appliedDemoRequest/, `${name} must ignore an already-consumed demo request`);
+    assert.match(source, /(?:let\s+|,\s*)appliedDemoRequest\s*=\s*(?:\$state\()?0/, `${name} must track the consumed demo request`);
+    assert.match(source, /(?:demoRequest\s*(?:===|!==)\s*appliedDemoRequest|appliedDemoRequest\s*(?:===|!==)\s*demoRequest)/, `${name} must compare the consumed demo request before applying a demo`);
     assert.match(source, /appliedDemoRequest\s*=\s*demoRequest/, `${name} must consume the request before mutating editor state`);
   }
 

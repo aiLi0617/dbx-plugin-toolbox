@@ -15,15 +15,19 @@
   } from "./nativePdf.js";
   import { createTaskScope } from "./taskManager.js";
   import { createPdfWorkerClient } from "./pdfWorkerClient.js";
+  import { pdfSessionPool } from "./pdfSessionPool.js";
+  import { sessionState } from "./sessionState.js";
+  import { tools } from "./catalog.js";
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
-  let { toolId, locale = "zh-CN", demoRequest = 0, onStateChange, visible = true } = $props();
+  let { toolId, locale = "zh-CN", demoRequest = 0, onStateChange, onOpenTool, onCloseTool, visible = true } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   const taskScope = createTaskScope(
     untrack(() => toolId),
     "pdf",
   );
   const operation = $derived(toolId.slice(4));
+  const compactSettings = $derived(["merge", "decrypt", "signature-check"].includes(operation));
   const nativeOperation = $derived(PDF_NATIVE_OPERATIONS.has(operation));
   const operationCopy = {
     merge: [
@@ -143,7 +147,35 @@
   const sizeChange = $derived(totalInputSize ? ((outputSize - totalInputSize) / totalInputSize * 100).toFixed(1) : '0.0');
   let advancedOpen = $state(false);
   let savedOutput = $state(null), savedReport = $state("");
-  $effect(() => { onStateChange?.({ dispose: () => { taskScope.dispose(); void cancelNativePdf(nativeSession); }, busy, dirty: files.length > 0 && (!output || output !== savedOutput), hasUnsavedResult: (!!output && output !== savedOutput) || (!!report && report !== savedReport), export: output ? save : report ? saveReport : null, retry: info ? run : files.length ? load : null }); });
+  let occupiedTools = $state([]);
+  // This identifier participates in UI lifecycle metadata as well as async work.
+  let pdfSessionActive = $state(false);
+  let pendingRelease = Promise.resolve();
+  function releaseNative() {
+    const next = pendingRelease.catch(() => {}).then(async () => {
+      const id = nativeSession;
+      await cancelNativePdf(id, {strict:true});
+      if (nativeSession === id) { nativeSession = ""; pdfSessionActive = false; }
+    });
+    pendingRelease = next;
+    return next;
+  }
+  async function releaseIdle() {
+    await releaseNative();
+    info = null;
+    order = [];
+    output = null;
+    savedOutput = null;
+  }
+  async function closeOccupied(id) {
+    try { await onCloseTool?.(id); occupiedTools = pdfSessionPool.owners(); }
+    catch (cause) { error = localizeError(locale, cause); }
+  }
+  async function saveOccupied(id) {
+    try { await sessionState.export(id); }
+    catch (cause) { error = localizeError(locale, cause); }
+  }
+  $effect(() => { onStateChange?.({ dispose: async () => { taskScope.dispose(); await releaseNative(); }, pdfSessionActive, busy, dirty: files.length > 0 && (!output || output !== savedOutput), hasUnsavedResult: (!!output && output !== savedOutput) || (!!report && report !== savedReport), export: output ? save : report ? saveReport : null, retry: info ? run : files.length ? load : null }); });
   $effect(() => { if (!visible) { password = ""; newPassword = ""; showPassword = false; } });
   async function saveReport() { const value = report; const result = await saveBlobThroughHost(new Blob([value], {type: 'application/json'}), { fileName: 'signature-report.json', binary: true }); if (result?.cancelled) return false; savedReport = value; return true; }
   const totalInputSize = $derived(
@@ -187,8 +219,7 @@
     disposed = true;
     revision++;
     taskScope.dispose();
-    void cancelNativePdf(nativeSession);
-    nativeSession = "";
+    void releaseNative().catch(cause => { if (!disposed) error = localizeError(locale, cause); });
     void clearPreview();
     buffers = [];
     password = "";
@@ -225,8 +256,7 @@
     order = [];
     clearOutput();
     error = "";
-    void cancelNativePdf(nativeSession);
-    nativeSession = "";
+    void releaseNative().catch(cause => { if (!disposed) error = localizeError(locale, cause); });
     try {
       validatePdfFiles(nextFiles, { native: nativeOperation });
       files = nextFiles;
@@ -303,8 +333,7 @@
     order = [];
     clearOutput();
     error = "";
-    void cancelNativePdf(nativeSession);
-    nativeSession = "";
+    void releaseNative().catch(cause => { if (!disposed) error = localizeError(locale, cause); });
   }
   async function example() {
     busy = true;
@@ -347,6 +376,7 @@
     taskScope.cancel();
   }
   async function load() {
+    occupiedTools = [];
     const taskPassword = password;
     const token = ++revision;
     busy = true;
@@ -360,9 +390,13 @@
         validatePdfFiles(files, { native: nativeOperation });
         let inspections;
         if (nativeOperation) {
-          await cancelNativePdf(nativeSession);
-          nativeSession = "";
+          await releaseNative();
           const uploadedSession = await uploadNativePdfs(files, {
+            owner: toolId,
+            resource: {
+              canRelease: () => !disposed && !busy && (!output || output === savedOutput) && (!report || report === savedReport),
+              release: releaseIdle,
+            },
             signal: task.signal,
             onProgress: ({ uploadedBytes, totalBytes }) => {
               if (!disposed && token === revision) {
@@ -379,6 +413,7 @@
             return;
           }
           nativeSession = uploadedSession;
+          pdfSessionActive = true;
           inspections = (
             await inspectNativePdfs(nativeSession, taskPassword, {
               signal: task.signal,
@@ -426,11 +461,13 @@
       if (!disposed && token === revision) {
         if (e?.name === "AbortError") {
           if (nativeOperation) {
-            await cancelNativePdf(nativeSession);
-            nativeSession = "";
+            await releaseNative();
             info = null;
           }
-        } else error = localizeError(locale, e);
+        } else {
+          if (e?.code === "PDF_SESSION_LIMIT" || e?.message === "Too many PDF sessions are active") occupiedTools = e.occupants || pdfSessionPool.owners();
+          error = localizeError(locale, e);
+        }
       }
     } finally {
       if (!disposed && token === revision) {
@@ -726,8 +763,7 @@
       if (!disposed && token === revision) {
         if (e?.name === "AbortError") {
           if (nativeOperation) {
-            await cancelNativePdf(nativeSession);
-            nativeSession = "";
+            await releaseNative();
             info = null;
           }
         } else error = localizeError(locale, e);
@@ -757,9 +793,11 @@
 </script>
 
 <div class="expansion-page pdf-page">
-  {#if busy}<button class="dbx-btn" type="button" onclick={cancelTask}
-      >{t("取消", "Cancel")}</button
-    >{/if}
+  {#if occupiedTools.length}<section class="capacity-notice" role="alert">
+    <p>{t("PDF 会话已满。请保存或关闭下列页面后重试；当前文件会保留。", "PDF sessions are full. Save or close a page below, then retry. Your current files are preserved.")}</p>
+    {#each occupiedTools as id (id)}<div class="capacity-row"><strong>{pick(locale, tools.find(item => item.id === id)?.name || {en:id})}</strong><button class="dbx-btn" onclick={() => onOpenTool?.(id)}>{t("返回工具", "Return to tool")}</button><button class="dbx-btn" disabled={!sessionState.get(id).canExport || sessionState.get(id).busy} onclick={() => saveOccupied(id)}>{t("保存结果", "Save result")}</button><button class="dbx-btn" onclick={() => closeOccupied(id)}>{t("关闭并释放", "Close and release")}</button></div>{/each}
+    <button class="dbx-btn" onclick={load} disabled={busy}>{t("重试", "Retry")}</button>
+  </section>{/if}
   {#if operation === 'compress'}<p class="dbx-hint">{t('压缩主要清理元数据、缩略图并重写结构；扫描件不保证明显缩小，输出也可能变大。', 'Compression cleans metadata and thumbnails and rewrites structure. Scanned files may not shrink; output can be larger.')}</p>{/if}
   <fieldset disabled={busy} class="controls">
     <section
@@ -802,7 +840,7 @@
               )}</span
         >
       </div>
-      <label class="dbx-btn dbx-btn--primary file-button">
+      <label class="dbx-btn file-button" class:dbx-btn--primary={!files.length}>
         {t(
           files.length && operation === "merge"
             ? "添加文件"
@@ -946,10 +984,10 @@
         </div>
       </section>{/if}
 
-    {#if info}<section class="dbx-card settings-card">
+    {#if info}<section class="dbx-card settings-card" class:compact-settings={compactSettings}>
+        {#if !compactSettings}
         <div class="section-heading">
           <div>
-            <span class="step-number">2</span>
             <h4>{t("处理设置", "Processing settings")}</h4>
           </div>
           <span
@@ -957,6 +995,7 @@
             {t("页", "pages")} · {formatBytes(totalInputSize)}</span
           >
         </div>
+        {/if}
         {#if info.signed && operation !== "signature-check"}<p role="status">
             {t(
               "修改文档可能使原有数字签名失效。",
@@ -1166,13 +1205,23 @@
               "A visual signature is a page image, not a cryptographic digital signature.",
             )}
           </p>
+          <div class="signature-editor">
+          <div class="signature-toolbar">
           <label
             >{t("上传签名图片", "Upload signature image")}<input
               type="file"
               accept="image/png,image/jpeg"
               onchange={signatureFile}
             /></label
-          ><canvas
+          >
+          <button class="dbx-btn" type="button" onclick={() => {
+            signatureCanvas.getContext("2d").clearRect(0, 0, 600, 200);
+            signature = null;
+            hasStrokes = false;
+            clearOutput();
+          }}>{t("清空签名", "Clear signature")}</button>
+          </div>
+          <canvas
             class="signature"
             width="600"
             height="200"
@@ -1182,15 +1231,10 @@
             onpointerup={() => (drawing = false)}
             onpointercancel={() => (drawing = false)}
             aria-label={t("手写签名区域", "Handwritten signature area")}
-          ></canvas><button
-            class="dbx-btn"
-            onclick={() => {
-              signatureCanvas.getContext("2d").clearRect(0, 0, 600, 200);
-              signature = null;
-              hasStrokes = false;
-              clearOutput();
-            }}>{t("清空签名", "Clear signature")}</button
-          ><label
+          ></canvas>
+          </div>
+          <div class="signature-dimensions">
+          <label
             >{t("签名宽度", "Signature width")}<input
               class="dbx-input"
               type="number"
@@ -1204,7 +1248,8 @@
               bind:value={signatureHeight}
               oninput={clearOutput}
             /></label
-          >{/if}
+          >
+          </div>{/if}
         {#if operation === "encrypt"}<label
             >{t("新的打开密码", "New opening password")}<input
               class="dbx-input"
@@ -1233,6 +1278,7 @@
             )}
           </p>{/if}
         <div class="run-row">
+          {#if compactSettings}<span class="document-summary">{info.count} {t("页", "pages")} · {formatBytes(totalInputSize)}</span>{/if}
           <button
             class="dbx-btn dbx-btn--primary"
             onclick={run}
@@ -1244,22 +1290,18 @@
           >
         </div>
       </section>{/if}
-    {#if busy}<div class="status-card" role="status">
-        <span class="spinner" aria-hidden="true"></span>
-        {t("处理中…", "Working…")}
-        {progress}
-      </div>{/if}{#if output}<section class="result-card">
+    {#if output}<section class="result-card">
         <div>
           <strong>{t("处理完成", "Processing complete")}</strong><span
             >{formatBytes(totalInputSize)} → {formatBytes(
               output.native ? output.size : output.blob.size,
             )}</span
           >
+          {#if operation === 'compress'}<p role="status">{t('体积变化', 'Size change')}: {Number(sizeChange)>0?'+':''}{sizeChange}% {#if outputSize >= totalInputSize}{t('未缩小，可保留原文件。', 'No size reduction. You can keep the original file.')}{/if}</p>{/if}
         </div>
         <button class="dbx-btn dbx-btn--primary" onclick={save}
           >{t("保存结果", "Save result")}</button
         >
-        {#if operation === 'compress'}<p role="status">{t('体积变化', 'Size change')}: {Number(sizeChange)>0?'+':''}{sizeChange}% {#if outputSize >= totalInputSize}{t('未缩小，可保留原文件。', 'No size reduction. You can keep the original file.')}{/if}</p>{/if}
       </section>{/if}{#if report}<section class="dbx-card report-card">
         <div class="section-heading">
           <h4>{t("签名检查报告", "Signature inspection report")}</h4>
@@ -1271,10 +1313,20 @@
         {error}
       </div>{/if}
   </fieldset>
+  {#if files.length}<div class="status-card task-status" class:idle={!busy} aria-hidden={!busy}>
+    {#if busy}
+      <div class="task-progress" role="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="task-progress-text" title={progress}>{progress || t("处理中…", "Working…")}</span>
+      </div>
+      <button class="dbx-btn" type="button" onclick={cancelTask}>{t("取消", "Cancel")}</button>
+    {/if}
+  </div>{/if}
 </div>
 
 <style>
   .pdf-page {
+    --pdf-card-padding: 16px;
     max-width: 1060px;
     padding: 22px;
     gap: 16px;
@@ -1290,13 +1342,14 @@
   }
   .controls > section {
     min-width: 0;
+    padding-inline: var(--pdf-card-padding);
   }
   .upload-card {
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr) auto;
     align-items: center;
     gap: 14px;
-    padding: 22px;
+    padding: var(--pdf-card-padding);
     border: 1px dashed var(--color-ring);
     border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--color-muted) 45%, transparent);
@@ -1352,7 +1405,8 @@
   .settings-card > .pages,
   .settings-card > .page-range-field,
   .settings-card > .run-row,
-  .settings-card > .signature {
+  .settings-card > .signature-editor,
+  .settings-card > .signature-dimensions {
     grid-column: 1 / -1;
   }
   .section-heading {
@@ -1376,7 +1430,6 @@
     color: var(--color-muted-foreground);
     font-size: 12px;
   }
-  .step-number,
   .file-index {
     display: inline-grid;
     place-items: center;
@@ -1471,6 +1524,8 @@
     gap: 10px;
   }
   .password-field,
+  .signature-toolbar > label,
+  .signature-dimensions > label,
   .settings-card > label {
     display: flex;
     flex-direction: column;
@@ -1517,9 +1572,26 @@
   .run-row {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--color-border);
+  }
+  .compact-settings .run-row {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .document-summary {
+    margin-right: auto;
+    color: var(--color-muted-foreground);
+    font-size: 12px;
+  }
+  .run-row > button,
+  .load-row > button,
+  .result-card > button,
+  .file-button {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .status-card,
   .result-card,
@@ -1534,6 +1606,30 @@
     background: var(--color-info-bg);
     color: var(--color-info);
   }
+  .task-status {
+    box-sizing: border-box;
+    height: 56px;
+    padding-inline: var(--pdf-card-padding);
+    justify-content: space-between;
+  }
+  .task-status.idle {
+    visibility: hidden;
+  }
+  .task-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .task-progress-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .task-progress .spinner,
+  .task-status > button {
+    flex-shrink: 0;
+  }
   .result-card {
     justify-content: space-between;
     background: var(--color-success-bg);
@@ -1542,6 +1638,13 @@
   .result-card > div {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    gap: 4px;
+  }
+  .result-card p {
+    margin: 0;
+    font-size: 12px;
   }
   .result-card span {
     font-size: 12px;
@@ -1584,10 +1687,42 @@
   .pages span {
     grid-column: 1/-1;
   }
+  .signature-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  .signature-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .signature-toolbar > label {
+    min-width: 0;
+  }
+  .signature-toolbar input {
+    max-width: 100%;
+  }
+  .signature-toolbar > button {
+    flex-shrink: 0;
+  }
+  .signature-dimensions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .signature-dimensions > label {
+    min-width: 0;
+  }
   .signature {
+    display: block;
+    width: 600px;
     border: 1px solid var(--color-border);
     background: white;
     max-width: 100%;
+    height: auto;
     touch-action: none;
   }
   @media (max-width: 680px) {
@@ -1598,16 +1733,34 @@
       align-items: stretch;
       flex-direction: column;
     }
+    .result-card {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .document-summary {
+      margin-right: 0;
+    }
     .upload-card {
       grid-template-columns: 42px minmax(0, 1fr);
     }
     .upload-card > .file-button {
       grid-column: 1 / -1;
     }
+    .upload-icon {
+      width: 42px;
+      height: 42px;
+    }
     .load-row {
       grid-template-columns: 1fr;
     }
     .settings-card {
+      grid-template-columns: 1fr;
+    }
+    .signature-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .signature-dimensions {
       grid-template-columns: 1fr;
     }
     .settings-card > * {
@@ -1620,10 +1773,37 @@
       flex: 1;
     }
     .file-row {
-      grid-template-columns: 28px 24px minmax(0, 1fr) auto auto;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 6px;
+    }
+    .file-drag,
+    .file-drag-placeholder {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+    .file-row:has(.file-drag) {
+      grid-template-columns: 28px 24px minmax(0, 1fr) auto;
+    }
+    .file-drag-placeholder {
+      display: none;
+    }
+    .file-name {
+      grid-column: 2;
+    }
+    .file-row:has(.file-drag) .file-name {
+      grid-column: 3;
     }
     .file-size {
       grid-column: 2;
+      grid-row: 2;
+    }
+    .file-row:has(.file-drag) .file-size {
+      grid-column: 3;
+    }
+    .remove-file {
+      grid-column: -2;
+      grid-row: 1 / 3;
     }
   }
+.capacity-notice{padding:12px;border:1px solid var(--color-warning);border-radius:var(--radius-md);background:var(--color-warning-bg)}.capacity-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0}.capacity-row strong{flex:1}
 </style>

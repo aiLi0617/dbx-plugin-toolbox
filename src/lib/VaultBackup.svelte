@@ -8,8 +8,9 @@
   let password = $state(''), preview = $state(null), file = $state(null), error = $state(''), notice = $state('');
   let vaultStatus = $state(null), unlockOpen = $state(false), unlockExists = $state(true), unlockPassword = $state(''), unlockConfirm = $state(''), unlockError = $state(''), unlockBusy = $state(false);
   let fileInput = $state(null);
+  let exportOpen = $state(false);
   let disposed = false;
-  $effect(() => { dirty = Boolean(password || preview || file); });
+  $effect(() => { dirty = Boolean(password || preview || file || unlockPassword || unlockConfirm); });
   onMount(() => {
     let active = true;
     void invoke('toolbox/keys/status').then((status) => { if (active) vaultStatus = status; }).catch(() => {});
@@ -38,7 +39,7 @@
     } catch (cause) { unlockError = localizeError(locale, cause); }
     finally { unlockBusy = false; }
   }
-  onDestroy(() => { disposed = true; password = ''; void invoke('toolbox/keys/restore/cancel').catch(() => {}); });
+  onDestroy(() => { disposed = true; password = ''; unlockPassword = ''; unlockConfirm = ''; dirty = false; void invoke('toolbox/keys/restore/cancel').catch(() => {}); });
   async function run(action) {
     if (updating) return;
     updating = true; error = ''; notice = '';
@@ -48,7 +49,7 @@
       if (!status.unlocked) throw new Error(t('请先创建或解锁密钥库。', 'Create or unlock the vault first.'));
       if (action === 'backup') {
         const result = await invoke('toolbox/keys/backup', { password, title: t('备份密钥库', 'Back up vault') }, 120000);
-        if (!disposed && !result.cancelled) notice = t('加密备份已保存。', 'Encrypted backup saved.');
+        if (!disposed && !result.cancelled) { notice = t('加密备份已保存。', 'Encrypted backup saved.'); exportOpen = false; }
       } else if (action === 'preview') {
         if (!file || file.size > 16 * 1024 * 1024) throw new Error(t('请选择不超过 16 MB 的加密备份。', 'Choose an encrypted backup up to 16 MB.'));
         await invoke('toolbox/keys/restore/begin');
@@ -70,7 +71,7 @@
 
 <section class="backup" aria-labelledby="backup-title">
   <header>
-    <h3 id="backup-title">{t('备份与恢复', 'Backup and restore')}</h3>
+    <h3 id="backup-title">{t('密钥库', 'Key vault')}</h3>
     <p class="hint">{t('加密备份包含全部密钥和 TOTP。导出使用当前主密码；导入必须输入创建该备份时的主密码。偏好设置导出不包含这些密钥材料。', 'Encrypted backups include all keys and TOTP accounts. Export uses your current master password; import requires the password used when that backup was created. Preferences exports do not contain key material.')}</p>
   </header>
   {#if vaultStatus && !vaultStatus.unlocked}
@@ -88,13 +89,24 @@
         <label class="password-field"><span>{t('主密码', 'Master password')}</span><input class="dbx-input" type="password" bind:value={unlockPassword} autocomplete={unlockExists ? 'current-password' : 'new-password'} disabled={unlockBusy} onkeydown={(event) => event.key === 'Enter' && submitUnlock()} /></label>
         {#if !unlockExists}<label class="password-field"><span>{t('再次输入主密码', 'Confirm master password')}</span><input class="dbx-input" type="password" bind:value={unlockConfirm} autocomplete="new-password" disabled={unlockBusy} onkeydown={(event) => event.key === 'Enter' && submitUnlock()} /></label>{/if}
         {#if unlockError}<p class="feedback error" role="alert">{unlockError}</p>{/if}
-        <div class="actions"><button class="dbx-btn dbx-btn--primary" type="button" disabled={unlockBusy} onclick={submitUnlock}>{unlockBusy ? t('处理中…', 'Working…') : unlockExists ? t('解锁并继续', 'Unlock and continue') : t('创建并继续', 'Create and continue')}</button><button class="dbx-btn" type="button" disabled={unlockBusy} onclick={() => (unlockOpen = false)}>{t('取消', 'Cancel')}</button></div>
+        <div class="actions"><button class="dbx-btn dbx-btn--primary" type="button" disabled={unlockBusy} onclick={submitUnlock}>{unlockBusy ? t('处理中…', 'Working…') : unlockExists ? t('解锁并继续', 'Unlock and continue') : t('创建并继续', 'Create and continue')}</button><button class="dbx-btn" type="button" disabled={unlockBusy} onclick={() => { unlockOpen = false; unlockPassword = ''; unlockConfirm = ''; }}>{t('取消', 'Cancel')}</button></div>
       </div>
     {/if}
   {/if}
   <div class="backup-form">
-    <input bind:this={fileInput} class="file-input" type="file" accept=".dbxvault" tabindex="-1" aria-label={t('选择加密备份', 'Choose encrypted backup')} disabled={updating || !!preview} onchange={(e) => { const selected = e.currentTarget.files?.[0]; if (selected) { file = selected; password = ''; error = ''; notice = ''; } e.currentTarget.value = ''; }}/>
-    {#if !file}
+    <input bind:this={fileInput} class="file-input" type="file" accept=".dbxvault" tabindex="-1" aria-label={t('选择加密备份', 'Choose encrypted backup')} disabled={updating || !!preview} onchange={(e) => { const selected = e.currentTarget.files?.[0]; if (selected) { exportOpen = false; file = selected; password = ''; error = ''; notice = ''; } e.currentTarget.value = ''; }}/>
+    {#if !file && !exportOpen}
+      <section class="backup-panel">
+        <h4>{t('导出加密备份', 'Export encrypted backup')}</h4>
+        <p class="hint">{t('把当前密钥库和 TOTP 保存为 .dbxvault 文件。', 'Save the current vault and TOTP accounts as a .dbxvault file.')}</p>
+        <button class="dbx-btn dbx-btn--primary" type="button" disabled={updating || !vaultStatus?.unlocked} onclick={() => { exportOpen = true; password = ''; error = ''; notice = ''; }}>{t('导出加密备份', 'Export encrypted backup')}</button>
+      </section>
+      <section class="backup-panel import-start">
+        <h4>{t('导入加密备份', 'Import encrypted backup')}</h4>
+        <p class="hint">{t('先选择 .dbxvault 文件，再输入该文件创建时使用的主密码。', 'Choose a .dbxvault file first, then enter the master password used to create it.')}</p>
+        <button class="dbx-btn" type="button" disabled={updating || !vaultStatus?.unlocked} onclick={() => fileInput?.click()}>{t('选择备份文件', 'Choose backup file')}</button>
+      </section>
+    {:else if exportOpen}
       <section class="backup-panel">
         <h4>{t('导出加密备份', 'Export encrypted backup')}</h4>
         <p class="hint">{t('把当前密钥库和 TOTP 保存为 .dbxvault 文件。', 'Save the current vault and TOTP accounts as a .dbxvault file.')}</p>
@@ -103,15 +115,11 @@
           <input class="dbx-input" type="password" bind:value={password} autocomplete="current-password" disabled={updating}/>
         </label>
         <button class="dbx-btn dbx-btn--primary" type="button" disabled={updating || !password} onclick={() => run('backup')}>{t('导出加密备份', 'Export encrypted backup')}</button>
-      </section>
-      <section class="backup-panel import-start">
-        <h4>{t('导入加密备份', 'Import encrypted backup')}</h4>
-        <p class="hint">{t('先选择 .dbxvault 文件，再输入该文件创建时使用的主密码。', 'Choose a .dbxvault file first, then enter the master password used to create it.')}</p>
-        <button class="dbx-btn" type="button" disabled={updating} onclick={() => fileInput?.click()}>{t('选择备份文件', 'Choose backup file')}</button>
+        <button class="dbx-btn" type="button" disabled={updating} onclick={() => { exportOpen = false; password = ''; error = ''; }}>{t('取消', 'Cancel')}</button>
       </section>
     {:else}
       <section class="backup-panel import-panel">
-        <div class="step-heading"><span class="step-number">2</span><div><h4>{t('验证并预览导入', 'Verify and preview import')}</h4><p class="hint">{t('输入备份文件的主密码，先预览将新增和跳过的项目。', 'Enter the backup password to preview what will be added or skipped.')}</p></div></div>
+        <div class="step-heading"><div><h4>{t('验证并预览导入', 'Verify and preview import')}</h4><p class="hint">{t('输入备份文件的主密码，先预览将新增和跳过的项目。', 'Enter the backup password to preview what will be added or skipped.')}</p></div></div>
         <div class="selected-file">
           <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
           <div class="file-details"><strong>{file.name}</strong><small>{new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(file.size / 1024)} KB · .dbxvault</small></div>
@@ -154,6 +162,7 @@
       </section>
     {/if}
   </div>
+  {#if unlockError && !unlockOpen}<p class="feedback error" role="alert">{unlockError}</p>{/if}
   {#if updating}<p class="feedback hint" role="status">{t('处理中…', 'Working…')}</p>{/if}
   {#if error}<p class="feedback error" role="alert">{error}</p>{/if}
   {#if notice}<p class="feedback notice" role="status">{notice}</p>{/if}
@@ -170,14 +179,15 @@
   h3, p { margin: 0; }
   h3 { font-size: 16px; line-height: 1.5; }
   .hint, .restore-preview p { color: var(--color-muted-foreground); font-size: 12px; line-height: 1.7; }
-  .backup-form { display: flex; flex-direction: column; align-items: stretch; gap: 12px; min-width: 0; padding: 14px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-card, var(--color-background)); }
+  .backup-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; min-width: 0; }
+  .backup-form:has(.import-panel), .backup-form:has(.password-field) { grid-template-columns: minmax(0, 1fr); }
   .backup-panel { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-background); }
+  .backup-panel > .dbx-btn { margin-top: auto; }
   .backup-panel h4 { margin: 0; font-size: 13px; }
   .backup-panel > .hint { margin: 0; }
   .step-heading { display: flex; align-items: flex-start; gap: 10px; }
-  .step-number { display: grid; width: 22px; height: 22px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--color-primary); color: var(--color-primary-foreground); font-size: 11px; font-weight: 700; }
   .step-heading h4 { margin-top: 1px; }
-  .password-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 12px; font-weight: 500; }
+  .password-field { width: 100%; display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 12px; font-weight: 500; }
   .password-field input { width: 100%; min-width: 0; box-sizing: border-box; min-height: 36px; }
   .file-input { display: none; }
   .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -199,7 +209,7 @@
   .feedback { padding: 10px 12px; border-radius: 7px; background: var(--color-muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
   .error { color: var(--color-destructive); }
   .notice { color: var(--color-success, var(--color-primary)); }
-  @media (max-width: 480px) { .backup-form { padding: 14px; } .actions .dbx-btn { flex: 1 1 140px; } }
+  @media (max-width: 480px) { .backup-form { grid-template-columns: minmax(0, 1fr); } .actions .dbx-btn { flex: 1 1 140px; } }
   @media (max-width: 560px) { .restore-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .vault-required { align-items: flex-start; flex-direction: column; } }
 </style>

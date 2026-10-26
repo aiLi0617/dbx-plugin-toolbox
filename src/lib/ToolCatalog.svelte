@@ -1,7 +1,4 @@
 <script>
-  import SearchObjectFilter from "./SearchObjectFilter.svelte";
-  import { matchesObject } from "./searchObjects.js";
-  let searchObject = $state("all");
   import { CATEGORY_ORDER, searchToolMatches } from "./catalog.js";
   import { buildCatalogSections } from "./catalogGroups.js";
   import { categories, chrome, pick } from "./i18n.js";
@@ -11,7 +8,7 @@
   const t = (dict) => pick(locale, dict);
   let query = $state("");
   const favoriteSet = $derived(new Set(favorites));
-  const matches = $derived(searchToolMatches(query, locale, tools).filter((match) => (category === "all" || match.tool.category === category) && matchesObject(match.tool, searchObject)));
+  const matches = $derived(searchToolMatches(query, locale, tools).filter((match) => category === "all" || match.tool.category === category));
   const filtered = $derived(matches.map((match) => match.tool));
   const matchById = $derived(new Map(matches.map((match) => [match.tool.id, match])));
   const sections = $derived(buildCatalogSections(filtered, category, query));
@@ -43,7 +40,6 @@
     <button class:active={category === "all"} aria-pressed={category === "all"} onclick={() => onCategory?.("all")} type="button">{t(chrome.all)} <small>{tools.length}</small></button>
     {#each CATEGORY_ORDER as id}<button class:active={category === id} aria-pressed={category === id} onclick={() => onCategory?.(id)} type="button">{pick(locale,categories[id])} <small>{tools.filter((item) => item.category === id).length}</small></button>{/each}
   </div>
-  {#if query.trim()}<SearchObjectFilter {locale} value={searchObject} onChange={value => searchObject = value}/>{/if}
   <div class="result-head"><span>{t(chrome.toolCount(filtered.length))}</span></div>
   {#if sections?.length}
     <div class="catalog-sections" class:category-sections={category === "all"}>
@@ -66,7 +62,7 @@
   {:else}
     <div class="catalog-grid">
       {#each filtered as item (item.id)}{@render toolCard(item, showCategoryMeta)}
-      {:else}<div class="empty"><p>{t(chrome.emptyDot)} · {category === 'all' ? t(chrome.all) : pick(locale, categories[category])}</p><button class="dbx-btn" type="button" onclick={() => { onCategory?.('all'); searchObject = 'all'; }}>{pick(locale, '清除筛选', 'Clear filters')}</button><button class="dbx-btn" type="button" onclick={() => { query = 'JSON → CSV'; onCategory?.('all'); searchObject = 'all'; }}>{pick(locale, '试试 JSON → CSV', 'Try JSON → CSV')}</button><button class="dbx-btn" type="button" onclick={() => { query = ''; onCategory?.('all'); searchObject = 'all'; }}>{t(chrome.allTools)}</button></div>{/each}
+      {:else}<div class="empty"><p>{t(chrome.emptyDot)} · {category === 'all' ? t(chrome.all) : pick(locale, categories[category])}</p><button class="dbx-btn" type="button" onclick={() => onCategory?.('all')}>{pick(locale, '清除筛选', 'Clear filters')}</button><button class="dbx-btn" type="button" onclick={() => { query = 'JSON → CSV'; onCategory?.('all'); }}>{pick(locale, '试试 JSON → CSV', 'Try JSON → CSV')}</button><button class="dbx-btn" type="button" onclick={() => { query = ''; onCategory?.('all'); }}>{t(chrome.allTools)}</button></div>{/each}
     </div>
   {/if}
 </div>

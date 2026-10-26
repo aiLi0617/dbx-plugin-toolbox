@@ -8,7 +8,7 @@ const source = fs.readFileSync(new URL("../src/lib/SettingsDialog.svelte", impor
 const handlers = parse(source, { modern: true }).instance.content.body
   .filter(node => node.type === "FunctionDeclaration").map(node => source.slice(node.start, node.end)).join("\n");
 function dialogState(initial = {}, onSave = async () => {}) {
-  return new Function("initial", "onSave", "defaultSettings", "parseSettingsFile", "MAX_SETTINGS_BYTES", `
+  return new Function("initial", "onSave", "defaultSettings", "parseSettingsFile", "MAX_SETTINGS_BYTES", "exportSettings", `
     let draft = defaultSettings(), baseline = JSON.stringify(draft), hasChanges = true;
     let clearRecent = false, pendingImport = null, confirmation = '', busy = false;
     const backupDirty = initial.backupDirty ?? false, backupBusy = initial.backupBusy ?? false;
@@ -19,6 +19,8 @@ function dialogState(initial = {}, onSave = async () => {}) {
     const t = (zh, en) => en, locale = 'en', DEFAULT_RECENT_TOOL_LIMIT = 10;
     const localizeError = (locale, err) => err.message;
     const tick = async () => {};
+    const window = {dbxPlugin: {invoke() {}}};
+    const saveBlobThroughHost = initial.saveBlobThroughHost;
     let focus = '';
     const document = {activeElement: null};
     const first = {focus() {focus = 'first';}, getClientRects() {return [1];}};
@@ -27,11 +29,47 @@ function dialogState(initial = {}, onSave = async () => {}) {
     Object.assign(draft, initial.draft);
     busy = initial.busy ?? false; hasChanges = initial.hasChanges ?? true;
     ${handlers}
-    return {requestClose, finishClose, clearPreferences, acceptImport, resetInterface, resetVault, save, onImport,
+    return {requestClose, finishClose, clearPreferences, acceptImport, resetInterface, resetVault, save, onImport, exportPreferences,
       key(event, position) {document.activeElement = position === 'first' ? first : position === 'last' ? last : dialog; keydown(event);},
       read: () => ({draft, clearRecent, pendingImport, confirmation, busy, notice, error, closed, vault, baseline, focus})};
-  `)(initial, onSave, defaultSettings, parseSettingsFile, MAX_SETTINGS_BYTES);
+  `)(initial, onSave, defaultSettings, parseSettingsFile, MAX_SETTINGS_BYTES, exportSettings);
 }
+
+test("preferences export uses the host's ordinary file path rather than image validation", async () => {
+  let calls = 0;
+  const state = dialogState({
+    draft: {recentToolLimit: 20, favoriteToolIds: ["json"]},
+    async saveBlobThroughHost(blob, options) {
+      calls++;
+      assert.equal(options.binary, true);
+      assert.equal(options.fileName, "dbx-toolbox-preferences.json");
+      assert.equal(options.extension, "json");
+      assert.equal(options.mimeType, "application/json");
+      assert.deepEqual(parseSettingsFile(await blob.text()), state.read().draft);
+      assert.equal(state.read().busy, true);
+      return {cancelled: false, path: "dbx-toolbox-preferences.json"};
+    },
+  });
+  await state.exportPreferences();
+  assert.equal(calls, 1);
+  assert.equal(state.read().notice, "Preferences exported.");
+  assert.equal(state.read().error, "");
+  assert.equal(state.read().busy, false);
+});
+
+test("preferences export cancellation and failures release the dialog without claiming success", async () => {
+  for (const result of [{cancelled: true}, {canceled: true}, new Error("Failed to save file")]) {
+    const state = dialogState({async saveBlobThroughHost() {
+      if (result instanceof Error) throw result;
+      return result;
+    }});
+    await state.exportPreferences();
+    assert.equal(state.read().notice, "");
+    assert.equal(state.read().error, result instanceof Error ? result.message : "");
+    assert.equal(state.read().busy, false);
+    assert.equal(state.read().focus, "dialog");
+  }
+});
 
 test("settings dialog and app compile without accessibility warnings", () => {
   for (const file of ["SettingsDialog.svelte", "SettingsConfirmation.svelte", "ShortcutSettings.svelte", "VaultPasswordSettings.svelte", "../App.svelte"]) {

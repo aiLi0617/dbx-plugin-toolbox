@@ -1,4 +1,5 @@
 import { parseAllDocuments } from "yaml";
+import { parseLosslessJson, isLosslessNumber, losslessNumbersEqual } from "./jsonPrecision.js";
 
 export function boundedText(value, max = 1_000_000) {
   const text = String(value ?? "");
@@ -19,17 +20,19 @@ export function basicAuth(username, password) {
 }
 
 export function jsonStructureDiff(left, right) {
-  const a = JSON.parse(boundedText(left)),
-    b = JSON.parse(boundedText(right));
+  const a = parseLosslessJson(boundedText(left)),
+    b = parseLosslessJson(boundedText(right));
   const changes = [];
   function walk(x, y, path, depth) {
     if (depth > 100) throw new Error("Maximum nesting depth exceeded");
     if (Object.is(x, y)) return;
+    if (isLosslessNumber(x) && isLosslessNumber(y) && losslessNumbersEqual(x, y)) return;
     if (
       x &&
       y &&
       typeof x === "object" &&
       typeof y === "object" &&
+      !isLosslessNumber(x) && !isLosslessNumber(y) &&
       Array.isArray(x) === Array.isArray(y)
     ) {
       for (const key of new Set([...Object.keys(x), ...Object.keys(y)])) {

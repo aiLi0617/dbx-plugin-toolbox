@@ -1,3 +1,5 @@
+import { businessDayPolicy } from "./businessCalendar.js";
+
 export function number(value) {
   const n = Number(value);
   if (String(value).trim() === "" || !Number.isFinite(n))
@@ -11,13 +13,14 @@ export function precision(value, digits = 6) {
 
 // Pratt parser: tokens never reach eval, Function, or a property lookup on globals.
 export function evaluateExpression(source) {
+  source = String(source).replace(/[×÷−π]/g, (symbol) => ({ "×": "*", "÷": "/", "−": "-", "π": "pi" })[symbol]);
   if (source.length > 10_000) throw new Error("Expression is too long");
   const tokens = [];
   let at = 0;
   while (at < source.length) {
     const part = source.slice(at);
     const match =
-      /^(?:\s+|(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?|[A-Za-z]+|[+*/%^(),-])/i.exec(
+      /^(?:\s+|(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?|[A-Za-z]+\d*|\*\*|[+*/%^!(),-])/i.exec(
         part,
       );
     if (!match) throw new Error(`Invalid token at ${at + 1}`);
@@ -41,8 +44,21 @@ export function evaluateExpression(source) {
     floor: Math.floor,
     ceil: Math.ceil,
     round: Math.round,
+    trunc: Math.trunc,
+    sign: Math.sign,
+    cbrt: Math.cbrt,
+    log2: Math.log2,
+    log10: Math.log10,
+    sinh: Math.sinh,
+    cosh: Math.cosh,
+    tanh: Math.tanh,
+    pow: Math.pow,
+    atan2: Math.atan2,
+    min: Math.min,
+    max: Math.max,
+    hypot: Math.hypot,
   };
-  const constants = { pi: Math.PI, e: Math.E };
+  const constants = { pi: Math.PI, e: Math.E, tau: 2 * Math.PI, phi: (1 + Math.sqrt(5)) / 2 };
   function parse(min = 0) {
     if (++depth > 100) throw new Error("Expression nesting is too deep");
     const token = tokens[index++];
@@ -58,19 +74,44 @@ export function evaluateExpression(source) {
     else if (Object.hasOwn(functions, t)) {
       if (tokens[index++]?.value !== "(")
         throw new Error("Function requires parentheses");
-      const value = parse();
+      const args = [];
+      if (tokens[index]?.value !== ")") {
+        do {
+          args.push(parse());
+          if (tokens[index]?.value !== ",") break;
+          index++;
+        } while (true);
+      }
       if (tokens[index++]?.value !== ")")
         throw new Error("Missing closing parenthesis");
-      left = functions[t](value);
+      const arity = ["min", "max", "hypot"].includes(t) ? null : ["pow", "atan2"].includes(t) ? 2 : 1;
+      if (!args.length || (arity !== null && args.length !== arity))
+        throw new Error("Invalid function arguments");
+      left = functions[t](...args);
     } else if (/^\d|^\./.test(t)) left = number(t);
     else throw new Error(`Unknown name at ${token.at + 1}`);
+    if (!Number.isFinite(left)) throw new Error("Result is not finite");
     while (index < tokens.length) {
-      const op = tokens[index].value;
+      const next = tokens[index].value;
+      if (next === "!") {
+        if (40 < min) break;
+        if (!Number.isInteger(left) || left < 0 || left > 170)
+          throw new Error("Factorial requires an integer from 0 to 170");
+        let value = 1;
+        for (let n = 2; n <= left; n++) value *= n;
+        left = value;
+        index++;
+        continue;
+      }
+      // Implicit multiplication has the same precedence as explicit *.
+      // Bare adjacent numbers remain errors (e.g. an accidentally pasted list).
+      const implicit = next === "(" || /^[A-Za-z]/.test(next);
+      const op = implicit ? "*" : next === "**" ? "^" : next;
       const power = { "+": 10, "-": 10, "*": 20, "/": 20, "%": 20, "^": 30 }[
         op
       ];
       if (power === undefined || power < min) break;
-      index++;
+      if (!implicit) index++;
       const right = parse(op === "^" ? power : power + 1);
       if ((op === "/" || op === "%") && right === 0)
         throw new Error("Division by zero");
@@ -86,7 +127,9 @@ export function evaluateExpression(source) {
                 : op === "%"
                   ? left % right
                   : left ** right;
+      if (!Number.isFinite(left)) throw new Error("Result is not finite");
     }
+    if (!Number.isFinite(left)) throw new Error("Result is not finite");
     depth--;
     return left;
   }
@@ -153,7 +196,7 @@ export function convertUnit(value, category, from, to) {
 export function statistics(source) {
   const values = String(source)
     .trim()
-    .split(/[\s,;]+/)
+    .split(/[\s,;，；、]+/)
     .filter(Boolean)
     .map(number);
   if (!values.length || values.length > 100_000)
@@ -212,17 +255,22 @@ function day(value) {
 }
 export function businessDays(
   start,
-  { end, add, weekends = [0, 6], holidays = [] } = {},
+  { end, add, weekends = [0, 6], holidays = [], calendar = "weekends" } = {},
 ) {
   const first = day(start);
-  const excluded = new Set(holidays.filter(Boolean).map(day));
-  const valid = (d) =>
-    !weekends.includes(new Date(d).getUTCDay()) && !excluded.has(d);
-  if (weekends.length === 7)
+  const normalizedHolidays = holidays.filter(Boolean).map((date) => {
+    day(date);
+    return date;
+  });
+  const policy = businessDayPolicy({ calendar, weekends, holidays: normalizedHolidays });
+  policy.assertYear(start);
+  const valid = policy.isWorkingDay;
+  if (calendar === "weekends" && weekends.length === 7)
     throw new Error("At least one working weekday is required");
   if (end !== undefined) {
     const last = day(end),
       sign = last >= first ? 1 : -1;
+    policy.assertYear(end);
     if (Math.abs(last - first) / 864e5 > 100_000)
       throw new Error("Date range is too large");
     let count = 0;
@@ -289,10 +337,12 @@ export function compoundInterest(
     convention: "Contributions at month end; excludes taxes and fees",
   };
 }
-export function compareBenchmarks(source) {
+export function compareBenchmarks(source, { metric = "throughput" } = {}) {
+  if (!["throughput", "latency"].includes(metric)) throw new Error("Invalid benchmark metric");
   const rows = String(source)
     .trim()
     .split(/\r?\n/)
+    .map(line => line.trim())
     .filter(Boolean)
     .map((line, i) => {
       const at = line.indexOf(":");
@@ -302,10 +352,10 @@ export function compareBenchmarks(source) {
         throw new Error("Scores must be positive operations per second");
       return { name, ...s };
     })
-    .sort((a, b) => b.mean - a.mean);
+    .sort((a, b) => metric === "latency" ? a.mean - b.mean : b.mean - a.mean);
   return rows.map((row, i) => ({
     ...row,
     rank: i + 1,
-    relativeToFastest: row.mean / rows[0].mean,
+    relativeToFastest: metric === "latency" ? rows[0].mean / row.mean : row.mean / rows[0].mean,
   }));
 }

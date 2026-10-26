@@ -363,7 +363,7 @@ const BASE_TOOL_DEFS = [...rows, ...utilityRows].map(([id, category, zhCN, zhTW,
 const EXPANSION_DEMO_IDS = new Set([
   "basic-auth", "json-diff", "yaml-tree", "safelink", "roman", "mac-generator", "ipv4-range",
   "figlet", "numeronym", "english-plural", "email-normalizer", "url-extractor", "color-palette", "lunar-calendar",
-  "math-expression", "unit-converter", "percentage", "statistics", "business-days", "temperature", "eta", "stopwatch", "benchmark", "compound-interest",
+  "math-expression", "unit-converter", "percentage", "statistics", "business-days", "temperature", "eta", "stopwatch", "benchmark", "compound-interest", "text-speech",
   "bcrypt", "password-strength", "iban", "bip39", "gif-compress", "gif-crop", "gif-frames", "wifi-qr",
 ]);
 const expansionDefs = EXPANSION_TOOLS.map(([id,category,zh,en,view,,summary])=>({
@@ -382,3 +382,4 @@ const expansionDefs = EXPANSION_TOOLS.map(([id,category,zh,en,view,,summary])=>(
     az:`Yerli alət: ${EXPANSION_NAMES[id][7]}`},
 }));
 export const TOOL_DEFS = [...BASE_TOOL_DEFS,...expansionDefs].map(presentTool);
+

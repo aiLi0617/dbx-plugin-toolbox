@@ -67,6 +67,7 @@ const SHORTCUT_ACTIONS: &[&str] = &[
     "closeTool",
     "toggleFavorite",
     "loadDemo",
+    "calculate",
     "settings",
 ];
 
@@ -82,6 +83,7 @@ fn default_shortcuts() -> BTreeMap<String, String> {
         ("closeTool", "Mod+KeyW"),
         ("toggleFavorite", "Mod+Shift+KeyF"),
         ("loadDemo", "Mod+Shift+KeyD"),
+        ("calculate", "Mod+Enter"),
         ("settings", "Mod+Comma"),
     ]
     .into_iter()
@@ -781,6 +783,7 @@ mod tests {
         let shortcuts = shortcuts_from_params(&json!({
             "shortcuts": {
                 "search": "Alt+KeyP",
+                "calculate": "Alt+KeyR",
                 "tool:json": "Mod+Shift+KeyJ",
                 "tool:../secret": "Mod+KeyX",
                 "unknown": "Mod+KeyY"
@@ -798,6 +801,8 @@ mod tests {
         );
         assert!(!shortcuts.contains_key("tool:../secret"));
         assert!(!shortcuts.contains_key("unknown"));
+        assert_eq!(shortcuts.get("calculate").map(String::as_str), Some("Alt+KeyR"));
+        assert_eq!(sanitize_shortcuts(BTreeMap::new()).get("calculate").map(String::as_str), Some("Mod+Enter"));
     }
 
     #[test]

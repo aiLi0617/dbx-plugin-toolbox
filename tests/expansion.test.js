@@ -172,6 +172,22 @@ test("Statistics distinguish sample and population, units preserve binary semant
   assert.equal(temperatures(32, "F").C, 0);
   assert.throws(() => temperatures(-1, "K"));
 });
+
+test("Statistics accept pasted separators and scientific notation without ignoring invalid values", () => {
+  const result = statistics("-2，0；2、4\n6\t1e1");
+  assert.equal(result.count, 6);
+  assert.equal(result.sum, 20);
+  assert.equal(result.median, 3);
+  assert.deepEqual(result.modes, []);
+  assert.deepEqual(statistics("1,1,2,2,3").modes, [1, 2]);
+  const single = statistics("-3.5");
+  assert.equal(single.populationVariance, 0);
+  assert.equal(single.sampleStdDev, null);
+  for (const input of ["", "1, invalid, 3", "NaN", "Infinity", "1e309"])
+    assert.throws(() => statistics(input));
+  assert.equal(statistics(Array(100000).fill("2").join(",")).count, 100000);
+  assert.throws(() => statistics(Array(100001).fill("2").join(",")));
+});
 test("Business dates skip configured weekends and holidays in both directions", () => {
   assert.equal(
     businessDays("2026-10-23", { add: 1, holidays: ["2026-10-26"] }).end,

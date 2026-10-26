@@ -6,8 +6,6 @@
     formatYaml,
     treeRows,
     decodeSafeLink,
-    toRoman,
-    fromRoman,
     randomMac,
     ipv4Range,
     summarizeIpv4,
@@ -18,6 +16,7 @@
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
   import Select from "./Select.svelte";
   import JsonDiffView from "./JsonDiffView.svelte";
+  import RomanView from "./RomanView.svelte";
   let { toolId, locale = "zh-CN", onOpenTool, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
@@ -67,11 +66,6 @@
           .filter((s) => s.trim())
           .map(decodeSafeLink)
           .join("\n");
-      else if (toolId === "roman")
-        output = input
-          .split(/\r?\n/)
-          .map((s) => (/^\d+$/.test(s.trim()) ? toRoman(s) : fromRoman(s)))
-          .join("\n");
       else if (toolId === "mac-generator")
         output = randomMac(Number(count), input, separator);
       else if (toolId === "ipv4-range")
@@ -91,7 +85,6 @@
         "yaml-tree":
           "name: DBX\nfeatures:\n  - JSON\n  - YAML\n---\nactive: true",
         safelink: "https://example.com/",
-        roman: "2026\nMMXXVI",
         "mac-generator": "",
         "ipv4-range": "192.168.1.0/25\n192.168.1.128/25",
       }[toolId] || "";
@@ -141,6 +134,8 @@
 
 {#if toolId === "json-diff"}
   <JsonDiffView {locale} {demoRequest} />
+{:else if toolId === "roman"}
+  <RomanView {locale} {demoRequest} />
 {:else}
 <div class="expansion-page developer-workspace" class:regex-reference-page={toolId === "regex-reference"} class:yaml-tree-workspace={toolId === "yaml-tree"}>
   {#if toolId === "regex-reference"}

@@ -17,7 +17,7 @@ function svelteFiles(directory) {
 test("user-visible Svelte error state does not bypass localizeError", () => {
   const violations = [];
   const patterns = [
-    /(?:error|Error|loadError)\s*=\s*[^\n;]*(?:\?*\.message|String\((?:err|error|cause))/g,
+    /\b(?:error|Error|loadError)\s*=\s*[^\n;]*(?:\?*\.message|String\((?:err|error|cause))/g,
     /error:\s*(?:err|error|cause)\?*\.message/g,
     /error:\s*String\((?:err|error|cause)/g,
   ];

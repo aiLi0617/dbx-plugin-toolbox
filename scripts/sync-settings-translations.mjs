@@ -3,6 +3,9 @@ import fs from "node:fs";
 // Settings copy for every supported host locale; run after i18n:sync.
 const locales = ["zh-TW", "es", "it", "ja", "pt-BR", "ko", "tr", "az"];
 const rows = [
+  ["Preferences","偏好設定","Preferencias","Preferenze","環境設定","Preferências","환경설정","Tercihler","Seçimlər"],
+  ["Reset preferences","重設偏好設定","Restablecer preferencias","Ripristina preferenze","環境設定をリセット","Redefinir preferências","환경설정 초기화","Tercihleri sıfırla","Seçimləri sıfırla"],
+  ["Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.","恢復預設設定，並清空收藏和最近記錄；金鑰庫內容保留。點擊「儲存變更」後生效。","Restaura los ajustes predeterminados y borra favoritos y recientes. Se conserva el almacén de claves. Haz clic en «Guardar cambios» para aplicar.","Ripristina le impostazioni predefinite e cancella preferiti e recenti. Il contenuto dell’archivio chiavi viene conservato. Fai clic su «Salva modifiche» per applicare.","既定の設定に戻し、お気に入りと最近の履歴を消去します。キー保管庫の内容は保持されます。「変更を保存」で適用します。","Restaura as configurações padrão e limpa favoritos e recentes. O conteúdo do cofre é mantido. Clique em “Salvar alterações” para aplicar.","기본 설정을 복원하고 즐겨찾기와 최근 기록을 지웁니다. 키 저장소 내용은 유지됩니다. “변경 사항 저장”을 클릭하면 적용됩니다.","Varsayılan ayarları geri yükler, favorileri ve son kayıtları temizler. Kasa içeriği korunur. Uygulamak için “Değişiklikleri kaydet”e tıklayın.","Standart parametrləri bərpa edir, sevimliləri və son qeydləri təmizləyir. Açar anbarının məzmunu saxlanılır. Tətbiq etmək üçün “Dəyişiklikləri saxla” üzərinə klikləyin."],
   ["Dark", "深色", "Oscuro", "Scuro", "ダーク", "Escuro", "어둡게", "Koyu", "Tünd"],
   ["Light", "淺色", "Claro", "Chiaro", "ライト", "Claro", "밝게", "Açık", "Açıq"],
   ["Settings sections", "設定分類", "Secciones de ajustes", "Sezioni impostazioni", "設定カテゴリ", "Seções de configurações", "설정 분류", "Ayar bölümleri", "Parametr bölmələri"],

@@ -10,6 +10,7 @@
     disabled = false,
     ariaLabel = "",
     placeholder = "",
+    fitTrigger = false,
     onchange,
   } = $props();
 
@@ -71,7 +72,7 @@
     const vh = window.innerHeight;
     const triggerWidth = Math.max(rect.width, 128);
     let contentWidth = triggerWidth;
-    if (menuEl) {
+    if (menuEl && !fitTrigger) {
       const prevWidth = menuEl.style.width;
       menuEl.style.width = "max-content";
       contentWidth = Math.ceil(menuEl.getBoundingClientRect().width);
@@ -297,7 +298,7 @@
               </svg>
             {/if}
           </span>
-          <span class="item-label">{row.label}</span>
+          <span class="item-label" title={row.label}>{row.label}</span>
           {#if row.disabled}
             <svg class="disabled-mark" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
@@ -456,3 +457,4 @@
     to { opacity: 1; }
   }
 </style>
+

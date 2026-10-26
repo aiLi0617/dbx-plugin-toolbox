@@ -1,8 +1,17 @@
 <script>
-  import { onDestroy } from "svelte";
   import { pick, localizeError } from "./i18n.js";
   import CopyButton from "./CopyButton.svelte";
   import Select from "./Select.svelte";
+  import BusinessDaysView from "./BusinessDaysView.svelte";
+  import TemperatureView from "./TemperatureView.svelte";
+  import NumericStatisticsView from "./NumericStatisticsView.svelte";
+  import UnitConverterView from "./UnitConverterView.svelte";
+  import PercentageView from "./PercentageView.svelte";
+  import MathExpressionView from "./MathExpressionView.svelte";
+  import { DEFAULT_SHORTCUTS } from "./shortcuts.js";
+  import CompoundInterestView from "./CompoundInterestView.svelte";
+  import BenchmarkView from "./BenchmarkView.svelte";
+  import EtaView from "./EtaView.svelte";
   import {
     number,
     precision,
@@ -11,12 +20,11 @@
     convertUnit,
     statistics,
     temperatures,
-    businessDays,
     compoundInterest,
     compareBenchmarks,
   } from "./calculators.js";
-  import { saveBlobThroughHost } from "./fileSave.js";
-  let { toolId, locale = "zh-CN", demoRequest = 0 } = $props();
+  import StopwatchView from "./StopwatchView.svelte";
+  let { toolId, locale = "zh-CN", demoRequest = 0, calculateShortcut = DEFAULT_SHORTCUTS.calculate } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
     a = $state(""),
@@ -29,58 +37,8 @@
     from = $state("m"),
     to = $state("km"),
     scale = $state("C"),
-    mode = $state("difference"),
-    weekends = $state("0,6"),
     output = $state(""),
     error = $state("");
-  let elapsed = $state(0),
-    running = $state(false),
-    laps = $state([]);
-  let timer,
-    lastStart = 0,
-    accumulated = 0;
-  function pause() {
-    if (running) {
-      accumulated += performance.now() - lastStart;
-      elapsed = accumulated;
-      running = false;
-      clearInterval(timer);
-    }
-  }
-  function start() {
-    if (running) return;
-    lastStart = performance.now();
-    running = true;
-    timer = setInterval(
-      () => (elapsed = accumulated + performance.now() - lastStart),
-      31,
-    );
-  }
-  onDestroy(() => clearInterval(timer));
-  function reset() {
-    pause();
-    accumulated = 0;
-    elapsed = 0;
-    laps = [];
-  }
-  async function exportLaps() {
-    try {
-      await saveBlobThroughHost(
-        new Blob(
-          [
-            "lap,total_ms,split_ms\n" +
-              laps
-                .map((x, i) => `${i + 1},${x},${x - (laps[i - 1] || 0)}`)
-                .join("\n"),
-          ],
-          { type: "text/csv" },
-        ),
-        { fileName: "laps.csv" },
-      );
-    } catch (e) {
-      error = localizeError(locale, e);
-    }
-  }
   function run() {
     error = "";
     output = "";
@@ -105,33 +63,7 @@
         };
       } else if (toolId === "statistics") result = statistics(input);
       else if (toolId === "temperature") result = temperatures(a, scale);
-      else if (toolId === "business-days") {
-        const days = weekends
-          .split(",")
-          .filter((s) => s.trim())
-          .map(number);
-        if (days.some((n) => !Number.isInteger(n) || n < 0 || n > 6))
-          throw new Error("Weekdays must be 0 to 6");
-        result = businessDays(a, {
-          ...(mode === "difference" ? { end: b } : { add: b }),
-          weekends: days,
-          holidays: input.split(/[\s,]+/).filter(Boolean),
-        });
-      } else if (toolId === "eta") {
-        const total = number(a),
-          done = number(b),
-          seconds = number(c);
-        if (total < 0 || done <= 0 || done > total || seconds <= 0)
-          throw new Error("Invalid progress");
-        const remainingSeconds = ((total - done) * seconds) / done;
-        result = {
-          remainingSeconds,
-          completion: new Date(
-            Date.now() + remainingSeconds * 1000,
-          ).toISOString(),
-          rate: done / seconds,
-        };
-      } else if (toolId === "benchmark") result = compareBenchmarks(input);
+      else if (toolId === "benchmark") result = compareBenchmarks(input);
       else if (toolId === "compound-interest")
         result = compoundInterest(a, b, c, d, e);
       output = JSON.stringify(
@@ -158,9 +90,7 @@
       "unit-converter": ["1024", "", ""],
       percentage: ["20", "80", ""],
       temperature: ["25", "", ""],
-      eta: ["100", "40", "120"],
       "compound-interest": ["1000", "5", "10"],
-      "business-days": ["2026-10-23", "2026-10-30", ""],
     }[toolId] || ["", "", ""];
     [a, b, c] = values;
   }
@@ -171,56 +101,43 @@
     example();
   });
   const fieldLabels = {
-    percentage: [
-      ["X", "X"],
-      ["Y", "Y"],
-    ],
-    eta: [
-      ["总量", "Total"],
-      ["已完成量", "Completed"],
-      ["已用秒数", "Elapsed seconds"],
-    ],
-    "compound-interest": [
+      "compound-interest": [
       ["本金", "Principal"],
       ["年利率（%）", "Annual rate (%)"],
       ["年数", "Years"],
     ],
-    "business-days": [
-      ["开始日期", "Start date"],
-      ["结束日期 / 增加工作日", "End date / working days to add"],
-    ],
   };
 </script>
 
-<div class="expansion-page">
-  {#if toolId === "stopwatch"}
-    <output class="stopwatch">{(elapsed / 1000).toFixed(3)} s</output>
-    <div class="expansion-actions">
-      <button class="dbx-btn" onclick={running ? pause : start}
-        >{running ? t("暂停", "Pause") : t("开始", "Start")}</button
-      ><button
-        class="dbx-btn"
-        disabled={!running}
-        onclick={() => (laps = [...laps, elapsed])}>{t("计次", "Lap")}</button
-      ><button class="dbx-btn" onclick={reset}>{t("重置", "Reset")}</button
-      ><button class="dbx-btn" disabled={!laps.length} onclick={exportLaps}
-        >{t("导出记录", "Export laps")}</button
-      >
-    </div>
-    {#each laps as lap, i}<p>
-        {i + 1}. {(lap / 1000).toFixed(3)} s · +{(
-          (lap - (laps[i - 1] || 0)) /
-          1000
-        ).toFixed(3)} s
-      </p>{/each}
+{#if toolId === "compound-interest"}
+  <CompoundInterestView {locale} {demoRequest} />
+{:else if toolId === "eta"}
+  <EtaView {locale} {demoRequest} />
+{:else if toolId === "math-expression"}
+  <MathExpressionView {locale} {demoRequest} {calculateShortcut} />
+{:else if toolId === "stopwatch"}
+  <StopwatchView {locale} {demoRequest} />
+{:else}
+{#if toolId === "percentage"}
+  <PercentageView {locale} {demoRequest} />
+{:else}
+{#if toolId === "unit-converter"}
+  <UnitConverterView {locale} {demoRequest} />
+{:else}
+{#if toolId === "statistics"}
+  <NumericStatisticsView {locale} {demoRequest} />
+{:else}
+{#if toolId === "business-days"}
+  <BusinessDaysView {locale} {demoRequest} />
+{:else if toolId === "benchmark"}
+  <BenchmarkView {locale} {demoRequest} />
+{:else}
+<div class="expansion-page" class:temperature-host={toolId === "temperature"}>
+  {#if toolId === "temperature"}
+    <TemperatureView {locale} {demoRequest} />
   {:else}
-    {#if ["math-expression", "statistics", "benchmark", "business-days"].includes(toolId)}<label
-        >{toolId === "business-days"
-          ? t(
-              "节假日（YYYY-MM-DD，每行一个）",
-              "Holidays (YYYY-MM-DD, one per line)",
-            )
-          : toolId === "benchmark"
+    {#if ["math-expression", "statistics", "benchmark"].includes(toolId)}<label
+        >{toolId === "benchmark"
             ? t("每行：名称: 样本1, 样本2", "Each line: name: sample1, sample2")
             : t("输入", "Input")}<textarea
           class="dbx-textarea"
@@ -232,16 +149,6 @@
             : toolId === "benchmark"
               ? "A: 100, 110, 105\nB: 90, 95, 92"
               : ""}></textarea></label
-      >{/if}
-    {#if toolId === "business-days"}<label
-        >{t("模式", "Mode")}<Select bind:value={mode} ariaLabel={t("模式", "Mode")} options={[
-          {value:"difference",label:t("工作日差", "Working day difference")},{value:"add",label:t("增加工作日", "Add working days")},
-        ]} /></label
-      ><label
-        >{t("周末（0=周日，6=周六）", "Weekends (0=Sunday, 6=Saturday)")}<input
-          class="dbx-input"
-          bind:value={weekends}
-        /></label
       >{/if}
     {#if ["unit-converter", "temperature"].includes(toolId)}<label
         >{t("数值", "Value")}<input class="dbx-input" bind:value={a} /></label
@@ -305,10 +212,10 @@
   {/if}
   {#if error}<p role="alert">{error}</p>{/if}
 </div>
+{/if}
+{/if}
+{/if}
+{/if}
+{/if}
 
-<style>
-  .stopwatch {
-    font: 48px var(--font-mono);
-    font-variant-numeric: tabular-nums;
-  }
-</style>
+<style>.temperature-host{padding:0;max-width:none}</style>

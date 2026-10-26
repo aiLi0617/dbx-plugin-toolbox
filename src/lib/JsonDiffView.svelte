@@ -1,7 +1,7 @@
 <script>
   import { pick, localizeError } from "./i18n.js";
   import { boundedText, jsonStructureDiff } from "./developerExpansion.js";
-  import { parseLosslessJson, stringifyLosslessJson } from "./jsonPrecision.js";
+  import { parseLosslessJson, stringifyLosslessJson, isLosslessNumber } from "./jsonPrecision.js";
   import JsonCodeEditor from "./JsonCodeEditor.svelte";
   import CopyButton from "./CopyButton.svelte";
 
@@ -12,17 +12,28 @@
   let errors = $state(["", ""]);
   let result = $state(null);
   let filter = $state("all");
+  let focusResults = $state(false);
   let appliedDemoRequest = 0;
   const current = $derived(result && result.left === left && result.right === right);
   const rows = $derived(current ? result.rows : []);
   const visible = $derived(rows.filter((row) => filter === "all" || row.type === filter));
   const labels = $derived({ all: t("全部", "All"), modified: t("修改", "Modified"), added: t("新增", "Added"), removed: t("删除", "Removed") });
-  const output = $derived(current ? JSON.stringify(rows, null, 2) : "");
+  const output = $derived(current ? stringifyLosslessJson(rows, 2) : "");
+
+  function expandable(value) {
+    return (value !== null && typeof value === "object" && !isLosslessNumber(value)) || stringifyLosslessJson(value)?.length > 100;
+  }
+  function preview(value) {
+    if (Array.isArray(value)) return `Array · ${value.length}`;
+    if (value !== null && typeof value === "object" && !isLosslessNumber(value)) return `Object · ${Object.keys(value).length}`;
+    const text = stringifyLosslessJson(value);
+    return text.length > 100 ? `${text.slice(0, 100)}…` : text;
+  }
 
   function parse(text, side) {
     try {
       if (!text.trim()) throw new Error(t("请输入 JSON", "Enter JSON"));
-      return { value: JSON.parse(boundedText(text)) };
+      return { value: parseLosslessJson(boundedText(text)) };
     } catch (error) {
       errors[side] = localizeError(locale, error);
       return null;
@@ -54,6 +65,7 @@
     errors = ["", ""];
     result = null;
     filter = "all";
+    focusResults = false;
   }
   function swap() {
     [left, right] = [right, left];
@@ -79,7 +91,7 @@
     </div>
   </div>
 
-  <div class="editors">
+  <div class="editors" class:concealed={focusResults && current && rows.length > 0}>
     {#each [0, 1] as side}
       <section class="editor-panel" aria-label={side === 0 ? t("原始 JSON", "Original JSON") : t("对比 JSON", "Updated JSON")}>
         <div class="panel-heading">
@@ -106,6 +118,7 @@
       <h2>{t("对比结果", "Comparison results")}{#if current}<span class="total">{rows.length}</span>{/if}</h2>
       <div class="actions">
         {#if current && rows.length}
+          <button class="dbx-btn dbx-btn--ghost" aria-pressed={focusResults} onclick={() => (focusResults = !focusResults)}>{focusResults ? t("显示输入", "Show inputs") : t("展开结果", "Expand results")}</button>
           <div class="filters" role="group" aria-label={t("筛选差异", "Filter differences")}>
             {#each ["all", "modified", "added", "removed"] as type}
               <button class:active={filter === type} aria-pressed={filter === type} onclick={() => (filter = type)}>{labels[type]} <span>{type === "all" ? rows.length : rows.filter((row) => row.type === type).length}</span></button>
@@ -123,15 +136,32 @@
       {:else if !visible.length}
         <div class="empty" role="status"><strong>{t("此分类下没有差异", "No differences in this category")}</strong></div>
       {:else}
-        {#each visible as change}
-          <article class="change" class:added={change.type === "added"} class:removed={change.type === "removed"}>
-            <div class="change-heading"><span class="badge">{labels[change.type]}</span><code>{change.path}</code></div>
-            <div class="values">
-              <div class="before"><span class="value-label">{t("原始值", "Original value")}</span><pre class:missing={change.type === "added"}>{change.type === "added" ? t("不存在", "Absent") : JSON.stringify(change.before, null, 2)}</pre></div>
-              <div class="after"><span class="value-label">{t("对比值", "Updated value")}</span><pre class:missing={change.type === "removed"}>{change.type === "removed" ? t("不存在", "Absent") : JSON.stringify(change.after, null, 2)}</pre></div>
-            </div>
-          </article>
-        {/each}
+        <div class="table-scroll">
+          <table>
+            <colgroup><col class="type-column" /><col class="path-column" /><col /><col /></colgroup>
+            <thead><tr><th scope="col">{t("变更", "Change")}</th><th scope="col">{t("字段路径", "Field path")}</th><th scope="col">{t("原始值", "Original value")}</th><th scope="col">{t("对比值", "Updated value")}</th></tr></thead>
+            <tbody>
+              {#each visible as change (change.path)}
+                <tr class="change" class:added={change.type === "added"} class:removed={change.type === "removed"}>
+                  <td><span class="badge"><span aria-hidden="true">{change.type === "added" ? "+" : change.type === "removed" ? "−" : "↔"}</span> {labels[change.type]}</span></td>
+                  <th scope="row"><div class="path-cell"><code>{change.path}</code><CopyButton {locale} text={change.path} /></div></th>
+                  {#each ["before", "after"] as side}
+                    {@const missing = side === "before" ? change.type === "added" : change.type === "removed"}
+                    <td class:before={side === "before" && !missing} class:after={side === "after" && !missing}>
+                      {#if missing}
+                        <span class="missing" title={t("不存在", "Absent")} aria-label={t("不存在", "Absent")}>—</span>
+                      {:else if expandable(change[side])}
+                        <details><summary><code>{preview(change[side])}</code></summary><pre>{stringifyLosslessJson(change[side], 2)}</pre></details>
+                      {:else}
+                        <code class="scalar">{stringifyLosslessJson(change[side])}</code>
+                      {/if}
+                    </td>
+                  {/each}
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
       {/if}
     </div>
   </section>
@@ -152,13 +182,15 @@
   .editor-body{display:flex;height:clamp(230px,34vh,430px);min-height:0;padding:1px}
   .editor-body :global(.json-code-editor){border:0;border-radius:0}
   .error{margin:0;padding:10px 12px;border-top:1px solid var(--color-border);color:var(--color-destructive);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
-  .results{flex-shrink:0;overflow:hidden}.result-content{padding:12px}
+  .results{flex-shrink:0;overflow:hidden}.result-content{padding:0}.editors.concealed{display:none}
   .filters{display:flex;gap:4px;flex-wrap:wrap}.filters button{display:flex;gap:6px;align-items:center;border:0;background:transparent;color:var(--color-muted-foreground);border-radius:4px;padding:6px 8px;font-size:12px;cursor:pointer}.filters button:hover{background:var(--color-muted)}.filters button.active{background:color-mix(in srgb,var(--color-primary) 12%,transparent);color:var(--color-primary)}
   .filters button:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
   .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:150px;padding:20px;text-align:center;color:var(--color-muted-foreground);font-size:13px}.empty p{margin:0;font-size:12px;line-height:1.6}.empty-symbol{font:24px var(--font-mono);opacity:.7}.success strong,.success .empty-symbol{color:var(--color-success)}
-  .change{--change-color:var(--color-info);border:1px solid var(--color-border);border-left:3px solid var(--change-color);border-radius:var(--radius-md);overflow:hidden}.change+.change{margin-top:10px}.change.added{--change-color:var(--color-success)}.change.removed{--change-color:var(--color-destructive)}
-  .change-heading{display:flex;align-items:center;gap:10px;padding:10px 12px;background:color-mix(in srgb,var(--change-color) 5%,transparent)}.badge{flex-shrink:0;font-size:11px;font-weight:600;color:var(--change-color)}.change-heading code{font:12px var(--font-mono);overflow-wrap:anywhere;min-width:0}
-  .values{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.values>div{min-width:0;padding:10px 12px}.before{border-right:1px solid var(--color-border);background:color-mix(in srgb,var(--color-destructive) 4%,transparent)}.after{background:color-mix(in srgb,var(--color-success) 4%,transparent)}.value-label{font-size:10px;color:var(--color-muted-foreground)}pre{margin:6px 0 0;font:12px/1.6 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto}.missing{color:var(--color-muted-foreground);font-style:italic}
-  @container (max-width:680px){.editors{grid-template-columns:minmax(0,1fr)}.values{grid-template-columns:minmax(0,1fr)}.before{border-right:0;border-bottom:1px solid var(--color-border)}.workspace-toolbar>.actions{margin-left:0}.editor-body{height:240px}}
+  .table-scroll{overflow:auto;max-height:65vh}table{width:100%;min-width:580px;table-layout:fixed;border-collapse:collapse;text-align:left;font-size:12px}.type-column{width:96px}.path-column{width:28%}th,td{padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--color-border)}thead th{position:sticky;top:0;z-index:1;background:var(--color-card);color:var(--color-muted-foreground);font-size:11px;font-weight:500}tbody tr:last-child>*{border-bottom:0}tbody th{font-weight:400}tbody tr:hover{background:var(--color-muted)}
+  .change{--change-color:var(--color-info)}.change.added{--change-color:var(--color-success)}.change.removed{--change-color:var(--color-destructive)}.badge{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-size:11px;font-weight:600;color:var(--change-color);padding:3px 6px;border-radius:4px;background:color-mix(in srgb,var(--change-color) 9%,transparent)}
+  code{font:12px/1.7 var(--font-mono);overflow-wrap:anywhere;white-space:pre-wrap}.path-cell{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;min-width:0}.path-cell code{min-width:0}.path-cell :global(button){flex-shrink:0;opacity:0}.path-cell:hover :global(button),.path-cell:focus-within :global(button){opacity:1}.before .scalar{background:color-mix(in srgb,var(--color-destructive) 8%,transparent)}.after .scalar{background:color-mix(in srgb,var(--color-success) 8%,transparent)}.scalar{padding:2px 4px;border-radius:3px;box-decoration-break:clone}.missing{color:var(--color-muted-foreground)}
+  summary{cursor:pointer;color:var(--color-muted-foreground);overflow-wrap:anywhere}summary:hover{color:var(--color-foreground)}summary:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px}pre{margin:10px 0 0;padding:10px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-muted);font:12px/1.6 var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto}
+  @media (hover:none){.path-cell :global(button){opacity:1}}
+  @container (max-width:680px){.editors{grid-template-columns:minmax(0,1fr)}.workspace-toolbar>.actions{margin-left:0}.editor-body{height:240px}.type-column{width:84px}.path-column{width:26%}th,td{padding:10px}}
 </style>
 

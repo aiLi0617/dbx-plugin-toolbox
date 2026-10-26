@@ -89,3 +89,9 @@ export function lunarConvert({
     description: result.toString(),
   };
 }
+
+export function lunarLeapMonth(year) {
+  if (!Number.isInteger(Number(year)) || Number(year) < 1900 || Number(year) > 2100)
+    return 0;
+  return lunar.LunarYear.fromYear(Number(year)).getLeapMonth();
+}

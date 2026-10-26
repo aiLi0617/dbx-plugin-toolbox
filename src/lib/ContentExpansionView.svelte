@@ -6,13 +6,15 @@
     normalizeEmailList,
     extractLinks,
     palette,
-    EMOJI,
   } from "./contentExpansion.js";
   import CopyButton from "./CopyButton.svelte";
   import NumeronymView from "./NumeronymView.svelte";
   import Select from "./Select.svelte";
   import FigletView from "./FigletView.svelte";
+  import EmojiPickerView from "./EmojiPickerView.svelte";
   import EnglishNounsView from "./EnglishNounsView.svelte";
+  import UrlExtractorView from "./UrlExtractorView.svelte";
+  import LunarCalendarView from "./LunarCalendarView.svelte";
   let { toolId, locale = "zh-CN", demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""),
@@ -31,14 +33,6 @@
     color = $state("#15988f"),
     scheme = $state("complementary"),
     colors = $state([]),
-    skin = $state(""),
-    emojiCategory = $state("all"),
-    selected = $state(""),
-    direction = $state("solar"),
-    year = $state(2026),
-    month = $state(1),
-    day = $state(1),
-    leap = $state(false),
     html = $state(""),
     editor = $state(null),
     link = $state("");
@@ -47,13 +41,6 @@
   onDestroy(() => {
     disposed = true;
   });
-  const emoji = $derived(
-    EMOJI.filter(
-      (row) =>
-        (emojiCategory === "all" || row[2] === emojiCategory) &&
-        (!input || row[1].toLowerCase().includes(input.toLowerCase())),
-    ),
-  );
   async function run() {
     output = "";
     error = "";
@@ -76,15 +63,6 @@
         if (toolId === "figlet") result = lib.banner(input, font, width, align);
         else if (toolId === "english-plural")
           result = lib.englishNouns(input, mode === "singular");
-        else if (toolId === "lunar-calendar")
-          result = lib.lunarConvert({
-            solarDate: input,
-            year: Number(year),
-            month: Number(month),
-            day: Number(day),
-            leap,
-            direction,
-          });
       }
       if (!disposed)
         output =
@@ -103,7 +81,6 @@
         "email-normalizer": "User@EXAMPLE.COM",
         "url-extractor":
           "https://example.com/docs and mailto:hello@example.com",
-        "lunar-calendar": "2026-02-17",
       }[toolId] || "";
     output = "";
     error = "";
@@ -155,35 +132,16 @@
   <FigletView {locale} {demoRequest} />
 {:else if toolId === "english-plural"}
   <EnglishNounsView {locale} {demoRequest} />
+{:else if toolId === "url-extractor"}
+  <UrlExtractorView {locale} {demoRequest} />
+{:else if toolId === "emoji-picker"}
+  <EmojiPickerView {locale} />
+{:else if toolId === "lunar-calendar"}
+  <LunarCalendarView {locale} {demoRequest} />
 {:else}
 <div class="expansion-page" class:content-workspace={!["numeronym", "emoji-picker", "rich-text", "lunar-calendar"].includes(toolId)} class:numeronym-page={toolId === "numeronym"} class:email-normalizer-page={toolId === "email-normalizer"}>
   {#if toolId === "numeronym"}
     <NumeronymView {locale} {demoRequest} />
-  {:else if toolId === "emoji-picker"}
-    <label
-      >{t("搜索", "Search")}<input
-        class="dbx-input"
-        bind:value={input}
-      /></label
-    ><label
-      >{t("类别", "Category")}<Select bind:value={emojiCategory} ariaLabel={t("类别", "Category")} options={["all", "faces", "people", "symbols", "nature", "objects", "food"].map((value) => ({value,label:value}))} /></label
-    ><label
-      >{t("肤色", "Skin tone")}<Select bind:value={skin} ariaLabel={t("肤色", "Skin tone")} options={["", "🏻", "🏼", "🏽", "🏾", "🏿"].map((value) => ({value,label:value || t("默认", "Default")}))} /></label
-    >
-    <div class="emoji-grid">
-      {#each emoji as [value, name, , supportsSkin]}<button
-          class="dbx-btn"
-          title={name}
-          onclick={() => (selected += value + (supportsSkin ? skin : ""))}
-          >{value}{supportsSkin ? skin : ""}</button
-        >{/each}
-    </div>
-    <textarea class="dbx-textarea" bind:value={selected}></textarea><CopyButton
-      {locale}
-      text={selected}
-    /><button class="dbx-btn" onclick={() => (selected = "")}
-      >{t("清空", "Clear")}</button
-    >
   {:else if toolId === "rich-text"}
     <div class="expansion-actions">
       {#each [["bold", "B"], ["italic", "I"], ["formatBlock", "H2"], ["insertUnorderedList", "•"], ["insertOrderedList", "1."]] as [cmd, label]}<button
@@ -230,42 +188,6 @@
           bind:value={color}
         /></label
       ><Select bind:value={scheme} ariaLabel={t("配色方案", "Color scheme")} options={["complementary", "analogous", "triadic", "tetradic", "monochrome"].map((value) => ({value,label:value}))} />
-      {:else if toolId === "lunar-calendar"}<Select bind:value={direction} ariaLabel={t("转换方向", "Direction")} options={[{value:"solar",label:t("阳历转农历", "Solar to lunar")},{value:"lunar",label:t("农历转阳历", "Lunar to solar")}]} />
-      <p>1900–2100</p>
-      {#if direction === "solar"}<input
-          class="dbx-input"
-          type="date"
-          min="1900-01-01"
-          max="2100-12-31"
-          bind:value={input}
-        />{:else}<label
-          >{t("年", "Year")}<input
-            class="dbx-input"
-            type="number"
-            bind:value={year}
-          /></label
-        ><label
-          >{t("月", "Month")}<input
-            class="dbx-input"
-            type="number"
-            min="1"
-            max="12"
-            bind:value={month}
-          /></label
-        ><label
-          >{t("日", "Day")}<input
-            class="dbx-input"
-            type="number"
-            min="1"
-            max="30"
-            bind:value={day}
-          /></label
-        ><label
-          ><input type="checkbox" bind:checked={leap} />{t(
-            "闰月",
-            "Leap month",
-          )}</label
-        >{/if}
     {:else}<label
         >{t("输入", "Input")}<textarea
           class="dbx-textarea"
@@ -333,14 +255,6 @@
 {/if}
 
 <style>
-  .emoji-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-    gap: 8px;
-  }
-  .emoji-grid button {
-    font-size: 26px;
-  }
   .swatches {
     display: flex;
     height: 90px;

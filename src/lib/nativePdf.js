@@ -1,4 +1,5 @@
 import { invoke, ready, sendBinary } from "./host.js";
+import { pdfSessionPool } from "./pdfSessionPool.js";
 
 export const PDF_NATIVE_OPERATIONS = new Set([
   "merge",
@@ -39,7 +40,7 @@ async function waitForFile(sessionId, fileIndex, expectedChunks, signal) {
 
 export async function uploadNativePdfs(
   files,
-  { signal, onProgress = () => {} } = {},
+  { signal, onProgress = () => {}, owner = "pdf", resource = {} } = {},
 ) {
   throwIfAborted(signal);
   await ready();
@@ -49,7 +50,13 @@ export async function uploadNativePdfs(
     size: file.size,
     chunkCount: Math.ceil(file.size / DEFAULT_CHUNK_BYTES),
   }));
-  const begin = await invoke("toolbox/pdf/begin", { files: declared }, 120_000);
+  const lease = await pdfSessionPool.acquire(owner, resource);
+  let begin;
+  try {
+    throwIfAborted(signal);
+    begin = await invoke("toolbox/pdf/begin", { files: declared }, 120_000);
+    lease.attach(begin.sessionId);
+  } catch (error) { lease.abandon(); throw error; }
   const sessionId = begin.sessionId;
   const chunkBytes = Number(begin.chunkBytes) || DEFAULT_CHUNK_BYTES;
   const total = files.reduce((sum, file) => sum + file.size, 0);
@@ -82,7 +89,7 @@ export async function uploadNativePdfs(
     throwIfAborted(signal);
     return sessionId;
   } catch (error) {
-    void invoke("toolbox/pdf/cancel", { sessionId }).catch(() => {});
+    void cancelNativePdf(sessionId).catch(() => {});
     throw signal?.aborted ? abortError() : error;
   } finally {
     signal?.removeEventListener("abort", cancel);
@@ -145,7 +152,10 @@ export function saveNativePdf(sessionId, fileName) {
   return invoke("toolbox/pdf/save", { sessionId, fileName }, 120_000);
 }
 
-export function cancelNativePdf(sessionId) {
+export function cancelNativePdf(sessionId, { strict = false } = {}) {
   if (!sessionId) return Promise.resolve();
-  return invoke("toolbox/pdf/cancel", { sessionId }).catch(() => {});
+  return invoke("toolbox/pdf/cancel", { sessionId }).then(result => {
+    pdfSessionPool.release(sessionId);
+    return result;
+  }).catch(error => { if (strict) throw error; });
 }

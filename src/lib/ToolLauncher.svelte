@@ -1,7 +1,4 @@
 <script>
-  import SearchObjectFilter from "./SearchObjectFilter.svelte";
-  import { matchesObject } from "./searchObjects.js";
-  let searchObject = $state("all");
   import { onMount } from "svelte";
   import { searchToolMatches } from "./catalog.js";
   import { categories, chrome, pick } from "./i18n.js";
@@ -20,25 +17,35 @@
       .slice(0, Math.max(14, favorites.length + recents.length))
       .map((tool) => ({ tool, score: 0, matchKind: "", matchLabel: "" }));
   });
-  const results = $derived(query.trim() ? searchToolMatches(query, locale, visibleTools).filter(match => matchesObject(match.tool, searchObject)).slice(0, 30) : defaultMatches);
+  const results = $derived(query.trim() ? searchToolMatches(query, locale, visibleTools).slice(0, 30) : defaultMatches);
 
-  $effect(() => { query; searchObject; selected = 0; });
+  $effect(() => { query; selected = 0; });
   onMount(() => {
     const previous = document.activeElement;
+    const dialog = dialogEl;
+    // Handle navigation before document-level delegated/global shortcuts.
+    dialog?.addEventListener("keydown", onKeydown, true);
     inputEl?.focus();
-    return () => { if (previous?.isConnected && previous.getClientRects().length) previous.focus(); };
+    return () => {
+      dialog?.removeEventListener("keydown", onKeydown, true);
+      if (previous?.isConnected && previous.getClientRects().length) previous.focus();
+    };
   });
   $effect(() => {
     const index = selected;
     dialogEl?.querySelectorAll('[role="option"]')[index]?.scrollIntoView({ block: "nearest" });
   });
   function moveSelection(delta) {
+    if (!results.length) return;
     selected = Math.max(0, Math.min(results.length - 1, selected + delta));
     if (document.activeElement !== inputEl) dialogEl?.querySelectorAll('[role="option"]')[selected]?.focus();
   }
 
   function choose(match) { if (match?.tool) onTool?.(match.tool, query); }
   function onKeydown(event) {
+    if (event.isComposing || event.keyCode === 229) return;
+    if (!["Escape", "ArrowDown", "ArrowUp", "Enter", "Tab"].includes(event.key)) return;
+    event.stopPropagation();
     if (event.key === "Escape") { event.preventDefault(); onClose?.(); return; }
     if (event.key === "ArrowDown") { event.preventDefault(); moveSelection(1); return; }
     if (event.key === "ArrowUp") { event.preventDefault(); moveSelection(-1); return; }
@@ -54,17 +61,16 @@
 </script>
 
 <div class="backdrop" role="presentation" onclick={(event) => { if (event.target === event.currentTarget) onClose?.(); }}>
-  <div class="launcher-dialog" bind:this={dialogEl} role="dialog" aria-modal="true" aria-label={t(chrome.search)} tabindex="-1" onkeydown={onKeydown}>
+  <div class="launcher-dialog" bind:this={dialogEl} role="dialog" aria-modal="true" aria-label={t(chrome.search)} tabindex="-1">
     <div class="search-row">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input bind:this={inputEl} bind:value={query} name="toolbox-launcher-query" autocomplete="off" aria-label={t(chrome.search)} aria-controls="tool-launcher-results" aria-activedescendant={results.length ? `tool-result-${selected}` : undefined} placeholder={t(chrome.searchPlaceholderEllipsis)} />
+      <input bind:this={inputEl} bind:value={query} name="toolbox-launcher-query" autocomplete="off" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-label={t(chrome.search)} aria-controls="tool-launcher-results" aria-activedescendant={results.length ? `tool-result-${selected}` : undefined} placeholder={t(chrome.searchPlaceholderEllipsis)} />
       <kbd>Esc</kbd>
     </div>
-    {#if query.trim()}<SearchObjectFilter {locale} value={searchObject} onChange={value => searchObject = value}/>{/if}
     <div class="results" role="listbox" id="tool-launcher-results" aria-label={t(chrome.searchResultsLabel)}>
       <div class="result-label">{query.trim() ? t(chrome.results) : t(chrome.favoritesAndRecent)}</div>
       {#each results as match, index (match.tool.id)}
-        <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmouseenter={() => (selected = index)} onclick={() => choose(match)}>
+        <button id={`tool-result-${index}`} class:selected={index === selected} type="button" role="option" aria-selected={index === selected} onfocus={() => (selected = index)} onmousemove={() => (selected = index)} onclick={() => choose(match)}>
           <span><strong>{pick(locale,match.tool.name)}</strong><small>{pick(locale,match.tool.summary)}</small></span>
           <em>{pick(locale,categories[match.tool.category])}</em>
         </button>

@@ -11,6 +11,7 @@
     labelEn = "Copy",
     label = null,
     themedTooltip = false,
+    disabled = false,
   } = $props();
 
   let copied = $state(false);
@@ -23,7 +24,7 @@
   const title = $derived(copied ? pick(locale, chrome.copied) : labelText);
 
   async function copy() {
-    if ((!text && !getText) || copying) return;
+    if (disabled || (!text && !getText) || copying) return;
     failed = false;
     copying = true;
     try {
@@ -45,7 +46,7 @@
 
 <button
   class="dbx-btn dbx-btn--ghost copy-btn"
-  disabled={(!text && !getText) || copying}
+  disabled={disabled || (!text && !getText) || copying}
   onclick={copy}
   title={themedTooltip ? undefined : title}
   use:tooltip={themedTooltip ? title : ""}

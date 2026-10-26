@@ -161,29 +161,361 @@
     "en": "Generate header",
     "zh-CN": "生成认证头"
   },
-  "Pause": {
-    "en": "Pause",
-    "zh-CN": "暂停"
+  "Comparison metric": {
+    "en": "Comparison metric",
+    "zh-CN": "比较指标"
   },
-  "Start": {
-    "en": "Start",
-    "zh-CN": "起始序号"
+  "Throughput: higher is better (ops/s)": {
+    "en": "Throughput: higher is better (ops/s)",
+    "zh-CN": "吞吐量：越高越好（次/秒）"
   },
-  "Lap": {
-    "en": "Lap",
-    "zh-CN": "计次"
+  "Latency: lower is better (ms)": {
+    "en": "Latency: lower is better (ms)",
+    "zh-CN": "耗时：越低越好（毫秒）"
+  },
+  "Data input": {
+    "en": "Data input",
+    "zh-CN": "数据输入"
+  },
+  "Benchmark samples": {
+    "en": "Benchmark samples",
+    "zh-CN": "测试样本"
+  },
+  "One group per line: name: sample1, sample2. Enter positive durations (ms); lower is better.": {
+    "en": "One group per line: name: sample1, sample2. Enter positive durations (ms); lower is better.",
+    "zh-CN": "每行一组：名称: 样本1, 样本2。输入正数耗时（毫秒），数值越小越好。"
+  },
+  "One group per line: name: sample1, sample2. Enter positive throughput values (ops/s); higher is better.": {
+    "en": "One group per line: name: sample1, sample2. Enter positive throughput values (ops/s); higher is better.",
+    "zh-CN": "每行一组：名称: 样本1, 样本2。输入正数吞吐量（次/秒），数值越大越好。"
+  },
+  "Compares as you type, sorted by ascending mean": {
+    "en": "Compares as you type, sorted by ascending mean",
+    "zh-CN": "输入后自动比较，按平均值升序排列"
+  },
+  "Compares as you type, sorted by descending mean": {
+    "en": "Compares as you type, sorted by descending mean",
+    "zh-CN": "输入后自动比较，按平均值降序排列"
+  },
+  "Significant digits": {
+    "en": "Significant digits",
+    "zh-CN": "有效数字"
+  },
+  "Comparison results": {
+    "en": "Comparison results",
+    "zh-CN": "对比结果"
+  },
+  "Copy JSON": {
+    "en": "Copy JSON",
+    "zh-CN": "复制 JSON"
+  },
+  "Lowest mean latency": {
+    "en": "Lowest mean latency",
+    "zh-CN": "最低平均耗时"
+  },
+  "Highest mean throughput": {
+    "en": "Highest mean throughput",
+    "zh-CN": "最高平均吞吐量"
+  },
+  "Benchmark groups": {
+    "en": "Benchmark groups",
+    "zh-CN": "测试组数"
+  },
+  "Compared by mean": {
+    "en": "Compared by mean",
+    "zh-CN": "按均值比较"
+  },
+  "Total samples": {
+    "en": "Total samples",
+    "zh-CN": "样本总数"
+  },
+  "Across all groups": {
+    "en": "Across all groups",
+    "zh-CN": "所有测试组"
+  },
+  "Relative performance": {
+    "en": "Relative performance",
+    "zh-CN": "相对性能"
+  },
+  "Fastest group = 100%": {
+    "en": "Fastest group = 100%",
+    "zh-CN": "最快组 = 100%"
+  },
+  "Group statistics · latency in ms": {
+    "en": "Group statistics · latency in ms",
+    "zh-CN": "各组统计明细 · 耗时单位：毫秒"
+  },
+  "Group statistics · throughput in ops/s": {
+    "en": "Group statistics · throughput in ops/s",
+    "zh-CN": "各组统计明细 · 吞吐量单位：次/秒"
+  },
+  "Rank": {
+    "en": "Rank",
+    "zh-CN": "排名"
+  },
+  "Name": {
+    "en": "Name",
+    "zh-CN": "名称"
+  },
+  "Sample count": {
+    "en": "Sample count",
+    "zh-CN": "样本数量"
+  },
+  "Mean": {
+    "en": "Mean",
+    "zh-CN": "平均值"
+  },
+  "Median": {
+    "en": "Median",
+    "zh-CN": "中位数"
+  },
+  "Minimum": {
+    "en": "Minimum",
+    "zh-CN": "最低版本"
+  },
+  "Maximum": {
+    "en": "Maximum",
+    "zh-CN": "最高版本"
+  },
+  "Population standard deviation": {
+    "en": "Population standard deviation",
+    "zh-CN": "总体标准差"
+  },
+  "Coefficient of variation": {
+    "en": "Coefficient of variation",
+    "zh-CN": "变异系数"
+  },
+  "Coefficient of variation = population standard deviation / mean; lower means more consistent samples. A single sample cannot describe variability. Ranking compares means only, without statistical significance testing.": {
+    "en": "Coefficient of variation = population standard deviation / mean; lower means more consistent samples. A single sample cannot describe variability. Ranking compares means only, without statistical significance testing.",
+    "zh-CN": "变异系数 = 总体标准差 / 平均值，越小表示样本越稳定。单个样本无法反映波动；排名仅比较均值，不代表统计显著性。"
+  },
+  "View JSON": {
+    "en": "View JSON",
+    "zh-CN": "查看 JSON"
+  },
+  "Comparison results JSON": {
+    "en": "Comparison results JSON",
+    "zh-CN": "对比结果 JSON"
+  },
+  "Compare your benchmark groups": {
+    "en": "Compare your benchmark groups",
+    "zh-CN": "比较每一组测试的表现"
+  },
+  "Paste benchmark samples to see ranking, throughput and consistency.": {
+    "en": "Paste benchmark samples to see ranking, throughput and consistency.",
+    "zh-CN": "粘贴测试样本，即可查看排名、吞吐量和稳定性。"
+  },
+  "Values exceed the calculation range. Use smaller numbers and try again.": {
+    "en": "Values exceed the calculation range. Use smaller numbers and try again.",
+    "zh-CN": "数值超出计算范围，请缩小数值后重试。"
+  },
+  "Calculation mode": {
+    "en": "Calculation mode",
+    "zh-CN": "计算模式"
+  },
+  "Working day difference": {
+    "en": "Working day difference",
+    "zh-CN": "相隔工作日"
+  },
+  "Find a date": {
+    "en": "Find a date",
+    "zh-CN": "推算日期"
+  },
+  "Dates": {
+    "en": "Dates",
+    "zh-CN": "日期设置"
+  },
+  "Start date": {
+    "en": "Start date",
+    "zh-CN": "开始日期"
+  },
+  "End date": {
+    "en": "End date",
+    "zh-CN": "结束日期"
+  },
+  "Add working days": {
+    "en": "Add working days",
+    "zh-CN": "增加工作日"
+  },
+  "Excludes the start, includes the end. Reverse ranges return a negative count.": {
+    "en": "Excludes the start, includes the end. Reverse ranges return a negative count.",
+    "zh-CN": "不含开始日期，包含结束日期；倒序计算返回负数。"
+  },
+  "Use a negative number to go backwards; 0 keeps the start date.": {
+    "en": "Use a negative number to go backwards; 0 keeps the start date.",
+    "zh-CN": "输入负数可向前推算；输入 0 保持开始日期。"
+  },
+  "Exclusions": {
+    "en": "Exclusions",
+    "zh-CN": "排除规则"
+  },
+  "Work calendar": {
+    "en": "Work calendar",
+    "zh-CN": "工作日历"
+  },
+  "Weekends only (custom)": {
+    "en": "Weekends only (custom)",
+    "zh-CN": "普通周末（自定义）"
+  },
+  "Mainland China holidays and make-up workdays": {
+    "en": "Mainland China holidays and make-up workdays",
+    "zh-CN": "中国大陆放假调休"
+  },
+  "Bundled years": {
+    "en": "Bundled years",
+    "zh-CN": "内置年份"
+  },
+  "Available offline; updated with the plugin": {
+    "en": "Available offline; updated with the plugin",
+    "zh-CN": "离线可用，随插件更新"
+  },
+  "Uses Saturday/Sunday weekends and published national holiday schedules, including make-up workdays.": {
+    "en": "Uses Saturday/Sunday weekends and published national holiday schedules, including make-up workdays.",
+    "zh-CN": "采用周六、周日休息及国家公布的放假调休安排，补班日计入工作日。"
+  },
+  "Weekend days": {
+    "en": "Weekend days",
+    "zh-CN": "周末休息日"
+  },
+  "Selected weekdays are excluded from the count.": {
+    "en": "Selected weekdays are excluded from the count.",
+    "zh-CN": "选中的星期不计入工作日。"
+  },
+  "Custom holidays": {
+    "en": "Custom holidays",
+    "zh-CN": "自定义节假日"
+  },
+  "Optional holidays": {
+    "en": "Optional holidays",
+    "zh-CN": "选填"
+  },
+  "YYYY-MM-DD, one date per line": {
+    "en": "YYYY-MM-DD, one date per line",
+    "zh-CN": "YYYY-MM-DD，每行一个日期"
+  },
+  "Add extra days off; these override make-up workdays. Duplicates count once.": {
+    "en": "Add extra days off; these override make-up workdays. Duplicates count once.",
+    "zh-CN": "可额外添加休息日，优先于调休补班安排；重复日期只计一次。"
+  },
+  "Uses only your holidays; public holidays and make-up workdays are not loaded automatically. Duplicates count once.": {
+    "en": "Uses only your holidays; public holidays and make-up workdays are not loaded automatically. Duplicates count once.",
+    "zh-CN": "仅使用你填写的节假日，不自动加载法定假期或调休。重复日期只计一次。"
+  },
+  "Calculate": {
+    "en": "Calculate",
+    "zh-CN": "计算"
   },
   "Reset": {
     "en": "Reset",
-    "zh-CN": "恢复默认"
+    "zh-CN": "重置"
   },
-  "Export laps": {
-    "en": "Export laps",
-    "zh-CN": "导出记录"
+  "Calculation result": {
+    "en": "Calculation result",
+    "zh-CN": "计算结果"
   },
-  "Holidays (YYYY-MM-DD, one per line)": {
-    "en": "Holidays (YYYY-MM-DD, one per line)",
-    "zh-CN": "节假日（YYYY-MM-DD，每行一个）"
+  "Resulting date": {
+    "en": "Resulting date",
+    "zh-CN": "推算后的日期"
+  },
+  "days": {
+    "en": "days",
+    "zh-CN": "天"
+  },
+  "Calendar days": {
+    "en": "Calendar days",
+    "zh-CN": "日历天数"
+  },
+  "Weekend days excluded": {
+    "en": "Weekend days excluded",
+    "zh-CN": "排除周末"
+  },
+  "Holidays excluded": {
+    "en": "Holidays excluded",
+    "zh-CN": "排除节假日"
+  },
+  "Make-up workdays included": {
+    "en": "Make-up workdays included",
+    "zh-CN": "计入调休补班"
+  },
+  "Working days": {
+    "en": "Working days",
+    "zh-CN": "工作日"
+  },
+  "Holidays on weekends are not subtracted twice.": {
+    "en": "Holidays on weekends are not subtracted twice.",
+    "zh-CN": "节假日与周末重叠时不重复扣除。"
+  },
+  "Make every day count": {
+    "en": "Make every day count",
+    "zh-CN": "让日期更有计划"
+  },
+  "Set your dates and days off, then calculate to see the breakdown.": {
+    "en": "Set your dates and days off, then calculate to see the breakdown.",
+    "zh-CN": "设置日期和休息日，点击计算查看工作日与日期明细。"
+  },
+  "Counts towards the target, excluding the start date, using the selected calendar and custom days off.": {
+    "en": "Counts towards the target, excluding the start date, using the selected calendar and custom days off.",
+    "zh-CN": "从开始日期向目标方向逐日计算，不含开始日期；按所选日历和自定义休息日判断工作日。"
+  },
+  "Calendar data sources": {
+    "en": "Calendar data sources",
+    "zh-CN": "日历数据来源"
+  },
+  "Compiled from annual State Council holiday notices": {
+    "en": "Compiled from annual State Council holiday notices",
+    "zh-CN": "依据国务院办公厅年度放假通知整理"
+  },
+  "Holiday schedule notice": {
+    "en": "Holiday schedule notice",
+    "zh-CN": "放假安排通知"
+  },
+  "Mon": {
+    "en": "Mon",
+    "zh-CN": "周一"
+  },
+  "Tue": {
+    "en": "Tue",
+    "zh-CN": "周二"
+  },
+  "Wed": {
+    "en": "Wed",
+    "zh-CN": "周三"
+  },
+  "Thu": {
+    "en": "Thu",
+    "zh-CN": "周四"
+  },
+  "Fri": {
+    "en": "Fri",
+    "zh-CN": "周五"
+  },
+  "Sat": {
+    "en": "Sat",
+    "zh-CN": "周六"
+  },
+  "Sun": {
+    "en": "Sun",
+    "zh-CN": "周日"
+  },
+  "Select all required dates.": {
+    "en": "Select all required dates.",
+    "zh-CN": "请选择完整的日期。"
+  },
+  "Keep at least one working weekday.": {
+    "en": "Keep at least one working weekday.",
+    "zh-CN": "请至少保留一个工作日。"
+  },
+  "Working days must be an integer from -100000 to 100000.": {
+    "en": "Working days must be an integer from -100000 to 100000.",
+    "zh-CN": "工作日天数须为 -100000 到 100000 之间的整数。"
+  },
+  "Invalid holiday. Enter real dates in YYYY-MM-DD format.": {
+    "en": "Invalid holiday. Enter real dates in YYYY-MM-DD format.",
+    "zh-CN": "节假日日期无效，请按 YYYY-MM-DD 格式填写真实日期。"
+  },
+  "Mainland China holiday data is not bundled for this year. Adjust the dates or switch to weekends only.": {
+    "en": "Mainland China holiday data is not bundled for this year. Adjust the dates or switch to weekends only.",
+    "zh-CN": "该年份的中国大陆放假调休数据未内置，请调整日期或切换普通周末模式。"
   },
   "Each line: name: sample1, sample2": {
     "en": "Each line: name: sample1, sample2",
@@ -197,27 +529,6 @@
     "it": "Ingresso",
     "ja": "入力",
     "pt-BR": "Entrada"
-  },
-  "Mode": {
-    "en": "Mode",
-    "zh-CN": "模式",
-    "zh-TW": "模式",
-    "es": "Modo",
-    "it": "Modalità",
-    "ja": "モード",
-    "pt-BR": "Modo"
-  },
-  "Working day difference": {
-    "en": "Working day difference",
-    "zh-CN": "工作日差"
-  },
-  "Add working days": {
-    "en": "Add working days",
-    "zh-CN": "增加工作日"
-  },
-  "Weekends (0=Sunday, 6=Saturday)": {
-    "en": "Weekends (0=Sunday, 6=Saturday)",
-    "zh-CN": "周末（0=周日，6=周六）"
   },
   "Value": {
     "en": "Value",
@@ -260,14 +571,6 @@
   "Mathematical projection; excludes taxes and product fees.": {
     "en": "Mathematical projection; excludes taxes and product fees.",
     "zh-CN": "数学推算，不包含税费和产品费率。"
-  },
-  "Significant digits": {
-    "en": "Significant digits",
-    "zh-CN": "有效数字"
-  },
-  "Calculate": {
-    "en": "Calculate",
-    "zh-CN": "计算"
   },
   "Find and terminate processes using a TCP or UDP port": {
     "en": "Find and terminate processes using a TCP or UDP port",
@@ -1007,6 +1310,15 @@
     "ja": "アルゴリズム",
     "pt-BR": "Algoritmo"
   },
+  "Mode": {
+    "en": "Mode",
+    "zh-CN": "模式",
+    "zh-TW": "模式",
+    "es": "Modo",
+    "it": "Modalità",
+    "ja": "モード",
+    "pt-BR": "Modo"
+  },
   "Ciphertext format": {
     "en": "Ciphertext format",
     "zh-CN": "密文格式"
@@ -1536,17 +1848,158 @@
     "en": "Current color",
     "zh-CN": "当前颜色"
   },
-  "Search": {
-    "en": "Search",
-    "zh-CN": "搜索"
+  "Calculation inputs": {
+    "en": "Calculation inputs",
+    "zh-CN": "计算参数"
   },
-  "Skin tone": {
-    "en": "Skin tone",
-    "zh-CN": "肤色"
+  "Investment parameters": {
+    "en": "Investment parameters",
+    "zh-CN": "投资参数"
   },
-  "Default": {
-    "en": "Default",
-    "zh-CN": "默认"
+  "Live calculation": {
+    "en": "Live calculation",
+    "zh-CN": "实时计算"
+  },
+  "0–200 years, rounded to the nearest month": {
+    "en": "0–200 years, rounded to the nearest month",
+    "zh-CN": "0–200 年，按最接近的整月计算"
+  },
+  "Added at the end of each month": {
+    "en": "Added at the end of each month",
+    "zh-CN": "在每个月月底追加投入"
+  },
+  "Compounding frequency": {
+    "en": "Compounding frequency",
+    "zh-CN": "计息频率"
+  },
+  "Decimal places": {
+    "en": "Decimal places",
+    "zh-CN": "小数位数"
+  },
+  "Results": {
+    "en": "Results",
+    "zh-CN": "计算结果",
+    "zh-TW": "搜尋結果",
+    "es": "Resultados",
+    "it": "Risultati",
+    "ja": "検索結果",
+    "pt-BR": "Resultados"
+  },
+  "Final balance": {
+    "en": "Final balance",
+    "zh-CN": "期末总额"
+  },
+  "Copy calculation results": {
+    "en": "Copy calculation results",
+    "zh-CN": "复制计算结果"
+  },
+  "months of growth": {
+    "en": "months of growth",
+    "zh-CN": "个月后的资金总额"
+  },
+  "Check your calculation inputs": {
+    "en": "Check your calculation inputs",
+    "zh-CN": "请检查计算参数"
+  },
+  "Calculated in whole months. The entered period was rounded to": {
+    "en": "Calculated in whole months. The entered period was rounded to",
+    "zh-CN": "按整月计算，输入期间已四舍五入为"
+  },
+  "months": {
+    "en": "months",
+    "zh-CN": "个月"
+  },
+  "Total contributions": {
+    "en": "Total contributions",
+    "zh-CN": "累计投入"
+  },
+  "Total interest": {
+    "en": "Total interest",
+    "zh-CN": "累计收益"
+  },
+  "Balance over time": {
+    "en": "Balance over time",
+    "zh-CN": "资金增长趋势"
+  },
+  "Balance": {
+    "en": "Balance",
+    "zh-CN": "总额"
+  },
+  "Contributions": {
+    "en": "Contributions",
+    "zh-CN": "投入"
+  },
+  "Balance and contributions over time; exact values are in the annual breakdown": {
+    "en": "Balance and contributions over time; exact values are in the annual breakdown",
+    "zh-CN": "总额与累计投入随时间变化，具体数值见年度明细"
+  },
+  "Enter valid parameters to see the growth trend": {
+    "en": "Enter valid parameters to see the growth trend",
+    "zh-CN": "输入有效参数后显示增长趋势"
+  },
+  "Enter valid numbers: principal and monthly contributions must be nonnegative, annual rate must exceed −100%, and years must be between 0 and 200.": {
+    "en": "Enter valid numbers: principal and monthly contributions must be nonnegative, annual rate must exceed −100%, and years must be between 0 and 200.",
+    "zh-CN": "请输入有效数值：本金和月投入不可为负，年利率须大于 −100%，年数须在 0–200 之间。"
+  },
+  "Decimal places must be an integer from 0 to 8.": {
+    "en": "Decimal places must be an integer from 0 to 8.",
+    "zh-CN": "小数位数必须是 0 到 8 之间的整数。"
+  },
+  "Result is outside the numeric range. Reduce the amount, rate or years.": {
+    "en": "Result is outside the numeric range. Reduce the amount, rate or years.",
+    "zh-CN": "结果超出数值范围，请减小金额、利率或年数。"
+  },
+  "Annual breakdown": {
+    "en": "Annual breakdown",
+    "zh-CN": "年度明细"
+  },
+  "records": {
+    "en": "records",
+    "zh-CN": "条记录"
+  },
+  "Months": {
+    "en": "Months",
+    "zh-CN": "月数"
+  },
+  "Initial principal": {
+    "en": "Initial principal",
+    "zh-CN": "初始本金"
+  },
+  "Annual rate (%)": {
+    "en": "Annual rate (%)",
+    "zh-CN": "年利率（%）"
+  },
+  "Investment years": {
+    "en": "Investment years",
+    "zh-CN": "投资年数"
+  },
+  "Monthly contribution": {
+    "en": "Monthly contribution",
+    "zh-CN": "每月追加投入"
+  },
+  "Calculated months": {
+    "en": "Calculated months",
+    "zh-CN": "计算月数"
+  },
+  "Annually · 1 time": {
+    "en": "Annually · 1 time",
+    "zh-CN": "每年 · 1 次"
+  },
+  "Semiannually · 2 times": {
+    "en": "Semiannually · 2 times",
+    "zh-CN": "每半年 · 2 次"
+  },
+  "Quarterly · 4 times": {
+    "en": "Quarterly · 4 times",
+    "zh-CN": "每季度 · 4 次"
+  },
+  "Monthly · 12 times": {
+    "en": "Monthly · 12 times",
+    "zh-CN": "每月 · 12 次"
+  },
+  "Daily · 365 times": {
+    "en": "Daily · 365 times",
+    "zh-CN": "每日 · 365 次"
   },
   "Link URL": {
     "en": "Link URL",
@@ -1571,39 +2024,6 @@
   "Color scheme": {
     "en": "Color scheme",
     "zh-CN": "配色方案"
-  },
-  "Direction": {
-    "en": "Direction",
-    "zh-CN": "方向",
-    "zh-TW": "方向",
-    "es": "Dirección",
-    "it": "Direzione",
-    "ja": "方向",
-    "pt-BR": "Direção"
-  },
-  "Solar to lunar": {
-    "en": "Solar to lunar",
-    "zh-CN": "阳历转农历"
-  },
-  "Lunar to solar": {
-    "en": "Lunar to solar",
-    "zh-CN": "农历转阳历"
-  },
-  "Year": {
-    "en": "Year",
-    "zh-CN": "年"
-  },
-  "Month": {
-    "en": "Month",
-    "zh-CN": "月"
-  },
-  "Day": {
-    "en": "Day",
-    "zh-CN": "日"
-  },
-  "Leap month": {
-    "en": "Leap month",
-    "zh-CN": "闰月"
   },
   "Font": {
     "en": "Font",
@@ -1715,6 +2135,10 @@
     "en": "hour",
     "zh-CN": "小时"
   },
+  "Day": {
+    "en": "Day",
+    "zh-CN": "日"
+  },
   "Every day": {
     "en": "Every day",
     "zh-CN": "每日"
@@ -1722,6 +2146,10 @@
   "day": {
     "en": "day",
     "zh-CN": "日"
+  },
+  "Month": {
+    "en": "Month",
+    "zh-CN": "月"
   },
   "Every month": {
     "en": "Every month",
@@ -1746,6 +2174,10 @@
   "weekday": {
     "en": "weekday",
     "zh-CN": "周"
+  },
+  "Year": {
+    "en": "Year",
+    "zh-CN": "年"
   },
   "Every year": {
     "en": "Every year",
@@ -2064,6 +2496,22 @@
     "en": "Not a valid cron expression",
     "zh-CN": "不是有效的 Cron 表达式"
   },
+  "Drag the selection to move or its bottom-right handle to resize. Click the selection or focus it with Tab: arrows move 1 pixel, Alt + arrows resize, and Shift changes the step to 10 pixels.": {
+    "en": "Drag the selection to move or its bottom-right handle to resize. Click the selection or focus it with Tab: arrows move 1 pixel, Alt + arrows resize, and Shift changes the step to 10 pixels.",
+    "zh-CN": "拖动选框移动，拖动右下角调整大小。点击选框或用 Tab 聚焦后：方向键移动 1 像素，Alt + 方向键调整大小，按住 Shift 改为 10 像素。"
+  },
+  "First GIF frame": {
+    "en": "First GIF frame",
+    "zh-CN": "GIF 首帧"
+  },
+  "Crop selection": {
+    "en": "Crop selection",
+    "zh-CN": "裁剪区域"
+  },
+  "Resize crop selection": {
+    "en": "Resize crop selection",
+    "zh-CN": "缩放裁剪区域"
+  },
   "Recommended": {
     "en": "Recommended",
     "zh-CN": "推荐默认"
@@ -2102,7 +2550,7 @@
   },
   "Converting…": {
     "en": "Converting…",
-    "zh-CN": "转换中…"
+    "zh-CN": "正在转换…"
   },
   "Custom…": {
     "en": "Custom…",
@@ -2215,6 +2663,55 @@
   "Save failed": {
     "en": "Save failed",
     "zh-CN": "保存失败"
+  },
+  "Enter a valid date (YYYY-MM-DD), within: ": {
+    "en": "Enter a valid date (YYYY-MM-DD), within: ",
+    "zh-CN": "请输入有效日期（YYYY-MM-DD），范围："
+  },
+  "Previous years": {
+    "en": "Previous years",
+    "zh-CN": "上一组年份"
+  },
+  "Previous year": {
+    "en": "Previous year",
+    "zh-CN": "上一年"
+  },
+  "Previous month": {
+    "en": "Previous month",
+    "zh-CN": "上个月"
+  },
+  "Choose year": {
+    "en": "Choose year",
+    "zh-CN": "选择年份"
+  },
+  "Choose month": {
+    "en": "Choose month",
+    "zh-CN": "选择月份"
+  },
+  "Next years": {
+    "en": "Next years",
+    "zh-CN": "下一组年份"
+  },
+  "Next year": {
+    "en": "Next year",
+    "zh-CN": "下一年"
+  },
+  "Next month": {
+    "en": "Next month",
+    "zh-CN": "下个月"
+  },
+  "Close": {
+    "en": "Close",
+    "zh-CN": "关闭",
+    "zh-TW": "關閉",
+    "es": "Cerrar",
+    "it": "Chiudi",
+    "ja": "閉じる",
+    "pt-BR": "Fechar"
+  },
+  "Today": {
+    "en": "Today",
+    "zh-CN": "今天"
   },
   "DEVELOPER REFERENCE": {
     "en": "DEVELOPER REFERENCE",
@@ -2479,25 +2976,119 @@
     "en": "Right input",
     "zh-CN": "右侧输入"
   },
-  "English singular and plural": {
-    "en": "English singular and plural",
-    "zh-CN": "英文单复数转换",
-    "zh-TW": "英文單複數轉換",
-    "es": "Singular y plural en inglés",
-    "it": "Singolare e plurale inglese",
-    "ja": "英語の単数形と複数形",
-    "pt-BR": "Singular e plural em inglês",
-    "ko": "영어 단수 및 복수",
-    "tr": "İngilizce tekil ve çoğul",
-    "az": "İngilis dilində tək və cəm"
+  "Choose emoji": {
+    "en": "Choose emoji",
+    "zh-CN": "选择表情"
   },
-  "Convert English nouns in bulk, including irregular and uncountable nouns.": {
-    "en": "Convert English nouns in bulk, including irregular and uncountable nouns.",
-    "zh-CN": "批量转换英文名词，支持不规则变化与不可数名词。"
+  "Browse emoji": {
+    "en": "Browse emoji",
+    "zh-CN": "浏览表情"
   },
-  "Auto convert": {
-    "en": "Auto convert",
-    "zh-CN": "自动转换"
+  "Search": {
+    "en": "Search",
+    "zh-CN": "搜索"
+  },
+  "Chinese, English or emoji": {
+    "en": "Chinese, English or emoji",
+    "zh-CN": "中文、英文或 Emoji"
+  },
+  "Skin tone": {
+    "en": "Skin tone",
+    "zh-CN": "肤色"
+  },
+  "No matches": {
+    "en": "No matches",
+    "zh-CN": "没有匹配项"
+  },
+  "Clear filters": {
+    "en": "Clear filters",
+    "zh-CN": "清除筛选"
+  },
+  "Emoji collection": {
+    "en": "Emoji collection",
+    "zh-CN": "表情组合"
+  },
+  "Selected emoji, editable": {
+    "en": "Selected emoji, editable",
+    "zh-CN": "已选表情，可编辑"
+  },
+  "Click an emoji to add…": {
+    "en": "Click an emoji to add…",
+    "zh-CN": "点击表情添加…"
+  },
+  "Backspace": {
+    "en": "Backspace",
+    "zh-CN": "退格"
+  },
+  "Recently used": {
+    "en": "Recently used",
+    "zh-CN": "最近使用"
+  },
+  "None": {
+    "en": "None",
+    "zh-CN": "无"
+  },
+  "Faces": {
+    "en": "Faces",
+    "zh-CN": "表情"
+  },
+  "Gestures": {
+    "en": "Gestures",
+    "zh-CN": "手势"
+  },
+  "Symbols": {
+    "en": "Symbols",
+    "zh-CN": "特殊符号",
+    "zh-TW": "符號",
+    "es": "Símbolos",
+    "it": "Simboli",
+    "ja": "記号",
+    "pt-BR": "Símbolos"
+  },
+  "Nature": {
+    "en": "Nature",
+    "zh-CN": "自然"
+  },
+  "Objects": {
+    "en": "Objects",
+    "zh-CN": "物品"
+  },
+  "Food": {
+    "en": "Food",
+    "zh-CN": "食物"
+  },
+  "Default": {
+    "en": "Default",
+    "zh-CN": "默认"
+  },
+  "Light": {
+    "en": "Light",
+    "zh-CN": "浅色"
+  },
+  "Medium light": {
+    "en": "Medium light",
+    "zh-CN": "较浅"
+  },
+  "Medium": {
+    "en": "Medium",
+    "zh-CN": "中等"
+  },
+  "Medium dark": {
+    "en": "Medium dark",
+    "zh-CN": "较深"
+  },
+  "Dark": {
+    "en": "Dark",
+    "zh-CN": "深色"
+  },
+  "Direction": {
+    "en": "Direction",
+    "zh-CN": "方向",
+    "zh-TW": "方向",
+    "es": "Dirección",
+    "it": "Direzione",
+    "ja": "方向",
+    "pt-BR": "Direção"
   },
   "Singular → Plural": {
     "en": "Singular → Plural",
@@ -2507,9 +3098,17 @@
     "en": "Plural → Singular",
     "zh-CN": "复数 → 单数"
   },
-  "Use example": {
-    "en": "Use example",
-    "zh-CN": "使用示例"
+  "Auto convert": {
+    "en": "Auto convert",
+    "zh-CN": "自动转换"
+  },
+  "e.g. child, mouse, city\nbox, leaf, sheep": {
+    "en": "e.g. child, mouse, city\nbox, leaf, sheep",
+    "zh-CN": "例如：child, mouse, city\nbox, leaf, sheep"
+  },
+  "e.g. children, mice, cities\nboxes, leaves, sheep": {
+    "en": "e.g. children, mice, cities\nboxes, leaves, sheep",
+    "zh-CN": "例如：children, mice, cities\nboxes, leaves, sheep"
   },
   "Separate with spaces, commas or line breaks": {
     "en": "Separate with spaces, commas or line breaks",
@@ -2527,10 +3126,6 @@
     "en": "Singular result",
     "zh-CN": "单数结果"
   },
-  "Copy result": {
-    "en": "Copy result",
-    "zh-CN": "复制结果"
-  },
   "Conversion failed": {
     "en": "Conversion failed",
     "zh-CN": "转换失败"
@@ -2539,9 +3134,9 @@
     "en": "Your result appears here",
     "zh-CN": "转换结果将在这里显示"
   },
-  "Enter text or use an example to convert automatically.": {
-    "en": "Enter text or use an example to convert automatically.",
-    "zh-CN": "输入内容或填入示例，即可自动转换。"
+  "Updates as you type": {
+    "en": "Updates as you type",
+    "zh-CN": "输入后自动转换"
   },
   "words changed": {
     "en": "words changed",
@@ -2549,7 +3144,7 @@
   },
   "Waiting for input": {
     "en": "Waiting for input",
-    "zh-CN": "等待输入"
+    "zh-CN": "等待输入文本"
   },
   "Reverse conversion": {
     "en": "Reverse conversion",
@@ -2559,9 +3154,13 @@
     "en": "Conversion preview",
     "zh-CN": "转换预览"
   },
-  "Unchanged": {
-    "en": "Unchanged",
-    "zh-CN": "未变化"
+  "Changes": {
+    "en": "Changes",
+    "zh-CN": "变化预览"
+  },
+  "How it works": {
+    "en": "How it works",
+    "zh-CN": "处理规则"
   },
   "Preserves capitalization, punctuation and line breaks. Processes words individually without sentence grammar analysis; noun lists work best.": {
     "en": "Preserves capitalization, punctuation and line breaks. Processes words individually without sentence grammar analysis; noun lists work best.",
@@ -2570,10 +3169,6 @@
   "Escaped text": {
     "en": "Escaped text",
     "zh-CN": "已转义文本"
-  },
-  "Updates as you type": {
-    "en": "Updates as you type",
-    "zh-CN": "输入后自动转换"
   },
   "{0} output": {
     "en": "{0} output",
@@ -2611,17 +3206,165 @@
     "en": "NATO phonetic",
     "zh-CN": "NATO 拼读"
   },
-  "Figlet banner": {
-    "en": "Figlet banner",
-    "zh-CN": "Figlet 字符横幅",
-    "zh-TW": "Figlet 字元橫幅",
-    "es": "Banner Figlet",
-    "it": "Banner di testo Figlet",
-    "ja": "Figlet 文字バナー",
-    "pt-BR": "Faixa de texto Figlet",
-    "ko": "Figlet 문자 배너",
-    "tr": "Figlet metin afişi",
-    "az": "Figlet mətn banneri"
+  "Task progress": {
+    "en": "Task progress",
+    "zh-CN": "任务进度"
+  },
+  "Total": {
+    "en": "Total",
+    "zh-CN": "总量"
+  },
+  "Total amount of work": {
+    "en": "Total amount of work",
+    "zh-CN": "任务需要完成的总数量"
+  },
+  "Completed": {
+    "en": "Completed",
+    "zh-CN": "已完成"
+  },
+  "Use the same unit as total": {
+    "en": "Use the same unit as total",
+    "zh-CN": "与总量使用相同单位"
+  },
+  "Elapsed time": {
+    "en": "Elapsed time",
+    "zh-CN": "已用时间"
+  },
+  "Time unit": {
+    "en": "Time unit",
+    "zh-CN": "时间单位"
+  },
+  "Seconds": {
+    "en": "Seconds",
+    "zh-CN": "秒"
+  },
+  "Minutes": {
+    "en": "Minutes",
+    "zh-CN": "分钟"
+  },
+  "Hours": {
+    "en": "Hours",
+    "zh-CN": "小时"
+  },
+  "Time actually spent completing this amount": {
+    "en": "Time actually spent completing this amount",
+    "zh-CN": "完成上述数量实际花费的时间"
+  },
+  "ETA updates as you type · Decimals and scientific notation supported": {
+    "en": "ETA updates as you type · Decimals and scientific notation supported",
+    "zh-CN": "输入后自动更新预计时间 · 支持小数与科学计数法"
+  },
+  "The estimate is outside the supported range. Adjust the input values.": {
+    "en": "The estimate is outside the supported range. Adjust the input values.",
+    "zh-CN": "预计时间超出支持范围，请调整输入数值。"
+  },
+  "Estimate": {
+    "en": "Estimate",
+    "zh-CN": "预计结果"
+  },
+  "Estimated time remaining": {
+    "en": "Estimated time remaining",
+    "zh-CN": "预计剩余时间"
+  },
+  "Complete": {
+    "en": "Complete",
+    "zh-CN": "已完成"
+  },
+  "Based on average speed": {
+    "en": "Based on average speed",
+    "zh-CN": "按平均速度估算"
+  },
+  "Awaiting calculation": {
+    "en": "Awaiting calculation",
+    "zh-CN": "等待计算"
+  },
+  "Complete some work before a completion time can be estimated.": {
+    "en": "Complete some work before a completion time can be estimated.",
+    "zh-CN": "尚未完成任何数量，暂时无法估算完成时间。"
+  },
+  "Task complete. No time remaining.": {
+    "en": "Task complete. No time remaining.",
+    "zh-CN": "任务已完成，无需等待。"
+  },
+  "Time needed at the current average speed": {
+    "en": "Time needed at the current average speed",
+    "zh-CN": "保持当前平均速度时的预计耗时"
+  },
+  "Inputs changed. Calculate again to update the estimate.": {
+    "en": "Inputs changed. Calculate again to update the estimate.",
+    "zh-CN": "参数已更改，请重新计算。"
+  },
+  "Enter your progress to estimate completion.": {
+    "en": "Enter your progress to estimate completion.",
+    "zh-CN": "输入任务进度后，计算预计完成时间。"
+  },
+  "Estimated completion": {
+    "en": "Estimated completion",
+    "zh-CN": "预计完成时间"
+  },
+  "Local time zone; estimate starts at calculation time": {
+    "en": "Local time zone; estimate starts at calculation time",
+    "zh-CN": "使用本地时区，计算时刻为估算起点"
+  },
+  "Progress": {
+    "en": "Progress",
+    "zh-CN": "完成进度"
+  },
+  "Remaining work": {
+    "en": "Remaining work",
+    "zh-CN": "剩余量"
+  },
+  "Average speed": {
+    "en": "Average speed",
+    "zh-CN": "平均速度"
+  },
+  "units / second": {
+    "en": "units / second",
+    "zh-CN": "单位 / 秒"
+  },
+  "Estimated total duration": {
+    "en": "Estimated total duration",
+    "zh-CN": "预计总耗时"
+  },
+  "The estimate assumes a constant speed. Recalculate when progress changes. Durations round up to whole seconds.": {
+    "en": "The estimate assumes a constant speed. Recalculate when progress changes. Durations round up to whole seconds.",
+    "zh-CN": "估算假设后续速度保持不变；进度更新后请重新计算。时长向上取整到秒。"
+  },
+  "Less than 1 second": {
+    "en": "Less than 1 second",
+    "zh-CN": "不足 1 秒"
+  },
+  "d": {
+    "en": "d",
+    "zh-CN": "天"
+  },
+  "h": {
+    "en": "h",
+    "zh-CN": "小时"
+  },
+  "min": {
+    "en": "min",
+    "zh-CN": "分"
+  },
+  "s": {
+    "en": "s",
+    "zh-CN": "秒"
+  },
+  "Total must be a finite number greater than 0.": {
+    "en": "Total must be a finite number greater than 0.",
+    "zh-CN": "总量必须是大于 0 的有限数值。"
+  },
+  "Completed must be a finite number greater than or equal to 0.": {
+    "en": "Completed must be a finite number greater than or equal to 0.",
+    "zh-CN": "已完成量必须是大于或等于 0 的有限数值。"
+  },
+  "Completed cannot exceed total.": {
+    "en": "Completed cannot exceed total.",
+    "zh-CN": "已完成量不能超过总量。"
+  },
+  "Elapsed time must be a finite number greater than 0.": {
+    "en": "Elapsed time must be a finite number greater than 0.",
+    "zh-CN": "已用时间必须是大于 0 的有限数值。"
   },
   "Turn text into ASCII art for terminals, comments and README files.": {
     "en": "Turn text into ASCII art for terminals, comments and README files.",
@@ -2629,7 +3372,7 @@
   },
   "Input text": {
     "en": "Input text",
-    "zh-CN": "输入文字"
+    "zh-CN": "输入文本"
   },
   "Use letters, numbers, ASCII symbols and line breaks, up to 200 characters.": {
     "en": "Use letters, numbers, ASCII symbols and line breaks, up to 200 characters.",
@@ -2685,7 +3428,7 @@
   },
   "Try an example": {
     "en": "Try an example",
-    "zh-CN": "试试示例"
+    "zh-CN": "试一试"
   },
   "Monospace · Preserves spaces and line breaks": {
     "en": "Monospace · Preserves spaces and line breaks",
@@ -2751,57 +3494,150 @@
     "en": "Extension / MIME lookup",
     "zh-CN": "扩展名 / MIME 双向查询"
   },
-  "No matches": {
-    "en": "No matches",
-    "zh-CN": "没有匹配项"
-  },
   "Up to 50 files, 100 MB each, and 250 MB total.": {
     "en": "Up to 50 files, 100 MB each, and 250 MB total.",
     "zh-CN": "最多 50 个文件、单文件 100 MB、总计 250 MB。"
+  },
+  "Replace GIF": {
+    "en": "Replace GIF",
+    "zh-CN": "更换 GIF"
   },
   "Import GIF": {
     "en": "Import GIF",
     "zh-CN": "导入 GIF"
   },
-  "Cancel": {
-    "en": "Cancel",
-    "zh-CN": "取消"
+  "Choose a GIF to edit": {
+    "en": "Choose a GIF to edit",
+    "zh-CN": "选择需要处理的 GIF 动图"
   },
   "Up to 30 MB, 300 frames, and 24 million total pixels.": {
     "en": "Up to 30 MB, 300 frames, and 24 million total pixels.",
     "zh-CN": "最多 30 MB、300 帧、总计 2400 万像素。"
   },
+  "Loading animation…": {
+    "en": "Loading animation…",
+    "zh-CN": "正在读取动图…"
+  },
+  "Start with a GIF": {
+    "en": "Start with a GIF",
+    "zh-CN": "从一张 GIF 开始"
+  },
+  "Import an animation to preview, adjust options, and save the result": {
+    "en": "Import an animation to preview, adjust options, and save the result",
+    "zh-CN": "导入后可预览动图、调整参数并保存结果"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "zh-CN": "取消"
+  },
+  "Animation preview": {
+    "en": "Animation preview",
+    "zh-CN": "动图预览"
+  },
+  "Preview content": {
+    "en": "Preview content",
+    "zh-CN": "预览内容"
+  },
   "Original": {
     "en": "Original",
     "zh-CN": "原图"
   },
-  "Crop width": {
-    "en": "Crop width",
-    "zh-CN": "裁剪宽度"
+  "frames": {
+    "en": "frames",
+    "zh-CN": "帧"
   },
-  "Crop height": {
-    "en": "Crop height",
-    "zh-CN": "裁剪高度"
+  "Preview zoom": {
+    "en": "Preview zoom",
+    "zh-CN": "预览缩放"
   },
-  "Height": {
-    "en": "Height",
-    "zh-CN": "高度"
+  "Fit to window": {
+    "en": "Fit to window",
+    "zh-CN": "适应窗口"
   },
-  "Colors": {
-    "en": "Colors",
-    "zh-CN": "颜色数量"
+  "Actual size": {
+    "en": "Actual size",
+    "zh-CN": "实际大小"
   },
-  "Repeat (-1 once, 0 forever)": {
-    "en": "Repeat (-1 once, 0 forever)",
-    "zh-CN": "循环次数（-1 单次，0 无限）"
+  "Shrink the selection before moving it": {
+    "en": "Shrink the selection before moving it",
+    "zh-CN": "先缩小选框，再拖动移动"
   },
-  "Keep every Nth frame (combine delays)": {
-    "en": "Keep every Nth frame (combine delays)",
-    "zh-CN": "每 N 帧保留一帧（合并时长）"
+  "Drag to move · bottom-right handle to resize": {
+    "en": "Drag to move · bottom-right handle to resize",
+    "zh-CN": "拖动选框移动 · 右下角调整大小"
+  },
+  "Controls": {
+    "en": "Controls",
+    "zh-CN": "操作帮助"
+  },
+  "Crop controls": {
+    "en": "Crop controls",
+    "zh-CN": "裁剪操作"
+  },
+  "Drag the selection to move; drag the bottom-right handle to resize.": {
+    "en": "Drag the selection to move; drag the bottom-right handle to resize.",
+    "zh-CN": "拖动选框移动，拖动右下角调整大小。"
+  },
+  "Click the selection or focus it with Tab:": {
+    "en": "Click the selection or focus it with Tab:",
+    "zh-CN": "点击选框或用 Tab 聚焦后："
+  },
+  "Move 1 pixel": {
+    "en": "Move 1 pixel",
+    "zh-CN": "移动 1 像素"
+  },
+  "Resize": {
+    "en": "Resize",
+    "zh-CN": "缩放",
+    "zh-TW": "縮放",
+    "es": "Redimensionar",
+    "it": "Ridimensiona",
+    "ja": "サイズ変更",
+    "pt-BR": "Redimensionar"
+  },
+  "Use a 10-pixel step": {
+    "en": "Use a 10-pixel step",
+    "zh-CN": "步长改为 10 像素"
+  },
+  "Coordinates and steps use source-image pixels.": {
+    "en": "Coordinates and steps use source-image pixels.",
+    "zh-CN": "坐标与步长均以原图像素为单位。"
+  },
+  "Zoom affects preview only": {
+    "en": "Zoom affects preview only",
+    "zh-CN": "缩放仅影响预览"
+  },
+  "Size reduced by": {
+    "en": "Size reduced by",
+    "zh-CN": "体积减少"
+  },
+  "Size did not decrease": {
+    "en": "Size did not decrease",
+    "zh-CN": "体积未减小"
+  },
+  "This file is already under 1 KB; re-encoding may increase its size.": {
+    "en": "This file is already under 1 KB; re-encoding may increase its size.",
+    "zh-CN": "文件已小于 1 KB，重新编码后可能变大。"
+  },
+  "Frame editor": {
+    "en": "Frame editor",
+    "zh-CN": "帧编辑"
   },
   "Frame duration (ms)": {
     "en": "Frame duration (ms)",
     "zh-CN": "帧时长（毫秒）"
+  },
+  "Drag the handle to reorder frames": {
+    "en": "Drag the handle to reorder frames",
+    "zh-CN": "拖动手柄调整帧顺序"
+  },
+  "Move up": {
+    "en": "Move up",
+    "zh-CN": "上移"
+  },
+  "Move down": {
+    "en": "Move down",
+    "zh-CN": "下移"
   },
   "Delete": {
     "en": "Delete",
@@ -2815,17 +3651,106 @@
     "en": "Export PNG",
     "zh-CN": "导出 PNG"
   },
+  "Output settings": {
+    "en": "Output settings",
+    "zh-CN": "输出设置"
+  },
+  "Dimensions": {
+    "en": "Dimensions",
+    "zh-CN": "尺寸"
+  },
+  "Crop width": {
+    "en": "Crop width",
+    "zh-CN": "裁剪宽度"
+  },
+  "Crop height": {
+    "en": "Crop height",
+    "zh-CN": "裁剪高度"
+  },
+  "Height": {
+    "en": "Height",
+    "zh-CN": "高度"
+  },
+  "Lock source aspect ratio": {
+    "en": "Lock source aspect ratio",
+    "zh-CN": "锁定原图比例"
+  },
+  "Original size": {
+    "en": "Original size",
+    "zh-CN": "原始尺寸"
+  },
+  "Size presets": {
+    "en": "Size presets",
+    "zh-CN": "尺寸预设"
+  },
+  "Quality and playback": {
+    "en": "Quality and playback",
+    "zh-CN": "画质与播放"
+  },
+  "Colors": {
+    "en": "Colors",
+    "zh-CN": "颜色数量"
+  },
+  "Repeat count": {
+    "en": "Repeat count",
+    "zh-CN": "重复次数"
+  },
+  "Repeat: -1 plays once; 0 loops forever": {
+    "en": "Repeat: -1 plays once; 0 loops forever",
+    "zh-CN": "循环：-1 为单次，0 为无限循环"
+  },
+  "Frame interval": {
+    "en": "Frame interval",
+    "zh-CN": "抽帧间隔"
+  },
+  "Reduce dimensions, colors, or frames for a smaller file. Skipped frame delays are combined to preserve duration.": {
+    "en": "Reduce dimensions, colors, or frames for a smaller file. Skipped frame delays are combined to preserve duration.",
+    "zh-CN": "减少尺寸、颜色或帧数可缩小体积；抽帧会合并时长，保持播放总时长。"
+  },
+  "Output": {
+    "en": "Output",
+    "zh-CN": "输出",
+    "zh-TW": "輸出",
+    "es": "Salida",
+    "it": "Risultato",
+    "ja": "出力",
+    "pt-BR": "Saída"
+  },
   "Generate GIF": {
     "en": "Generate GIF",
     "zh-CN": "生成 GIF"
   },
-  "(size did not decrease)": {
-    "en": "(size did not decrease)",
-    "zh-CN": "（体积未减小）"
-  },
   "Save GIF": {
     "en": "Save GIF",
     "zh-CN": "保存 GIF"
+  },
+  "Width and height must be integers from 1 to 4096": {
+    "en": "Width and height must be integers from 1 to 4096",
+    "zh-CN": "宽度和高度须为 1–4096 的整数"
+  },
+  "Crop area must stay inside the source image": {
+    "en": "Crop area must stay inside the source image",
+    "zh-CN": "裁剪区域不能超出原图"
+  },
+  "Colors must be an integer from 2 to 256": {
+    "en": "Colors must be an integer from 2 to 256",
+    "zh-CN": "颜色数量须为 2–256 的整数"
+  },
+  "Repeat must be an integer from -1 to 65535": {
+    "en": "Repeat must be an integer from -1 to 65535",
+    "zh-CN": "循环次数须为 -1–65535 的整数"
+  },
+  "Frame interval must be an integer from 1 to 300": {
+    "en": "Frame interval must be an integer from 1 to 300",
+    "zh-CN": "抽帧间隔须为 1–300 的整数"
+  },
+  "Total frame pixels exceed 24 million; reduce output dimensions": {
+    "en": "Total frame pixels exceed 24 million; reduce output dimensions",
+    "zh-CN": "总帧像素超过 2400 万，请减小输出尺寸"
+  },
+  "Individual or combined frame duration must not exceed 655350 ms": {
+    "en": "Individual or combined frame duration must not exceed 655350 ms",
+    "zh-CN": "单帧或合并后的时长不能超过 655350 毫秒"
   },
   "Processing timed out; reimport a smaller file": {
     "en": "Processing timed out; reimport a smaller file",
@@ -2970,7 +3895,7 @@
   },
   "Input type": {
     "en": "Input type",
-    "zh-CN": "处理对象"
+    "zh-CN": "输入方式"
   },
   "Text checksum": {
     "en": "Text checksum",
@@ -3032,10 +3957,6 @@
     "en": "{0} digest",
     "zh-CN": "{0} 摘要"
   },
-  "HTTP status reference": {
-    "en": "HTTP status reference",
-    "zh-CN": "HTTP 状态码速查"
-  },
   "Search instantly by code, name, meaning, or class. All lookups stay on this device.": {
     "en": "Search instantly by code, name, meaning, or class. All lookups stay on this device.",
     "zh-CN": "按状态码、英文名称、中文含义或分类即时查找。所有数据均在本地查询。"
@@ -3083,10 +4004,6 @@
   "Try a numeric code, an English name, a meaning, or a class from 1xx to 5xx.": {
     "en": "Try a numeric code, an English name, a meaning, or a class from 1xx to 5xx.",
     "zh-CN": "可以尝试状态码、英文名称、中文含义，或 1xx–5xx 分类。"
-  },
-  "Clear filters": {
-    "en": "Clear filters",
-    "zh-CN": "清除筛选"
   },
   "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.": {
     "en": "Names and registration states follow an offline snapshot of the IANA HTTP Status Code Registry (2025-09-15); 104 is temporarily registered through 2026-11-13.",
@@ -3581,15 +4498,6 @@
     "ja": "ツール検索結果",
     "pt-BR": "Resultados da pesquisa"
   },
-  "Results": {
-    "en": "Results",
-    "zh-CN": "搜索结果",
-    "zh-TW": "搜尋結果",
-    "es": "Resultados",
-    "it": "Risultati",
-    "ja": "検索結果",
-    "pt-BR": "Resultados"
-  },
   "Favorites and recent": {
     "en": "Favorites and recent",
     "zh-CN": "常用与最近",
@@ -3896,15 +4804,6 @@
     "ja": "開く",
     "pt-BR": "Abrir"
   },
-  "Close": {
-    "en": "Close",
-    "zh-CN": "关闭",
-    "zh-TW": "關閉",
-    "es": "Cerrar",
-    "it": "Chiudi",
-    "ja": "閉じる",
-    "pt-BR": "Fechar"
-  },
   "Open tools": {
     "en": "Open tools",
     "zh-CN": "已打开工具",
@@ -3941,18 +4840,9 @@
     "ja": "出力をコピー",
     "pt-BR": "Copiar saída"
   },
-  "Output": {
-    "en": "Output",
-    "zh-CN": "输出",
-    "zh-TW": "輸出",
-    "es": "Salida",
-    "it": "Risultato",
-    "ja": "出力",
-    "pt-BR": "Saída"
-  },
   "Ready": {
     "en": "Ready",
-    "zh-CN": "已就绪",
+    "zh-CN": "准备就绪",
     "zh-TW": "已就緒",
     "es": "Listo",
     "it": "Pronto",
@@ -4244,14 +5134,17 @@
     "ja": "長さ",
     "pt-BR": "Comprimento"
   },
-  "Symbols": {
-    "en": "Symbols",
-    "zh-CN": "特殊符号",
-    "zh-TW": "符號",
-    "es": "Símbolos",
-    "it": "Simboli",
-    "ja": "記号",
-    "pt-BR": "Símbolos"
+  "PDF sessions are full. Save or close an open PDF tool, then retry.": {
+    "en": "PDF sessions are full. Save or close an open PDF tool, then retry.",
+    "zh-CN": "PDF 会话已满，请保存或关闭已打开的 PDF 工具后重试。",
+    "zh-TW": "PDF 工作階段已滿，請儲存或關閉已開啟的 PDF 工具後重試。",
+    "es": "Las sesiones PDF están llenas. Guarda o cierra una herramienta PDF y reintenta.",
+    "it": "Le sessioni PDF sono esaurite. Salva o chiudi uno strumento PDF e riprova.",
+    "ja": "PDF セッションが満杯です。PDF ツールを保存または閉じて再試行してください。",
+    "pt-BR": "As sessões PDF estão cheias. Salve ou feche uma ferramenta PDF e tente novamente.",
+    "ko": "PDF 세션이 가득 찼습니다. PDF 도구를 저장하거나 닫고 다시 시도하세요.",
+    "tr": "PDF oturumları dolu. Açık bir PDF aracını kaydedip kapatın ve yeniden deneyin.",
+    "az": "PDF sessiyaları doludur. Açıq PDF alətini saxlayın və ya bağlayıb yenidən sınayın."
   },
   "A TOTP store already exists. Unlock it with its dedicated password.": {
     "en": "A TOTP store already exists. Unlock it with its dedicated password.",
@@ -6572,7 +7465,7 @@
   },
   "Fast": {
     "en": "Fast",
-    "zh-CN": "快速"
+    "zh-CN": "快"
   },
   "Transferring image…": {
     "en": "Transferring image…",
@@ -6660,7 +7553,7 @@
   },
   "Exporting…": {
     "en": "Exporting…",
-    "zh-CN": "导出中…"
+    "zh-CN": "正在导出…"
   },
   "Export all ({0})": {
     "en": "Export all ({0})",
@@ -6738,15 +7631,6 @@
   "The crop may include canvas area outside the image; axes follow rotation": {
     "en": "The crop may include canvas area outside the image; axes follow rotation",
     "zh-CN": "可框选画布内的图片外区域，轴向随旋转"
-  },
-  "Resize": {
-    "en": "Resize",
-    "zh-CN": "缩放",
-    "zh-TW": "縮放",
-    "es": "Redimensionar",
-    "it": "Ridimensiona",
-    "ja": "サイズ変更",
-    "pt-BR": "Redimensionar"
   },
   "Match crop": {
     "en": "Match crop",
@@ -7102,18 +7986,6 @@
     "ja": "{0}は {1} 文字までに制限されています",
     "pt-BR": "{0} está limitado a {1} caracteres"
   },
-  "IPv6 ULA generator": {
-    "en": "IPv6 ULA generator",
-    "zh-CN": "IPv6 ULA 生成",
-    "zh-TW": "IPv6 ULA 產生",
-    "es": "Generador IPv6 ULA",
-    "it": "Generatore IPv6 ULA",
-    "ja": "IPv6 ULA 生成",
-    "pt-BR": "Gerador IPv6 ULA",
-    "ko": "IPv6 ULA 생성",
-    "tr": "IPv6 ULA oluşturucu",
-    "az": "IPv6 ULA generatoru"
-  },
   "Generate address blocks and assign consecutive subnets to your network.": {
     "en": "Generate address blocks and assign consecutive subnets to your network.",
     "zh-CN": "生成独立地址块，再为内网分配连续子网。"
@@ -7246,9 +8118,13 @@
     "en": "Updated JSON",
     "zh-CN": "对比 JSON"
   },
-  "Comparison results": {
-    "en": "Comparison results",
-    "zh-CN": "对比结果"
+  "Show inputs": {
+    "en": "Show inputs",
+    "zh-CN": "显示输入"
+  },
+  "Expand results": {
+    "en": "Expand results",
+    "zh-CN": "展开结果"
   },
   "Filter differences": {
     "en": "Filter differences",
@@ -7278,17 +8154,25 @@
     "en": "No differences in this category",
     "zh-CN": "此分类下没有差异"
   },
+  "Change": {
+    "en": "Change",
+    "zh-CN": "变更"
+  },
+  "Field path": {
+    "en": "Field path",
+    "zh-CN": "字段路径"
+  },
   "Original value": {
     "en": "Original value",
     "zh-CN": "原始值"
   },
-  "Absent": {
-    "en": "Absent",
-    "zh-CN": "不存在"
-  },
   "Updated value": {
     "en": "Updated value",
     "zh-CN": "对比值"
+  },
+  "Absent": {
+    "en": "Absent",
+    "zh-CN": "不存在"
   },
   "Modified": {
     "en": "Modified",
@@ -7706,10 +8590,6 @@
     "en": "No, show once",
     "zh-CN": "否，仅显示一次"
   },
-  "Name": {
-    "en": "Name",
-    "zh-CN": "名称"
-  },
   "Generated public key": {
     "en": "Generated public key",
     "zh-CN": "生成的公钥"
@@ -7859,10 +8739,6 @@
     "en": "Azərbaycan",
     "zh-CN": "Azərbaycan"
   },
-  "Repeat count": {
-    "en": "Repeat count",
-    "zh-CN": "重复次数"
-  },
   "Default copy language": {
     "en": "Default copy language",
     "zh-CN": "默认文案语言"
@@ -7891,6 +8767,122 @@
     "en": "Output is limited to 1,000,000 characters. Reduce the repeat count or content length.",
     "zh-CN": "输出最多 1,000,000 个字符，请减少重复次数或内容长度。"
   },
+  "Solar → Lunar": {
+    "en": "Solar → Lunar",
+    "zh-CN": "公历 → 农历"
+  },
+  "Lunar → Solar": {
+    "en": "Lunar → Solar",
+    "zh-CN": "农历 → 公历"
+  },
+  "Lunar data range": {
+    "en": "Lunar data range",
+    "zh-CN": "当前农历数据范围"
+  },
+  "Input parameters": {
+    "en": "Input parameters",
+    "zh-CN": "输入参数"
+  },
+  "Solar date": {
+    "en": "Solar date",
+    "zh-CN": "公历"
+  },
+  "Lunar date": {
+    "en": "Lunar date",
+    "zh-CN": "农历"
+  },
+  "Lunar month": {
+    "en": "Lunar month",
+    "zh-CN": "农历月份"
+  },
+  "This year has no leap month": {
+    "en": "This year has no leap month",
+    "zh-CN": "该年份没有闰月"
+  },
+  "Leap month {0}": {
+    "en": "Leap month {0}",
+    "zh-CN": "闰{0}"
+  },
+  "This year has a leap {0}, not the selected month": {
+    "en": "This year has a leap {0}, not the selected month",
+    "zh-CN": "该年闰{0}，当前月份不可选"
+  },
+  "No leap month in this year": {
+    "en": "No leap month in this year",
+    "zh-CN": "该年份无闰月"
+  },
+  "Only leap month {0} is available": {
+    "en": "Only leap month {0} is available",
+    "zh-CN": "仅闰{0}可选"
+  },
+  "Choose or enter a date to convert to the Chinese lunar calendar.": {
+    "en": "Choose or enter a date to convert to the Chinese lunar calendar.",
+    "zh-CN": "选择或输入日期，自动换算为中国农历。"
+  },
+  "Enter the lunar year, month and day. Select leap month only when applicable.": {
+    "en": "Enter the lunar year, month and day. Select leap month only when applicable.",
+    "zh-CN": "输入农历年月日；仅在该月为闰月时勾选。"
+  },
+  "Local auto convert": {
+    "en": "Local auto convert",
+    "zh-CN": "本地自动转换"
+  },
+  "Conversion result": {
+    "en": "Conversion result",
+    "zh-CN": "换算结果"
+  },
+  "Running": {
+    "en": "Running",
+    "zh-CN": "计时中"
+  },
+  "Idle": {
+    "en": "Idle",
+    "zh-CN": "等待输入"
+  },
+  "Lunar year": {
+    "en": "Lunar year",
+    "zh-CN": "农历年份"
+  },
+  "Leap ": {
+    "en": "Leap ",
+    "zh-CN": "闰"
+  },
+  "Lunar day": {
+    "en": "Lunar day",
+    "zh-CN": "农历日"
+  },
+  "Waiting for a valid date": {
+    "en": "Waiting for a valid date",
+    "zh-CN": "等待有效日期"
+  },
+  "See the same day in both calendars.": {
+    "en": "See the same day in both calendars.",
+    "zh-CN": "日期的两种表达，在这里相遇。"
+  },
+  "Convert this result back": {
+    "en": "Convert this result back",
+    "zh-CN": "以此结果反向转换"
+  },
+  "Raw data": {
+    "en": "Raw data",
+    "zh-CN": "原始数据"
+  },
+  "Input payload": {
+    "en": "Input payload",
+    "zh-CN": "输入载荷"
+  },
+  "Conversion response": {
+    "en": "Conversion response",
+    "zh-CN": "转换响应"
+  },
+  "Enter a valid solar date between 1900 and 2100.": {
+    "en": "Enter a valid solar date between 1900 and 2100.",
+    "zh-CN": "请输入 1900–2100 年间的有效公历日期。"
+  },
+  "Invalid lunar date. Check the year, month, day and leap month. Some months have only 29 days and not every year has a leap month.": {
+    "en": "Invalid lunar date. Check the year, month, day and leap month. Some months have only 29 days and not every year has a leap month.",
+    "zh-CN": "农历日期无效，请检查年份、月份、日期及闰月。并非每年都有闰月，部分月份只有 29 天。"
+  },
   "Markdown": {
     "en": "Markdown",
     "zh-CN": "Markdown",
@@ -7918,6 +8910,123 @@
   "Export self-contained HTML": {
     "en": "Export self-contained HTML",
     "zh-CN": "导出自包含 HTML"
+  },
+  "Expression": {
+    "en": "Expression",
+    "zh-CN": "表达式"
+  },
+  "Common functions and symbols": {
+    "en": "Common functions and symbols",
+    "zh-CN": "常用函数与符号"
+  },
+  "Insert {0}": {
+    "en": "Insert {0}",
+    "zh-CN": "插入 {0}"
+  },
+  "Significant digits must be an integer from 1 to 15.": {
+    "en": "Significant digits must be an integer from 1 to 15.",
+    "zh-CN": "有效数字须为 1 到 15 的整数。"
+  },
+  "Calculate anywhere on this page · Trigonometric functions use radians": {
+    "en": "Calculate anywhere on this page · Trigonometric functions use radians",
+    "zh-CN": "页面内计算 · 三角函数使用弧度"
+  },
+  "Trigonometric functions use radians": {
+    "en": "Trigonometric functions use radians",
+    "zh-CN": "三角函数使用弧度"
+  },
+  "Check the functions, operators, and parentheses in your expression.": {
+    "en": "Check the functions, operators, and parentheses in your expression.",
+    "zh-CN": "请检查表达式中的函数、运算符和括号。"
+  },
+  "Displayed with {0} significant digits": {
+    "en": "Displayed with {0} significant digits",
+    "zh-CN": "按 {0} 位有效数字显示"
+  },
+  "Expression ready. Calculate to see the result.": {
+    "en": "Expression ready. Calculate to see the result.",
+    "zh-CN": "表达式已就绪，点击计算查看结果。"
+  },
+  "Enter an expression or choose an example below.": {
+    "en": "Enter an expression or choose an example below.",
+    "zh-CN": "输入表达式，或选择下方示例开始。"
+  },
+  "Recent calculations": {
+    "en": "Recent calculations",
+    "zh-CN": "最近计算"
+  },
+  "Clear history": {
+    "en": "Clear history",
+    "zh-CN": "清除记录"
+  },
+  "Calculations from this session appear here. Click one to reuse it.": {
+    "en": "Calculations from this session appear here. Click one to reuse it.",
+    "zh-CN": "本次打开期间的计算会显示在这里，点击可再次使用。"
+  },
+  "Quick reference": {
+    "en": "Quick reference",
+    "zh-CN": "语法速查"
+  },
+  "Functions, constants, and operators": {
+    "en": "Functions, constants, and operators",
+    "zh-CN": "函数、常量与运算规则"
+  },
+  "Arithmetic": {
+    "en": "Arithmetic",
+    "zh-CN": "日期加减",
+    "zh-TW": "日期加減",
+    "es": "Aritmética",
+    "it": "Aritmetica",
+    "ja": "日時の加減算",
+    "pt-BR": "Aritmética"
+  },
+  "Power / remainder / factorial": {
+    "en": "Power / remainder / factorial",
+    "zh-CN": "幂 / 取余 / 阶乘"
+  },
+  "Implicit multiplication": {
+    "en": "Implicit multiplication",
+    "zh-CN": "隐式乘法"
+  },
+  "Constants": {
+    "en": "Constants",
+    "zh-CN": "常量"
+  },
+  "Scientific functions": {
+    "en": "Scientific functions",
+    "zh-CN": "科学函数"
+  },
+  "Functions with multiple arguments": {
+    "en": "Functions with multiple arguments",
+    "zh-CN": "多参数函数"
+  },
+  "Trigonometry (radians)": {
+    "en": "Trigonometry (radians)",
+    "zh-CN": "三角函数（弧度）"
+  },
+  "Hyperbolic functions": {
+    "en": "Hyperbolic functions",
+    "zh-CN": "双曲函数"
+  },
+  "Rounding and sign": {
+    "en": "Rounding and sign",
+    "zh-CN": "取整与符号"
+  },
+  "Functions require parentheses; log is base 10 and ln is the natural logarithm.": {
+    "en": "Functions require parentheses; log is base 10 and ln is the natural logarithm.",
+    "zh-CN": "函数需带括号；log 为常用对数，ln 为自然对数。"
+  },
+  "% means remainder. Implicit multiplication has the same precedence as * and is evaluated left to right. Factorials accept integers from 0 to 170.": {
+    "en": "% means remainder. Implicit multiplication has the same precedence as * and is evaluated left to right. Factorials accept integers from 0 to 170.",
+    "zh-CN": "% 表示取余；隐式乘法与 * 同级，按从左到右计算。阶乘仅支持 0–170 的整数。"
+  },
+  "Incorrect number of function arguments. See the quick reference.": {
+    "en": "Incorrect number of function arguments. See the quick reference.",
+    "zh-CN": "函数参数数量不正确，请参考语法速查。"
+  },
+  "Factorials accept integers from 0 to 170.": {
+    "en": "Factorials accept integers from 0 to 170.",
+    "zh-CN": "阶乘仅支持 0–170 的整数。"
   },
   "MD5 collision check": {
     "en": "MD5 collision check",
@@ -8203,6 +9312,62 @@
     "en": "Decrease",
     "zh-CN": "减少"
   },
+  "Enter or paste numbers, e.g. 1, 2, 3, 4, 5": {
+    "en": "Enter or paste numbers, e.g. 1, 2, 3, 4, 5",
+    "zh-CN": "输入或粘贴数字，例如：1, 2, 3, 4, 5"
+  },
+  "Separate numbers with commas, semicolons, spaces or newlines. Supports negative numbers, decimals and scientific notation, up to 100,000 values.": {
+    "en": "Separate numbers with commas, semicolons, spaces or newlines. Supports negative numbers, decimals and scientific notation, up to 100,000 values.",
+    "zh-CN": "支持逗号、分号、空格或换行分隔，可输入负数、小数和科学计数法，最多 100,000 个数值。"
+  },
+  "Calculates as you type": {
+    "en": "Calculates as you type",
+    "zh-CN": "输入后自动计算"
+  },
+  "Statistics results": {
+    "en": "Statistics results",
+    "zh-CN": "统计结果"
+  },
+  "Population variance uses n; sample variance uses n − 1. Sample variance and standard deviation require at least 2 values.": {
+    "en": "Population variance uses n; sample variance uses n − 1. Sample variance and standard deviation require at least 2 values.",
+    "zh-CN": "总体方差除以 n，样本方差除以 n − 1；样本不足 2 个时，样本方差和标准差不可用。"
+  },
+  "Start with a set of numbers": {
+    "en": "Start with a set of numbers",
+    "zh-CN": "从一组数字开始"
+  },
+  "Enter data to see the mean, median, variance and more.": {
+    "en": "Enter data to see the mean, median, variance and more.",
+    "zh-CN": "输入数据，即可查看平均值、中位数、方差等统计指标。"
+  },
+  "No mode": {
+    "en": "No mode",
+    "zh-CN": "无众数"
+  },
+  "Sum": {
+    "en": "Sum",
+    "zh-CN": "总和"
+  },
+  "Distribution": {
+    "en": "Distribution",
+    "zh-CN": "分布概览"
+  },
+  "Dispersion": {
+    "en": "Dispersion",
+    "zh-CN": "离散程度"
+  },
+  "Population variance": {
+    "en": "Population variance",
+    "zh-CN": "总体方差"
+  },
+  "Sample variance": {
+    "en": "Sample variance",
+    "zh-CN": "样本方差"
+  },
+  "Sample standard deviation": {
+    "en": "Sample standard deviation",
+    "zh-CN": "样本标准差"
+  },
   "Numeronym": {
     "en": "Numeronym",
     "zh-CN": "数字缩写",
@@ -8246,6 +9411,10 @@
   "Converted text": {
     "en": "Converted text",
     "zh-CN": "转换结果"
+  },
+  "Copy result": {
+    "en": "Copy result",
+    "zh-CN": "复制结果"
   },
   "Your converted text appears here as you type": {
     "en": "Your converted text appears here as you type",
@@ -8325,7 +9494,7 @@
   },
   "Weak": {
     "en": "Weak",
-    "zh-CN": "较弱"
+    "zh-CN": "弱"
   },
   "Fair": {
     "en": "Fair",
@@ -8333,11 +9502,23 @@
   },
   "Strong": {
     "en": "Strong",
-    "zh-CN": "较强"
+    "zh-CN": "强"
   },
   "Very strong": {
     "en": "Very strong",
     "zh-CN": "很强"
+  },
+  "PDF sessions are full. Save or close a page below, then retry. Your current files are preserved.": {
+    "en": "PDF sessions are full. Save or close a page below, then retry. Your current files are preserved.",
+    "zh-CN": "PDF 会话已满。请保存或关闭下列页面后重试；当前文件会保留。"
+  },
+  "Return to tool": {
+    "en": "Return to tool",
+    "zh-CN": "返回工具"
+  },
+  "Close and release": {
+    "en": "Close and release",
+    "zh-CN": "关闭并释放"
   },
   "Compression cleans metadata and thumbnails and rewrites structure. Scanned files may not shrink; output can be larger.": {
     "en": "Compression cleans metadata and thumbnails and rewrites structure. Scanned files may not shrink; output can be larger.",
@@ -8566,6 +9747,86 @@
   "The Sidecar is processing temporary files…": {
     "en": "The Sidecar is processing temporary files…",
     "zh-CN": "Sidecar 正在处理临时文件…"
+  },
+  "Two values, three perspectives": {
+    "en": "Two values, three perspectives",
+    "zh-CN": "两个数，三种百分比"
+  },
+  "Enter X and Y to calculate a percentage, proportion and change instantly.": {
+    "en": "Enter X and Y to calculate a percentage, proportion and change instantly.",
+    "zh-CN": "输入 X 和 Y，实时查看百分数值、占比与变化率。"
+  },
+  "Value X": {
+    "en": "Value X",
+    "zh-CN": "数值 X"
+  },
+  "The value or starting amount": {
+    "en": "The value or starting amount",
+    "zh-CN": "作为计算数值或变化前的值"
+  },
+  "Swap X and Y": {
+    "en": "Swap X and Y",
+    "zh-CN": "交换 X 与 Y"
+  },
+  "Value Y": {
+    "en": "Value Y",
+    "zh-CN": "数值 Y"
+  },
+  "The percentage, total or ending amount": {
+    "en": "The percentage, total or ending amount",
+    "zh-CN": "作为百分数、总量或变化后的值"
+  },
+  "Enter finite numbers. Negative values, decimals and scientific notation are supported.": {
+    "en": "Enter finite numbers. Negative values, decimals and scientific notation are supported.",
+    "zh-CN": "请输入有效的有限数值，支持负数、小数和科学计数法。"
+  },
+  "Enter both values to see the result": {
+    "en": "Enter both values to see the result",
+    "zh-CN": "输入两个数值后显示结果"
+  },
+  "No change": {
+    "en": "No change",
+    "zh-CN": "无变化"
+  },
+  "Percentage change uses the absolute value of X as its base. Significant digits only affect displayed results.": {
+    "en": "Percentage change uses the absolute value of X as its base. Significant digits only affect displayed results.",
+    "zh-CN": "变化率以 X 的绝对值为基数；有效数字仅影响结果显示。"
+  },
+  "Percentage of a value": {
+    "en": "Percentage of a value",
+    "zh-CN": "百分数值"
+  },
+  "What is Y% of X?": {
+    "en": "What is Y% of X?",
+    "zh-CN": "X 的 Y% 是多少？"
+  },
+  "Proportion": {
+    "en": "Proportion",
+    "zh-CN": "占比"
+  },
+  "What percent of Y is X?": {
+    "en": "What percent of Y is X?",
+    "zh-CN": "X 占 Y 的百分之几？"
+  },
+  "Percentage change": {
+    "en": "Percentage change",
+    "zh-CN": "变化率"
+  },
+  "What is the change from X to Y?": {
+    "en": "What is the change from X to Y?",
+    "zh-CN": "从 X 到 Y，变化了多少？"
+  },
+  "Proportion is undefined when Y is 0": {
+    "en": "Proportion is undefined when Y is 0",
+    "zh-CN": "Y 为 0，无法计算占比"
+  },
+  "Percentage change is undefined when X is 0": {
+    "en": "Percentage change is undefined when X is 0",
+    "zh-CN": "X 为 0，无法计算变化率"
+  },
+  "Result is outside the numeric range": {
+    "en": "Result is outside the numeric range",
+    "zh-CN": "结果超出数值范围"
   },
   "Find local TCP / UDP port owners on Windows, macOS, and Linux.": {
     "en": "Find local TCP / UDP port owners on Windows, macOS, and Linux.",
@@ -8943,6 +10204,50 @@
     "en": "{0} match(es)",
     "zh-CN": "{0} 处匹配"
   },
+  "Convert integers and Roman numerals in either direction. One value per line, automatically detected.": {
+    "en": "Convert integers and Roman numerals in either direction. One value per line, automatically detected.",
+    "zh-CN": "整数与罗马数字双向转换，每行一项，自动识别。"
+  },
+  "Conversion results": {
+    "en": "Conversion results",
+    "zh-CN": "换算结果"
+  },
+  "Copy successful results": {
+    "en": "Copy successful results",
+    "zh-CN": "复制成功结果"
+  },
+  "Line": {
+    "en": "Line",
+    "zh-CN": "行"
+  },
+  "Enter an integer from 1 to 3999": {
+    "en": "Enter an integer from 1 to 3999",
+    "zh-CN": "请输入 1–3999 的整数"
+  },
+  "Invalid Roman numeral. Use standard notation, e.g. IV or IX.": {
+    "en": "Invalid Roman numeral. Use standard notation, e.g. IV or IX.",
+    "zh-CN": "无效的罗马数字，请使用标准写法（如 IV、IX）"
+  },
+  "Enter a number or Roman numeral to see the result instantly.": {
+    "en": "Enter a number or Roman numeral to see the result instantly.",
+    "zh-CN": "输入数字或罗马数字，即时查看转换结果。"
+  },
+  "Converted": {
+    "en": "Converted",
+    "zh-CN": "转换成功"
+  },
+  "Invalid inputs": {
+    "en": "Invalid inputs",
+    "zh-CN": "无效输入"
+  },
+  "Symbol reference": {
+    "en": "Symbol reference",
+    "zh-CN": "符号速查"
+  },
+  "Mix numbers and lowercase numerals; blank lines are ignored.": {
+    "en": "Mix numbers and lowercase numerals; blank lines are ignored.",
+    "zh-CN": "支持混合输入与小写字母，自动忽略空行。"
+  },
   "Extract": {
     "en": "Extract",
     "zh-CN": "提取",
@@ -8951,15 +10256,6 @@
     "it": "Estrai",
     "ja": "抽出",
     "pt-BR": "Extrair"
-  },
-  "Arithmetic": {
-    "en": "Arithmetic",
-    "zh-CN": "日期加减",
-    "zh-TW": "日期加減",
-    "es": "Aritmética",
-    "it": "Aritmetica",
-    "ja": "日時の加減算",
-    "pt-BR": "Aritmética"
   },
   "Picker": {
     "en": "Picker",
@@ -8997,22 +10293,6 @@
     "ja": "重複削除",
     "pt-BR": "Remover duplicados"
   },
-  "Text and data": {
-    "en": "Text and data",
-    "zh-CN": "文本与数据"
-  },
-  "Documents": {
-    "en": "Documents",
-    "zh-CN": "文档",
-    "zh-TW": "文件",
-    "es": "Documentos",
-    "it": "Documenti",
-    "ja": "ドキュメント",
-    "pt-BR": "Documentos",
-    "ko": "문서",
-    "tr": "Belgeler",
-    "az": "Sənədlər"
-  },
   "Derive seed": {
     "en": "Derive seed",
     "zh-CN": "派生种子"
@@ -9048,6 +10328,58 @@
   "Checks syntax and checksum only, not account existence or ownership.": {
     "en": "Checks syntax and checksum only, not account existence or ownership.",
     "zh-CN": "仅校验格式和校验和，不验证账号存在或归属。"
+  },
+  "Result is outdated. Run again before copying.": {
+    "en": "Result is outdated. Run again before copying.",
+    "zh-CN": "结果已过期，请重新执行后复制。"
+  },
+  "Result matches the current parameters": {
+    "en": "Result matches the current parameters",
+    "zh-CN": "结果与当前参数一致"
+  },
+  "Valid IBAN": {
+    "en": "Valid IBAN",
+    "zh-CN": "IBAN 有效"
+  },
+  "Invalid IBAN": {
+    "en": "Invalid IBAN",
+    "zh-CN": "IBAN 无效"
+  },
+  "Country code": {
+    "en": "Country code",
+    "zh-CN": "国家代码"
+  },
+  "Length / expected length": {
+    "en": "Length / expected length",
+    "zh-CN": "长度 / 预期长度"
+  },
+  "Checksum": {
+    "en": "Checksum",
+    "zh-CN": "校验和"
+  },
+  "Passed": {
+    "en": "Passed",
+    "zh-CN": "通过"
+  },
+  "Failed": {
+    "en": "Failed",
+    "zh-CN": "未通过"
+  },
+  "Very weak": {
+    "en": "Very weak",
+    "zh-CN": "非常弱"
+  },
+  "Estimated guesses": {
+    "en": "Estimated guesses",
+    "zh-CN": "估算猜测次数"
+  },
+  "Use a longer, unique password. Avoid common words, repeated characters and personal information.": {
+    "en": "Use a longer, unique password. Avoid common words, repeated characters and personal information.",
+    "zh-CN": "建议使用更长且独一无二的密码，避免常见词、重复字符和个人信息。"
+  },
+  "Raw result": {
+    "en": "Raw result",
+    "zh-CN": "原始结果"
   },
   "Versions": {
     "en": "Versions",
@@ -9085,17 +10417,9 @@
     "en": "{0} invalid",
     "zh-CN": "{0} 个无效"
   },
-  "Minimum": {
-    "en": "Minimum",
-    "zh-CN": "最低版本"
-  },
   "Multiple versions have equal precedence": {
     "en": "Multiple versions have equal precedence",
     "zh-CN": "多个版本优先级相同"
-  },
-  "Maximum": {
-    "en": "Maximum",
-    "zh-CN": "最高版本"
   },
   "Highest matching": {
     "en": "Highest matching",
@@ -9209,10 +10533,6 @@
     "en": "Backup and restore",
     "zh-CN": "备份与恢复"
   },
-  "Data & diagnostics": {
-    "en": "Data & diagnostics",
-    "zh-CN": "数据与诊断"
-  },
   "Interface preferences": {
     "en": "Interface preferences",
     "zh-CN": "界面偏好"
@@ -9253,14 +10573,6 @@
     "en": "Follows the DBX host theme.",
     "zh-CN": "跟随 DBX 宿主主题。"
   },
-  "Dark": {
-    "en": "Dark",
-    "zh-CN": "深色"
-  },
-  "Light": {
-    "en": "Light",
-    "zh-CN": "浅色"
-  },
   "Reset interface": {
     "en": "Reset interface",
     "zh-CN": "恢复界面默认"
@@ -9280,6 +10592,10 @@
   "Open key vault": {
     "en": "Open key vault",
     "zh-CN": "打开密钥库"
+  },
+  "Preferences": {
+    "en": "Preferences",
+    "zh-CN": "偏好设置"
   },
   "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.": {
     "en": "Preferences export contains interface, shortcuts, favorites and auto-lock settings. Use the encrypted backup in “Backup and restore” for keys and TOTP.",
@@ -9309,9 +10625,13 @@
     "en": "Load into draft",
     "zh-CN": "载入草稿"
   },
-  "Clear preferences": {
-    "en": "Clear preferences",
-    "zh-CN": "清除偏好设置"
+  "Reset preferences": {
+    "en": "Reset preferences",
+    "zh-CN": "重置偏好设置"
+  },
+  "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.": {
+    "en": "Restore default settings and clear favorites and recents. Vault contents are kept. Click “Save changes” to apply.",
+    "zh-CN": "恢复默认设置，并清空收藏和最近记录；密钥库内容保留。点击“保存更改”后生效。"
   },
   "Plugin version": {
     "en": "Plugin version",
@@ -9365,10 +10685,6 @@
     "en": "Session content is not restored after closing the workbench. Spreadsheets retain cell values only. OCR models download at your request; processed content stays local.",
     "zh-CN": "工作台关闭后会话内容不会恢复。表格仅保留单元格值。OCR 模型由用户主动下载，处理内容保留在本机。"
   },
-  "Exports exclude keys, passwords, and tool inputs.": {
-    "en": "Exports exclude keys, passwords, and tool inputs.",
-    "zh-CN": "导出文件不包含密钥、口令或工具输入内容。"
-  },
   "Resolve conflicts before saving.": {
     "en": "Resolve conflicts before saving.",
     "zh-CN": "解决冲突后才能保存。"
@@ -9396,10 +10712,6 @@
     "ko": "저장하지 않은 변경 사항을 삭제할까요?",
     "tr": "Kaydedilmemiş değişiklikler silinsin mi?",
     "az": "Saxlanmamış dəyişikliklər ləğv edilsin?"
-  },
-  "Clear settings, favorites and recents? Vault contents will be kept.": {
-    "en": "Clear settings, favorites and recents? Vault contents will be kept.",
-    "zh-CN": "清除设置、收藏和最近记录？密钥库内容将保留。"
   },
   "Keep editing": {
     "en": "Keep editing",
@@ -9585,6 +10897,10 @@
     "en": "Open settings center",
     "zh-CN": "打开设置中心"
   },
+  "Run current tool primary action (confirm, calculate, etc.)": {
+    "en": "Run current tool primary action (confirm, calculate, etc.)",
+    "zh-CN": "执行当前工具主操作（确定 / 计算等）"
+  },
   "Navigation": {
     "en": "Navigation",
     "zh-CN": "导航"
@@ -9665,49 +10981,133 @@
     "en": "AES key",
     "zh-CN": "AES 密钥"
   },
-  "No local voices are available": {
-    "en": "No local voices are available",
-    "zh-CN": "没有可用的本地语音"
+  "Enter text and listen with a local system voice.": {
+    "en": "Enter text and listen with a local system voice.",
+    "zh-CN": "输入文本，使用系统本地语音朗读。"
   },
-  "Install a local voice pack in your system language and speech settings, then retry.": {
-    "en": "Install a local voice pack in your system language and speech settings, then retry.",
-    "zh-CN": "请在系统语言与语音设置中安装本地语音包，然后重试。"
+  "Local voices": {
+    "en": "Local voices",
+    "zh-CN": "本地语音"
+  },
+  "Text to read": {
+    "en": "Text to read",
+    "zh-CN": "朗读文本"
+  },
+  "Clear text": {
+    "en": "Clear text",
+    "zh-CN": "清空文本"
+  },
+  "Type or paste the text you want to hear…": {
+    "en": "Type or paste the text you want to hear…",
+    "zh-CN": "在这里输入或粘贴需要朗读的文字…"
+  },
+  "Stop playback to edit text": {
+    "en": "Stop playback to edit text",
+    "zh-CN": "停止后可编辑文本"
+  },
+  "Up to 10,000 characters": {
+    "en": "Up to 10,000 characters",
+    "zh-CN": "最多 10,000 字符"
+  },
+  "Voice settings": {
+    "en": "Voice settings",
+    "zh-CN": "语音设置"
   },
   "Voice": {
     "en": "Voice",
     "zh-CN": "语音"
   },
+  "No local voices are available": {
+    "en": "No local voices are available",
+    "zh-CN": "没有可用的本地语音"
+  },
+  "Speech synthesis is not supported in this environment.": {
+    "en": "Speech synthesis is not supported in this environment.",
+    "zh-CN": "当前环境不支持语音朗读。"
+  },
+  "Install a local voice pack in your system language and speech settings, then retry.": {
+    "en": "Install a local voice pack in your system language and speech settings, then retry.",
+    "zh-CN": "请在系统语言与语音设置中安装本地语音包，然后重试。"
+  },
   "Rate": {
     "en": "Rate",
     "zh-CN": "语速"
+  },
+  "Slow": {
+    "en": "Slow",
+    "zh-CN": "慢"
   },
   "Pitch": {
     "en": "Pitch",
     "zh-CN": "音高"
   },
-  "Read aloud": {
-    "en": "Read aloud",
-    "zh-CN": "文字朗读",
-    "zh-TW": "文字朗讀",
-    "es": "Leer en voz alta",
-    "it": "Leggi ad alta voce",
-    "ja": "読み上げ",
-    "pt-BR": "Ler em voz alta",
-    "ko": "소리 내어 읽기",
-    "tr": "Sesli oku",
-    "az": "Ucadan oxu"
+  "Low": {
+    "en": "Low",
+    "zh-CN": "低"
+  },
+  "High": {
+    "en": "High",
+    "zh-CN": "高"
+  },
+  "Volume": {
+    "en": "Volume",
+    "zh-CN": "体积"
+  },
+  "Voice and settings apply when you start reading.": {
+    "en": "Voice and settings apply when you start reading.",
+    "zh-CN": "语音与参数在下次开始朗读时生效。"
+  },
+  "Playback controls": {
+    "en": "Playback controls",
+    "zh-CN": "播放控制"
+  },
+  "Read again": {
+    "en": "Read again",
+    "zh-CN": "重新朗读"
+  },
+  "Start reading": {
+    "en": "Start reading",
+    "zh-CN": "开始朗读"
   },
   "Resume": {
     "en": "Resume",
     "zh-CN": "继续"
   },
+  "Pause": {
+    "en": "Pause",
+    "zh-CN": "暂停"
+  },
   "Stop": {
     "en": "Stop",
     "zh-CN": "停止"
   },
-  "Read aloud failed": {
-    "en": "Read aloud failed",
-    "zh-CN": "朗读失败"
+  "Reading progress": {
+    "en": "Reading progress",
+    "zh-CN": "朗读进度"
+  },
+  "Hello, and welcome to text to speech.\n\nThis sample lets you adjust the rate, pitch, and volume before starting playback.": {
+    "en": "Hello, and welcome to text to speech.\n\nThis sample lets you adjust the rate, pitch, and volume before starting playback.",
+    "zh-CN": "你好，欢迎使用文字朗读。\n\n这是一段示例文本，你可以调整语速、音高和音量，然后点击开始朗读。"
+  },
+  "Reading aloud": {
+    "en": "Reading aloud",
+    "zh-CN": "正在朗读"
+  },
+  "Paused": {
+    "en": "Paused",
+    "zh-CN": "已暂停"
+  },
+  "Finished reading": {
+    "en": "Finished reading",
+    "zh-CN": "朗读完成"
+  },
+  "Reading failed. Check your system speech settings and retry.": {
+    "en": "Reading failed. Check your system speech settings and retry.",
+    "zh-CN": "朗读失败，请检查系统语音设置后重试。"
+  },
+  "Give your words a voice.\n\nEnter something to listen to, choose a voice, and adjust the speed and pitch to make reading easier.": {
+    "en": "Give your words a voice.\n\nEnter something to listen to, choose a voice, and adjust the speed and pitch to make reading easier.",
+    "zh-CN": "给文字一个声音。\n\n在这里输入想听的内容，选择喜欢的语音，调整语速与音高，让阅读变得更轻松。"
   },
   "Open spreadsheet": {
     "en": "Open spreadsheet",
@@ -9885,6 +11285,86 @@
     "en": "Words: each CJK character, or a Latin word.",
     "zh-CN": "词：汉字按字计，英文按单词计。"
   },
+  "Stopwatch": {
+    "en": "Stopwatch",
+    "zh-CN": "秒表"
+  },
+  "Total elapsed": {
+    "en": "Total elapsed",
+    "zh-CN": "总用时"
+  },
+  "Current lap": {
+    "en": "Current lap",
+    "zh-CN": "当前分圈"
+  },
+  "Resume timer": {
+    "en": "Resume timer",
+    "zh-CN": "继续计时"
+  },
+  "Start timer": {
+    "en": "Start timer",
+    "zh-CN": "开始计时"
+  },
+  "Lap": {
+    "en": "Lap",
+    "zh-CN": "计次"
+  },
+  "Sample records · Reset to start a new session": {
+    "en": "Sample records · Reset to start a new session",
+    "zh-CN": "示例记录 · 点击重置开始新的计时"
+  },
+  "Completed laps": {
+    "en": "Completed laps",
+    "zh-CN": "已完成分圈"
+  },
+  "Fastest lap": {
+    "en": "Fastest lap",
+    "zh-CN": "最快分圈"
+  },
+  "Average lap": {
+    "en": "Average lap",
+    "zh-CN": "平均分圈"
+  },
+  "Slowest lap": {
+    "en": "Slowest lap",
+    "zh-CN": "最慢分圈"
+  },
+  "Lap records": {
+    "en": "Lap records",
+    "zh-CN": "计次记录"
+  },
+  "Scroll down to see more laps": {
+    "en": "Scroll down to see more laps",
+    "zh-CN": "向下滚动查看更多记录"
+  },
+  "Scrollable lap records": {
+    "en": "Scrollable lap records",
+    "zh-CN": "可滚动的计次记录"
+  },
+  "Lap number": {
+    "en": "Lap number",
+    "zh-CN": "圈次"
+  },
+  "Lap time": {
+    "en": "Lap time",
+    "zh-CN": "分圈用时"
+  },
+  "Cumulative time": {
+    "en": "Cumulative time",
+    "zh-CN": "累计用时"
+  },
+  "Fastest": {
+    "en": "Fastest",
+    "zh-CN": "最快"
+  },
+  "No laps yet": {
+    "en": "No laps yet",
+    "zh-CN": "还没有计次记录"
+  },
+  "Start the timer, then click Lap to record each interval.": {
+    "en": "Start the timer, then click Lap to record each interval.",
+    "zh-CN": "开始计时后，点击「计次」记录每一圈用时。"
+  },
   "Task manager": {
     "en": "Task manager",
     "zh-CN": "任务管理"
@@ -9905,9 +11385,17 @@
     "en": "Confirm clear records",
     "zh-CN": "确认清除记录"
   },
-  "Return to tool": {
-    "en": "Return to tool",
-    "zh-CN": "返回工具"
+  "PDF sessions": {
+    "en": "PDF sessions",
+    "zh-CN": "PDF 会话"
+  },
+  "Result not saved": {
+    "en": "Result not saved",
+    "zh-CN": "结果尚未保存"
+  },
+  "Source files can be read again": {
+    "en": "Source files can be read again",
+    "zh-CN": "可重新读取原文件"
   },
   "Processing timed out. Retry or choose a smaller file.": {
     "en": "Processing timed out. Retry or choose a smaller file.",
@@ -9921,13 +11409,13 @@
     "en": "Save failed. The result was preserved.",
     "zh-CN": "保存失败，结果已保留。"
   },
+  "Could not release the session. Retry; your content was preserved.": {
+    "en": "Could not release the session. Retry; your content was preserved.",
+    "zh-CN": "释放失败，请重试。内容已保留。"
+  },
   "Queued": {
     "en": "Queued",
     "zh-CN": "排队中"
-  },
-  "Completed": {
-    "en": "Completed",
-    "zh-CN": "已完成"
   },
   "Failed; return to the tool for details": {
     "en": "Failed; return to the tool for details",
@@ -9965,6 +11453,82 @@
     "en": "Rendering pages…",
     "zh-CN": "渲染页面…"
   },
+  "Enter a temperature to convert between four scales instantly.": {
+    "en": "Enter a temperature to convert between four scales instantly.",
+    "zh-CN": "输入温度，实时查看四种温标的换算结果。"
+  },
+  "Temperature input": {
+    "en": "Temperature input",
+    "zh-CN": "温度输入"
+  },
+  "Temperature value": {
+    "en": "Temperature value",
+    "zh-CN": "温度数值"
+  },
+  "Input scale": {
+    "en": "Input scale",
+    "zh-CN": "输入温标"
+  },
+  "Quick presets": {
+    "en": "Quick presets",
+    "zh-CN": "常用温度"
+  },
+  "Freezing": {
+    "en": "Freezing",
+    "zh-CN": "冰点"
+  },
+  "Room": {
+    "en": "Room",
+    "zh-CN": "室温"
+  },
+  "Boiling": {
+    "en": "Boiling",
+    "zh-CN": "沸点"
+  },
+  "Absolute zero": {
+    "en": "Absolute zero",
+    "zh-CN": "绝对零度"
+  },
+  "Minimum temperature": {
+    "en": "Minimum temperature",
+    "zh-CN": "最低温度"
+  },
+  "Water reference points assume standard atmospheric pressure.": {
+    "en": "Water reference points assume standard atmospheric pressure.",
+    "zh-CN": "水的冰点与沸点以标准大气压为参考。"
+  },
+  "Enter a temperature to see the results.": {
+    "en": "Enter a temperature to see the results.",
+    "zh-CN": "输入温度数值后，结果将自动显示。"
+  },
+  "Celsius": {
+    "en": "Celsius",
+    "zh-CN": "摄氏度"
+  },
+  "Fahrenheit": {
+    "en": "Fahrenheit",
+    "zh-CN": "华氏度"
+  },
+  "Kelvin": {
+    "en": "Kelvin",
+    "zh-CN": "开尔文"
+  },
+  "Rankine": {
+    "en": "Rankine",
+    "zh-CN": "兰金度"
+  },
+  "Enter a valid temperature.": {
+    "en": "Enter a valid temperature.",
+    "zh-CN": "请输入有效的温度数值。"
+  },
+  "Temperature cannot be below absolute zero: ": {
+    "en": "Temperature cannot be below absolute zero: ",
+    "zh-CN": "温度不能低于绝对零度："
+  },
+  "Value is too large. Enter a smaller temperature.": {
+    "en": "Value is too large. Enter a smaller temperature.",
+    "zh-CN": "数值过大，请输入较小的温度。"
+  },
   "Text operation groups": {
     "en": "Text operation groups",
     "zh-CN": "文本处理分类"
@@ -9996,6 +11560,10 @@
   "First only": {
     "en": "First only",
     "zh-CN": "仅首次"
+  },
+  "Start": {
+    "en": "Start",
+    "zh-CN": "起始序号"
   },
   "Zero-pad width": {
     "en": "Zero-pad width",
@@ -10629,6 +12197,186 @@
     "en": "Namespace must be a valid UUID",
     "zh-CN": "命名空间必须是有效的 UUID"
   },
+  "Conversion settings": {
+    "en": "Conversion settings",
+    "zh-CN": "换算设置"
+  },
+  "Enter a value, e.g. 1024 or 1e3": {
+    "en": "Enter a value, e.g. 1024 or 1e3",
+    "zh-CN": "输入数值，如 1024 或 1e3"
+  },
+  "Source unit": {
+    "en": "Source unit",
+    "zh-CN": "来源单位"
+  },
+  "Swap units": {
+    "en": "Swap units",
+    "zh-CN": "交换单位"
+  },
+  "Target unit": {
+    "en": "Target unit",
+    "zh-CN": "目标单位"
+  },
+  "Awaiting input": {
+    "en": "Awaiting input",
+    "zh-CN": "等待输入"
+  },
+  "Conversion rate": {
+    "en": "Conversion rate",
+    "zh-CN": "换算关系"
+  },
+  "kB, MB, etc. use decimal (1000); KiB, MiB, etc. use binary (1024).": {
+    "en": "kB, MB, etc. use decimal (1000); KiB, MiB, etc. use binary (1024).",
+    "zh-CN": "kB、MB 等使用十进制（1000）；KiB、MiB 等使用二进制（1024）。"
+  },
+  "Unit comparison": {
+    "en": "Unit comparison",
+    "zh-CN": "同类单位对照"
+  },
+  "Area": {
+    "en": "Area",
+    "zh-CN": "面积"
+  },
+  "Mass": {
+    "en": "Mass",
+    "zh-CN": "质量"
+  },
+  "Speed": {
+    "en": "Speed",
+    "zh-CN": "速度"
+  },
+  "Data storage": {
+    "en": "Data storage",
+    "zh-CN": "数据存储"
+  },
+  "Metre": {
+    "en": "Metre",
+    "zh-CN": "米"
+  },
+  "Kilometre": {
+    "en": "Kilometre",
+    "zh-CN": "千米"
+  },
+  "Centimetre": {
+    "en": "Centimetre",
+    "zh-CN": "厘米"
+  },
+  "Millimetre": {
+    "en": "Millimetre",
+    "zh-CN": "毫米"
+  },
+  "Inch": {
+    "en": "Inch",
+    "zh-CN": "英寸"
+  },
+  "Foot": {
+    "en": "Foot",
+    "zh-CN": "英尺"
+  },
+  "Yard": {
+    "en": "Yard",
+    "zh-CN": "码"
+  },
+  "Mile": {
+    "en": "Mile",
+    "zh-CN": "英里"
+  },
+  "Square metre": {
+    "en": "Square metre",
+    "zh-CN": "平方米"
+  },
+  "Square kilometre": {
+    "en": "Square kilometre",
+    "zh-CN": "平方千米"
+  },
+  "Square centimetre": {
+    "en": "Square centimetre",
+    "zh-CN": "平方厘米"
+  },
+  "Hectare": {
+    "en": "Hectare",
+    "zh-CN": "公顷"
+  },
+  "Acre": {
+    "en": "Acre",
+    "zh-CN": "英亩"
+  },
+  "Square foot": {
+    "en": "Square foot",
+    "zh-CN": "平方英尺"
+  },
+  "Litre": {
+    "en": "Litre",
+    "zh-CN": "升"
+  },
+  "Millilitre": {
+    "en": "Millilitre",
+    "zh-CN": "毫升"
+  },
+  "Cubic metre": {
+    "en": "Cubic metre",
+    "zh-CN": "立方米"
+  },
+  "US gallon": {
+    "en": "US gallon",
+    "zh-CN": "美制加仑"
+  },
+  "US fluid ounce": {
+    "en": "US fluid ounce",
+    "zh-CN": "美制液量盎司"
+  },
+  "Kilogram": {
+    "en": "Kilogram",
+    "zh-CN": "千克"
+  },
+  "Gram": {
+    "en": "Gram",
+    "zh-CN": "克"
+  },
+  "Milligram": {
+    "en": "Milligram",
+    "zh-CN": "毫克"
+  },
+  "Tonne": {
+    "en": "Tonne",
+    "zh-CN": "吨"
+  },
+  "Pound": {
+    "en": "Pound",
+    "zh-CN": "磅"
+  },
+  "Ounce": {
+    "en": "Ounce",
+    "zh-CN": "盎司"
+  },
+  "Metres per second": {
+    "en": "Metres per second",
+    "zh-CN": "米/秒"
+  },
+  "Kilometres per hour": {
+    "en": "Kilometres per hour",
+    "zh-CN": "千米/时"
+  },
+  "Miles per hour": {
+    "en": "Miles per hour",
+    "zh-CN": "英里/时"
+  },
+  "Knot": {
+    "en": "Knot",
+    "zh-CN": "节"
+  },
+  "Byte": {
+    "en": "Byte",
+    "zh-CN": "字节"
+  },
+  "Bit": {
+    "en": "Bit",
+    "zh-CN": "比特"
+  },
+  "Significant digits must be an integer from 1 to 15": {
+    "en": "Significant digits must be an integer from 1 to 15",
+    "zh-CN": "有效数字须为 1 到 15 的整数"
+  },
   "Create key vault": {
     "en": "Create key vault",
     "zh-CN": "创建密钥库"
@@ -10660,6 +12408,62 @@
   "Create and continue": {
     "en": "Create and continue",
     "zh-CN": "创建并继续"
+  },
+  "Extract links from plain text, HTML, or Markdown.": {
+    "en": "Extract links from plain text, HTML, or Markdown.",
+    "zh-CN": "从纯文本、HTML 或 Markdown 中提取链接。"
+  },
+  "Live": {
+    "en": "Live",
+    "zh-CN": "实时更新"
+  },
+  "Extraction options": {
+    "en": "Extraction options",
+    "zh-CN": "提取选项"
+  },
+  "Remove duplicates": {
+    "en": "Remove duplicates",
+    "zh-CN": "自动去重"
+  },
+  "One link per line": {
+    "en": "One link per line",
+    "zh-CN": "每行一个链接"
+  },
+  "Query parameters and fragments (#) will be removed.": {
+    "en": "Query parameters and fragments (#) will be removed.",
+    "zh-CN": "将移除查询参数和片段标识（#）。"
+  },
+  "Paste text containing URLs…": {
+    "en": "Paste text containing URLs…",
+    "zh-CN": "粘贴包含 URL 的文本…"
+  },
+  "Protocols · Domains · IPs": {
+    "en": "Protocols · Domains · IPs",
+    "zh-CN": "多协议 · 域名 · IP"
+  },
+  "Extracted links": {
+    "en": "Extracted links",
+    "zh-CN": "提取结果"
+  },
+  "No links found": {
+    "en": "No links found",
+    "zh-CN": "未找到链接"
+  },
+  "Check that the text contains valid URLs.": {
+    "en": "Check that the text contains valid URLs.",
+    "zh-CN": "请检查文本中是否包含有效的 URL。"
+  },
+  "Paste text to see extracted links here automatically.": {
+    "en": "Paste text to see extracted links here automatically.",
+    "zh-CN": "粘贴文本后，提取结果会自动显示在这里。"
+  },
+  "Links": {
+    "en": "Links",
+    "zh-CN": "链接"
+  },
+  "Supports HTTP(S), FTP(S), SFTP, WS(S), SSH, file, custom scheme:// links, and mailto, tel, sms, magnet, urn, geo, news, bitcoin. Bare domains, IPs, and // links default to HTTPS; links without a hostname are grouped by scheme.": {
+    "en": "Supports HTTP(S), FTP(S), SFTP, WS(S), SSH, file, custom scheme:// links, and mailto, tel, sms, magnet, urn, geo, news, bitcoin. Bare domains, IPs, and // links default to HTTPS; links without a hostname are grouped by scheme.",
+    "zh-CN": "支持 HTTP(S)、FTP(S)、SFTP、WS(S)、SSH、file、自定义 scheme:// 链接，以及 mailto、tel、sms、magnet、urn、geo、news、bitcoin。裸域名、IP 和 // 开头的链接默认补全为 HTTPS；无主机名时按协议分组。"
   },
   "URL or query string": {
     "en": "URL or query string",
@@ -10885,10 +12689,6 @@
     "en": "Grid",
     "zh-CN": "网格"
   },
-  "Data input": {
-    "en": "Data input",
-    "zh-CN": "数据输入"
-  },
   "CSV or JSON data": {
     "en": "CSV or JSON data",
     "zh-CN": "CSV 或 JSON 数据"
@@ -10900,10 +12700,6 @@
   "Chart preview": {
     "en": "Chart preview",
     "zh-CN": "图表预览"
-  },
-  "Live": {
-    "en": "Live",
-    "zh-CN": "实时更新"
   },
   "Updates as data or settings change": {
     "en": "Updates as data or settings change",
@@ -10944,6 +12740,10 @@
   "Parse number": {
     "en": "Parse number",
     "zh-CN": "解析号码"
+  },
+  "Use example": {
+    "en": "Use example",
+    "zh-CN": "使用示例"
   },
   "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.": {
     "en": "Supports spaces, dashes, parentheses, and international numbers starting with + or 00.",
@@ -11101,10 +12901,6 @@
     "en": "Key down",
     "zh-CN": "按下"
   },
-  "None": {
-    "en": "None",
-    "zh-CN": "无"
-  },
   "on": {
     "en": "on",
     "zh-CN": "开启"
@@ -11225,10 +13021,6 @@
     "en": "Save the current vault and TOTP accounts as a .dbxvault file.",
     "zh-CN": "把当前密钥库和 TOTP 保存为 .dbxvault 文件。"
   },
-  "Current master password (for export)": {
-    "en": "Current master password (for export)",
-    "zh-CN": "当前主密码（用于导出）"
-  },
   "Import encrypted backup": {
     "en": "Import encrypted backup",
     "zh-CN": "导入加密备份"
@@ -11240,6 +13032,10 @@
   "Choose backup file": {
     "en": "Choose backup file",
     "zh-CN": "选择备份文件"
+  },
+  "Current master password (for export)": {
+    "en": "Current master password (for export)",
+    "zh-CN": "当前主密码（用于导出）"
   },
   "Verify and preview import": {
     "en": "Verify and preview import",
@@ -11668,6 +13464,18 @@
     "ko": "보안",
     "tr": "Güvenlik",
     "az": "Təhlükəsizlik"
+  },
+  "Documents": {
+    "en": "Documents",
+    "zh-CN": "文档",
+    "zh-TW": "文件",
+    "es": "Documentos",
+    "it": "Documenti",
+    "ja": "ドキュメント",
+    "pt-BR": "Documentos",
+    "ko": "문서",
+    "tr": "Belgeler",
+    "az": "Sənədlər"
   },
   "JSON workbench": {
     "en": "JSON workbench",
@@ -13877,6 +15685,18 @@
     "tr": "Yerel araç: MAC adresi oluşturucu",
     "az": "Yerli alət: MAC ünvan generatoru"
   },
+  "IPv6 ULA generator": {
+    "en": "IPv6 ULA generator",
+    "zh-CN": "IPv6 ULA 生成",
+    "zh-TW": "IPv6 ULA 產生",
+    "es": "Generador IPv6 ULA",
+    "it": "Generatore IPv6 ULA",
+    "ja": "IPv6 ULA 生成",
+    "pt-BR": "Gerador IPv6 ULA",
+    "ko": "IPv6 ULA 생성",
+    "tr": "IPv6 ULA oluşturucu",
+    "az": "IPv6 ULA generatoru"
+  },
   "Generate private IPv6 prefixes": {
     "en": "Generate private IPv6 prefixes",
     "zh-CN": "生成私有 IPv6 ULA 前缀",
@@ -14249,6 +16069,18 @@
     "tr": "Yerel araç: BIP39 anımsatıcı",
     "az": "Yerli alət: BIP39 yaddaş ifadəsi"
   },
+  "Figlet banner": {
+    "en": "Figlet banner",
+    "zh-CN": "Figlet 字符横幅",
+    "zh-TW": "Figlet 字元橫幅",
+    "es": "Banner Figlet",
+    "it": "Banner di testo Figlet",
+    "ja": "Figlet 文字バナー",
+    "pt-BR": "Faixa de texto Figlet",
+    "ko": "Figlet 문자 배너",
+    "tr": "Figlet metin afişi",
+    "az": "Figlet mətn banneri"
+  },
   "Render ASCII banners with bundled Figlet fonts": {
     "en": "Render ASCII banners with bundled Figlet fonts",
     "zh-CN": "使用内置 Figlet 字体生成多行 ASCII 艺术字",
@@ -14272,6 +16104,18 @@
     "ko": "로컬 도구: 숫자 약어",
     "tr": "Yerel araç: Sayısal kısaltma",
     "az": "Yerli alət: Rəqəmli ixtisar"
+  },
+  "English singular and plural": {
+    "en": "English singular and plural",
+    "zh-CN": "英文单复数转换",
+    "zh-TW": "英文單複數轉換",
+    "es": "Singular y plural en inglés",
+    "it": "Singolare e plurale inglese",
+    "ja": "英語の単数形と複数形",
+    "pt-BR": "Singular e plural em inglês",
+    "ko": "영어 단수 및 복수",
+    "tr": "İngilizce tekil ve çoğul",
+    "az": "İngilis dilində tək və cəm"
   },
   "Convert English singular and plural nouns including irregular forms": {
     "en": "Convert English singular and plural nouns including irregular forms",
@@ -14500,6 +16344,18 @@
     "ko": "로컬 도구: GIF 프레임 편집",
     "tr": "Yerel araç: GIF kare düzenleyici",
     "az": "Yerli alət: GIF kadr redaktoru"
+  },
+  "Read aloud": {
+    "en": "Read aloud",
+    "zh-CN": "文字朗读",
+    "zh-TW": "文字朗讀",
+    "es": "Leer en voz alta",
+    "it": "Leggi ad alta voce",
+    "ja": "読み上げ",
+    "pt-BR": "Ler em voz alta",
+    "ko": "소리 내어 읽기",
+    "tr": "Sesli oku",
+    "az": "Ucadan oxu"
   },
   "Read text using local voices": {
     "en": "Read text using local voices",
