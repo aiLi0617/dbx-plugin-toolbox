@@ -156,7 +156,7 @@
       </section>
       <article><strong>{t("图片预览", "Image preview")}{decodedMime ? ` · ${decodedMime}` : ""}</strong><div class="preview checker">{#if outputUrl}<img src={outputUrl} alt={t("Base64 解码图片", "Base64 decoded image")}/>{:else}<span class="hint">{t("转换后将在此处显示", "The decoded image will appear here")}</span>{/if}</div></article>
     </div>
-  {:else if !file}<label class="drop" ondragover={(event)=>event.preventDefault()} ondrop={onDrop}><input type="file" accept="image/*" onchange={onFile}/><strong>{t("选择或拖入图片", "Choose or drop an image")}</strong><span>{t("全部处理都在本地完成", "All processing stays local")}</span></label>
+  {:else if !file}<label class="drop file-button" ondragover={(event)=>event.preventDefault()} ondrop={onDrop}><input type="file" accept="image/*" onchange={onFile}/><strong>{t("选择或拖入图片", "Choose or drop an image")}</strong><span>{t("全部处理都在本地完成", "All processing stays local")}</span></label>
   {:else}
     <div class="workspace" class:base64-workspace={mode === "base64"}>
       <aside>

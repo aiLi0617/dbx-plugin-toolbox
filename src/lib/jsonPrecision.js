@@ -1,8 +1,22 @@
-import { LosslessNumber, isSafeNumber } from "lossless-json";
+import { LosslessNumber, isSafeNumber, compareLosslessNumber } from "lossless-json";
 import { localize, localizeError, L } from "./i18n.js";
 
 // Use class identity, never a user-controlled `isLosslessNumber` property.
 export function isLosslessNumber(value) { return value instanceof LosslessNumber; }
+
+// The library comparator parses exponents as JS numbers. Normalize the power
+// with BigInt before comparing coefficients, including powers above 2^53.
+export function losslessNumbersEqual(a, b) {
+  const normalized = (number) => {
+    const [, sign, whole, fraction = "", exponent = "0"] = String(number).match(/^(-?)(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+    const digits = (whole + fraction).replace(/^0+/, "");
+    if (!digits) return { coefficient: new LosslessNumber("0"), power: 0n };
+    const trimmed = digits.replace(/0+$/, "");
+    return { coefficient: new LosslessNumber(sign + trimmed), power: BigInt(exponent) - BigInt(fraction.length) + BigInt(digits.length - trimmed.length) };
+  };
+  const x = normalized(a), y = normalized(b);
+  return x.power === y.power && compareLosslessNumber(x.coefficient, y.coefficient) === 0;
+}
 
 function numberMarker(serialized) {
   let prefix = "__DBX_RAW_NUMBER__";

@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { inspectHostIntegration } from '../src/lib/hostIntegrationProbe.js';
+const manifest=JSON.parse(fs.readFileSync(new URL('../manifest.json',import.meta.url),'utf8'));
+const fixture={context:{result:{columns:['sample'],rows:[[1]],truncated:false}},onContext(){},sendBinary(){},readAssetUrl(){}};
+const probe=inspectHostIntegration(fixture);
+assert.equal(probe.resultSnapshotPresent,true);
+assert.equal(probe.resultRowCount,1);
+assert.ok(!JSON.stringify(probe).includes('sample'));
+console.log(JSON.stringify({mode:'contract-fixture',contributions:manifest.contributions.map(({type})=>type),permissions:manifest.permissions,probe,desktopVerification:'pending'},null,2));

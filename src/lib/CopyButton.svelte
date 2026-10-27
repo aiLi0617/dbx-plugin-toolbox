@@ -1,6 +1,7 @@
 <script>
   import { chrome, L, pick } from "./i18n.js";
   import { copyText } from "./clipboard.js";
+  import { themedTooltip as tooltip } from "./themedTooltip.js";
 
   let {
     locale = "zh-CN",
@@ -9,6 +10,8 @@
     labelZh = "复制",
     labelEn = "Copy",
     label = null,
+    themedTooltip = false,
+    disabled = false,
   } = $props();
 
   let copied = $state(false);
@@ -21,7 +24,7 @@
   const title = $derived(copied ? pick(locale, chrome.copied) : labelText);
 
   async function copy() {
-    if ((!text && !getText) || copying) return;
+    if (disabled || (!text && !getText) || copying) return;
     failed = false;
     copying = true;
     try {
@@ -43,9 +46,10 @@
 
 <button
   class="dbx-btn dbx-btn--ghost copy-btn"
-  disabled={(!text && !getText) || copying}
+  disabled={disabled || (!text && !getText) || copying}
   onclick={copy}
-  title={title}
+  title={themedTooltip ? undefined : title}
+  use:tooltip={themedTooltip ? title : ""}
   aria-label={title}
   type="button"
 >

@@ -57,7 +57,10 @@
     <button class="dbx-btn" type="button" onclick={swap} disabled={pending || Boolean(result.error)}>{t("交换并使用结果", "Swap and use result")}</button>
     {#if !shortcut}<label class="field"><span>{t("输出格式", "Output format")}</span><Select bind:value={to} options={DATA_FORMATS} /></label>{/if}
   </div>
-  <p class="dbx-hint">{t("CSV/TSV 按首行作为列名，值按文本读取；NDJSON 每行是一个 JSON 值。CSV/TSV 嵌套值输出为 JSON 文本；XML 使用 @_ 属性，多个顶层字段包在 root 中，数组包在 root/item 中。跨格式不保证保留注释。", "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.")}</p>
+  <details class="format-hint">
+    <summary>{t("格式说明", "Format notes")}</summary>
+    <p>{t("CSV/TSV 按首行作为列名，值按文本读取；NDJSON 每行是一个 JSON 值。CSV/TSV 嵌套值输出为 JSON 文本；XML 使用 @_ 属性，多个顶层字段包在 root 中，数组包在 root/item 中。跨格式不保证保留注释。", "CSV/TSV use the first row as column names and read values as text; NDJSON contains one JSON value per line. Nested CSV/TSV values become JSON text. XML uses @_ attributes, root for multiple top-level fields, and root/item for arrays. Cross-format conversion may discard comments.")}</p>
+  </details>
   <IoSplit
     {locale}
     bind:input
@@ -77,4 +80,8 @@
   .format-route { display: inline-flex; align-items: center; gap: 9px; min-height: 32px; padding: 0 11px; border: 1px solid var(--color-border); border-radius: 7px; background: var(--color-card); font-size: 12px; }
   .format-route span { color: var(--color-muted-foreground); }
   p { margin: 0; }
+  .format-hint { align-self: flex-start; max-width: min(100%, 760px); color: var(--color-muted-foreground); font-size: 11px; line-height: 1.55; }
+  .format-hint summary { width: fit-content; cursor: pointer; color: var(--color-muted-foreground); user-select: none; }
+  .format-hint summary::marker { color: var(--color-muted-foreground); }
+  .format-hint p { margin-top: 6px; padding: 8px 10px; border: 1px solid var(--color-border); border-radius: 7px; background: var(--color-card); }
 </style>

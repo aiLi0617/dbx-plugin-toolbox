@@ -6,7 +6,7 @@
   import { INPUT_LIMITS } from "./inputLimits.js";
   import { regexSegments } from "./tools/text.js";
 
-  let { locale = "zh-CN" } = $props();
+  let { locale = "zh-CN", initialOptions = {} } = $props();
 
   const t = (zh, en) => pick(locale, zh, en);
 
@@ -14,6 +14,7 @@
   let flags = $state("g");
   let input = $state("");
   let replacement = $state("");
+  $effect(() => { if (initialOptions.pattern !== undefined) { pattern = initialOptions.pattern; flags = initialOptions.flags || 'g'; input = initialOptions.input || ''; } });
   /** @type {"match" | "replace"} */
   let resultPane = $state("match");
 

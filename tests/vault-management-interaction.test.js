@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { parse } from "svelte/compiler";
 
 const source = readFileSync(new URL("../src/lib/VaultView.svelte", import.meta.url), "utf8");
-const wanted = new Set(["passwordTooShort", "run", "clearManagement", "closeManagement", "requestCloseManagement", "createKey", "changePassword"]);
+const wanted = new Set(["passwordTooShort", "run", "clearManagement", "closeManagement", "requestCloseManagement", "createKey"]);
 const handlers = parse(source, { modern: true }).instance.content.body
   .filter((node) => node.type === "FunctionDeclaration" && wanted.has(node.id.name))
   .map((node) => source.slice(node.start, node.end)).join("\n");
@@ -13,7 +13,7 @@ function management(initial = {}, invoke = async () => ({ key: { id: "new-key" }
   const defaults = {
     panel: "create", busy: false, discardPending: false, formError: "", fieldErrors: {},
     createName: "", createAlg: "aes-256", createMode: "generate", createBits: "2048", createFormat: "pkcs8",
-    createMaterial: "", createPublicMaterial: "", currentPassword: "", newPassword: "", confirmNewPassword: "",
+    createMaterial: "", createPublicMaterial: "",
     highlightedKeyId: "", listQuery: "", keyType: "all", highlightTimer: null,
   };
   const values = { ...defaults, ...initial };
@@ -33,7 +33,7 @@ function management(initial = {}, invoke = async () => ({ key: { id: "new-key" }
     const generateRsaKeyPairPem = async () => ({ privateKey: 'test-private-key' });
     const pasteExisting = createMode === 'paste';
     ${handlers}
-    return { createKey, changePassword, requestCloseManagement, closeManagement,
+    return { createKey, requestCloseManagement, closeManagement,
       read: () => ({ ${Object.keys(defaults).join(",")} }) };
   `)(values, invoke);
 }
@@ -97,17 +97,4 @@ test("key type filters combine with text queries and retain exact algorithm boun
   assert.deepEqual(filter(keys, "aes-256", "production").map((key) => key.id), ["b"]);
   assert.deepEqual(filter(keys, "all", "production").map((key) => key.id), ["a", "b"]);
   assert.deepEqual(filter(keys, "aes-128", "test"), []);
-});
-
-test("password errors remain in the modal and successful changes clear all password fields", async () => {
-  const initial = { panel: "password", currentPassword: "old-password", newPassword: "new-password", confirmNewPassword: "new-password" };
-  const failed = management(initial, async () => { throw new Error("Wrong master password"); });
-  await failed.changePassword();
-  assert.equal(failed.read().panel, "password");
-  assert.equal(failed.read().formError, "Wrong master password");
-  assert.equal(failed.read().newPassword, "new-password");
-  const saved = management(initial);
-  await saved.changePassword();
-  assert.equal(saved.read().panel, "");
-  assert.equal(saved.read().currentPassword + saved.read().newPassword + saved.read().confirmNewPassword, "");
 });

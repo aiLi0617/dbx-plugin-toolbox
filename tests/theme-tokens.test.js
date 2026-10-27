@@ -41,6 +41,20 @@ test("component theme tokens do not pin DBX colors to hex fallbacks", () => {
   assert.deepEqual(violations, []);
 });
 
+test("all Svelte controls use the themed custom select", () => {
+  const expansionViews = [
+    "ContentExpansionView.svelte", "DeveloperExpansionView.svelte",
+    "CalculatorSuiteView.svelte", "SecurityExpansionView.svelte",
+    "SpeechView.svelte", "WifiQrView.svelte", "GifEditorView.svelte",
+    "PdfToolView.svelte", "NetworkCalcView.svelte", "PortProcessesView.svelte",
+    "SessionConfirm.svelte", "ColorConvertView.svelte",
+  ];
+  const nativeSelects = expansionViews
+    .map((name) => path.join(sourceRoot, "lib", name))
+    .filter((file) => fs.readFileSync(file, "utf8").includes("<select"));
+  assert.deepEqual(nativeSelects, [], nativeSelects.join("\n"));
+});
+
 test("non-semantic shadows do not derive from the theme foreground", () => {
   const violations = [];
 
@@ -110,9 +124,9 @@ test("interactive states use DBX theme aliases instead of browser defaults", () 
   assert.match(css, /:where\(button:not\(:disabled\):hover\)\s*\{[^}]*var\(--dbx-hover-background\)/s);
   assert.match(css, /--dbx-range-track:\s*var\(--dbx-control-border\);/);
   assert.match(css, /:where\(input\[type="range"\]:hover\),[^{]*\{[^}]*--dbx-range-track:\s*var\(--color-ring,/s);
-  assert.match(css, /:where\(input\[type="range"\]::-webkit-slider-thumb\)\s*\{[^}]*background:\s*var\(--color-primary\);/s);
+  assert.match(css, /:where\(input\[type="range"\]\)::-webkit-slider-thumb\s*\{[^}]*background:\s*var\(--color-primary\);/s);
   assert.match(css, /:where\(input\[type="color"\]:hover\)\s*\{[^}]*var\(--color-ring,/s);
-  assert.match(css, /:where\(\.file-button:hover\)\s*\{[^}]*var\(--dbx-hover-background\)/s);
+  assert.match(css, /:where\(\.file-button:hover\):not\(:has\(input\[type="file"\]:disabled\)\)\s*\{[^}]*var\(--dbx-hover-background\)/s);
 });
 
 test("large file drop targets opt in to themeable hover and focus states", () => {

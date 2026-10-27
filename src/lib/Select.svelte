@@ -10,6 +10,7 @@
     disabled = false,
     ariaLabel = "",
     placeholder = "",
+    fitTrigger = false,
     onchange,
   } = $props();
 
@@ -71,7 +72,7 @@
     const vh = window.innerHeight;
     const triggerWidth = Math.max(rect.width, 128);
     let contentWidth = triggerWidth;
-    if (menuEl) {
+    if (menuEl && !fitTrigger) {
       const prevWidth = menuEl.style.width;
       menuEl.style.width = "max-content";
       contentWidth = Math.ceil(menuEl.getBoundingClientRect().width);
@@ -297,7 +298,7 @@
               </svg>
             {/if}
           </span>
-          <span class="item-label">{row.label}</span>
+          <span class="item-label" title={row.label}>{row.label}</span>
           {#if row.disabled}
             <svg class="disabled-mark" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9"></circle>
@@ -326,9 +327,9 @@
     height: 30px;
     padding: 0 8px 0 10px;
     border-radius: var(--radius-md, 6px);
-    border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 18%, transparent)));
-    background: var(--color-background, Canvas);
-    color: var(--color-foreground, CanvasText);
+    border: 1px solid var(--dbx-control-border);
+    background: var(--dbx-control-background);
+    color: var(--dbx-control-foreground);
     font: inherit;
     font-size: 13px;
     line-height: 1.3;
@@ -336,7 +337,8 @@
     cursor: pointer;
   }
   .trigger:hover:not(:disabled) {
-    background: var(--color-muted, var(--color-accent, color-mix(in srgb, CanvasText 6%, transparent)));
+    background: var(--dbx-hover-background);
+    color: var(--dbx-hover-foreground);
   }
   .trigger:focus {
     outline: none;
@@ -360,11 +362,11 @@
     white-space: nowrap;
   }
   .trigger.placeholder .value {
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    color: var(--color-muted-foreground);
   }
   .chevron {
     flex-shrink: 0;
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 58%, transparent));
+    color: var(--color-muted-foreground);
     transition: transform 160ms ease;
   }
   .open .chevron {
@@ -372,14 +374,15 @@
   }
   .menu {
     position: fixed;
-    z-index: 80;
+    /* The menu is portaled to body, so it must sit above the settings dialog. */
+    z-index: 140;
     box-sizing: border-box;
     padding: 4px;
     overflow: auto;
-    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 14%, transparent));
+    border: 1px solid var(--color-border, var(--dbx-control-border));
     border-radius: var(--radius-md, 8px);
-    background: var(--color-popover, var(--color-card, var(--color-background, Canvas)));
-    color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
+    background: var(--color-popover, var(--dbx-control-background));
+    color: var(--color-popover-foreground, var(--dbx-control-foreground));
     /* The theme border separates the menu without an outer halo in either theme. */
     box-shadow: none;
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -390,13 +393,13 @@
     gap: 7px;
     margin: 9px 4px 3px;
     padding: 5px 8px 5px 9px;
-    border-top: 1px solid color-mix(in srgb, var(--color-primary, CanvasText) 22%, transparent);
-    border-left: 3px solid var(--color-primary, CanvasText);
+    border-top: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+    border-left: 3px solid var(--color-primary);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.04em;
     line-height: 1.2;
-    color: var(--color-primary, var(--color-foreground, CanvasText));
+    color: var(--color-primary);
     white-space: nowrap;
   }
   .group:first-child {
@@ -407,7 +410,7 @@
     flex: 1;
     min-width: 12px;
     height: 1px;
-    background: color-mix(in srgb, var(--color-primary, CanvasText) 22%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 22%, transparent);
   }
   .item {
     display: flex;
@@ -422,12 +425,12 @@
   }
   .item.active:not([aria-disabled="true"]),
   .item:hover:not([aria-disabled="true"]) {
-    background: var(--color-accent, var(--color-muted, color-mix(in srgb, var(--color-foreground, CanvasText) 6%, transparent)));
-    color: var(--color-accent-foreground, var(--color-foreground, CanvasText));
+    background: var(--dbx-hover-background);
+    color: var(--dbx-hover-foreground);
   }
   .item[aria-disabled="true"] {
-    background: color-mix(in srgb, var(--color-muted, CanvasText) 42%, transparent);
-    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 45%, transparent));
+    background: color-mix(in srgb, var(--color-muted) 42%, transparent);
+    color: var(--color-muted-foreground);
     cursor: not-allowed;
     opacity: 0.72;
   }
@@ -436,7 +439,7 @@
     flex: 0 0 14px;
     width: 14px;
     height: 14px;
-    color: var(--color-foreground, CanvasText);
+    color: var(--dbx-control-foreground);
   }
   .item-label {
     min-width: 0;
@@ -454,3 +457,4 @@
     to { opacity: 1; }
   }
 </style>
+

@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { DEFAULT_SHORTCUTS } from "../src/lib/shortcuts.js";
 import {
   DEFAULT_VAULT_AUTO_LOCK_MINUTES,
   getFavoriteToolIds,
@@ -9,7 +10,9 @@ import {
   setFavoriteToolIds,
   setVaultAutoLockMinutes,
   setRecentToolIds,
+  setRecentCollapsed,
   setSidebarCollapsed,
+  setShortcuts,
   VAULT_AUTO_LOCK_MINUTES,
 } from "../src/lib/prefs.js";
 
@@ -50,11 +53,80 @@ test("workspace navigation preferences migrate to and persist through the sideca
     globalThis.localStorage = originalStorage;
   });
 
-  assert.deepEqual(await getWorkspacePreferences(true), { recentToolIds: ["uuid"], sidebarCollapsed: false });
+  assert.deepEqual(await getWorkspacePreferences(true), {
+    recentToolIds: ["uuid"],
+    sidebarCollapsed: false,
+    recentCollapsed: false,
+    shortcuts: DEFAULT_SHORTCUTS,
+    recentToolLimit: 10,
+  });
   assert.deepEqual(await setRecentToolIds(["hash", "json"]), ["hash", "json"]);
   assert.equal(await setSidebarCollapsed(true), true);
   assert.deepEqual(calls.at(-2), { method: "toolbox/prefs/set", params: { recentToolIds: ["hash", "json"] } });
   assert.deepEqual(calls.at(-1), { method: "toolbox/prefs/set", params: { sidebarCollapsed: true } });
+});
+
+test("recent history falls back to local storage when an older sidecar returns no history", async (t) => {
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  const values = new Map([["toolbox.recentToolIds", '["hash"]'], ["toolbox.recentCollapsed", "true"]]);
+  globalThis.localStorage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, String(value)) };
+  globalThis.window = { dbxPlugin: { invoke: async (method, params) => method === "toolbox/prefs/get" ? { version: 6, recentToolIds: [], sidebarCollapsed: false } : { version: 6, ...params } } };
+  t.after(() => { globalThis.window = originalWindow; globalThis.localStorage = originalStorage; });
+
+  const saved = await getWorkspacePreferences();
+  assert.deepEqual(saved.recentToolIds, ["hash"]);
+  assert.equal(saved.recentCollapsed, true);
+  assert.deepEqual(await setRecentToolIds(["json"]), ["json"]);
+  assert.equal(await setRecentCollapsed(false), false);
+  assert.equal(values.get("toolbox.recentToolIds"), '["json"]');
+  assert.equal(values.get("toolbox.recentCollapsed"), "false");
+});
+
+test("recent history writes are serialized in access order", async (t) => {
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  const calls = [];
+  globalThis.localStorage = { getItem: () => null, setItem() {} };
+  globalThis.window = { dbxPlugin: { invoke: async (method, params) => {
+    calls.push(params.recentToolIds);
+    await new Promise(resolve => setTimeout(resolve, params.recentToolIds.length === 1 ? 15 : 0));
+    return { version: 7, recentToolIds: params.recentToolIds, recentToolLimit: 10 };
+  } } };
+  t.after(() => { globalThis.window = originalWindow; globalThis.localStorage = originalStorage; });
+
+  await Promise.all([setRecentToolIds(["hash"]), setRecentToolIds(["json", "hash"])]);
+  assert.deepEqual(calls, [["hash"], ["json", "hash"]]);
+});
+
+test("shortcut preferences persist through the sidecar with a local fallback", async (t) => {
+  const values = new Map();
+  const calls = [];
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  globalThis.localStorage = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+  globalThis.window = {
+    dbxPlugin: {
+      invoke: async (method, params) => {
+        calls.push({ method, params });
+        return method === "toolbox/prefs/set" ? { shortcuts: params.shortcuts } : {};
+      },
+    },
+  };
+  t.after(() => {
+    globalThis.window = originalWindow;
+    globalThis.localStorage = originalStorage;
+  });
+
+  const saved = await setShortcuts({ search: "Alt+KeyP", home: "", "tool:json": "Mod+Shift+KeyJ" });
+  assert.equal(saved.search, "Alt+KeyP");
+  assert.equal(saved.home, "");
+  assert.equal(saved["tool:json"], "Mod+Shift+KeyJ");
+  assert.deepEqual(calls.at(-1), { method: "toolbox/prefs/set", params: { shortcuts: saved } });
+  assert.equal(JSON.parse(values.get("toolbox.shortcuts")).search, "Alt+KeyP");
 });
 
 test("current sidecar settings override stale local auto-lock state", async (t) => {

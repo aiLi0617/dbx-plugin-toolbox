@@ -60,6 +60,8 @@ struct VaultFile {
     #[serde(default, rename = "schemaVersion")]
     schema_version: u8,
     keys: Vec<StoredKey>,
+    #[serde(default, rename = "totpEntries")]
+    totp_entries: Vec<crate::totp_store::Entry>,
 }
 
 struct Unlocked {
@@ -67,6 +69,7 @@ struct Unlocked {
     salt: [u8; 16],
     keys: Vec<StoredKey>,
     needs_migration: bool,
+    totp_entries: Vec<crate::totp_store::Entry>,
 }
 
 impl Drop for Unlocked {
@@ -82,11 +85,66 @@ impl Drop for Unlocked {
 #[derive(Default)]
 pub struct Vault {
     unlocked: Option<Unlocked>,
+    revision: Option<Vec<u8>>,
+    restore: Option<RestorePreview>,
+    restore_upload: Vec<u8>,
 }
 
 impl Vault {
     pub fn handle(&mut self, method: &str, params: Value) -> Result<Value, PluginError> {
+        let path = vault_path()?;
+        fs::create_dir_all(path.parent().unwrap()).map_err(|_| err("VAULT_STORAGE_FAILED"))?;
+        let guard = OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .read(true)
+            .write(true)
+            .open(path.with_extension("lock"))
+            .map_err(|_| err("VAULT_STORAGE_FAILED"))?;
+        guard.lock().map_err(|_| err("VAULT_STORAGE_FAILED"))?;
+        let revision = storage_revision(&path)?;
+        if self.unlocked.is_some() && self.revision.as_ref().is_some_and(|r| r != &revision) {
+            self.lock();
+            return Err(PluginError::new(-32040, "VAULT_CHANGED"));
+        }
+        let result = self.handle_inner(method, params);
+        if result.is_ok() && self.unlocked.is_some() {
+            self.revision = Some(storage_revision(&path)?);
+        }
+        result
+    }
+
+    fn handle_inner(&mut self, method: &str, params: Value) -> Result<Value, PluginError> {
+        if method.starts_with("toolbox/totp/") {
+            return self.totp(method, params);
+        }
         match method {
+            "toolbox/keys/restore/begin" => {
+                self.restore = None;
+                self.restore_upload.clear();
+                Ok(json!({"ok": true}))
+            }
+            "toolbox/keys/restore/upload" => {
+                let chunk = str_param(&params, "data")?;
+                if chunk.len() > 400_000 {
+                    return Err(bad("VAULT_BACKUP_TOO_LARGE"));
+                }
+                let bytes = B64.decode(chunk).map_err(|_| bad("VAULT_BACKUP_INVALID"))?;
+                if self.restore_upload.len() + bytes.len() > MAX_VAULT_BYTES {
+                    self.restore_upload.clear();
+                    return Err(bad("VAULT_BACKUP_TOO_LARGE"));
+                }
+                self.restore_upload.extend(bytes);
+                Ok(json!({"ok": true}))
+            }
+            "toolbox/keys/backup" => self.backup(params),
+            "toolbox/keys/restore/preview" => self.restore_preview(params),
+            "toolbox/keys/restore/commit" => self.restore_commit(params),
+            "toolbox/keys/restore/cancel" => {
+                self.restore_upload.clear();
+                self.restore = None;
+                Ok(json!({"ok": true}))
+            }
             "toolbox/keys/status" => self.status(),
             "toolbox/keys/setup" => self.setup(params),
             "toolbox/keys/unlock" => self.unlock(params),
@@ -159,8 +217,14 @@ impl Vault {
             salt,
             keys: Vec::new(),
             needs_migration: false,
+            totp_entries: Vec::new(),
         };
-        persist_contents(&unlocked.kek, &unlocked.salt, &unlocked.keys)?;
+        persist_contents(
+            &unlocked.kek,
+            &unlocked.salt,
+            &unlocked.keys,
+            &unlocked.totp_entries,
+        )?;
         self.unlocked = Some(unlocked);
         Ok(json!({ "ok": true, "unlocked": true }))
     }
@@ -176,6 +240,9 @@ impl Vault {
 
     fn lock(&mut self) {
         self.unlocked = None;
+        self.revision = None;
+        self.restore = None;
+        self.restore_upload.clear();
     }
 
     fn list(&self) -> Result<Value, PluginError> {
@@ -231,7 +298,7 @@ impl Vault {
         let meta = metadata(&key);
         let mut keys = unlocked.keys.clone();
         keys.push(key);
-        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true, "key": meta }))
     }
@@ -250,7 +317,7 @@ impl Vault {
             .find(|key| key.id == id)
             .ok_or_else(|| bad("Unknown key id"))?;
         key.name = name.to_string();
-        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
     }
@@ -281,7 +348,7 @@ impl Vault {
             .ok_or_else(|| bad("Unknown key id"))?;
         validate_allowed_purposes(&key.algorithm, &purposes)?;
         key.allowed_purposes = Some(purposes);
-        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
     }
@@ -305,7 +372,12 @@ impl Vault {
             })
             .collect::<Result<_, _>>()?;
         let ordered = apply_reorder(&unlocked.keys, &id_list)?;
-        persist_contents(&unlocked.kek, &unlocked.salt, &ordered)?;
+        persist_contents(
+            &unlocked.kek,
+            &unlocked.salt,
+            &ordered,
+            &unlocked.totp_entries,
+        )?;
         self.unlocked.as_mut().expect("vault checked above").keys = ordered;
         Ok(json!({ "ok": true }))
     }
@@ -325,7 +397,7 @@ impl Vault {
         if keys.len() == before {
             return Err(bad("Unknown key id"));
         }
-        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true }))
     }
@@ -356,7 +428,7 @@ impl Vault {
         let meta = metadata(&key);
         let mut keys = unlocked.keys.clone();
         keys.push(key);
-        persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+        persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
         self.unlocked.as_mut().expect("vault checked above").keys = keys;
         Ok(json!({ "ok": true, "key": meta }))
     }
@@ -425,13 +497,13 @@ impl Vault {
         }
         current_kek.zeroize();
         let (kek, salt) = derive_kek(&next)?;
-        persist_contents(&kek, &salt, &unlocked.keys)?;
-        // The regular atomic writer keeps the previous vault as a recovery
-        // copy. After password rotation that copy is encrypted with the old
-        // password, so remove it once the new primary is durable.
-        if let Ok(path) = vault_path() {
-            let _ = fs::remove_file(vault_backup_path(&path));
-        }
+        let bytes = encode_vault_contents(&kek, &salt, &unlocked.keys, &unlocked.totp_entries)?;
+        let path = vault_path()?;
+        // Publish the new-password recovery copy first. An interrupted rotation
+        // always leaves at least one readable snapshot; success leaves neither
+        // primary nor recovery data decryptable with the previous password.
+        replace_encrypted_snapshot(&vault_backup_path(&path), &bytes)?;
+        replace_encrypted_snapshot(&path, &bytes)?;
         let unlocked = self.unlocked.as_mut().expect("vault checked above");
         unlocked.kek.zeroize();
         unlocked.kek = kek;
@@ -480,7 +552,7 @@ impl Vault {
             let meta = metadata(&key);
             let mut keys = unlocked.keys.clone();
             keys.push(key);
-            persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+            persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
             self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
@@ -547,7 +619,7 @@ impl Vault {
             let meta = metadata(&key);
             let mut keys = unlocked.keys.clone();
             keys.push(key);
-            persist_contents(&unlocked.kek, &unlocked.salt, &keys)?;
+            persist_contents(&unlocked.kek, &unlocked.salt, &keys, &unlocked.totp_entries)?;
             self.unlocked.as_mut().expect("vault checked above").keys = keys;
             response["saved"] = json!(true);
             response["key"] = meta;
@@ -557,34 +629,279 @@ impl Vault {
     }
 }
 
+// Decrypted restore data never leaves the Sidecar and expires on lock or commit.
+struct RestorePreview {
+    token: String,
+    created: std::time::Instant,
+    revision: Vec<u8>,
+    keys: Vec<StoredKey>,
+    totp: Vec<crate::totp_store::Entry>,
+}
+
+fn storage_revision(path: &Path) -> Result<Vec<u8>, PluginError> {
+    let mut hash = Sha256::new();
+    for file in [path.to_path_buf(), vault_backup_path(path)] {
+        match fs::read(file) {
+            Ok(bytes) => {
+                hash.update([1]);
+                hash.update(bytes);
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => hash.update([0]),
+            Err(_) => return Err(err("VAULT_STORAGE_FAILED")),
+        }
+    }
+    Ok(hash.finalize().to_vec())
+}
+
+fn same_key(a: &StoredKey, b: &StoredKey) -> bool {
+    let mut ap = a
+        .allowed_purposes
+        .clone()
+        .unwrap_or_else(|| default_allowed_purposes(&a.algorithm));
+    let mut bp = b
+        .allowed_purposes
+        .clone()
+        .unwrap_or_else(|| default_allowed_purposes(&b.algorithm));
+    ap.sort();
+    bp.sort();
+    a.algorithm == b.algorithm
+        && a.material == b.material
+        && a.public_material == b.public_material
+        && ap == bp
+}
+
+fn same_totp(a: &crate::totp_store::Entry, b: &crate::totp_store::Entry) -> bool {
+    a.secret == b.secret
+        && a.algorithm == b.algorithm
+        && a.digits == b.digits
+        && a.period == b.period
+        && a.issuer == b.issuer
+        && a.account == b.account
+}
+
+impl Vault {
+    fn totp(&mut self, method: &str, params: Value) -> Result<Value, PluginError> {
+        use crate::totp_store::{metadata, windows};
+        if method == "toolbox/totp/manual" {
+            let mut entries = Vec::new();
+            let mut input = params;
+            input["name"] = json!("temporary");
+            crate::totp_store::save(&mut entries, &input)?;
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|_| err("Invalid TOTP time"))?
+                .as_secs();
+            return windows(&entries[0], now);
+        }
+        if method == "toolbox/totp/status" {
+            return Ok(
+                json!({"exists": vault_exists()?, "unlocked": self.unlocked.is_some(), "protection": "vault"}),
+            );
+        }
+        if method == "toolbox/totp/lock" {
+            self.lock();
+            return Ok(json!({"ok": true}));
+        }
+        let store = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        if method == "toolbox/totp/list" {
+            return Ok(
+                json!({"entries": store.totp_entries.iter().map(metadata).collect::<Vec<_>>()}),
+            );
+        }
+        if method == "toolbox/totp/reveal" {
+            let id = str_param(&params, "id")?;
+            let entry = store
+                .totp_entries
+                .iter()
+                .find(|e| e.id == id)
+                .ok_or_else(|| bad("Unknown TOTP entry"))?;
+            return Ok(json!({"secret": entry.secret}));
+        }
+        if method == "toolbox/totp/generate" {
+            let id = str_param(&params, "id")?;
+            let entry = store
+                .totp_entries
+                .iter()
+                .find(|e| e.id == id)
+                .ok_or_else(|| bad("Unknown TOTP entry"))?;
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_err(|_| err("Invalid TOTP time"))?
+                .as_secs();
+            return windows(entry, now);
+        }
+        let mut entries = store.totp_entries.clone();
+        let result = match method {
+            "toolbox/totp/save" => crate::totp_store::save(&mut entries, &params)?,
+            "toolbox/totp/delete" => {
+                let id = str_param(&params, "id")?;
+                let at = entries
+                    .iter()
+                    .position(|e| e.id == id)
+                    .ok_or_else(|| bad("Unknown TOTP entry"))?;
+                entries.remove(at);
+                json!({"ok": true})
+            }
+            "toolbox/totp/reorder" => {
+                let ids: Vec<String> =
+                    serde_json::from_value(params.get("ids").cloned().unwrap_or(Value::Null))
+                        .map_err(|_| bad("Invalid TOTP order"))?;
+                if ids.len() != entries.len()
+                    || ids.iter().collect::<HashSet<_>>().len() != ids.len()
+                {
+                    return Err(bad("Invalid TOTP order"));
+                }
+                entries = ids
+                    .iter()
+                    .map(|id| {
+                        entries
+                            .iter()
+                            .find(|e| &e.id == id)
+                            .cloned()
+                            .ok_or_else(|| bad("Invalid TOTP order"))
+                    })
+                    .collect::<Result<_, _>>()?;
+                json!({"ok": true})
+            }
+            _ => return Err(PluginError::method_not_found(method)),
+        };
+        persist_contents(&store.kek, &store.salt, &store.keys, &entries)?;
+        self.unlocked.as_mut().unwrap().totp_entries = entries;
+        Ok(result)
+    }
+
+    fn backup(&self, params: Value) -> Result<Value, PluginError> {
+        let store = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let password = Zeroizing::new(require_password(&params, "password")?);
+        let candidate = Zeroizing::new(derive_kek_with_salt(&password, &store.salt)?);
+        if *candidate != store.kek {
+            return Err(err("Master password is wrong"));
+        }
+        let bytes =
+            encode_vault_contents(&store.kek, &store.salt, &store.keys, &store.totp_entries)?;
+        crate::fsutil::save_binary_file(
+            json!({"binary": true, "extension": "dbxvault", "fileName": "toolbox-backup.dbxvault", "title": opt_str(&params, "title").unwrap_or("Back up vault"), "mimeType": "application/octet-stream"}),
+            bytes,
+        )
+    }
+
+    fn restore_preview(&mut self, params: Value) -> Result<Value, PluginError> {
+        self.restore = None;
+        let bytes = std::mem::take(&mut self.restore_upload);
+        let store = self
+            .unlocked
+            .as_ref()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        let password = Zeroizing::new(require_password(&params, "password")?);
+        let incoming = decrypt_vault_bytes(&bytes, &password)?;
+        let total_keys = incoming.keys.len();
+        let total_totp = incoming.totp_entries.len();
+        let mut keys = store.keys.clone();
+        let mut totp = store.totp_entries.clone();
+        for entry in &incoming.keys {
+            if !keys.iter().any(|e| same_key(e, entry)) {
+                let mut next = entry.clone();
+                next.id = Uuid::new_v4().to_string();
+                keys.push(next);
+            }
+        }
+        for entry in &incoming.totp_entries {
+            if !totp.iter().any(|e| same_totp(e, entry)) {
+                let mut next = entry.clone();
+                next.id = Uuid::new_v4().to_string();
+                totp.push(next);
+            }
+        }
+        validate_loaded_keys(&keys)?;
+        crate::totp_store::validate(&totp)?;
+        // Validate serialized size before showing a preview that could never commit.
+        encode_vault_contents(&store.kek, &store.salt, &keys, &totp)?;
+        let added_keys = keys.len() - store.keys.len();
+        let added_totp = totp.len() - store.totp_entries.len();
+        let token = Uuid::new_v4().to_string();
+        self.restore = Some(RestorePreview {
+            token: token.clone(),
+            created: std::time::Instant::now(),
+            revision: storage_revision(&vault_path()?)?,
+            keys,
+            totp,
+        });
+        Ok(
+            json!({"token": token, "keys": total_keys, "totp": total_totp, "addedKeys": added_keys, "addedTotp": added_totp, "duplicates": total_keys + total_totp - added_keys - added_totp}),
+        )
+    }
+
+    fn restore_commit(&mut self, params: Value) -> Result<Value, PluginError> {
+        let supplied = str_param(&params, "token")?;
+        let preview = self
+            .restore
+            .take()
+            .ok_or_else(|| err("VAULT_PREVIEW_EXPIRED"))?;
+        if preview.token != supplied || preview.created.elapsed().as_secs() >= 300 {
+            return Err(err("VAULT_PREVIEW_EXPIRED"));
+        }
+        if preview.revision != storage_revision(&vault_path()?)? {
+            return Err(err("VAULT_CHANGED"));
+        }
+        let store = self
+            .unlocked
+            .as_mut()
+            .ok_or_else(|| err("Key vault is locked"))?;
+        persist_contents(&store.kek, &store.salt, &preview.keys, &preview.totp)?;
+        store.keys = preview.keys;
+        store.totp_entries = preview.totp;
+        Ok(json!({"ok": true}))
+    }
+}
+
 #[derive(Serialize)]
 struct VaultFileRef<'a> {
     #[serde(rename = "schemaVersion")]
     schema_version: u8,
     keys: &'a [StoredKey],
+    #[serde(rename = "totpEntries")]
+    totp_entries: &'a [crate::totp_store::Entry],
 }
 
 fn persist_contents(
     kek: &[u8; 32],
     salt: &[u8; 16],
     keys: &[StoredKey],
+    totp_entries: &[crate::totp_store::Entry],
 ) -> Result<(), PluginError> {
     let path = vault_path()?;
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|error| err(error.to_string()))?;
     }
-    let out = encode_vault_file(kek, salt, keys)?;
+    let out = encode_vault_contents(kek, salt, keys, totp_entries)?;
     persist_atomically(&path, &out)
 }
 
+#[cfg(test)]
 fn encode_vault_file(
     kek: &[u8; 32],
     salt: &[u8; 16],
     keys: &[StoredKey],
 ) -> Result<Vec<u8>, PluginError> {
+    encode_vault_contents(kek, salt, keys, &[])
+}
+
+fn encode_vault_contents(
+    kek: &[u8; 32],
+    salt: &[u8; 16],
+    keys: &[StoredKey],
+    totp_entries: &[crate::totp_store::Entry],
+) -> Result<Vec<u8>, PluginError> {
     let mut plain = serde_json::to_vec(&VaultFileRef {
-        schema_version: 2,
+        schema_version: 3,
         keys,
+        totp_entries,
     })
     .map_err(|error| err(error.to_string()))?;
     if plain.len() > MAX_VAULT_BYTES - VAULT_FILE_OVERHEAD {
@@ -669,7 +986,11 @@ fn decrypt_vault_bytes(bytes: &[u8], password: &str) -> Result<Unlocked, PluginE
     let parsed_file = serde_json::from_slice::<VaultFile>(&plain);
     plain.zeroize();
     let file = parsed_file.map_err(|_| err("Vault data is corrupt"))?;
+    if file.schema_version > 3 {
+        return Err(err("VAULT_VERSION_UNSUPPORTED"));
+    }
     validate_loaded_keys(&file.keys)?;
+    crate::totp_store::validate(&file.totp_entries)?;
     let mut keys = file.keys;
     let filled = backfill_public_material(&mut keys);
     let legacy = file.schema_version < 2;
@@ -683,6 +1004,7 @@ fn decrypt_vault_bytes(bytes: &[u8], password: &str) -> Result<Unlocked, PluginE
         salt: parsed.salt,
         keys,
         needs_migration: legacy || filled,
+        totp_entries: file.totp_entries,
     };
     Ok(unlocked)
 }
@@ -728,7 +1050,12 @@ fn migrate_unlocked(
         fs::copy(source, &migration_backup)
             .map_err(|error| err(format!("Failed to create migration backup: {error}")))?;
     }
-    let bytes = encode_vault_file(&unlocked.kek, &unlocked.salt, &unlocked.keys)?;
+    let bytes = encode_vault_contents(
+        &unlocked.kek,
+        &unlocked.salt,
+        &unlocked.keys,
+        &unlocked.totp_entries,
+    )?;
     persist_atomically(path, &bytes)?;
     unlocked.needs_migration = false;
     Ok(())
@@ -778,6 +1105,24 @@ fn vault_exists() -> Result<bool, PluginError> {
         .try_exists()
         .map_err(|error| err(format!("Failed to access key vault backup: {error}")))?;
     Ok(primary || backup)
+}
+
+fn replace_encrypted_snapshot(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+    let temp = path.with_extension(format!("rotate-{}", Uuid::new_v4()));
+    let result = (|| -> std::io::Result<()> {
+        let mut file = OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .open(&temp)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+        fs::rename(&temp, path)
+    })();
+    if result.is_err() {
+        let _ = fs::remove_file(temp);
+    }
+    result.map_err(|_| err("VAULT_STORAGE_FAILED"))
 }
 
 fn persist_atomically(path: &std::path::Path, bytes: &[u8]) -> Result<(), PluginError> {
@@ -1490,6 +1835,40 @@ mod tests {
     }
 
     #[test]
+    fn totp_reveal_requires_unlock_and_explicit_valid_id() {
+        let mut vault = Vault::default();
+        assert!(vault
+            .totp("toolbox/totp/reveal", json!({"id":"entry"}))
+            .is_err());
+        let mut entries = Vec::new();
+        let saved = crate::totp_store::save(
+            &mut entries,
+            &json!({"name":"Test","secret":"JBSWY3DPEHPK3PXP"}),
+        )
+        .unwrap();
+        let id = saved["entry"]["id"].as_str().unwrap();
+        vault.unlocked = Some(Unlocked {
+            kek: [0; 32],
+            salt: [0; 16],
+            keys: vec![],
+            needs_migration: false,
+            totp_entries: entries,
+        });
+        assert!(vault
+            .totp("toolbox/totp/reveal", json!({"id":"missing"}))
+            .is_err());
+        assert!(!vault
+            .totp("toolbox/totp/list", json!({}))
+            .unwrap()
+            .to_string()
+            .contains("JBSWY"));
+        assert_eq!(
+            vault.totp("toolbox/totp/reveal", json!({"id":id})).unwrap()["secret"],
+            "JBSWY3DPEHPK3PXP"
+        );
+    }
+
+    #[test]
     fn totp_entries_are_readable_for_recovery_but_cannot_be_created() {
         assert_eq!(canonical_algorithm("totp-base32").unwrap(), "totp-base32");
         let mut vault = Vault {
@@ -1498,7 +1877,9 @@ mod tests {
                 salt: [0; 16],
                 keys: vec![],
                 needs_migration: false,
+                totp_entries: Vec::new(),
             }),
+            ..Default::default()
         };
         assert!(vault
             .create(json!({"name": "test", "algorithm": "totp-base32", "generate": true}))
@@ -1528,7 +1909,9 @@ mod tests {
                 salt: [0; 16],
                 keys: vec![key],
                 needs_migration: false,
+                totp_entries: Vec::new(),
             }),
+            ..Default::default()
         };
         assert!(vault.material_for("legacy", "sm4-cipher").is_ok());
         assert!(vault.material_for("legacy", "debug-xor").is_err());

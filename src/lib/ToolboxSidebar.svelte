@@ -3,8 +3,9 @@
 
   let {
     locale = "zh-CN", collapsed = false, page = "home", activeToolId = "",
-    favorites = [], recents = [], vaultUnlocked = false,
-    onHome, onCatalog, onSearch, onTool, onVault, onToggleCollapse, onMoveFavorite,
+    favorites = [], recents = [], recentCollapsed = false, vaultUnlocked = false,
+    searchShortcut = "Ctrl+K",
+    onHome, onCatalog, onSearch, onTool, onVault, onToggleCollapse, onToggleRecentCollapsed, onMoveFavorite,
   } = $props();
   const t = (dict) => pick(locale, dict);
   let panel = $state("");
@@ -108,8 +109,8 @@
     <button class:active={page === "home"} onclick={onHome} type="button" title={t(chrome.home)}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg><span>{t(chrome.home)}</span>
     </button>
-    <button onclick={onSearch} type="button" title={`${t(chrome.search)} (Ctrl+K)`}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>{t(chrome.search)}</span>{#if !collapsed}<kbd>Ctrl K</kbd>{/if}
+    <button onclick={onSearch} type="button" title={`${t(chrome.search)} (${searchShortcut})`}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>{t(chrome.search)}</span>{#if !collapsed}<kbd>{searchShortcut}</kbd>{/if}
     </button>
     <button class:active={page === "catalog"} onclick={onCatalog} type="button" title={t(chrome.allTools)}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>{t(chrome.allTools)}</span>
@@ -162,13 +163,20 @@
         {:else}<p class="empty">{t(chrome.starInLibrary)}</p>{/each}
       </div>
     </section>
-    <section class="group recent">
-      <div class="group-title"><span>{t(chrome.recent)}</span></div>
-      <div class="group-list">
-        {#each recents.slice(0, 8) as item (item.id)}
-          <button class="recent-tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={() => onTool?.(item)}>{pick(locale, item.name)}</button>
-        {:else}<p class="empty">{t(chrome.openedAppearHere)}</p>{/each}
+    <section class="group recent" class:collapsed={recentCollapsed}>
+      <div class="group-title recent-title">
+        <button class="group-toggle" type="button" aria-expanded={!recentCollapsed} aria-controls="recent-tools-list" aria-label={t(recentCollapsed ? chrome.expand : chrome.collapse)} title={t(recentCollapsed ? chrome.expand : chrome.collapse)} onclick={() => onToggleRecentCollapsed?.(!recentCollapsed)}>
+          <span>{t(chrome.recent)}</span>
+          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d={recentCollapsed ? "m9 6 6 6-6 6" : "m6 9 6 6 6-6"}/></svg>
+        </button>
       </div>
+      {#if !recentCollapsed}
+        <div class="group-list" id="recent-tools-list">
+          {#each recents as item (item.id)}
+            <button class="recent-tool" class:active={page === "tool" && activeToolId === item.id} type="button" onclick={() => onTool?.(item)}>{pick(locale, item.name)}</button>
+          {:else}<p class="empty">{t(chrome.openedAppearHere)}</p>{/each}
+        </div>
+      {/if}
     </section>
   {/if}
 
@@ -205,10 +213,16 @@
   kbd { margin-left:auto; color:var(--color-muted-foreground); font-size:10px; }
   .group { min-height:0; padding:9px 8px 6px; }
   .favorites { flex:1 1 0; min-height:96px; overflow:auto; }
-  .recent { flex:0 1 auto; max-height:200px; overflow:auto; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
+  .recent { flex:0 0 200px; height:200px; min-height:200px; overflow:hidden; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
+  .recent.collapsed { flex:0 0 auto; height:auto; min-height:0; }
   .group-title { display:flex; align-items:center; justify-content:space-between; padding:0 8px 5px; color:var(--color-muted-foreground); font-size:11px; font-weight:600; letter-spacing:.04em; }
+  .recent-title { padding-bottom:5px; }
+  .group-toggle { display:flex; align-items:center; justify-content:space-between; width:100%; padding:0; border:0; background:transparent; color:inherit; font:inherit; text-align:left; }
+  .group-toggle:hover { color:var(--color-foreground); }
+  .group-toggle svg { flex:0 0 12px; }
   .group-title small { font-size:10px; }
   .group-list { display:flex; flex-direction:column; gap:1px; }
+  .recent > .group-list { height:calc(200px - 31px); overflow:auto; }
   .tool-row { display:flex; min-width:0; border:1px solid transparent; border-radius:6px; cursor:grab; user-select:none; transition:opacity 100ms,border-color 100ms; }
   .tool-row:hover { background:var(--color-sidebar-accent,var(--color-muted)); }
   .tool-row.dragging { opacity:.45; cursor:grabbing; }

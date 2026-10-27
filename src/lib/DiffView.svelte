@@ -133,9 +133,41 @@
   .caption-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
   .caption-actions, .layout-switch { display: flex; align-items: center; }
   .caption-actions { gap: 8px; }
-  .layout-switch .dbx-btn { border-radius: 0; }
-  .layout-switch .dbx-btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
-  .layout-switch .dbx-btn:last-child { margin-left: -1px; border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+  .layout-switch {
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--color-border, color-mix(in srgb, CanvasText 18%, transparent));
+    border-radius: calc(var(--radius-md) + 2px);
+    background: color-mix(in srgb, var(--color-muted, Canvas) 72%, var(--color-background, Canvas));
+  }
+  .layout-switch .dbx-btn {
+    height: 26px;
+    min-width: 76px;
+    padding-inline: 10px;
+    border: 0;
+    border-radius: var(--radius-sm, 5px);
+    background: transparent;
+    color: var(--color-muted-foreground, color-mix(in srgb, CanvasText 65%, transparent));
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .layout-switch .dbx-btn:hover {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-foreground, CanvasText);
+  }
+  .layout-switch .dbx-btn[aria-pressed="true"] {
+    background: var(--color-primary, CanvasText);
+    color: var(--color-primary-foreground, Canvas);
+    box-shadow: var(--dbx-shadow-sm);
+  }
+  .layout-switch .dbx-btn[aria-pressed="true"]:hover {
+    background: color-mix(in srgb, var(--color-primary) 88%, var(--color-background));
+    color: var(--color-primary-foreground, Canvas);
+  }
+  .layout-switch .dbx-btn:focus-visible {
+    outline: 2px solid var(--color-ring, var(--color-primary));
+    outline-offset: 1px;
+  }
   .area, .out { flex: 1; min-height: 0; margin: 0; resize: none; line-height: 1.5; }
   .out { overflow: auto; padding: 10px 12px; border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 14%, transparent))); border-radius: var(--radius-md); background: var(--color-card, var(--color-background, Canvas)); white-space: pre-wrap; font-family: var(--font-mono); }
   .out.lines { display: flex; flex-direction: column; gap: 0; padding: 6px 0; white-space: normal; }
@@ -162,6 +194,6 @@
   @container (max-width: 520px) {
     .caption-row { align-items: flex-start; }
     .caption-actions { flex-wrap: wrap; justify-content: flex-end; }
-    .layout-switch .dbx-btn { padding-inline: 8px; }
+    .layout-switch .dbx-btn { min-width: 0; padding-inline: 9px; }
   }
 </style>

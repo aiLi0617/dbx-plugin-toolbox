@@ -1,32 +1,44 @@
 // Build-time only: translate public UI copy into bundled, offline dictionaries.
 // Existing reviewed translations and manual overrides always take precedence.
 import fs from 'node:fs';
+import { mergeSourceTranslations, needsTranslation } from './ui-translation-utils.mjs';
 const locales = ['zh-TW', 'es', 'it', 'ja', 'pt-BR', 'ko', 'tr', 'az'];
 const inventory = JSON.parse(fs.readFileSync('scripts/ui-message-inventory.json', 'utf8'));
 const file = 'src/lib/uiMessages.json';
 const messages = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
-for (const [key, entry] of Object.entries(inventory)) messages[key] = { ...messages[key], ...entry };
+for (const [key, entry] of Object.entries(inventory)) messages[key] = mergeSourceTranslations(messages[key], entry);
 for (const [key, translations] of Object.entries(JSON.parse(fs.readFileSync('scripts/ui-overrides.json', 'utf8')))) {
-  Object.assign(messages[key], translations);
+  if (messages[key]) Object.assign(messages[key], translations);
 }
 for (const [key, translations] of Object.entries(JSON.parse(fs.readFileSync('scripts/host-ui-translations.json', 'utf8')))) {
-  for (const [locale, text] of Object.entries(translations)) messages[key][locale] ??= text;
+  if (!messages[key]) continue;
+  for (const [locale, text] of Object.entries(translations)) {
+    if (needsTranslation(messages[key], locale)) messages[key][locale] = text;
+  }
 }
 const nativeKeys = JSON.parse(fs.readFileSync('scripts/native-inventory.json', 'utf8'));
 for (const line of fs.readFileSync('scripts/native-translations.txt', 'utf8').split(/\r?\n/)) {
   if (!line || line.startsWith('#')) continue;
   const [id, ko, tr, az] = line.split('|');
   if (!ko || !tr || !az) throw new Error(`Invalid native entry ${id}`);
-  Object.assign(messages[nativeKeys[Number(id)]], { ko, tr, az });
+  const message = messages[nativeKeys[Number(id)]];
+  if (message) Object.assign(message, { ko, tr, az });
 }
 for (const [key, message] of Object.entries(messages)) {
   if (key === message['zh-CN']) for (const locale of locales) message[locale] = key;
 }
-const save = () => fs.writeFileSync(file, JSON.stringify(messages, null, 2) + '\n');
+const save = () => {
+  fs.writeFileSync(file, JSON.stringify(messages, null, 2) + '\n');
+  const allLocales = ['en', 'zh-CN', ...locales];
+  const compact = Object.fromEntries(Object.entries(messages).map(([key, entry]) => [
+    key, allLocales.map(locale => entry[locale] || ''),
+  ]));
+  fs.writeFileSync('src/lib/uiMessages.compact.json', JSON.stringify(compact) + '\n');
+};
 save();
 const placeholders = text => [...text.matchAll(/\{\d+\}/g)].map(m => m[0]).sort().join(',');
 for (const locale of locales) {
-  const pending = Object.entries(messages).filter(([, m]) => !m[locale]);
+  const pending = Object.entries(messages).filter(([, m]) => needsTranslation(m, locale));
   let done = 0;
   while (pending.length) {
     const batch = [];

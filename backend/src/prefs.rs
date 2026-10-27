@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -13,8 +13,9 @@ use uuid::Uuid;
 
 use crate::helpers::{bad, err};
 
-const PREFS_VERSION: u32 = 4;
+const PREFS_VERSION: u32 = 7;
 const DEFAULT_VAULT_AUTO_LOCK_MINUTES: u32 = 15;
+const DEFAULT_RECENT_TOOL_LIMIT: usize = 10;
 static PREFS_LOCK: Mutex<()> = Mutex::new(());
 
 // A first-run install starts with no favorites. Users choose the tools they want.
@@ -35,12 +36,117 @@ struct PrefsFile {
     vault_auto_lock_minutes: u32,
     #[serde(rename = "recentToolIds", default)]
     recent_tool_ids: Vec<String>,
+    #[serde(rename = "recentToolLimit", default = "default_recent_tool_limit")]
+    recent_tool_limit: usize,
     #[serde(rename = "sidebarCollapsed", default)]
     sidebar_collapsed: bool,
+    #[serde(rename = "recentCollapsed", default)]
+    recent_collapsed: bool,
+    #[serde(default = "default_shortcuts")]
+    shortcuts: BTreeMap<String, String>,
+}
+
+type Preferences = (
+    Vec<String>,
+    u32,
+    Vec<String>,
+    bool,
+    bool,
+    BTreeMap<String, String>,
+    usize,
+);
+
+const SHORTCUT_ACTIONS: &[&str] = &[
+    "search",
+    "home",
+    "catalog",
+    "vault",
+    "toggleSidebar",
+    "previousTool",
+    "nextTool",
+    "closeTool",
+    "toggleFavorite",
+    "loadDemo",
+    "calculate",
+    "settings",
+];
+
+fn default_shortcuts() -> BTreeMap<String, String> {
+    [
+        ("search", "Mod+KeyK"),
+        ("home", "Mod+Digit1"),
+        ("catalog", "Mod+Digit2"),
+        ("vault", "Mod+Digit3"),
+        ("toggleSidebar", "Mod+KeyB"),
+        ("previousTool", "Mod+Shift+BracketLeft"),
+        ("nextTool", "Mod+Shift+BracketRight"),
+        ("closeTool", "Mod+KeyW"),
+        ("toggleFavorite", "Mod+Shift+KeyF"),
+        ("loadDemo", "Mod+Shift+KeyD"),
+        ("calculate", "Mod+Enter"),
+        ("settings", "Mod+Comma"),
+    ]
+    .into_iter()
+    .map(|(action, shortcut)| (action.to_string(), shortcut.to_string()))
+    .collect()
+}
+
+fn sanitize_shortcuts(value: BTreeMap<String, String>) -> BTreeMap<String, String> {
+    let defaults = default_shortcuts();
+    let mut cleaned: BTreeMap<String, String> = SHORTCUT_ACTIONS
+        .iter()
+        .map(|action| {
+            let value = value
+                .get(*action)
+                .filter(|shortcut| {
+                    shortcut.len() <= 64
+                        && shortcut.is_ascii()
+                        && !shortcut.contains(char::is_whitespace)
+                })
+                .cloned()
+                .unwrap_or_else(|| defaults.get(*action).cloned().unwrap_or_default());
+            ((*action).to_string(), value)
+        })
+        .collect();
+    for (action, shortcut) in value.into_iter().take(128) {
+        let Some(tool_id) = action.strip_prefix("tool:") else {
+            continue;
+        };
+        let valid_tool_id = !tool_id.is_empty()
+            && tool_id.len() <= 80
+            && tool_id.as_bytes()[0].is_ascii_alphanumeric()
+            && tool_id.bytes().all(|ch| {
+                ch.is_ascii_lowercase()
+                    || ch.is_ascii_digit()
+                    || ch == b'-'
+                    || ch == b'_'
+                    || ch == b'.'
+            });
+        if valid_tool_id
+            && !shortcut.is_empty()
+            && shortcut.len() <= 64
+            && shortcut.is_ascii()
+            && !shortcut.contains(char::is_whitespace)
+        {
+            cleaned.insert(action, shortcut);
+        }
+    }
+    cleaned
 }
 
 fn default_vault_auto_lock_minutes() -> u32 {
     DEFAULT_VAULT_AUTO_LOCK_MINUTES
+}
+
+fn default_recent_tool_limit() -> usize {
+    DEFAULT_RECENT_TOOL_LIMIT
+}
+
+fn sanitize_recent_tool_limit(value: usize) -> usize {
+    match value {
+        5 | 8 | 10 | 15 | 20 => value,
+        _ => DEFAULT_RECENT_TOOL_LIMIT,
+    }
 }
 
 fn sanitize_vault_auto_lock_minutes(value: u32) -> u32 {
@@ -61,9 +167,7 @@ fn canonical_id(id: String) -> String {
         "duration" => "timestamp".to_string(),
         "hex" | "base32" | "base58" => "base64".to_string(),
         "unicode" => "html-entities".to_string(),
-        "sm4" => "aes".to_string(),
         "hmac-sm3" => "hmac-sha256".to_string(),
-        "sm2" => "rsa".to_string(),
         "ssh-fingerprint" => "cert".to_string(),
         "sql" | "xml" | "yaml" | "html" | "css" => "code-format".to_string(),
         "ulid" | "nanoid" => "uuid".to_string(),
@@ -109,12 +213,12 @@ fn prefs_path() -> Result<PathBuf, PluginError> {
     Ok(crate::data_dir::data_dir()?.join("prefs.json"))
 }
 
-fn read_preferences() -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
+fn read_preferences() -> Result<Preferences, PluginError> {
     let path = prefs_path()?;
     read_preferences_at(&path)
 }
 
-fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
+fn read_preferences_at(path: &Path) -> Result<Preferences, PluginError> {
     if !path
         .try_exists()
         .map_err(|error| err(format!("Failed to access prefs: {error}")))?
@@ -131,6 +235,9 @@ fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32, Vec<String>, bo
                 DEFAULT_VAULT_AUTO_LOCK_MINUTES,
                 Vec::new(),
                 false,
+                false,
+                default_shortcuts(),
+                DEFAULT_RECENT_TOOL_LIMIT,
             ))
         };
     }
@@ -142,24 +249,26 @@ fn read_preferences_at(path: &Path) -> Result<(Vec<String>, u32, Vec<String>, bo
     }
 }
 
-fn read_preferences_file(
-    path: &Path,
-) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
+fn read_preferences_file(path: &Path) -> Result<Preferences, PluginError> {
     let text =
         fs::read_to_string(path).map_err(|error| err(format!("Failed to read prefs: {error}")))?;
     let parsed: PrefsFile =
         serde_json::from_str(&text).map_err(|error| err(format!("Invalid prefs.json: {error}")))?;
     let auto_lock_minutes = sanitize_vault_auto_lock_minutes(parsed.vault_auto_lock_minutes);
     let favorite_tool_ids = ids_from_file(&parsed);
+    let recent_tool_limit = sanitize_recent_tool_limit(parsed.recent_tool_limit);
     let recent_tool_ids = filter_known(parsed.recent_tool_ids)
         .into_iter()
-        .take(10)
+        .take(recent_tool_limit)
         .collect();
     Ok((
         favorite_tool_ids,
         auto_lock_minutes,
         recent_tool_ids,
         parsed.sidebar_collapsed,
+        parsed.recent_collapsed,
+        sanitize_shortcuts(parsed.shortcuts),
+        recent_tool_limit,
     ))
 }
 
@@ -177,10 +286,18 @@ fn write_preferences(
     vault_auto_lock_minutes: u32,
     recent_tool_ids: Vec<String>,
     sidebar_collapsed: bool,
-) -> Result<(Vec<String>, u32, Vec<String>, bool), PluginError> {
+    recent_collapsed: bool,
+    shortcuts: BTreeMap<String, String>,
+    recent_tool_limit: usize,
+) -> Result<Preferences, PluginError> {
     let cleaned = filter_known(ids);
     let auto_lock_minutes = sanitize_vault_auto_lock_minutes(vault_auto_lock_minutes);
-    let recent_tool_ids: Vec<String> = filter_known(recent_tool_ids).into_iter().take(10).collect();
+    let recent_tool_limit = sanitize_recent_tool_limit(recent_tool_limit);
+    let recent_tool_ids: Vec<String> = filter_known(recent_tool_ids)
+        .into_iter()
+        .take(recent_tool_limit)
+        .collect();
+    let shortcuts = sanitize_shortcuts(shortcuts);
     let path = prefs_path()?;
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)
@@ -192,7 +309,10 @@ fn write_preferences(
         enabled_tool_ids: Vec::new(),
         vault_auto_lock_minutes: auto_lock_minutes,
         recent_tool_ids: recent_tool_ids.clone(),
+        recent_tool_limit,
         sidebar_collapsed,
+        recent_collapsed,
+        shortcuts: shortcuts.clone(),
     };
     let text = serde_json::to_string_pretty(&payload).map_err(|error| err(error.to_string()))?;
     persist_preferences(&path, text.as_bytes())?;
@@ -201,6 +321,9 @@ fn write_preferences(
         auto_lock_minutes,
         recent_tool_ids,
         sidebar_collapsed,
+        recent_collapsed,
+        shortcuts,
+        recent_tool_limit,
     ))
 }
 
@@ -281,13 +404,27 @@ fn recent_from_params(params: &Value) -> Result<Option<Vec<String>>, PluginError
         .as_array()
         .ok_or_else(|| bad("recentToolIds must be an array"))?;
     let mut ids = Vec::new();
-    for item in raw.iter().take(10) {
+    for item in raw.iter().take(20) {
         let id = item
             .as_str()
             .ok_or_else(|| bad("recentToolIds must be strings"))?;
         ids.push(id.to_string());
     }
-    Ok(Some(filter_known(ids).into_iter().take(10).collect()))
+    Ok(Some(filter_known(ids).into_iter().take(20).collect()))
+}
+
+fn recent_limit_from_params(params: &Value) -> Result<Option<usize>, PluginError> {
+    let Some(raw) = params.get("recentToolLimit") else {
+        return Ok(None);
+    };
+    let value = raw
+        .as_u64()
+        .and_then(|v| usize::try_from(v).ok())
+        .ok_or_else(|| bad("recentToolLimit must be a positive integer"))?;
+    if !matches!(value, 5 | 8 | 10 | 15 | 20) {
+        return Err(bad("Unsupported recent tool limit"));
+    }
+    Ok(Some(value))
 }
 
 fn sidebar_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
@@ -299,37 +436,110 @@ fn sidebar_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
         .ok_or_else(|| bad("sidebarCollapsed must be a boolean"))
 }
 
+fn recent_collapsed_from_params(params: &Value) -> Result<Option<bool>, PluginError> {
+    let Some(raw) = params.get("recentCollapsed") else {
+        return Ok(None);
+    };
+    raw.as_bool()
+        .map(Some)
+        .ok_or_else(|| bad("recentCollapsed must be a boolean"))
+}
+
+fn shortcuts_from_params(params: &Value) -> Result<Option<BTreeMap<String, String>>, PluginError> {
+    let Some(raw) = params.get("shortcuts") else {
+        return Ok(None);
+    };
+    let raw = raw
+        .as_object()
+        .ok_or_else(|| bad("shortcuts must be an object"))?;
+    let mut shortcuts = BTreeMap::new();
+    for (action, raw_value) in raw.iter().take(128) {
+        if !SHORTCUT_ACTIONS.contains(&action.as_str()) && !action.starts_with("tool:") {
+            continue;
+        }
+        let value = raw_value
+            .as_str()
+            .ok_or_else(|| bad("shortcut values must be strings"))?;
+        if value.len() > 64 || !value.is_ascii() || value.contains(char::is_whitespace) {
+            return Err(bad("Invalid shortcut"));
+        }
+        shortcuts.insert(action.to_string(), value.to_string());
+    }
+    Ok(Some(sanitize_shortcuts(shortcuts)))
+}
+
 pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
     let _guard = PREFS_LOCK
         .lock()
         .map_err(|_| err("Preferences lock is poisoned"))?;
     match method {
         "toolbox/prefs/get" => {
-            let (ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed) = read_preferences()?;
+            let (
+                ids,
+                auto_lock_minutes,
+                recent_tool_ids,
+                sidebar_collapsed,
+                recent_collapsed,
+                shortcuts,
+                recent_tool_limit,
+            ) = read_preferences()?;
             Ok(json!({
                 "version": PREFS_VERSION,
                 "favoriteToolIds": ids,
                 "vaultAutoLockMinutes": auto_lock_minutes,
                 "recentToolIds": recent_tool_ids,
                 "sidebarCollapsed": sidebar_collapsed,
+                "recentCollapsed": recent_collapsed,
+                "shortcuts": shortcuts,
+                "recentToolLimit": recent_tool_limit,
             }))
         }
         "toolbox/prefs/set" => {
-            let (current_ids, current_auto_lock_minutes, current_recent, current_sidebar) =
-                read_preferences()?;
+            let (
+                current_ids,
+                current_auto_lock_minutes,
+                current_recent,
+                current_sidebar,
+                current_recent_collapsed,
+                current_shortcuts,
+                current_recent_limit,
+            ) = read_preferences()?;
             let ids = ids_from_params(&params)?.unwrap_or(current_ids);
             let auto_lock_minutes =
                 auto_lock_from_params(&params)?.unwrap_or(current_auto_lock_minutes);
             let recent_tool_ids = recent_from_params(&params)?.unwrap_or(current_recent);
             let sidebar_collapsed = sidebar_from_params(&params)?.unwrap_or(current_sidebar);
-            let (ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed) =
-                write_preferences(ids, auto_lock_minutes, recent_tool_ids, sidebar_collapsed)?;
+            let recent_collapsed =
+                recent_collapsed_from_params(&params)?.unwrap_or(current_recent_collapsed);
+            let shortcuts = shortcuts_from_params(&params)?.unwrap_or(current_shortcuts);
+            let recent_tool_limit =
+                recent_limit_from_params(&params)?.unwrap_or(current_recent_limit);
+            let (
+                ids,
+                auto_lock_minutes,
+                recent_tool_ids,
+                sidebar_collapsed,
+                recent_collapsed,
+                shortcuts,
+                recent_tool_limit,
+            ) = write_preferences(
+                ids,
+                auto_lock_minutes,
+                recent_tool_ids,
+                sidebar_collapsed,
+                recent_collapsed,
+                shortcuts,
+                recent_tool_limit,
+            )?;
             Ok(json!({
                 "version": PREFS_VERSION,
                 "favoriteToolIds": ids,
                 "vaultAutoLockMinutes": auto_lock_minutes,
                 "recentToolIds": recent_tool_ids,
                 "sidebarCollapsed": sidebar_collapsed,
+                "recentCollapsed": recent_collapsed,
+                "shortcuts": shortcuts,
+                "recentToolLimit": recent_tool_limit,
             }))
         }
         _ => Err(PluginError::method_not_found(method)),
@@ -339,6 +549,33 @@ pub fn handle(method: &str, params: Value) -> Result<Value, PluginError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn recent_tool_limit_is_versioned_validated_and_defaults_for_old_files() {
+        for value in [5, 8, 10, 15, 20] {
+            assert_eq!(
+                recent_limit_from_params(&json!({"recentToolLimit": value})).unwrap(),
+                Some(value)
+            );
+        }
+        for value in [json!(0), json!(100), json!("10"), json!(null), json!(-1)] {
+            assert!(recent_limit_from_params(&json!({"recentToolLimit": value})).is_err());
+        }
+        assert_eq!(recent_limit_from_params(&json!({})).unwrap(), None);
+        let old: PrefsFile = serde_json::from_str(r#"{"version":6}"#).unwrap();
+        assert_eq!(old.recent_tool_limit, DEFAULT_RECENT_TOOL_LIMIT);
+        assert!(!old.recent_collapsed);
+        let directory =
+            std::env::temp_dir().join(format!("toolbox-recent-limit-{}", Uuid::new_v4()));
+        fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("prefs.json");
+        fs::write(&path, serde_json::to_vec(&json!({"version":7,"recentToolLimit":20,"recentCollapsed":true,"recentToolIds":(0..20).map(|i| format!("tool-{i}")).collect::<Vec<_>>()})).unwrap()).unwrap();
+        let prefs = read_preferences_at(&path).unwrap();
+        assert_eq!(prefs.2.len(), 20);
+        assert!(prefs.4);
+        assert_eq!(prefs.6, 20);
+        fs::remove_dir_all(directory).unwrap();
+    }
 
     #[test]
     fn missing_preferences_default_and_corrupt_primary_uses_backup() {
@@ -352,7 +589,10 @@ mod tests {
                 default_ids(),
                 DEFAULT_VAULT_AUTO_LOCK_MINUTES,
                 Vec::new(),
-                false
+                false,
+                false,
+                default_shortcuts(),
+                DEFAULT_RECENT_TOOL_LIMIT,
             )
         );
         let backup = path.with_extension("json.bak");
@@ -363,12 +603,28 @@ mod tests {
         .unwrap();
         assert_eq!(
             read_preferences_at(&path).unwrap(),
-            (vec!["hash".to_string()], 30, Vec::new(), false)
+            (
+                vec!["hash".to_string()],
+                30,
+                Vec::new(),
+                false,
+                false,
+                default_shortcuts(),
+                DEFAULT_RECENT_TOOL_LIMIT,
+            )
         );
         fs::write(&path, b"broken json").unwrap();
         assert_eq!(
             read_preferences_at(&path).unwrap(),
-            (vec!["hash".to_string()], 30, Vec::new(), false)
+            (
+                vec!["hash".to_string()],
+                30,
+                Vec::new(),
+                false,
+                false,
+                default_shortcuts(),
+                DEFAULT_RECENT_TOOL_LIMIT,
+            )
         );
         fs::write(&backup, b"also broken").unwrap();
         assert!(read_preferences_at(&path).is_err());
@@ -406,6 +662,14 @@ mod tests {
                 "missing-tool".to_string(),
                 "uuid".to_string()
             ]
+        );
+    }
+
+    #[test]
+    fn current_sm4_and_sm2_tool_ids_are_not_collapsed_into_legacy_ids() {
+        assert_eq!(
+            filter_known(vec!["sm4".into(), "sm2".into()]),
+            vec!["sm4", "sm2"]
         );
     }
 
@@ -512,6 +776,41 @@ mod tests {
             Some(30)
         );
         assert!(auto_lock_from_params(&json!({ "vaultAutoLockMinutes": 10 })).is_err());
+    }
+
+    #[test]
+    fn shortcut_preferences_keep_valid_tool_bindings() {
+        let shortcuts = shortcuts_from_params(&json!({
+            "shortcuts": {
+                "search": "Alt+KeyP",
+                "calculate": "Alt+KeyR",
+                "tool:json": "Mod+Shift+KeyJ",
+                "tool:../secret": "Mod+KeyX",
+                "unknown": "Mod+KeyY"
+            }
+        }))
+        .unwrap()
+        .unwrap();
+        assert_eq!(
+            shortcuts.get("search").map(String::as_str),
+            Some("Alt+KeyP")
+        );
+        assert_eq!(
+            shortcuts.get("tool:json").map(String::as_str),
+            Some("Mod+Shift+KeyJ")
+        );
+        assert!(!shortcuts.contains_key("tool:../secret"));
+        assert!(!shortcuts.contains_key("unknown"));
+        assert_eq!(
+            shortcuts.get("calculate").map(String::as_str),
+            Some("Alt+KeyR")
+        );
+        assert_eq!(
+            sanitize_shortcuts(BTreeMap::new())
+                .get("calculate")
+                .map(String::as_str),
+            Some("Mod+Enter")
+        );
     }
 
     #[test]

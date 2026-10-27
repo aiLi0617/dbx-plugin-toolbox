@@ -3,8 +3,10 @@
 /node_modules/
 /backend/target/
 /ui/
+/.vite-asset-cache/
 .dbx-repository-signing-key.env
 .DS_Store
 *.log
 /backend/.cargo/
 /output/
+/.playwright-cli/

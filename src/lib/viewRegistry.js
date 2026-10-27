@@ -58,6 +58,16 @@ export const VIEW_LOADERS = {
   signature: () => import("./SignatureView.svelte"),
   "specialized-crypto": () => import("./SpecializedCryptoView.svelte"),
   kem: () => import("./KemView.svelte"),
+  'developer-expansion': () => import('./DeveloperExpansionView.svelte'),
+  'ipv6-ula': () => import('./Ipv6UlaView.svelte'),
+  'basic-auth': () => import('./BasicAuthView.svelte'),
+  'wifi-qr': () => import('./WifiQrView.svelte'),
+  'calculator-suite': () => import('./CalculatorSuiteView.svelte'),
+  'security-expansion': () => import('./SecurityExpansionView.svelte'),
+  'content-expansion': () => import('./ContentExpansionView.svelte'),
+  'gif-editor': () => import('./GifEditorView.svelte'),
+  'speech': () => import('./SpeechView.svelte'),
+  'pdf-tool': () => import('./PdfToolView.svelte'),
 };
 
 export const FILL_VIEWS = new Set([
@@ -66,7 +76,17 @@ export const FILL_VIEWS = new Set([
   "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "key-generator", "unicode-inspect", "developer-utility", "http-status",
 ]);
 
+// Keep these established utilities free of per-tool workflow and editing guards.
+export function fillsToolPane(tool) {
+  return tool?.id === "yaml-tree" || tool?.id === "roman" || FILL_VIEWS.has(tool?.view);
+}
+
+export const SIMPLE_TOOL_IDS = new Set(['json','data-convert','spreadsheet','whitespace','regex','base64','image-ocr']);
+
+export const BACKGROUND_TOOL_IDS = new Set(tools.filter(tool => ['pdf-tool', 'gif-editor', 'gif-tools', 'image-ocr'].includes(tool.view)).map(tool => tool.id));
+
 export const EPHEMERAL_TOOL_IDS = new Set([
+  'basic-auth','wifi-qr','bcrypt','password-strength','bip39',
   "aes", "sm4", "rsa", "sm2", "modern-aead", "kdf", "signature", "key-wrap", "storage-crypto", "format-preserving", "aes-mac", "hpke", "ml-kem", "xor", "jwt", "jwk", "hmac-sha256", "totp", "password", "random-bytes", "key-generator",
 ]);
 
@@ -146,8 +166,8 @@ export const TOOL_REGISTRY = Object.freeze(tools.map((tool) => Object.freeze({
   demoPreset: tool.demoPreset,
   actions: Object.freeze([...(tool.actions || [])]),
   ephemeral: EPHEMERAL_TOOL_IDS.has(tool.id) || EPHEMERAL_TOOL_IDS.has(tool.parentId),
-  fill: FILL_VIEWS.has(tool.view),
-  limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || null,
+  fill: fillsToolPane(tool),
+  limits: TOOL_LIMITS[tool.id] || TOOL_LIMITS[tool.parentId] || (tool.view==='pdf-tool'?{inputBytes:50_000_000}:tool.view==='gif-editor'?{inputBytes:30_000_000}:tool.view?.includes('expansion')||['basic-auth','wifi-qr','calculator-suite','speech','ipv6-ula'].includes(tool.view)?{inputBytes:1_000_000}:null),
   layoutKind: layoutKind(tool),
   executionKind: DEBOUNCED_CRYPTO_IDS.has(tool.id) || DEBOUNCED_CRYPTO_IDS.has(tool.parentId) ? "debounced" : EXPLICIT_IDS.has(tool.id) || EXPLICIT_IDS.has(tool.parentId) ? "explicit" : LIVE_IDS.has(tool.id) ? "live" : "debounced",
 })));
@@ -170,6 +190,7 @@ export function viewPropsForTool(tool, context = {}) {
     initialAction: initialOptions.action || "trim",
     focusedOperation: initialOptions.op || "",
     shortcut: Boolean(context.shortcut),
+    calculateShortcut: context.calculateShortcut,
     shortcutId: tool.id,
     capabilityId: tool.capabilityId || null,
     lockOptions: tool.lockOptions || [],
@@ -177,5 +198,10 @@ export function viewPropsForTool(tool, context = {}) {
     demoRequest: Number(context.demoRequest || 0),
     onVaultChange: context.onVaultChange,
     onSupportLevelChange: context.onSupportLevelChange,
+    onOpenTool: context.onOpenTool,
+    onCloseTool: context.onCloseTool,
+    onStateChange: context.onStateChange,
+    onBeforeReplace: context.onBeforeReplace,
+    visible: context.visible,
   };
 }

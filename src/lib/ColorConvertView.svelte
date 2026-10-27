@@ -1,4 +1,5 @@
 <script>
+  import ColorPicker from "./ColorPicker.svelte";
   import { onMount } from "svelte";
   import { copyText } from "./clipboard.js";
   import { chrome, pick } from "./i18n.js";
@@ -287,7 +288,7 @@
         applyPickedHex(result?.sRGBHex);
       } catch (err) {
         if (err?.name !== "AbortError") {
-          pickHint = t("屏幕取色不可用，已打开系统调色板", "Eyedropper unavailable; opened the system color picker");
+          pickHint = t("选择颜色", "Choose color");
           colorInputEl?.click();
         }
       } finally {
@@ -302,7 +303,7 @@
     pickHint = t("当前环境不支持取色", "Color picking is not available here");
   }
 
-  function onNativeColorInput(event) {
+  function onPickerColorInput(event) {
     applyPickedHex(event.currentTarget.value);
   }
 
@@ -625,13 +626,12 @@
           <label class="contrast-color">
             <span>{t("背景色", "Background")}</span>
             <div class="contrast-input" class:invalid={contrastInvalid}>
-              <input
+              <ColorPicker
                 class="contrast-native-color"
-                type="color"
                 value={contrastBackground ? formatRgbaHex(contrastBackground).slice(0, 7) : "#FFFFFF"}
                 oninput={onContrastColorInput}
                 aria-label={t("选择背景色", "Choose background color")}
-              />
+              {locale} />
               {#if /^[\da-f]{0,8}$/i.test(contrastHex)}<span aria-hidden="true">#</span>{/if}
               <input
                 class="contrast-hex-input"
@@ -669,11 +669,11 @@
           </label>
           <label>
             <span>{t("单位", "Unit")}</span>
-            <select class="dbx-input" bind:value={fontUnit}><option value="px">px</option><option value="pt">pt</option><option value="rem">rem</option></select>
+            <Select class="font-unit-select" bind:value={fontUnit} ariaLabel={t("字体单位", "Font unit")} options={["px","pt","rem"].map((value) => ({value,label:value}))} />
           </label>
           <label>
             <span>{t("字重", "Weight")}</span>
-            <select class="dbx-input" bind:value={fontWeight}><option value="400">400</option><option value="500">500</option><option value="600">600</option><option value="700">700</option><option value="800">800</option><option value="900">900</option></select>
+            <Select class="font-weight-select" bind:value={fontWeight} ariaLabel={t("字体粗细", "Font weight")} options={["400","500","600","700","800","900"].map((value) => ({value,label:value}))} />
           </label>
           <div class="type-classification">
             <span>{t("自动分类", "Classification")}</span>
@@ -806,15 +806,11 @@
           <path d="m5.082 11.09 8.828 8.828"></path>
         </svg>
       </button>
-      <input
+      <ColorPicker
         bind:this={colorInputEl}
-        class="native-color"
-        type="color"
         value={fmt?.hex || "#000000"}
-        oninput={onNativeColorInput}
-        tabindex="-1"
-        aria-hidden="true"
-      />
+        oninput={onPickerColorInput} hidden
+      {locale} />
     </div>
     {#if pickHint}
       <p class="pick-hint">{pickHint}</p>
@@ -964,7 +960,7 @@
   .contrast-input.invalid {
     border-color: var(--color-destructive);
   }
-  .contrast-native-color {
+  .color-workbench :global(.contrast-native-color) {
     width: 28px;
     height: 24px;
     margin: 0 4px;
@@ -1010,6 +1006,11 @@
     width: 100%;
     height: 30px;
     padding: 0 7px;
+  }
+  .type-controls :global(.font-unit-select),
+  .type-controls :global(.font-weight-select) {
+    width: 100%;
+    min-width: 0;
   }
   .type-classification strong {
     display: flex;
@@ -1290,15 +1291,6 @@
     height: 30px;
     padding: 0;
     flex-shrink: 0;
-  }
-  .native-color {
-    position: absolute;
-    width: 0;
-    height: 0;
-    opacity: 0;
-    border: 0;
-    padding: 0;
-    overflow: hidden;
   }
   .pick-hint {
     margin: 0 0 8px;

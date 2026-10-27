@@ -18,8 +18,8 @@ test("all catalog sections follow category order and include every visible tool 
 });
 
 test("all catalog sections omit empty categories", () => {
-  const sample = visibleTools.filter((tool) => tool.category === "data");
-  assert.deepEqual(buildCatalogSections(sample, "all").map((section) => section.id), ["data"]);
+  const sample = visibleTools.filter((tool) => tool.category === "developer");
+  assert.deepEqual(buildCatalogSections(sample, "all").map((section) => section.id), ["developer"]);
 });
 
 test("security catalog groups every security tool exactly once", () => {
@@ -48,8 +48,8 @@ test("catalog grouping stays flat while searching or without subgroup configurat
   assert.equal(buildCatalogSections(securityTools, "security", "aes"), null);
   assert.equal(buildCatalogSections(securityTools, "security", "   aes   "), null);
   assert.equal(buildCatalogSections(visibleTools, "all", "aes"), null);
-  assert.equal(buildCatalogSections(visibleTools, "data"), null);
+  assert.equal(buildCatalogSections(visibleTools, "developer"), null);
   assert.equal(buildCatalogSections(visibleTools, "unknown"), null);
   assert.equal(groupedCatalogTools, buildCatalogSections);
-  assert.equal(tools.find((tool) => tool.id === "xor").category, "developer");
+  assert.equal(tools.find((tool) => tool.id === "xor").category, "security");
 });

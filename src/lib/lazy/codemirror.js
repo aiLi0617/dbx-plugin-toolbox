@@ -1,5 +1,7 @@
 import CodeMirror from "codemirror";
 import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/yaml/yaml.js";
+import "codemirror/addon/fold/indent-fold.js";
 import "codemirror/addon/fold/foldcode.js";
 import "codemirror/addon/fold/foldgutter.js";
 import "codemirror/addon/fold/brace-fold.js";

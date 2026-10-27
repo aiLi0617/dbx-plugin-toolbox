@@ -108,6 +108,26 @@ html.dark {
 }
 
 * { box-sizing: border-box; }
+.expansion-page { container-type:inline-size; display:flex; flex-direction:column; gap:12px; width:100%; max-width:1000px; min-height:0; margin:0 auto; padding:16px; overflow:auto; }
+.expansion-page > label { display:flex; flex-direction:column; gap:6px; min-width:0; font-size:13px; }
+.expansion-page > .dbx-custom-select { width:min(100%, 420px); }
+.expansion-page input[type="checkbox"] { margin-right:6px; }
+.expansion-page textarea { width:100%; min-height:90px; }
+.expansion-page p { font-size:12px; color:var(--color-muted-foreground); overflow-wrap:anywhere; }
+.expansion-page [role="alert"] { color:var(--color-destructive); }
+.expansion-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.expansion-page article { padding:12px; border:1px solid var(--color-border); border-radius:var(--radius-md); }
+.expansion-page > .yaml-tree-view { flex:1 1 260px; min-height:220px; border:1px solid var(--color-border); border-radius:var(--radius-md); overflow:hidden; }
+@container (min-width: 720px) {
+  .expansion-page.expansion-workspace { display:grid; grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr); align-content:start; }
+  .expansion-page.expansion-workspace > .expansion-actions,
+  .expansion-page.expansion-workspace > [role="alert"] { grid-column:1 / -1; }
+  .expansion-page.expansion-workspace > .result-panel { grid-column:2; grid-row:1 / span 2; min-height:300px; }
+}
+@container (max-width: 480px) {
+  .expansion-page { padding:12px; gap:10px; }
+  .expansion-actions .dbx-btn { flex:1 1 auto; }
+}
 
 .sr-only {
   position: absolute;
@@ -159,7 +179,7 @@ html, body, #app {
   background-color: color-mix(in oklch, var(--color-foreground, CanvasText) 48%, transparent);
 }
 
-button, input, select, textarea { font: inherit; color: inherit; }
+:where(button, input, select, textarea) { font: inherit; color: inherit; }
 textarea { resize: vertical; }
 /* Neutralize browser chrome before component styles are applied. Keeping this
    reset at zero specificity lets DBX's injected component kit win. */
@@ -198,7 +218,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background: transparent;
   cursor: pointer;
 }
-:where(input[type="range"]::-webkit-slider-runnable-track) {
+:where(input[type="range"])::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
   background: linear-gradient(
@@ -207,7 +227,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     var(--dbx-range-track) var(--dbx-range-progress) 100%
   );
 }
-:where(input[type="range"]::-webkit-slider-thumb) {
+:where(input[type="range"])::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   margin-top: -5px;
@@ -218,7 +238,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-border);
 }
-:where(input[type="range"]::-moz-range-track) {
+:where(input[type="range"])::-moz-range-track {
   height: 4px;
   border: 0;
   border-radius: 999px;
@@ -228,7 +248,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     var(--dbx-range-track) var(--dbx-range-progress) 100%
   );
 }
-:where(input[type="range"]::-moz-range-thumb) {
+:where(input[type="range"])::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border: 2px solid var(--color-background, Canvas);
@@ -244,12 +264,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   outline: none;
   box-shadow: none;
 }
-:where(input[type="range"]:focus-visible::-webkit-slider-thumb) {
+:where(input[type="range"]:focus-visible)::-webkit-slider-thumb {
   box-shadow:
     0 0 0 1px var(--color-border),
     inset 0 0 0 1px var(--color-ring, var(--color-primary));
 }
-:where(input[type="range"]:focus-visible::-moz-range-thumb) {
+:where(input[type="range"]:focus-visible)::-moz-range-thumb {
   box-shadow:
     0 0 0 1px var(--color-border),
     inset 0 0 0 1px var(--color-ring, var(--color-primary));
@@ -287,8 +307,55 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 :where(option),
 :where(optgroup) {
-  background: var(--color-popover, var(--color-background, Canvas));
-  color: var(--color-popover-foreground, var(--color-foreground, CanvasText));
+  background: var(--color-popover, var(--dbx-control-background));
+  color: var(--color-popover-foreground, var(--dbx-control-foreground));
+}
+
+/* File picker buttons live in a native pseudo-element, so the button reset
+   above does not reach them. Cover every tool, including unwrapped inputs. */
+:where(input[type="file"]) {
+  max-width: 100%;
+  min-width: 0;
+  font: inherit;
+  color: var(--color-muted-foreground);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+:where(input[type="file"])::file-selector-button {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  min-height: 30px;
+  margin: 0 8px 0 0;
+  padding: 0 12px;
+  border: 1px solid var(--dbx-control-border);
+  border-radius: var(--radius-md);
+  background: var(--dbx-control-background);
+  color: var(--dbx-control-foreground);
+  font: inherit;
+  cursor: inherit;
+}
+:where(input[type="file"]:not(:disabled):hover)::file-selector-button {
+  border-color: var(--color-ring, var(--color-primary));
+  background: var(--dbx-hover-background);
+  color: var(--dbx-hover-foreground);
+}
+:where(input[type="file"]:not(:disabled):active)::file-selector-button {
+  background: var(--dbx-active-background);
+  color: var(--dbx-control-foreground);
+}
+:where(input[type="file"]:focus-visible) {
+  outline: none;
+  box-shadow: var(--dbx-focus-ring);
+}
+:where(input[type="file"]:focus-visible)::file-selector-button {
+  border-color: var(--color-ring, var(--color-primary));
+}
+:where(input[type="file"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Keep native file inputs usable through their labels without exposing the
@@ -302,7 +369,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   opacity: 0;
   cursor: pointer;
 }
-:where(.file-button:hover) {
+:where(.file-button:hover):not(:has(input[type="file"]:disabled)) {
   border-color: var(--color-ring, var(--color-primary));
   background: var(--dbx-hover-background);
   color: var(--dbx-hover-foreground);
@@ -310,6 +377,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 :where(.file-button:has(input[type="file"]:focus-visible)) {
   border-color: var(--color-ring, var(--color-primary));
   box-shadow: var(--dbx-focus-ring);
+}
+.file-button:has(input[type="file"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.file-button > input[type="file"]:disabled {
+  cursor: not-allowed;
 }
 
 code, kbd, samp, pre, .mono {
@@ -443,9 +517,9 @@ code, kbd, samp, pre, .mono {
   height: 30px;
   padding: 0 10px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-input, var(--color-border, color-mix(in srgb, CanvasText 18%, transparent)));
-  background: var(--color-background, Canvas);
-  color: var(--color-foreground, CanvasText);
+  border: 1px solid var(--dbx-control-border);
+  background: var(--dbx-control-background);
+  color: var(--dbx-control-foreground);
   font-size: 13px;
   font-family: inherit;
 }

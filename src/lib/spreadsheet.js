@@ -170,3 +170,13 @@ export async function writeXlsx(sheets) {
 }
 
 export const spreadsheetLimits = { rows: MAX_ROWS, columns: MAX_COLUMNS, fileBytes: MAX_FILE_BYTES };
+
+export function gridToHtml(rows, firstRowHeader=true) {
+  const escape=value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>table{border-collapse:collapse;max-width:100%}td,th{border:1px solid #888;padding:6px;white-space:pre-wrap}</style></head><body><table>'+rows.map((row,i)=>'<tr>'+row.map(cell=>{const tag=firstRowHeader&&i===0?'th':'td';return `<${tag}>${escape(cell)}</${tag}>`;}).join('')+'</tr>').join('')+'</table></body></html>';
+}
+export function gridToText(rows, delimiter='\t') {
+  if(!delimiter||delimiter.length>16||/[\r\n]/.test(delimiter))throw new Error('Invalid delimiter');
+  const width=Math.max(0,...rows.map(row=>row.length));
+  return rows.map(row=>Array.from({length:width},(_,i)=>String(row[i]??'')).join(delimiter)).join('\n');
+}

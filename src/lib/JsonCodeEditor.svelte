@@ -12,6 +12,7 @@
     ariaLabel = "",
     maxLength = 5_000_000,
     locale = "zh-CN",
+    mode = "application/json",
   } = $props();
 
   let hostEl = $state(null);
@@ -36,7 +37,7 @@
         const CodeMirror = module.default;
         editor = CodeMirror(hostEl, {
           value,
-          mode: "application/json",
+          mode,
           lineNumbers: showLineNumbers,
           lineWrapping: true,
           foldGutter: true,
@@ -101,6 +102,10 @@
 
   $effect(() => {
     if (editor) editor.setOption("lineNumbers", showLineNumbers);
+  });
+
+  $effect(() => {
+    if (editor) editor.setOption("mode", mode);
   });
 
   $effect(() => {

@@ -6,6 +6,8 @@
     maskSensitiveText, numeronym, pluralizeEnglish, normalizeEmails, extractEmails, extractUrls, asciiBanner,
   } from "./tools/text.js";
   import { TEXT_ACTIONS } from "./textActions.js";
+  import { loadAssetModule } from './assetModules.js';
+  import { normalizeEmailList, extractLinks } from './contentExpansion.js';
 
   let { locale = "zh-CN", initialAction = "trim", shortcut = false, shortcutId = "", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
@@ -50,6 +52,13 @@
   let maxLength = $state("");
   let shuffleSeed = $state(1);
   let input = $state("");
+  let singular = $state(false), gmail = $state(false), stripPlus = $state(false), keepQuery = $state(true), groupUrls = $state(false);
+  let nounTransform = $state(null);
+  let nounError = $state(null);
+  $effect(() => { if (mode === 'pluralize' && !nounTransform) {
+    nounError = null;
+    void loadAssetModule('content-tools').then(lib => nounTransform=lib.englishNouns).catch(error => nounError=error);
+  } });
   let history = $state([]);
   let inputStats = $state(emptyStats);
   let outputStats = $state(emptyStats);
@@ -84,10 +93,13 @@
       else if (mode === "strip-html") value = stripHtml(input);
       else if (mode === "mask") value = maskSensitiveText(input);
       else if (mode === "numeronym") value = numeronym(input);
-      else if (mode === "pluralize") value = pluralizeEnglish(input);
-      else if (mode === "email-normalize") value = normalizeEmails(input);
+      else if (mode === "pluralize") {
+        if (!nounTransform) throw nounError || new Error(t('正在加载词形转换规则…','Loading noun inflection rules…'));
+        value = nounTransform(input,singular);
+      }
+      else if (mode === "email-normalize") value = input.trim() ? normalizeEmailList(input,{gmail,stripPlus}) : '';
       else if (mode === "extract-email") value = extractEmails(input);
-      else if (mode === "extract-url") value = extractUrls(input);
+      else if (mode === "extract-url") { const links=extractLinks(input,{keepQuery,group:groupUrls}); value=Array.isArray(links)?links.join('\n'):JSON.stringify(links,null,2); }
       else if (mode === "ascii-banner") value = asciiBanner(input);
       else if (CASE_STYLES.some((style) => style.id === mode)) value = applyCaseStyle(input, mode);
       else {
@@ -229,6 +241,9 @@
         {/if}
       </div>
     {/if}
+    {#if mode === 'pluralize'}<label><input type="checkbox" bind:checked={singular}/>{t('转单数','Singularize')}</label>{/if}
+    {#if mode === 'email-normalize'}<label><input type="checkbox" bind:checked={gmail}/>{t('启用 Gmail 专属规则','Enable Gmail-specific rules')}</label><label><input type="checkbox" bind:checked={stripPlus} disabled={!gmail}/>{t('移除 Gmail 加号别名','Remove Gmail plus aliases')}</label>{/if}
+    {#if mode === 'extract-url'}<label><input type="checkbox" bind:checked={keepQuery}/>{t('保留查询参数','Keep query parameters')}</label><label><input type="checkbox" bind:checked={groupUrls}/>{t('按域名分组','Group by domain')}</label>{/if}
     <IoSplit {locale} bind:input {output} {error} />
     <div class="stats">
       {#each [[t("输入", "Input"), inputStats], [t("结果", "Result"), outputStats]] as [label, counts]}

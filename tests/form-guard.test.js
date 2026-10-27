@@ -24,3 +24,17 @@ test("password regeneration does not depend on form submission", () => {
   assert.match(source, /onclick=\{generate\}/);
   assert.doesNotMatch(source, /type="submit"|onsubmit=/);
 });
+
+test("Basic Auth generation works without sandbox form permissions", () => {
+  const source = readFileSync(new URL("../src/lib/BasicAuthView.svelte", import.meta.url), "utf8");
+  assert.match(source, /type="button" onclick=\{generate\}/);
+  assert.doesNotMatch(source, /<form\b|type="submit"|onsubmit=/);
+  assert.equal((source.match(/onkeydown=\{generateOnEnter\}/g) || []).length, 2);
+});
+
+test("Bcrypt actions work without sandbox form permissions", () => {
+  const source = readFileSync(new URL("../src/lib/BcryptView.svelte", import.meta.url), "utf8");
+  assert.match(source, /type="button"\s+onclick=\{run\}/);
+  assert.doesNotMatch(source, /<form\b|type="submit"|onsubmit=/);
+  assert.equal((source.match(/onkeydown=\{runOnEnter\}/g) || []).length, 3);
+});

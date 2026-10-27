@@ -123,7 +123,7 @@ test("search finds localized categories and multiple keywords", () => {
   assert.ok(searchTools("セキュリティと暗号", "ja").every((tool) => tool.category === "security"));
   assert.ok(searchTools("SM4 CBC", "zh-CN").some((tool) => tool.id === "sm4"));
   assert.equal(searchTools("ULID", "zh-CN")[0].id, "uuid");
-  assert.ok(tools.some((tool) => tool.id === "data-convert" && tool.category === "data"));
+  assert.ok(tools.some((tool) => tool.id === "data-convert" && tool.category === "developer"));
   assert.ok(EPHEMERAL_TOOL_IDS.has("jwt") && EPHEMERAL_TOOL_IDS.has("password") && EPHEMERAL_TOOL_IDS.has("random-bytes"));
   assert.ok(!EPHEMERAL_TOOL_IDS.has("json"));
 });
@@ -163,7 +163,9 @@ test("JSON editor uses one CodeMirror layout for text, highlighting, selection, 
   assert.match(source, /await import\("\.\/lazy\/codemirror\.js"\)/);
   assert.match(source, /loadAssetModule\("codemirror"\)/);
   assert.match(assetModules, /"codemirror"/);
-  assert.match(source, /mode: "application\/json"/);
+  assert.match(source, /mode = "application\/json"/);
+  assert.match(source, /editor = CodeMirror\(hostEl, \{\s+value,\s+mode,/);
+  assert.match(source, /editor\.setOption\("mode", mode\)/);
   assert.match(source, /lineWrapping: true/);
   assert.match(source, /lineNumbers: showLineNumbers/);
   assert.match(source, /foldGutter: true/);
@@ -181,9 +183,10 @@ test("OCR quality controls follow the installed model tiers", () => {
 
 test("OCR model cancellation ignores repeated clicks while a request is pending", () => {
   const source = readFileSync(new URL("../src/lib/ImageOcrView.svelte", import.meta.url), "utf8");
-  assert.match(source, /if\(!modelSessionId\|\|modelCancelling\)return/);
+  assert.match(source, /if\(modelCancelling\)return/);
   assert.match(source, /modelInstallController\?\.abort\(\)/);
-  assert.match(source, /signal:installController\.signal/);
+  assert.match(source, /signal:task\.signal/);
+  assert.match(source, /modelTasks\.cancel\(\)/);
   assert.match(source, /disabled=\{modelCancelling\} onclick=\{cancelModelDownload\}/);
 });
 
@@ -196,9 +199,11 @@ test("completed OCR model installs use a compact transient notice", () => {
   assert.doesNotMatch(source, /modelBusy\|\|modelStatus/);
 });
 
-test("RSA and SM2 tools do not expose an in-page algorithm switch", () => {
+test("RSA and SM2 tools do not expose an in-page algorithm switch", async () => {
   const source = readFileSync(new URL("../src/lib/CipherView.svelte", import.meta.url), "utf8");
-  assert.match(source, /algorithm = asymmetricCipherProfile\(toolId\)/);
+  const { resolveCipherDefaults } = await import("../src/lib/cipherDefaults.js");
+  assert.equal(resolveCipherDefaults("rsa", "rsa", { algorithm: "sm2" }).algorithm, "rsa");
+  assert.equal(resolveCipherDefaults("rsa", "sm2", { algorithm: "rsa" }).algorithm, "sm2");
   assert.doesNotMatch(source, /bind:value=\{algorithm\}[\s\S]*value: "rsa"[\s\S]*value: "sm2"/);
   assert.match(source, /\{#if algorithm === "rsa"\}/);
 });

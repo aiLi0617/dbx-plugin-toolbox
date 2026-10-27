@@ -24,7 +24,7 @@
 </script>
 
 <div class="page">
-  <label class="drop" ondragover={(event)=>event.preventDefault()} ondrop={onDrop}>
+  <label class="drop file-button" ondragover={(event)=>event.preventDefault()} ondrop={onDrop}>
     <input type="file" multiple onchange={onFile} disabled={loading} />
     <strong>{loading ? t("正在识别…", "Identifying…") : t("选择或拖入文件", "Choose or drop a file")}</strong>
     <span>{t("批量按内容识别；最多 50 个、单文件 100 MB", "Batch content inspection; up to 50 files, 100 MB each")}</span>

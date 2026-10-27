@@ -2,6 +2,7 @@ import { L, localize, isZh, normalizeLocale, pick } from "./locale.js";
 import { SIDECAR_ERRORS, APP_ERRORS } from "./i18nErrors.js";
 import { UI_MESSAGES } from "./uiMessages.js";
 import { errorMessage } from "./errorMessage.js";
+import { CATEGORY_NAMES } from "./toolPresentation.js";
 
 export { errorMessage } from "./errorMessage.js";
 
@@ -499,6 +500,7 @@ export function localizeError(locale, err) {
 }
 
 export const chrome = {
+  settings: L("Settings", "设置", "設定", "Ajustes", "Impostazioni", "設定", "Configurações", "설정", "Ayarlar", "Parametrlər"),
   pluginName: L("DBX Toolbox", "DBX 工具箱", "DBX 工具箱", "Herramientas DBX", "Strumenti DBX", "DBX ツールボックス", "Ferramentas DBX"),
   toolLoadFailed: L("Failed to load tool", "工具加载失败", "工具載入失敗", "No se pudo cargar la herramienta", "Impossibile caricare lo strumento", "ツールを読み込めませんでした", "Falha ao carregar a ferramenta"),
   retry: L("Retry", "重试", "重試", "Reintentar", "Riprova", "再試行", "Tentar novamente"),
@@ -733,7 +735,7 @@ export const chrome = {
   ),
 };
 
-export const categories = {
+export const legacyCategories = {
   // Legacy labels remain available to old saved filters and older integrations.
   format: L("Data & code", "数据与代码", "資料與程式碼", "Datos y código", "Dati e codice", "データとコード", "Dados e código"),
   convert: L("Convert & calculate", "转换计算", "轉換計算", "Convertir y calcular", "Converti e calcola", "変換と計算", "Converter e calcular"),
@@ -747,6 +749,8 @@ export const categories = {
   generate: L("Generators", "生成器", "產生器", "Generadores", "Generatori", "ジェネレーター", "Geradores"),
   image: L("Images", "图片", "圖片", "Imágenes", "Immagini", "画像", "Imagens"),
 };
+
+export const categories = CATEGORY_NAMES;
 
 export const optionLabels = {
   direction: L("Direction", "方向", "方向", "Dirección", "Direzione", "方向", "Direção"),

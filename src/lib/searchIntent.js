@@ -1,4 +1,6 @@
 import { TEXT_ACTIONS, textActionForQuery } from "./textActions.js";
+import { EXPANSION_TOOLS } from './expansionTools.js';
+import { EXPANSION_NAMES } from './expansionNames.js';
 import { L, localize } from "./locale.js";
 
 const M = (en, zhCN, zhTW, es, it, ja, ptBR, ko, tr, az) => ({
@@ -339,6 +341,17 @@ export function resolveIntent(query = "") {
   const q = normalizeIntentQuery(query);
   if (!q) return [];
   const out = [];
+
+  // Specific new tools must rank above older broad intents such as cURL,
+  // generic text transforms, network calculators, or image editing.
+  for (const [id,,,en] of EXPANSION_TOOLS) {
+    const row = EXPANSION_TOOLS.find(item => item[0] === id);
+    const terms = [id,id.replaceAll('-',' '),row[2],en,...EXPANSION_NAMES[id]];
+    if (terms.some(term => normalizeIntentQuery(term) === q)) push(out,id,{},'',30);
+  }
+  for (const [pattern,id] of [[/basic\s*auth/,'basic-auth'],[/wi[ -]?fi/,'wifi-qr'],[/figlet/,'figlet'],[/json\s*(?:diff|结构对比|結構比較)/,'json-diff'],[/gif.*(?:压缩|壓縮|compress)/,'gif-compress'],[/gif.*(?:裁剪|裁切|crop)/,'gif-crop'],[/gif.*(?:帧|影格|frame)/,'gif-frames']]) {
+    if(pattern.test(q)) push(out,id,{},'',25);
+  }
 
   const ws = textActionMatch(q);
   if (ws) push(out, "whitespace", { action: ws.id }, ws.id, 12);

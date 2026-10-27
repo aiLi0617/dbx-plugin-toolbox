@@ -31,7 +31,7 @@ export const TEXT_ACTIONS = [
   ["email-normalize", "邮箱规范化", "Normalize emails", []],
   ["extract-email", "提取邮箱", "Extract emails", []],
   ["extract-url", "提取 URL", "Extract URLs", []],
-  ["ascii-banner", "ASCII 横幅", "ASCII banner", ["figlet", "字符画"]],
+  ["ascii-banner", "ASCII 横幅", "ASCII banner", ["字符画"]],
   ["stats", "仅统计", "Count only", ["字数", "字数统计", "word count"]],
 ].map(([id, zh, en, aliases]) => ({ id, zh, en, aliases }));
 
