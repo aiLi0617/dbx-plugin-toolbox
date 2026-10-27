@@ -40,8 +40,8 @@ test("keyboard events can be captured, matched, and displayed", () => {
   assert.equal(shortcutFromEvent(event, false), "Mod+Alt+KeyP");
   assert.equal(shortcutFromEvent({ ...event, ctrlKey: false, metaKey: true }, true), "Mod+Alt+KeyP");
   assert.equal(shortcutFromEvent({ ...event, ctrlKey: true, metaKey: false }, true), "Control+Alt+KeyP");
-  assert.equal(shortcutMatches(event, "Mod+Alt+KeyP"), true);
-  assert.equal(shortcutMatches({ ...event, shiftKey: true }, "Mod+Alt+KeyP"), false);
+  assert.equal(shortcutMatches(event, "Mod+Alt+KeyP", false), true);
+  assert.equal(shortcutMatches({ ...event, shiftKey: true }, "Mod+Alt+KeyP", false), false);
   assert.equal(shortcutLabel("Mod+Alt+KeyP", false), "Ctrl+Alt+P");
   assert.equal(shortcutLabel("Mod+Comma", true), "⌘ ,");
 });
