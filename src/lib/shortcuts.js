@@ -92,11 +92,10 @@ export function shortcutFromEvent(event, mac = isMacPlatform()) {
   return sanitizeShortcut([...modifiers, event.code].join("+")) || "";
 }
 
-export function shortcutMatches(event, shortcut) {
+export function shortcutMatches(event, shortcut, mac = isMacPlatform()) {
   const normalized = sanitizeShortcut(shortcut);
   if (!normalized || !event?.code) return false;
   const parts = new Set(normalized.split("+"));
-  const mac = isMacPlatform();
   const modPressed = mac ? event.metaKey : event.ctrlKey;
   const extraPlatformModifier = mac ? event.ctrlKey : event.metaKey;
   return parts.has(event.code)
