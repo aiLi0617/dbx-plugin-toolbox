@@ -19727,17 +19727,17 @@
     "az": "Uyğun açar yoxdur",
     "pt-BR": "Nenhuma chave correspondente"
   },
-  "Choose a saved key": {
-    "en": "Choose a saved key",
-    "zh-CN": "选择已保存密钥",
-    "zh-TW": "選擇已儲存的密鑰",
-    "es": "Elija una clave guardada",
-    "it": "Scegli una chiave salvata",
-    "ja": "保存されたキーを選択してください",
-    "pt-BR": "Escolha uma chave salva",
-    "ko": "저장된 키 선택",
-    "tr": "Kaydedilmiş bir anahtar seçin",
-    "az": "Saxlanmış açarı seçin"
+  "Search keys": {
+    "en": "Search keys",
+    "zh-CN": "搜索密钥",
+    "zh-TW": "搜尋金鑰",
+    "es": "Buscar claves",
+    "it": "Cerca chiavi",
+    "ja": "鍵を検索",
+    "pt-BR": "Pesquisar chaves",
+    "ko": "키 검색",
+    "tr": "Anahtarları ara",
+    "az": "Açarları axtar"
   },
   "Unlock key vault": {
     "en": "Unlock key vault",

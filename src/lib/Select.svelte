@@ -11,12 +11,16 @@
     ariaLabel = "",
     placeholder = "",
     fitTrigger = false,
+    searchPlaceholder = "",
+    searchEmptyLabel = "",
     onchange,
   } = $props();
 
   let open = $state(false);
+  let controlEl = $state(null);
   let triggerEl = $state(null);
   let menuEl = $state(null);
+  let query = $state("");
   let activeIndex = $state(-1);
   let keyboardFocus = $state(false);
   let pointerFocusing = false;
@@ -28,10 +32,17 @@
   const selectedIndex = $derived(options.findIndex((opt) => String(opt.value) === String(value)));
   const selectedLabel = $derived(selectedIndex >= 0 ? options[selectedIndex].label : "");
   const shownLabel = $derived(selectedLabel || placeholder || "");
+  const visibleOptions = $derived.by(() => {
+    const term = query.trim().toLowerCase();
+    return options.map((option, index) => ({ option, index })).filter(({ option }) =>
+      !term || (option.searchable !== false && [option.label, option.group, option.value, option.keywords]
+        .some((value) => String(value ?? "").toLowerCase().includes(term))));
+  });
+  const activeOption = $derived(visibleOptions.find(({ option, index }) => index === activeIndex && !option.disabled));
   const rows = $derived.by(() => {
     const out = [];
     let last = null;
-    options.forEach((opt, index) => {
+    visibleOptions.forEach(({ option: opt, index }) => {
       const group = opt.group || "";
       if (group && group !== last) {
         out.push({ type: "group", label: group });
@@ -56,13 +67,9 @@
   }
 
   function firstEnabled(from, step) {
-    if (!options.length) return -1;
-    let i = from;
-    for (let n = 0; n < options.length; n += 1) {
-      i = (i + step + options.length) % options.length;
-      if (!options[i]?.disabled) return i;
-    }
-    return -1;
+    const enabled = visibleOptions.filter(({ option }) => !option.disabled);
+    if (step > 0) return (enabled.find(({ index }) => index > from) ?? enabled[0])?.index ?? -1;
+    return (enabled.findLast(({ index }) => index < from) ?? enabled.at(-1))?.index ?? -1;
   }
 
   function place() {
@@ -111,7 +118,15 @@
     open = false;
     if (closeOpen) closeOpen = null;
     search = "";
-    if (restoreFocus) triggerEl?.focus();
+    query = "";
+    if (restoreFocus) {
+      triggerEl?.focus({ preventScroll: true });
+      if (searchPlaceholder) {
+        void tick().then(() => {
+          if (!open && triggerEl === document.activeElement) triggerEl?.select?.();
+        });
+      }
+    }
   }
 
   function toggle() {
@@ -164,6 +179,51 @@
     keyboardFocus = !pointerFocusing;
   }
 
+  async function filterOptions(event) {
+    query = event.currentTarget.value;
+    if (!open) void openMenu();
+    activeIndex = firstEnabled(-1, 1);
+    await tick();
+    if (!open) return;
+    menuEl?.scrollTo({ top: 0 });
+    place();
+  }
+
+  function onSearchKey(event) {
+    if (disabled || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
+    keyboardFocus = true;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (open) move(event.key === "ArrowUp" ? -1 : 1);
+      else void openMenu();
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      if (open) choose(activeOption?.option);
+      else void openMenu();
+    } else if (open && event.key === "Escape") {
+      event.preventDefault();
+      closeMenu();
+    } else if (event.key === "Tab") {
+      closeMenu(false);
+    }
+  }
+
+  function onSearchFocus(event) {
+    onTriggerFocus();
+    if (!open) event.currentTarget.select();
+  }
+
+  function onSearchBlur(event) {
+    keyboardFocus = false;
+    if (!controlEl?.contains(event.relatedTarget) && !menuEl?.contains(event.relatedTarget)) closeMenu(false);
+  }
+
+  function toggleSearch() {
+    triggerEl?.focus({ preventScroll: true });
+    keyboardFocus = false;
+    toggle();
+  }
+
   async function onTriggerKey(event) {
     if (disabled) return;
     keyboardFocus = true;
@@ -194,7 +254,7 @@
       choose(options[activeIndex]);
       return;
     }
-    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    if (!searchPlaceholder && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       if (!open) await openMenu();
       typeahead(event.key);
@@ -203,11 +263,15 @@
 
   $effect(() => {
     if (!open) return;
+    if (disabled) {
+      closeMenu(false);
+      return;
+    }
     const onWin = () => place();
     const closeOverlay = () => closeMenu(false);
     const onDown = (event) => {
       const path = event.composedPath();
-      if (triggerEl && path.includes(triggerEl)) return;
+      if (controlEl && path.includes(controlEl)) return;
       if (menuEl && path.includes(menuEl)) return;
       closeMenu(false);
     };
@@ -224,44 +288,92 @@
   });
 </script>
 
+{#snippet chevron()}
+  <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m6 9 6 6 6-6"></path>
+  </svg>
+{/snippet}
+
 <!-- Avoid the host kit's `.dbx-select` styles: this is a custom combobox, not a native select. -->
-<div class="dbx-custom-select {className}" class:open>
-  <button
-    bind:this={triggerEl}
-    class="trigger"
-    class:placeholder={!selectedLabel}
-    class:keyboard-focus={keyboardFocus}
-    type="button"
-    role="combobox"
-    aria-autocomplete="none"
-    aria-expanded={open}
-    aria-haspopup="listbox"
-    aria-controls={uid}
-    aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
-    aria-label={ariaLabel || undefined}
-    disabled={disabled}
-    onclick={toggle}
-    onpointerdown={onTriggerPointerDown}
-    onfocus={onTriggerFocus}
-    onblur={() => (keyboardFocus = false)}
-    onkeydown={onTriggerKey}
-  >
-    <span class="value">{shownLabel}</span>
-    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="m6 9 6 6 6-6"></path>
-    </svg>
-  </button>
+<div bind:this={controlEl} class="dbx-custom-select {className}" class:open>
+  {#if searchPlaceholder}
+    <div class="search-trigger">
+      <input
+        bind:this={triggerEl}
+        class="trigger search-input"
+        class:keyboard-focus={keyboardFocus}
+        type="text"
+        role="combobox"
+        aria-label={ariaLabel || searchPlaceholder}
+        aria-expanded={open}
+        aria-controls={uid}
+        aria-autocomplete="list"
+        aria-activedescendant={open && activeOption ? optionId(activeOption.index) : undefined}
+        placeholder={open ? searchPlaceholder : placeholder || searchPlaceholder}
+        value={open ? query : selectedLabel}
+        disabled={disabled}
+        autocomplete="off"
+        spellcheck="false"
+        onclick={openMenu}
+        oninput={filterOptions}
+        onpointerdown={onTriggerPointerDown}
+        onfocus={onSearchFocus}
+        onblur={onSearchBlur}
+        onkeydown={onSearchKey}
+      />
+      <button
+        class="search-toggle"
+        type="button"
+        tabindex="-1"
+        aria-label={searchPlaceholder}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-controls={uid}
+        disabled={disabled}
+        onmousedown={(event) => event.preventDefault()}
+        onclick={toggleSearch}
+      >
+        {@render chevron()}
+      </button>
+    </div>
+  {:else}
+    <button
+      bind:this={triggerEl}
+      class="trigger"
+      class:placeholder={!selectedLabel}
+      class:keyboard-focus={keyboardFocus}
+      type="button"
+      role="combobox"
+      aria-autocomplete="none"
+      aria-expanded={open}
+      aria-haspopup="listbox"
+      aria-controls={uid}
+      aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
+      aria-label={ariaLabel || undefined}
+      disabled={disabled}
+      onclick={toggle}
+      onpointerdown={onTriggerPointerDown}
+      onfocus={onTriggerFocus}
+      onblur={() => (keyboardFocus = false)}
+      onkeydown={onTriggerKey}
+    >
+      <span class="value">{shownLabel}</span>
+      {@render chevron()}
+    </button>
+  {/if}
 </div>
 
 {#if open}
   <div
     bind:this={menuEl}
     class="menu"
-    id={uid}
     style="top:{pos.top}px;left:{pos.left}px;width:{pos.width}px;max-height:{pos.maxHeight}px"
-    role="listbox"
     use:portal
   >
+    {#if searchPlaceholder && !rows.length}
+      <div class="search-empty" role="status">{searchEmptyLabel}</div>
+    {/if}
+    <div id={uid} class="option-list" role="listbox" aria-label={ariaLabel || undefined}>
     {#each rows as row, i (`${row.type}-${row.index ?? i}`)}
       {#if row.type === "group"}
         <div class="group" role="presentation">{row.label}</div>
@@ -308,6 +420,7 @@
         </div>
       {/if}
     {/each}
+    </div>
   </div>
 {/if}
 
@@ -386,6 +499,41 @@
     /* The theme border separates the menu without an outer halo in either theme. */
     box-shadow: none;
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .search-trigger {
+    position: relative;
+    width: 100%;
+  }
+  .search-input {
+    display: block;
+    box-sizing: border-box;
+    padding-right: 32px;
+    cursor: text;
+    text-overflow: ellipsis;
+  }
+  .search-input::placeholder {
+    color: var(--color-muted-foreground);
+  }
+  .search-toggle {
+    position: absolute;
+    inset: 1px 1px 1px auto;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md, 6px);
+    background: transparent;
+    cursor: pointer;
+  }
+  .search-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .search-empty {
+    padding: 6px 8px;
+    color: var(--color-muted-foreground);
+    font-size: 12px;
   }
   .group {
     display: flex;
