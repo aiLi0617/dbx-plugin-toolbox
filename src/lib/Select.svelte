@@ -11,13 +11,17 @@
     ariaLabel = "",
     placeholder = "",
     fitTrigger = false,
+    searchPlaceholder = "",
+    searchEmptyLabel = "",
     onchange,
   } = $props();
 
   let open = $state(false);
+  let controlEl = $state(null);
   let triggerEl = $state(null);
   let menuEl = $state(null);
-  let activeIndex = $state(-1);
+  let query = $state("");
+  let activeValue = $state(null);
   let keyboardFocus = $state(false);
   let pointerFocusing = false;
   let pos = $state({ top: 0, left: 0, width: 160, maxHeight: 240 });
@@ -28,10 +32,18 @@
   const selectedIndex = $derived(options.findIndex((opt) => String(opt.value) === String(value)));
   const selectedLabel = $derived(selectedIndex >= 0 ? options[selectedIndex].label : "");
   const shownLabel = $derived(selectedLabel || placeholder || "");
+  const visibleOptions = $derived.by(() => {
+    const term = query.trim().toLowerCase();
+    return options.map((option, index) => ({ option, index })).filter(({ option }) =>
+      !term || (option.searchable !== false && [option.label, option.group, option.value, option.keywords]
+        .some((value) => String(value ?? "").toLowerCase().includes(term))));
+  });
+  const activeOption = $derived(visibleOptions.find(({ option }) => String(option.value) === activeValue && !option.disabled));
+  const activeIndex = $derived(activeOption?.index ?? -1);
   const rows = $derived.by(() => {
     const out = [];
     let last = null;
-    options.forEach((opt, index) => {
+    visibleOptions.forEach(({ option: opt, index }) => {
       const group = opt.group || "";
       if (group && group !== last) {
         out.push({ type: "group", label: group });
@@ -56,17 +68,27 @@
   }
 
   function firstEnabled(from, step) {
-    if (!options.length) return -1;
-    let i = from;
-    for (let n = 0; n < options.length; n += 1) {
-      i = (i + step + options.length) % options.length;
-      if (!options[i]?.disabled) return i;
-    }
-    return -1;
+    const enabled = visibleOptions.filter(({ option }) => !option.disabled);
+    if (step > 0) return (enabled.find(({ index }) => index > from) ?? enabled[0])?.index ?? -1;
+    return (enabled.findLast(({ index }) => index < from) ?? enabled.at(-1))?.index ?? -1;
+  }
+
+  function highlight(option) {
+    activeValue = option && !option.disabled ? String(option.value) : null;
+  }
+
+  function scrollToActiveOption() {
+    const item = menuEl?.querySelector("[data-active='true']");
+    if (!item) return;
+    const top = menuEl.getBoundingClientRect().top + menuEl.clientTop;
+    const bottom = top + menuEl.clientHeight;
+    const rect = item.getBoundingClientRect();
+    if (rect.top < top) menuEl.scrollTop += rect.top - top;
+    else if (rect.bottom > bottom) menuEl.scrollTop += rect.bottom - bottom;
   }
 
   function place() {
-    if (!triggerEl) return;
+    if (!open || !triggerEl) return;
     const rect = triggerEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -97,13 +119,14 @@
     if (disabled || open) return;
     closeOpen?.();
     open = true;
-    activeIndex = selectedIndex >= 0 ? selectedIndex : firstEnabled(-1, 1);
+    const selected = options[selectedIndex];
+    highlight(selected && !selected.disabled ? selected : options[firstEnabled(-1, 1)]);
     closeOpen = () => closeMenu(false);
     await tick();
     place();
     await tick();
     place();
-    menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
+    scrollToActiveOption();
   }
 
   function closeMenu(restoreFocus = true) {
@@ -111,7 +134,11 @@
     open = false;
     if (closeOpen) closeOpen = null;
     search = "";
-    if (restoreFocus) triggerEl?.focus();
+    query = "";
+    activeValue = null;
+    if (restoreFocus && triggerEl !== document.activeElement) {
+      triggerEl?.focus({ preventScroll: true });
+    }
   }
 
   function toggle() {
@@ -131,10 +158,8 @@
   function move(step) {
     const next = firstEnabled(activeIndex, step);
     if (next < 0) return;
-    activeIndex = next;
-    queueMicrotask(() => {
-      menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
-    });
+    highlight(options[next]);
+    queueMicrotask(scrollToActiveOption);
   }
 
   function typeahead(char) {
@@ -146,10 +171,8 @@
     const order = options.map((_, i) => (start + i) % options.length);
     const hit = order.find((i) => !options[i].disabled && String(options[i].label || "").toLowerCase().startsWith(search));
     if (hit == null) return;
-    activeIndex = hit;
-    queueMicrotask(() => {
-      menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
-    });
+    highlight(options[hit]);
+    queueMicrotask(scrollToActiveOption);
   }
 
   function onTriggerPointerDown() {
@@ -162,6 +185,46 @@
 
   function onTriggerFocus() {
     keyboardFocus = !pointerFocusing;
+  }
+
+  async function filterOptions(event) {
+    query = event.currentTarget.value;
+    if (!open) void openMenu();
+    highlight(options[firstEnabled(-1, 1)]);
+    await tick();
+    if (!open) return;
+    menuEl?.scrollTo({ top: 0 });
+    place();
+  }
+
+  function onSearchKey(event) {
+    if (disabled || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
+    keyboardFocus = true;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (open) move(event.key === "ArrowUp" ? -1 : 1);
+      else void openMenu();
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      if (open) choose(activeOption?.option);
+      else void openMenu();
+    } else if (open && event.key === "Escape") {
+      event.preventDefault();
+      closeMenu();
+    } else if (event.key === "Tab") {
+      closeMenu(false);
+    }
+  }
+
+  function onSearchBlur(event) {
+    keyboardFocus = false;
+    if (!controlEl?.contains(event.relatedTarget) && !menuEl?.contains(event.relatedTarget)) closeMenu(false);
+  }
+
+  function toggleSearch() {
+    triggerEl?.focus({ preventScroll: true });
+    keyboardFocus = false;
+    toggle();
   }
 
   async function onTriggerKey(event) {
@@ -186,15 +249,16 @@
     if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
       if (!open) await openMenu();
-      activeIndex = event.key === "Home" ? firstEnabled(-1, 1) : firstEnabled(options.length, -1);
+      const next = event.key === "Home" ? firstEnabled(-1, 1) : firstEnabled(options.length, -1);
+      highlight(options[next]);
       return;
     }
     if (open && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
-      choose(options[activeIndex]);
+      choose(activeOption?.option);
       return;
     }
-    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+    if (!searchPlaceholder && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       if (!open) await openMenu();
       typeahead(event.key);
@@ -202,66 +266,129 @@
   }
 
   $effect(() => {
+    if (activeValue !== null && !activeOption) activeValue = null;
+  });
+
+  $effect(() => {
     if (!open) return;
-    const onWin = () => place();
+    if (disabled) {
+      closeMenu(false);
+      return;
+    }
+    const onScroll = ({ target }) => {
+      if (target === document || target === window || (target instanceof Element && target.contains(triggerEl))) place();
+    };
     const closeOverlay = () => closeMenu(false);
     const onDown = (event) => {
       const path = event.composedPath();
-      if (triggerEl && path.includes(triggerEl)) return;
+      if (controlEl && path.includes(controlEl)) return;
       if (menuEl && path.includes(menuEl)) return;
       closeMenu(false);
     };
-    window.addEventListener("resize", onWin);
+    window.addEventListener("resize", place);
     window.addEventListener("toolbox-close-overlays", closeOverlay);
-    window.addEventListener("scroll", onWin, true);
+    window.addEventListener("scroll", onScroll, true);
     document.addEventListener("pointerdown", onDown, true);
     return () => {
-      window.removeEventListener("resize", onWin);
+      window.removeEventListener("resize", place);
       window.removeEventListener("toolbox-close-overlays", closeOverlay);
-      window.removeEventListener("scroll", onWin, true);
+      window.removeEventListener("scroll", onScroll, true);
       document.removeEventListener("pointerdown", onDown, true);
     };
   });
 </script>
 
+{#snippet chevron()}
+  <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m6 9 6 6 6-6"></path>
+  </svg>
+{/snippet}
+
 <!-- Avoid the host kit's `.dbx-select` styles: this is a custom combobox, not a native select. -->
-<div class="dbx-custom-select {className}" class:open>
-  <button
-    bind:this={triggerEl}
-    class="trigger"
-    class:placeholder={!selectedLabel}
-    class:keyboard-focus={keyboardFocus}
-    type="button"
-    role="combobox"
-    aria-autocomplete="none"
-    aria-expanded={open}
-    aria-haspopup="listbox"
-    aria-controls={uid}
-    aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
-    aria-label={ariaLabel || undefined}
-    disabled={disabled}
-    onclick={toggle}
-    onpointerdown={onTriggerPointerDown}
-    onfocus={onTriggerFocus}
-    onblur={() => (keyboardFocus = false)}
-    onkeydown={onTriggerKey}
-  >
-    <span class="value">{shownLabel}</span>
-    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="m6 9 6 6 6-6"></path>
-    </svg>
-  </button>
+<div bind:this={controlEl} class="dbx-custom-select {className}" class:open>
+  {#if searchPlaceholder}
+    <div class="search-trigger">
+      <input
+        bind:this={triggerEl}
+        class="trigger search-input"
+        class:keyboard-focus={keyboardFocus}
+        class:has-selection={!open && Boolean(selectedLabel)}
+        type="text"
+        role="combobox"
+        aria-label={ariaLabel || searchPlaceholder}
+        aria-expanded={open}
+        aria-controls={uid}
+        aria-autocomplete="list"
+        aria-activedescendant={open && activeOption ? optionId(activeOption.index) : undefined}
+        aria-describedby={!open && selectedLabel ? `${uid}-selection` : undefined}
+        placeholder={open ? searchPlaceholder : selectedLabel || placeholder || searchPlaceholder}
+        value={query}
+        disabled={disabled}
+        autocomplete="off"
+        spellcheck="false"
+        onclick={openMenu}
+        oninput={filterOptions}
+        onpointerdown={onTriggerPointerDown}
+        onfocus={onTriggerFocus}
+        onblur={onSearchBlur}
+        onkeydown={onSearchKey}
+      />
+      {#if !open && selectedLabel}
+        <span class="sr-only" id={`${uid}-selection`}>{selectedLabel}</span>
+      {/if}
+      <button
+        class="search-toggle"
+        type="button"
+        tabindex="-1"
+        aria-label={searchPlaceholder}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-controls={uid}
+        disabled={disabled}
+        onmousedown={(event) => event.preventDefault()}
+        onclick={toggleSearch}
+      >
+        {@render chevron()}
+      </button>
+    </div>
+  {:else}
+    <button
+      bind:this={triggerEl}
+      class="trigger"
+      class:placeholder={!selectedLabel}
+      class:keyboard-focus={keyboardFocus}
+      type="button"
+      role="combobox"
+      aria-autocomplete="none"
+      aria-expanded={open}
+      aria-haspopup="listbox"
+      aria-controls={uid}
+      aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
+      aria-label={ariaLabel || undefined}
+      disabled={disabled}
+      onclick={toggle}
+      onpointerdown={onTriggerPointerDown}
+      onfocus={onTriggerFocus}
+      onblur={() => (keyboardFocus = false)}
+      onkeydown={onTriggerKey}
+    >
+      <span class="value">{shownLabel}</span>
+      {@render chevron()}
+    </button>
+  {/if}
 </div>
 
 {#if open}
   <div
     bind:this={menuEl}
     class="menu"
-    id={uid}
     style="top:{pos.top}px;left:{pos.left}px;width:{pos.width}px;max-height:{pos.maxHeight}px"
-    role="listbox"
     use:portal
   >
+    {#if searchPlaceholder && !rows.length}
+      <div class="search-empty" role="status">{searchEmptyLabel}</div>
+    {/if}
+    <div id={uid} class="option-list" role="listbox" aria-label={ariaLabel || undefined}>
     {#each rows as row, i (`${row.type}-${row.index ?? i}`)}
       {#if row.type === "group"}
         <div class="group" role="presentation">{row.label}</div>
@@ -281,7 +408,7 @@
             event.preventDefault();
           }}
           onpointerenter={() => {
-            if (!row.disabled) activeIndex = row.index;
+            if (!row.disabled) highlight(row);
           }}
           onclick={() => choose(row)}
           onkeydown={(event) => {
@@ -308,6 +435,7 @@
         </div>
       {/if}
     {/each}
+    </div>
   </div>
 {/if}
 
@@ -386,6 +514,44 @@
     /* The theme border separates the menu without an outer halo in either theme. */
     box-shadow: none;
     animation: dbx-select-in 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .search-trigger {
+    position: relative;
+    width: 100%;
+  }
+  .search-input {
+    display: block;
+    box-sizing: border-box;
+    padding-right: 32px;
+    cursor: text;
+    text-overflow: ellipsis;
+  }
+  .search-input::placeholder {
+    color: var(--color-muted-foreground);
+  }
+  .search-input.has-selection::placeholder {
+    color: inherit;
+  }
+  .search-toggle {
+    position: absolute;
+    inset: 1px 1px 1px auto;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md, 6px);
+    background: transparent;
+    cursor: pointer;
+  }
+  .search-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .search-empty {
+    padding: 6px 8px;
+    color: var(--color-muted-foreground);
+    font-size: 12px;
   }
   .group {
     display: flex;

@@ -8966,9 +8966,9 @@
     "en": "No matching keys",
     "zh-CN": "没有匹配的密钥"
   },
-  "Choose a saved key": {
-    "en": "Choose a saved key",
-    "zh-CN": "选择已保存密钥"
+  "Search keys": {
+    "en": "Search keys",
+    "zh-CN": "搜索密钥"
   },
   "Unlock key vault": {
     "en": "Unlock key vault",

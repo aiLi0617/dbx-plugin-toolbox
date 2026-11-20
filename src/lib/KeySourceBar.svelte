@@ -79,21 +79,24 @@
       />
     </label>
     {#if source === "vault"}
-      <label class="field grow">
-        <span class="dbx-label">{t("密钥", "Key")}</span>
-        <Select
-          bind:value={keyId}
-          options={[
-            { value: "", label: vaultUnlocked && !selectableKeys.length ? t("没有匹配的密钥", "No matching keys") : t("选择已保存密钥", "Choose a saved key") },
-            ...selectableKeys.map((key) => ({
+      {#if vaultUnlocked}
+        <div class="field grow">
+          <span class="dbx-label">{t("密钥", "Key")}</span>
+          <Select
+            bind:value={keyId}
+            ariaLabel={t("密钥", "Key")}
+            disabled={!selectableKeys.length}
+            placeholder={!selectableKeys.length ? t("没有匹配的密钥", "No matching keys") : ""}
+            searchPlaceholder={t("搜索密钥", "Search keys")}
+            searchEmptyLabel={t("没有匹配的密钥", "No matching keys")}
+            options={selectableKeys.map((key) => ({
               value: key.id,
               label: `${key.name} · ${key.algorithm} · ${key.fingerprint}`,
-            })),
-          ]}
-        />
-      </label>
-      {#if !vaultUnlocked}
-        <button class="dbx-btn dbx-btn--ghost unlock" type="button" onclick={() => (unlockOpen = true)}>
+            }))}
+          />
+        </div>
+      {:else}
+        <button class="dbx-btn dbx-btn--primary" type="button" aria-haspopup="dialog" onclick={() => (unlockOpen = true)}>
           {t("解锁密钥库", "Unlock key vault")}
         </button>
       {/if}
@@ -148,9 +151,6 @@
   .grow .dbx-input,
   .grow :global(.dbx-custom-select) {
     width: 100%;
-  }
-  .unlock {
-    align-self: flex-end;
   }
   .material {
     width: 100%;
