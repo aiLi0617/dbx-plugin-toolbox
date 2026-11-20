@@ -21,7 +21,7 @@
   let triggerEl = $state(null);
   let menuEl = $state(null);
   let query = $state("");
-  let activeIndex = $state(-1);
+  let activeValue = $state(null);
   let keyboardFocus = $state(false);
   let pointerFocusing = false;
   let pos = $state({ top: 0, left: 0, width: 160, maxHeight: 240 });
@@ -38,7 +38,8 @@
       !term || (option.searchable !== false && [option.label, option.group, option.value, option.keywords]
         .some((value) => String(value ?? "").toLowerCase().includes(term))));
   });
-  const activeOption = $derived(visibleOptions.find(({ option, index }) => index === activeIndex && !option.disabled));
+  const activeOption = $derived(visibleOptions.find(({ option }) => String(option.value) === activeValue && !option.disabled));
+  const activeIndex = $derived(activeOption?.index ?? -1);
   const rows = $derived.by(() => {
     const out = [];
     let last = null;
@@ -70,6 +71,10 @@
     const enabled = visibleOptions.filter(({ option }) => !option.disabled);
     if (step > 0) return (enabled.find(({ index }) => index > from) ?? enabled[0])?.index ?? -1;
     return (enabled.findLast(({ index }) => index < from) ?? enabled.at(-1))?.index ?? -1;
+  }
+
+  function highlight(option) {
+    activeValue = option && !option.disabled ? String(option.value) : null;
   }
 
   function place() {
@@ -104,7 +109,8 @@
     if (disabled || open) return;
     closeOpen?.();
     open = true;
-    activeIndex = selectedIndex >= 0 ? selectedIndex : firstEnabled(-1, 1);
+    const selected = options[selectedIndex];
+    highlight(selected && !selected.disabled ? selected : options[firstEnabled(-1, 1)]);
     closeOpen = () => closeMenu(false);
     await tick();
     place();
@@ -119,6 +125,7 @@
     if (closeOpen) closeOpen = null;
     search = "";
     query = "";
+    activeValue = null;
     if (restoreFocus) {
       triggerEl?.focus({ preventScroll: true });
       if (searchPlaceholder) {
@@ -146,7 +153,7 @@
   function move(step) {
     const next = firstEnabled(activeIndex, step);
     if (next < 0) return;
-    activeIndex = next;
+    highlight(options[next]);
     queueMicrotask(() => {
       menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
     });
@@ -161,7 +168,7 @@
     const order = options.map((_, i) => (start + i) % options.length);
     const hit = order.find((i) => !options[i].disabled && String(options[i].label || "").toLowerCase().startsWith(search));
     if (hit == null) return;
-    activeIndex = hit;
+    highlight(options[hit]);
     queueMicrotask(() => {
       menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
     });
@@ -182,7 +189,7 @@
   async function filterOptions(event) {
     query = event.currentTarget.value;
     if (!open) void openMenu();
-    activeIndex = firstEnabled(-1, 1);
+    highlight(options[firstEnabled(-1, 1)]);
     await tick();
     if (!open) return;
     menuEl?.scrollTo({ top: 0 });
@@ -246,12 +253,13 @@
     if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
       if (!open) await openMenu();
-      activeIndex = event.key === "Home" ? firstEnabled(-1, 1) : firstEnabled(options.length, -1);
+      const next = event.key === "Home" ? firstEnabled(-1, 1) : firstEnabled(options.length, -1);
+      highlight(options[next]);
       return;
     }
     if (open && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
-      choose(options[activeIndex]);
+      choose(activeOption?.option);
       return;
     }
     if (!searchPlaceholder && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
@@ -260,6 +268,10 @@
       typeahead(event.key);
     }
   }
+
+  $effect(() => {
+    if (activeValue !== null && !activeOption) activeValue = null;
+  });
 
   $effect(() => {
     if (!open) return;
@@ -393,7 +405,7 @@
             event.preventDefault();
           }}
           onpointerenter={() => {
-            if (!row.disabled) activeIndex = row.index;
+            if (!row.disabled) highlight(row);
           }}
           onclick={() => choose(row)}
           onkeydown={(event) => {
