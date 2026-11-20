@@ -77,8 +77,18 @@
     activeValue = option && !option.disabled ? String(option.value) : null;
   }
 
+  function scrollToActiveOption() {
+    const item = menuEl?.querySelector("[data-active='true']");
+    if (!item) return;
+    const top = menuEl.getBoundingClientRect().top + menuEl.clientTop;
+    const bottom = top + menuEl.clientHeight;
+    const rect = item.getBoundingClientRect();
+    if (rect.top < top) menuEl.scrollTop += rect.top - top;
+    else if (rect.bottom > bottom) menuEl.scrollTop += rect.bottom - bottom;
+  }
+
   function place() {
-    if (!triggerEl) return;
+    if (!open || !triggerEl) return;
     const rect = triggerEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -116,7 +126,7 @@
     place();
     await tick();
     place();
-    menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
+    scrollToActiveOption();
   }
 
   function closeMenu(restoreFocus = true) {
@@ -126,13 +136,8 @@
     search = "";
     query = "";
     activeValue = null;
-    if (restoreFocus) {
+    if (restoreFocus && triggerEl !== document.activeElement) {
       triggerEl?.focus({ preventScroll: true });
-      if (searchPlaceholder) {
-        void tick().then(() => {
-          if (!open && triggerEl === document.activeElement) triggerEl?.select?.();
-        });
-      }
     }
   }
 
@@ -154,9 +159,7 @@
     const next = firstEnabled(activeIndex, step);
     if (next < 0) return;
     highlight(options[next]);
-    queueMicrotask(() => {
-      menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
-    });
+    queueMicrotask(scrollToActiveOption);
   }
 
   function typeahead(char) {
@@ -169,9 +172,7 @@
     const hit = order.find((i) => !options[i].disabled && String(options[i].label || "").toLowerCase().startsWith(search));
     if (hit == null) return;
     highlight(options[hit]);
-    queueMicrotask(() => {
-      menuEl?.querySelector("[data-active='true']")?.scrollIntoView({ block: "nearest" });
-    });
+    queueMicrotask(scrollToActiveOption);
   }
 
   function onTriggerPointerDown() {
@@ -213,11 +214,6 @@
     } else if (event.key === "Tab") {
       closeMenu(false);
     }
-  }
-
-  function onSearchFocus(event) {
-    onTriggerFocus();
-    if (!open) event.currentTarget.select();
   }
 
   function onSearchBlur(event) {
@@ -279,7 +275,9 @@
       closeMenu(false);
       return;
     }
-    const onWin = () => place();
+    const onScroll = ({ target }) => {
+      if (target === document || target === window || (target instanceof Element && target.contains(triggerEl))) place();
+    };
     const closeOverlay = () => closeMenu(false);
     const onDown = (event) => {
       const path = event.composedPath();
@@ -287,14 +285,14 @@
       if (menuEl && path.includes(menuEl)) return;
       closeMenu(false);
     };
-    window.addEventListener("resize", onWin);
+    window.addEventListener("resize", place);
     window.addEventListener("toolbox-close-overlays", closeOverlay);
-    window.addEventListener("scroll", onWin, true);
+    window.addEventListener("scroll", onScroll, true);
     document.addEventListener("pointerdown", onDown, true);
     return () => {
-      window.removeEventListener("resize", onWin);
+      window.removeEventListener("resize", place);
       window.removeEventListener("toolbox-close-overlays", closeOverlay);
-      window.removeEventListener("scroll", onWin, true);
+      window.removeEventListener("scroll", onScroll, true);
       document.removeEventListener("pointerdown", onDown, true);
     };
   });
@@ -314,6 +312,7 @@
         bind:this={triggerEl}
         class="trigger search-input"
         class:keyboard-focus={keyboardFocus}
+        class:has-selection={!open && Boolean(selectedLabel)}
         type="text"
         role="combobox"
         aria-label={ariaLabel || searchPlaceholder}
@@ -321,18 +320,22 @@
         aria-controls={uid}
         aria-autocomplete="list"
         aria-activedescendant={open && activeOption ? optionId(activeOption.index) : undefined}
-        placeholder={open ? searchPlaceholder : placeholder || searchPlaceholder}
-        value={open ? query : selectedLabel}
+        aria-describedby={!open && selectedLabel ? `${uid}-selection` : undefined}
+        placeholder={open ? searchPlaceholder : selectedLabel || placeholder || searchPlaceholder}
+        value={query}
         disabled={disabled}
         autocomplete="off"
         spellcheck="false"
         onclick={openMenu}
         oninput={filterOptions}
         onpointerdown={onTriggerPointerDown}
-        onfocus={onSearchFocus}
+        onfocus={onTriggerFocus}
         onblur={onSearchBlur}
         onkeydown={onSearchKey}
       />
+      {#if !open && selectedLabel}
+        <span class="sr-only" id={`${uid}-selection`}>{selectedLabel}</span>
+      {/if}
       <button
         class="search-toggle"
         type="button"
@@ -525,6 +528,9 @@
   }
   .search-input::placeholder {
     color: var(--color-muted-foreground);
+  }
+  .search-input.has-selection::placeholder {
+    color: inherit;
   }
   .search-toggle {
     position: absolute;
