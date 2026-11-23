@@ -470,6 +470,9 @@ mod windows_tests {
     use std::sync::mpsc;
     use std::time::Duration;
 
+    const FIXTURE_MODE: &str = "DBX_TOOLBOX_WINDOWS_PORT_FIXTURE";
+    const READY_PREFIX: &str = "PORT_FIXTURE:";
+
     struct Fixture(Child);
     impl Drop for Fixture {
         fn drop(&mut self) {
@@ -480,24 +483,47 @@ mod windows_tests {
 
     #[test]
     fn finds_tcp_udp_and_only_terminates_matching_process_identity() {
+        if std::env::var_os(FIXTURE_MODE).is_some() {
+            let tcp = TcpListener::bind("127.0.0.1:0").unwrap();
+            let udp = UdpSocket::bind("127.0.0.1:0").unwrap();
+            println!(
+                "\n{READY_PREFIX}{},{}",
+                tcp.local_addr().unwrap().port(),
+                udp.local_addr().unwrap().port()
+            );
+            std::io::stdin().read_line(&mut String::new()).unwrap();
+            return;
+        }
+
         // Only this disposable test child is ever terminated.
-        let mut fixture = Fixture(Command::new("powershell.exe")
-            .args(["-NoProfile", "-NonInteractive", "-Command",
-                "$tcp = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0); $tcp.Start(); $udp = [System.Net.Sockets.UdpClient]::new(0); Write-Output \"$($tcp.LocalEndpoint.Port),$($udp.Client.LocalEndPoint.Port)\"; while ($true) { Start-Sleep -Seconds 1 }"])
-            .creation_flags(0x08000000)
-            .stdout(Stdio::piped()).stderr(Stdio::null()).spawn().unwrap());
+        let mut fixture = Fixture(
+            Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "ports::windows_tests::finds_tcp_udp_and_only_terminates_matching_process_identity",
+                    "--nocapture",
+                ])
+                .env(FIXTURE_MODE, "1")
+                .creation_flags(0x08000000)
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap(),
+        );
         let stdout = fixture.0.stdout.take().unwrap();
         let (sender, receiver) = mpsc::channel();
         std::thread::spawn(move || {
-            let mut line = String::new();
-            let result = BufReader::new(stdout).read_line(&mut line).map(|_| line);
-            let _ = sender.send(result);
+            let ports = BufReader::new(stdout)
+                .lines()
+                .map_while(Result::ok)
+                .find_map(|line| line.strip_prefix(READY_PREFIX).map(str::to_owned));
+            let _ = sender.send(ports);
         });
         let line = receiver
             .recv_timeout(Duration::from_secs(10))
             .expect("port fixture did not start within 10 seconds")
-            .expect("port fixture failed to write its ports");
-        let ports: Vec<u16> = line.trim().split(',').map(|v| v.parse().unwrap()).collect();
+            .expect("port fixture exited without reporting its ports");
+        let ports: Vec<u16> = line.split(',').map(|port| port.parse().unwrap()).collect();
         assert_eq!(ports.len(), 2);
         let owner = fixture.0.id();
         let tcp = handle(
