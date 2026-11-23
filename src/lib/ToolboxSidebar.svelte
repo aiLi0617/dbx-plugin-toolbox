@@ -213,16 +213,16 @@
   kbd { margin-left:auto; color:var(--color-muted-foreground); font-size:10px; }
   .group { min-height:0; padding:9px 8px 6px; }
   .favorites { flex:1 1 0; min-height:96px; overflow:auto; }
-  .recent { flex:0 0 200px; height:200px; min-height:200px; overflow:hidden; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
+  .recent { display:flex; flex-direction:column; flex:0 0 200px; height:200px; min-height:200px; overflow:hidden; border-top:1px solid var(--color-sidebar-border,var(--color-border)); }
   .recent.collapsed { flex:0 0 auto; height:auto; min-height:0; }
   .group-title { display:flex; align-items:center; justify-content:space-between; padding:0 8px 5px; color:var(--color-muted-foreground); font-size:11px; font-weight:600; letter-spacing:.04em; }
-  .recent-title { padding-bottom:5px; }
+  .recent-title { flex:none; padding-bottom:5px; }
   .group-toggle { display:flex; align-items:center; justify-content:space-between; width:100%; padding:0; border:0; background:transparent; color:inherit; font:inherit; text-align:left; }
   .group-toggle:hover { color:var(--color-foreground); }
   .group-toggle svg { flex:0 0 12px; }
   .group-title small { font-size:10px; }
   .group-list { display:flex; flex-direction:column; gap:1px; }
-  .recent > .group-list { height:calc(200px - 31px); overflow:auto; }
+  .recent > .group-list { flex:1; min-height:0; overflow:auto; }
   .tool-row { display:flex; min-width:0; border:1px solid transparent; border-radius:6px; cursor:grab; user-select:none; transition:opacity 100ms,border-color 100ms; }
   .tool-row:hover { background:var(--color-sidebar-accent,var(--color-muted)); }
   .tool-row.dragging { opacity:.45; cursor:grabbing; }
@@ -233,6 +233,7 @@
   .drag { flex:0 0 24px; width:24px; border:0; background:transparent; color:var(--color-muted-foreground); opacity:.45; }
   .tool-row:hover .drag,.drag:focus-visible { opacity:1; }
   .tool,.recent-tool { min-width:0; flex:1; height:29px; padding:0 7px; overflow:hidden; border:0; border-radius:6px; background:transparent; text-align:left; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+  .recent-tool { flex:none; }
   .tool.active,.recent-tool.active { background:var(--color-sidebar-accent,var(--color-muted)); font-weight:600; }
   .recent-tool:hover { background:var(--color-sidebar-accent,var(--color-muted)); }
   .empty { margin:6px 8px; color:var(--color-muted-foreground); font-size:11px; line-height:1.45; }

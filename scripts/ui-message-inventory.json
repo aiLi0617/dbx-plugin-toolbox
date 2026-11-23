@@ -155,7 +155,15 @@
   },
   "Username": {
     "en": "Username",
-    "zh-CN": "用户名"
+    "zh-CN": "用户名",
+    "zh-TW": "使用者名稱",
+    "es": "Nombre de usuario",
+    "it": "Nome utente",
+    "ja": "ユーザー名",
+    "pt-BR": "Nome de usuário",
+    "ko": "사용자 이름",
+    "tr": "Kullanıcı adı",
+    "az": "İstifadəçi adı"
   },
   "Enter username": {
     "en": "Enter username",
@@ -2252,7 +2260,15 @@
   },
   "Decimal places": {
     "en": "Decimal places",
-    "zh-CN": "小数位数"
+    "zh-CN": "小数位数",
+    "zh-TW": "小數位數",
+    "es": "Decimales",
+    "it": "Cifre decimali",
+    "ja": "小数点以下の桁数",
+    "pt-BR": "Casas decimais",
+    "ko": "소수 자릿수",
+    "tr": "Ondalık basamak",
+    "az": "Onluq mərtəbələrin sayı"
   },
   "Results": {
     "en": "Results",
@@ -3746,6 +3762,1382 @@
     "en": "Elapsed time must be a finite number greater than 0.",
     "zh-CN": "已用时间必须是大于 0 的有限数值。"
   },
+  "People": {
+    "en": "People",
+    "zh-CN": "人员",
+    "zh-TW": "人員",
+    "es": "Personas",
+    "it": "Persone",
+    "ja": "人物",
+    "pt-BR": "Pessoas",
+    "ko": "인물",
+    "tr": "Kişiler",
+    "az": "Şəxslər"
+  },
+  "Full name": {
+    "en": "Full name",
+    "zh-CN": "姓名",
+    "zh-TW": "姓名",
+    "es": "Nombre completo",
+    "it": "Nome completo",
+    "ja": "氏名",
+    "pt-BR": "Nome completo",
+    "ko": "성명",
+    "tr": "Tam ad",
+    "az": "Tam ad"
+  },
+  "Given name": {
+    "en": "Given name",
+    "zh-CN": "名字",
+    "zh-TW": "名字",
+    "es": "Nombre de pila",
+    "it": "Nome proprio",
+    "ja": "名",
+    "pt-BR": "Nome próprio",
+    "ko": "이름",
+    "tr": "Ad",
+    "az": "Ad"
+  },
+  "Surname": {
+    "en": "Surname",
+    "zh-CN": "姓氏",
+    "zh-TW": "姓氏",
+    "es": "Apellido",
+    "it": "Cognome",
+    "ja": "姓",
+    "pt-BR": "Sobrenome",
+    "ko": "성",
+    "tr": "Soyadı",
+    "az": "Soyad"
+  },
+  "Sex": {
+    "en": "Sex",
+    "zh-CN": "性别",
+    "zh-TW": "性別",
+    "es": "Sexo",
+    "it": "Sesso",
+    "ja": "性別",
+    "pt-BR": "Sexo",
+    "ko": "성별",
+    "tr": "Cinsiyet",
+    "az": "Cins"
+  },
+  "Age": {
+    "en": "Age",
+    "zh-CN": "年龄",
+    "zh-TW": "年齡",
+    "es": "Edad",
+    "it": "Età",
+    "ja": "年齢",
+    "pt-BR": "Idade",
+    "ko": "나이",
+    "tr": "Yaş",
+    "az": "Yaş"
+  },
+  "Date of birth": {
+    "en": "Date of birth",
+    "zh-CN": "出生日期",
+    "zh-TW": "出生日期",
+    "es": "Fecha de nacimiento",
+    "it": "Data di nascita",
+    "ja": "生年月日",
+    "pt-BR": "Data de nascimento",
+    "ko": "생년월일",
+    "tr": "Doğum tarihi",
+    "az": "Doğum tarixi"
+  },
+  "Chinese resident ID number": {
+    "en": "Chinese resident ID number",
+    "zh-CN": "居民身份证号",
+    "zh-TW": "居民身分證號",
+    "es": "Número de identidad chino",
+    "it": "Numero di identità cinese",
+    "ja": "中国居民身分証番号",
+    "pt-BR": "Número de identidade chinês",
+    "ko": "중국 주민 신분증 번호",
+    "tr": "Çin kimlik numarası",
+    "az": "Çin şəxsiyyət vəsiqəsi nömrəsi"
+  },
+  "Contact details": {
+    "en": "Contact details",
+    "zh-CN": "联系方式",
+    "zh-TW": "聯絡方式",
+    "es": "Contacto",
+    "it": "Contatti",
+    "ja": "連絡先",
+    "pt-BR": "Contato",
+    "ko": "연락처",
+    "tr": "İletişim bilgileri",
+    "az": "Əlaqə məlumatları"
+  },
+  "Mobile number": {
+    "en": "Mobile number",
+    "zh-CN": "手机号",
+    "zh-TW": "手機號碼",
+    "es": "Número de móvil",
+    "it": "Numero di cellulare",
+    "ja": "携帯電話番号",
+    "pt-BR": "Número de celular",
+    "ko": "휴대전화 번호",
+    "tr": "Cep telefonu numarası",
+    "az": "Mobil telefon nömrəsi"
+  },
+  "Email address": {
+    "en": "Email address",
+    "zh-CN": "邮箱",
+    "zh-TW": "電子郵件",
+    "es": "Correo electrónico",
+    "it": "Indirizzo email",
+    "ja": "メールアドレス",
+    "pt-BR": "Endereço de e-mail",
+    "ko": "이메일 주소",
+    "tr": "E-posta adresi",
+    "az": "E-poçt ünvanı"
+  },
+  "Address and organization": {
+    "en": "Address and organization",
+    "zh-CN": "地址与组织",
+    "zh-TW": "地址與組織",
+    "es": "Dirección y organización",
+    "it": "Indirizzo e organizzazione",
+    "ja": "住所と組織",
+    "pt-BR": "Endereço e organização",
+    "ko": "주소 및 조직",
+    "tr": "Adres ve kuruluş",
+    "az": "Ünvan və təşkilat"
+  },
+  "Province": {
+    "en": "Province",
+    "zh-CN": "省",
+    "zh-TW": "省",
+    "es": "Provincia",
+    "it": "Provincia",
+    "ja": "省",
+    "pt-BR": "Província",
+    "ko": "성",
+    "tr": "İl",
+    "az": "Əyalət"
+  },
+  "City": {
+    "en": "City",
+    "zh-CN": "城市",
+    "zh-TW": "市",
+    "es": "Ciudad",
+    "it": "Città",
+    "ja": "市",
+    "pt-BR": "Cidade",
+    "ko": "시",
+    "tr": "Şehir",
+    "az": "Şəhər"
+  },
+  "District": {
+    "en": "District",
+    "zh-CN": "区县",
+    "zh-TW": "區縣",
+    "es": "Distrito",
+    "it": "Distretto",
+    "ja": "区・県",
+    "pt-BR": "Distrito",
+    "ko": "구·현",
+    "tr": "İlçe",
+    "az": "Rayon"
+  },
+  "Postal code": {
+    "en": "Postal code",
+    "zh-CN": "邮编",
+    "zh-TW": "郵遞區號",
+    "es": "Código postal",
+    "it": "Codice postale",
+    "ja": "郵便番号",
+    "pt-BR": "Código postal",
+    "ko": "우편번호",
+    "tr": "Posta kodu",
+    "az": "Poçt indeksi"
+  },
+  "Full address": {
+    "en": "Full address",
+    "zh-CN": "详细地址",
+    "zh-TW": "詳細地址",
+    "es": "Dirección completa",
+    "it": "Indirizzo completo",
+    "ja": "住所の詳細",
+    "pt-BR": "Endereço completo",
+    "ko": "상세 주소",
+    "tr": "Açık adres",
+    "az": "Tam ünvan"
+  },
+  "Company": {
+    "en": "Company",
+    "zh-CN": "公司",
+    "zh-TW": "公司",
+    "es": "Empresa",
+    "it": "Azienda",
+    "ja": "会社",
+    "pt-BR": "Empresa",
+    "ko": "회사",
+    "tr": "Şirket",
+    "az": "Şirkət"
+  },
+  "Department": {
+    "en": "Department",
+    "zh-CN": "部门",
+    "zh-TW": "部門",
+    "es": "Departamento",
+    "it": "Reparto",
+    "ja": "部署",
+    "pt-BR": "Departamento",
+    "ko": "부서",
+    "tr": "Departman",
+    "az": "Şöbə"
+  },
+  "Job title": {
+    "en": "Job title",
+    "zh-CN": "职位",
+    "zh-TW": "職稱",
+    "es": "Puesto",
+    "it": "Ruolo",
+    "ja": "職種",
+    "pt-BR": "Cargo",
+    "ko": "직책",
+    "tr": "Unvan",
+    "az": "Vəzifə"
+  },
+  "Date and time": {
+    "en": "Date and time",
+    "zh-CN": "日期与时间",
+    "zh-TW": "日期與時間",
+    "es": "Fecha y hora",
+    "it": "Data e ora",
+    "ja": "日付と時刻",
+    "pt-BR": "Data e hora",
+    "ko": "날짜 및 시간",
+    "tr": "Tarih ve saat",
+    "az": "Tarix və vaxt"
+  },
+  "Date": {
+    "en": "Date",
+    "zh-CN": "日期",
+    "zh-TW": "日期",
+    "es": "Fecha",
+    "it": "Data",
+    "ja": "日付",
+    "pt-BR": "Data",
+    "ko": "날짜",
+    "tr": "Tarih",
+    "az": "Tarix"
+  },
+  "Date and time value": {
+    "en": "Date and time value",
+    "zh-CN": "日期时间",
+    "zh-TW": "日期時間",
+    "es": "Valor de fecha y hora",
+    "it": "Valore di data e ora",
+    "ja": "日時",
+    "pt-BR": "Valor de data e hora",
+    "ko": "일시",
+    "tr": "Tarih ve saat değeri",
+    "az": "Tarix və vaxt dəyəri"
+  },
+  "Unix timestamp": {
+    "en": "Unix timestamp",
+    "zh-CN": "Unix 时间戳",
+    "zh-TW": "Unix 時間戳記",
+    "es": "Marca de tiempo Unix",
+    "it": "Timestamp Unix",
+    "ja": "Unix タイムスタンプ",
+    "pt-BR": "Timestamp Unix",
+    "ko": "Unix 타임스탬프",
+    "tr": "Unix zaman damgası",
+    "az": "Unix vaxt möhürü"
+  },
+  "Numbers and choices": {
+    "en": "Numbers and choices",
+    "zh-CN": "数值与选项",
+    "zh-TW": "數值與選項",
+    "es": "Números y opciones",
+    "it": "Numeri e opzioni",
+    "ja": "数値と選択肢",
+    "pt-BR": "Números e opções",
+    "ko": "숫자 및 선택 항목",
+    "tr": "Sayılar ve seçenekler",
+    "az": "Ədədlər və seçimlər"
+  },
+  "Integer": {
+    "en": "Integer",
+    "zh-CN": "整数",
+    "zh-TW": "整數",
+    "es": "Entero",
+    "it": "Intero",
+    "ja": "整数",
+    "pt-BR": "Inteiro",
+    "ko": "정수",
+    "tr": "Tam sayı",
+    "az": "Tam ədəd"
+  },
+  "Decimal": {
+    "en": "Decimal",
+    "zh-CN": "十进制",
+    "zh-TW": "小數",
+    "es": "Número decimal",
+    "it": "Numero decimale",
+    "ja": "小数",
+    "pt-BR": "Número decimal",
+    "ko": "소수",
+    "tr": "Ondalık sayı",
+    "az": "Onluq ədəd"
+  },
+  "Amount": {
+    "en": "Amount",
+    "zh-CN": "金额",
+    "zh-TW": "金額",
+    "es": "Importe",
+    "it": "Importo",
+    "ja": "金額",
+    "pt-BR": "Valor monetário",
+    "ko": "금액",
+    "tr": "Tutar",
+    "az": "Məbləğ"
+  },
+  "Auto-increment": {
+    "en": "Auto-increment",
+    "zh-CN": "自增序号",
+    "zh-TW": "自增序號",
+    "es": "Secuencia incremental",
+    "it": "Sequenza incrementale",
+    "ja": "連番",
+    "pt-BR": "Sequência incremental",
+    "ko": "자동 증가",
+    "tr": "Otomatik artan sıra",
+    "az": "Avtomatik artan sıra"
+  },
+  "Boolean": {
+    "en": "Boolean",
+    "zh-CN": "布尔值",
+    "zh-TW": "布林值",
+    "es": "Booleano",
+    "it": "Booleano",
+    "ja": "真偽値",
+    "pt-BR": "Booleano",
+    "ko": "불리언",
+    "tr": "Mantıksal değer",
+    "az": "Məntiqi dəyər"
+  },
+  "Enumeration": {
+    "en": "Enumeration",
+    "zh-CN": "枚举",
+    "zh-TW": "列舉",
+    "es": "Enumeración",
+    "it": "Enumerazione",
+    "ja": "列挙",
+    "pt-BR": "Enumeração",
+    "ko": "열거형",
+    "tr": "Numaralandırma",
+    "az": "Sadalanan dəyərlər"
+  },
+  "Text and developer data": {
+    "en": "Text and developer data",
+    "zh-CN": "文本与开发",
+    "zh-TW": "文字與開發",
+    "es": "Texto y desarrollo",
+    "it": "Testo e sviluppo",
+    "ja": "テキストと開発",
+    "pt-BR": "Texto e desenvolvimento",
+    "ko": "텍스트 및 개발",
+    "tr": "Metin ve geliştirme",
+    "az": "Mətn və tərtibat"
+  },
+  "Short sentence": {
+    "en": "Short sentence",
+    "zh-CN": "短句",
+    "zh-TW": "短句",
+    "es": "Frase breve",
+    "it": "Frase breve",
+    "ja": "短文",
+    "pt-BR": "Frase curta",
+    "ko": "짧은 문장",
+    "tr": "Kısa cümle",
+    "az": "Qısa cümlə"
+  },
+  "Paragraph": {
+    "en": "Paragraph",
+    "zh-CN": "正文",
+    "zh-TW": "段落",
+    "es": "Párrafo",
+    "it": "Paragrafo",
+    "ja": "段落",
+    "pt-BR": "Parágrafo",
+    "ko": "문단",
+    "tr": "Paragraf",
+    "az": "Abzas"
+  },
+  "UUID v4": {
+    "en": "UUID v4",
+    "zh-CN": "UUID v4"
+  },
+  "Domain name": {
+    "en": "Domain name",
+    "zh-CN": "域名",
+    "zh-TW": "網域名稱",
+    "es": "Nombre de dominio",
+    "it": "Nome di dominio",
+    "ja": "ドメイン名",
+    "pt-BR": "Nome de domínio",
+    "ko": "도메인 이름",
+    "tr": "Alan adı",
+    "az": "Domen adı"
+  },
+  "URL": {
+    "en": "URL",
+    "zh-CN": "URL"
+  },
+  "IPv4": {
+    "en": "IPv4",
+    "zh-CN": "IPv4"
+  },
+  "IPv6": {
+    "en": "IPv6",
+    "zh-CN": "IPv6"
+  },
+  "Fixed value": {
+    "en": "Fixed value",
+    "zh-CN": "固定值",
+    "zh-TW": "固定值",
+    "es": "Valor fijo",
+    "it": "Valore fisso",
+    "ja": "固定値",
+    "pt-BR": "Valor fixo",
+    "ko": "고정값",
+    "tr": "Sabit değer",
+    "az": "Sabit dəyər"
+  },
+  "Pattern text": {
+    "en": "Pattern text",
+    "zh-CN": "规则文本",
+    "zh-TW": "規則文字",
+    "es": "Texto con patrón",
+    "it": "Testo con schema",
+    "ja": "パターン文字列",
+    "pt-BR": "Texto com padrão",
+    "ko": "패턴 텍스트",
+    "tr": "Kalıplı metin",
+    "az": "Şablonlu mətn"
+  },
+  "Common field types": {
+    "en": "Common field types",
+    "zh-CN": "常用类型",
+    "zh-TW": "常用類型",
+    "es": "Tipos comunes",
+    "it": "Tipi comuni",
+    "ja": "よく使う種類",
+    "pt-BR": "Tipos comuns",
+    "ko": "자주 쓰는 유형",
+    "tr": "Sık kullanılan türler",
+    "az": "Tez-tez istifadə olunan növlər"
+  },
+  "Configure": {
+    "en": "Configure",
+    "zh-CN": "设置",
+    "zh-TW": "設定",
+    "es": "Configurar",
+    "it": "Configura",
+    "ja": "設定",
+    "pt-BR": "Configurar",
+    "ko": "설정",
+    "tr": "Ayarla",
+    "az": "Ayarlamaq"
+  },
+  "Field options": {
+    "en": "Field options",
+    "zh-CN": "字段设置",
+    "zh-TW": "欄位設定",
+    "es": "Opciones de campo",
+    "it": "Opzioni del campo",
+    "ja": "フィールド設定",
+    "pt-BR": "Opções do campo",
+    "ko": "필드 설정",
+    "tr": "Alan ayarları",
+    "az": "Sahə parametrləri"
+  },
+  "Output language": {
+    "en": "Output language",
+    "zh-CN": "输出语言",
+    "zh-TW": "輸出語言",
+    "es": "Idioma de salida",
+    "it": "Lingua di output",
+    "ja": "出力言語",
+    "pt-BR": "Idioma de saída",
+    "ko": "출력 언어",
+    "tr": "Çıktı dili",
+    "az": "Çıxış dili"
+  },
+  "No options": {
+    "en": "No options",
+    "zh-CN": "无设置",
+    "zh-TW": "無設定",
+    "es": "Sin opciones",
+    "it": "Nessuna opzione",
+    "ja": "設定なし",
+    "pt-BR": "Sem opções",
+    "ko": "설정 없음",
+    "tr": "Ayar yok",
+    "az": "Parametr yoxdur"
+  },
+  "Drag to reorder fields": {
+    "en": "Drag to reorder fields",
+    "zh-CN": "拖动字段排序",
+    "zh-TW": "拖曳欄位排序",
+    "es": "Arrastra para reordenar los campos",
+    "it": "Trascina per riordinare i campi",
+    "ja": "ドラッグしてフィールドを並べ替え",
+    "pt-BR": "Arraste para reordenar os campos",
+    "ko": "드래그하여 필드 순서 변경",
+    "tr": "Alanları sıralamak için sürükleyin",
+    "az": "Sahələri sıralamaq üçün sürükləyin"
+  },
+  "Output fields": {
+    "en": "Output fields",
+    "zh-CN": "输出字段",
+    "zh-TW": "輸出欄位",
+    "es": "Campos de salida",
+    "it": "Campi di output",
+    "ja": "出力フィールド",
+    "pt-BR": "Campos de saída",
+    "ko": "출력 필드",
+    "tr": "Çıktı alanları",
+    "az": "Çıxış sahələri"
+  },
+  "Add field": {
+    "en": "Add field",
+    "zh-CN": "添加字段",
+    "zh-TW": "新增欄位",
+    "es": "Añadir campo",
+    "it": "Aggiungi campo",
+    "ja": "フィールドを追加",
+    "pt-BR": "Adicionar campo",
+    "ko": "필드 추가",
+    "tr": "Alan ekle",
+    "az": "Sahə əlavə et"
+  },
+  "Person form": {
+    "en": "Person form",
+    "zh-CN": "人员表单",
+    "zh-TW": "人員表單",
+    "es": "Formulario personal",
+    "it": "Modulo anagrafico",
+    "ja": "個人情報フォーム",
+    "pt-BR": "Formulário pessoal",
+    "ko": "개인 정보 양식",
+    "tr": "Kişi formu",
+    "az": "Şəxs forması"
+  },
+  "Field type": {
+    "en": "Field type",
+    "zh-CN": "字段类型",
+    "zh-TW": "欄位類型",
+    "es": "Tipo de campo",
+    "it": "Tipo di campo",
+    "ja": "フィールドの種類",
+    "pt-BR": "Tipo de campo",
+    "ko": "필드 유형",
+    "tr": "Alan türü",
+    "az": "Sahə növü"
+  },
+  "Search field types": {
+    "en": "Search field types",
+    "zh-CN": "搜索字段类型",
+    "zh-TW": "搜尋欄位類型",
+    "es": "Buscar tipos de campo",
+    "it": "Cerca tipi di campo",
+    "ja": "フィールドの種類を検索",
+    "pt-BR": "Buscar tipos de campo",
+    "ko": "필드 유형 검색",
+    "tr": "Alan türlerini ara",
+    "az": "Sahə növlərini axtar"
+  },
+  "Add fields in bulk": {
+    "en": "Add fields in bulk",
+    "zh-CN": "批量添加字段",
+    "zh-TW": "批次新增欄位",
+    "es": "Añadir varios campos",
+    "it": "Aggiungi più campi",
+    "ja": "フィールドを一括追加",
+    "pt-BR": "Adicionar vários campos",
+    "ko": "필드 일괄 추가",
+    "tr": "Toplu alan ekle",
+    "az": "Sahələri toplu əlavə et"
+  },
+  "Age reference date": {
+    "en": "Age reference date",
+    "zh-CN": "年龄基准日",
+    "zh-TW": "年齡基準日",
+    "es": "Fecha para calcular la edad",
+    "it": "Data di riferimento per l'età",
+    "ja": "年齢の基準日",
+    "pt-BR": "Data de referência para idade",
+    "ko": "나이 기준일",
+    "tr": "Yaş referans tarihi",
+    "az": "Yaşın hesablanma tarixi"
+  },
+  "Complete phone and ID numbers are for local form testing only.": {
+    "en": "Complete phone and ID numbers are for local form testing only.",
+    "zh-CN": "完整手机号和身份证号仅供本地表单测试。",
+    "zh-TW": "完整手機與證件號碼僅供本機表單測試。",
+    "es": "Usa los números completos de teléfono e identidad solo en pruebas locales de formularios.",
+    "it": "Usa i numeri completi di cellulare e documento solo nei test locali dei moduli.",
+    "ja": "完全な携帯番号と身分証番号はローカルのフォームテスト専用です。",
+    "pt-BR": "Use números completos de telefone e identidade apenas em testes locais de formulários.",
+    "ko": "전체 휴대전화 번호와 신분증 번호는 로컬 양식 테스트에만 사용하세요.",
+    "tr": "Tam telefon ve kimlik numaraları yalnızca yerel form testleri içindir.",
+    "az": "Tam telefon və vəsiqə nömrələri yalnız lokal forma sınaqları üçündür."
+  },
+  "National number": {
+    "en": "National number",
+    "zh-CN": "本地号码",
+    "zh-TW": "本地號碼",
+    "es": "Número nacional",
+    "it": "Numero nazionale",
+    "ja": "国内番号",
+    "pt-BR": "Número nacional",
+    "ko": "국내 번호",
+    "tr": "Ulusal numara",
+    "az": "Ölkədaxili nömrə"
+  },
+  "With calling code": {
+    "en": "With calling code",
+    "zh-CN": "带国际区号",
+    "zh-TW": "含國際區碼",
+    "es": "Con prefijo internacional",
+    "it": "Con prefisso internazionale",
+    "ja": "国番号付き",
+    "pt-BR": "Com código internacional",
+    "ko": "국제전화 코드 포함",
+    "tr": "Ülke koduyla",
+    "az": "Ölkə kodu ilə"
+  },
+  "Any sample city": {
+    "en": "Any sample city",
+    "zh-CN": "任意样例城市",
+    "zh-TW": "任意範例城市",
+    "es": "Cualquier ciudad de ejemplo",
+    "it": "Qualsiasi città di esempio",
+    "ja": "サンプル都市から選択",
+    "pt-BR": "Qualquer cidade de exemplo",
+    "ko": "아무 예시 도시",
+    "tr": "Herhangi bir örnek şehir",
+    "az": "İstənilən nümunə şəhər"
+  },
+  "Sequence step": {
+    "en": "Sequence step",
+    "zh-CN": "步长",
+    "zh-TW": "步長",
+    "es": "Incremento",
+    "it": "Passo della sequenza",
+    "ja": "増分",
+    "pt-BR": "Incremento",
+    "ko": "증가 간격",
+    "tr": "Sıra adımı",
+    "az": "Sıra addımı"
+  },
+  "Probability of true (%)": {
+    "en": "Probability of true (%)",
+    "zh-CN": "为真的概率（%）",
+    "zh-TW": "為真的機率（%）",
+    "es": "Probabilidad de verdadero (%)",
+    "it": "Probabilità di vero (%)",
+    "ja": "真の確率 (%)",
+    "pt-BR": "Probabilidade de verdadeiro (%)",
+    "ko": "참일 확률 (%)",
+    "tr": "Doğru olma olasılığı (%)",
+    "az": "Doğru olma ehtimalı (%)"
+  },
+  "Choices, one per line": {
+    "en": "Choices, one per line",
+    "zh-CN": "候选值，每行一个",
+    "zh-TW": "候選值，每行一個",
+    "es": "Opciones, una por línea",
+    "it": "Opzioni, una per riga",
+    "ja": "選択肢を1行に1つ",
+    "pt-BR": "Opções, uma por linha",
+    "ko": "선택 항목을 한 줄에 하나씩",
+    "tr": "Her satırda bir seçenek",
+    "az": "Hər sətirdə bir seçim"
+  },
+  "Use # for a digit and ? for an uppercase letter.": {
+    "en": "Use # for a digit and ? for an uppercase letter.",
+    "zh-CN": "# 表示一位数字，? 表示一位大写字母。",
+    "zh-TW": "# 代表一位數字，? 代表一位大寫字母。",
+    "es": "Usa # para un dígito y ? para una mayúscula.",
+    "it": "Usa # per una cifra e ? per una maiuscola.",
+    "ja": "# は数字1桁、? は英大文字1文字です。",
+    "pt-BR": "Use # para um dígito e ? para uma letra maiúscula.",
+    "ko": "#는 숫자 한 자리, ?는 대문자 한 글자를 나타냅니다.",
+    "tr": "Bir rakam için #, bir büyük harf için ? kullanın.",
+    "az": "Rəqəm üçün #, böyük hərf üçün ? istifadə edin."
+  },
+  "Regenerate to update": {
+    "en": "Regenerate to update",
+    "zh-CN": "待重新生成",
+    "zh-TW": "待重新產生",
+    "es": "Vuelve a generar",
+    "it": "Rigenera per aggiornare",
+    "ja": "再生成が必要",
+    "pt-BR": "Gere novamente",
+    "ko": "다시 생성 필요",
+    "tr": "Yeniden oluştur",
+    "az": "Yenidən yarat"
+  },
+  "Generation templates": {
+    "en": "Generation templates",
+    "zh-CN": "生成模板",
+    "zh-TW": "生成範本",
+    "es": "Plantillas de generación",
+    "it": "Modelli di generazione",
+    "ja": "生成テンプレート",
+    "pt-BR": "Modelos de geração",
+    "ko": "생성 템플릿",
+    "tr": "Üretim şablonları",
+    "az": "Generasiya şablonları"
+  },
+  "Built-in template": {
+    "en": "Built-in template",
+    "zh-CN": "内置模板",
+    "zh-TW": "內建範本",
+    "es": "Plantilla integrada",
+    "it": "Modello integrato",
+    "ja": "組み込みテンプレート",
+    "pt-BR": "Modelo integrado",
+    "ko": "기본 템플릿",
+    "tr": "Yerleşik şablon",
+    "az": "Daxili şablon"
+  },
+  "My templates": {
+    "en": "My templates",
+    "zh-CN": "我的模板",
+    "zh-TW": "我的範本",
+    "es": "Mis plantillas",
+    "it": "I miei modelli",
+    "ja": "マイテンプレート",
+    "pt-BR": "Meus modelos",
+    "ko": "내 템플릿",
+    "tr": "Şablonlarım",
+    "az": "Şablonlarım"
+  },
+  "No saved templates yet": {
+    "en": "No saved templates yet",
+    "zh-CN": "还没有保存的模板",
+    "zh-TW": "尚無已儲存的範本",
+    "es": "Aún no hay plantillas guardadas",
+    "it": "Nessun modello salvato",
+    "ja": "保存したテンプレートはありません",
+    "pt-BR": "Ainda não há modelos salvos",
+    "ko": "저장된 템플릿이 없습니다",
+    "tr": "Henüz kayıtlı şablon yok",
+    "az": "Hələ saxlanmış şablon yoxdur"
+  },
+  "Save as template": {
+    "en": "Save as template",
+    "zh-CN": "保存为模板",
+    "zh-TW": "儲存為範本",
+    "es": "Guardar como plantilla",
+    "it": "Salva come modello",
+    "ja": "テンプレートとして保存",
+    "pt-BR": "Salvar como modelo",
+    "ko": "템플릿으로 저장",
+    "tr": "Şablon olarak kaydet",
+    "az": "Şablon kimi saxla"
+  },
+  "Template name": {
+    "en": "Template name",
+    "zh-CN": "模板名称",
+    "zh-TW": "範本名稱",
+    "es": "Nombre de la plantilla",
+    "it": "Nome del modello",
+    "ja": "テンプレート名",
+    "pt-BR": "Nome do modelo",
+    "ko": "템플릿 이름",
+    "tr": "Şablon adı",
+    "az": "Şablon adı"
+  },
+  "Update loaded template": {
+    "en": "Update loaded template",
+    "zh-CN": "更新已载入的模板",
+    "zh-TW": "更新已載入的範本",
+    "es": "Actualizar plantilla cargada",
+    "it": "Aggiorna il modello caricato",
+    "ja": "読み込んだテンプレートを更新",
+    "pt-BR": "Atualizar modelo carregado",
+    "ko": "불러온 템플릿 업데이트",
+    "tr": "Yüklenen şablonu güncelle",
+    "az": "Yüklənmiş şablonu yenilə"
+  },
+  "Delete template": {
+    "en": "Delete template",
+    "zh-CN": "删除模板",
+    "zh-TW": "刪除範本",
+    "es": "Eliminar plantilla",
+    "it": "Elimina modello",
+    "ja": "テンプレートを削除",
+    "pt-BR": "Excluir modelo",
+    "ko": "템플릿 삭제",
+    "tr": "Şablonu sil",
+    "az": "Şablonu sil"
+  },
+  "Delete this saved template?": {
+    "en": "Delete this saved template?",
+    "zh-CN": "删除这份已保存的模板？",
+    "zh-TW": "刪除這份已儲存的範本？",
+    "es": "¿Eliminar esta plantilla guardada?",
+    "it": "Eliminare questo modello salvato?",
+    "ja": "保存したテンプレートを削除しますか？",
+    "pt-BR": "Excluir este modelo salvo?",
+    "ko": "이 저장된 템플릿을 삭제할까요?",
+    "tr": "Bu kayıtlı şablon silinsin mi?",
+    "az": "Bu saxlanmış şablon silinsin?"
+  },
+  "Template saved": {
+    "en": "Template saved",
+    "zh-CN": "模板已保存",
+    "zh-TW": "範本已儲存",
+    "es": "Plantilla guardada",
+    "it": "Modello salvato",
+    "ja": "テンプレートを保存しました",
+    "pt-BR": "Modelo salvo",
+    "ko": "템플릿이 저장되었습니다",
+    "tr": "Şablon kaydedildi",
+    "az": "Şablon saxlanıldı"
+  },
+  "Template deleted": {
+    "en": "Template deleted",
+    "zh-CN": "模板已删除",
+    "zh-TW": "範本已刪除",
+    "es": "Plantilla eliminada",
+    "it": "Modello eliminato",
+    "ja": "テンプレートを削除しました",
+    "pt-BR": "Modelo excluído",
+    "ko": "템플릿이 삭제되었습니다",
+    "tr": "Şablon silindi",
+    "az": "Şablon silindi"
+  },
+  "Enter a template name.": {
+    "en": "Enter a template name.",
+    "zh-CN": "请输入模板名称。",
+    "zh-TW": "請輸入範本名稱。",
+    "es": "Introduce un nombre para la plantilla.",
+    "it": "Inserisci il nome del modello.",
+    "ja": "テンプレート名を入力してください。",
+    "pt-BR": "Insira o nome do modelo.",
+    "ko": "템플릿 이름을 입력하세요.",
+    "tr": "Bir şablon adı girin.",
+    "az": "Şablonun adını daxil edin."
+  },
+  "This name is already in use. Choose a different name or update the loaded template.": {
+    "en": "This name is already in use. Choose a different name or update the loaded template.",
+    "zh-CN": "模板名称重复，请换个名称或更新已载入的模板。",
+    "zh-TW": "範本名稱已使用，請更名或更新已載入的範本。",
+    "es": "El nombre ya existe. Elige otro o actualiza la plantilla cargada.",
+    "it": "Il nome è già in uso. Scegline un altro o aggiorna il modello caricato.",
+    "ja": "同名のテンプレートがあります。別の名前を使うか、読み込んだテンプレートを更新してください。",
+    "pt-BR": "O nome já está em uso. Escolha outro ou atualize o modelo carregado.",
+    "ko": "같은 이름이 있습니다. 이름을 바꾸거나 불러온 템플릿을 업데이트하세요.",
+    "tr": "Bu ad kullanılıyor. Başka bir ad seçin veya yüklenen şablonu güncelleyin.",
+    "az": "Bu ad istifadə olunur. Başqa ad seçin və ya yüklənmiş şablonu yeniləyin."
+  },
+  "Template limit reached. Delete a saved template or update the loaded template.": {
+    "en": "Template limit reached. Delete a saved template or update the loaded template.",
+    "zh-CN": "已达保存上限，可删除已有模板或更新已载入的模板。",
+    "zh-TW": "已達儲存上限，可刪除已有的範本或更新已載入的範本。",
+    "es": "Se alcanzó el límite. Elimina una plantilla guardada o actualiza la cargada.",
+    "it": "Limite raggiunto. Elimina un modello salvato o aggiorna quello caricato.",
+    "ja": "保存上限に達しました。保存済みのテンプレートを削除するか、読み込んだテンプレートを更新してください。",
+    "pt-BR": "Limite atingido. Exclua um modelo salvo ou atualize o modelo carregado.",
+    "ko": "저장 한도에 도달했습니다. 저장된 템플릿을 삭제하거나 불러온 템플릿을 업데이트하세요.",
+    "tr": "Sınıra ulaşıldı. Kayıtlı bir şablonu silin veya yüklenen şablonu güncelleyin.",
+    "az": "Limitə çatdınız. Saxlanmış şablonu silin və ya yüklənmiş şablonu yeniləyin."
+  },
+  "This saved template no longer exists.": {
+    "en": "This saved template no longer exists.",
+    "zh-CN": "这份已保存的模板已不存在。",
+    "zh-TW": "這份已儲存的範本已不存在。",
+    "es": "Esta plantilla guardada ya no existe.",
+    "it": "Questo modello salvato non esiste più.",
+    "ja": "保存したテンプレートはすでに削除されています。",
+    "pt-BR": "Este modelo salvo não existe mais.",
+    "ko": "이 저장된 템플릿이 더 이상 없습니다.",
+    "tr": "Bu kayıtlı şablon artık yok.",
+    "az": "Bu saxlanmış şablon artıq mövcud deyil."
+  },
+  "Check the template configuration.": {
+    "en": "Check the template configuration.",
+    "zh-CN": "请检查模板配置。",
+    "zh-TW": "請檢查範本設定。",
+    "es": "Revisa la configuración de la plantilla.",
+    "it": "Controlla la configurazione del modello.",
+    "ja": "テンプレート設定を確認してください。",
+    "pt-BR": "Verifique a configuração do modelo.",
+    "ko": "템플릿 설정을 확인하세요.",
+    "tr": "Şablon ayarlarını kontrol edin.",
+    "az": "Şablonun parametrlərini yoxlayın."
+  },
+  "Could not access saved templates.": {
+    "en": "Could not access saved templates.",
+    "zh-CN": "无法访问已保存的模板。",
+    "zh-TW": "無法存取已儲存的範本。",
+    "es": "No se pudo acceder a las plantillas guardadas.",
+    "it": "Impossibile accedere ai modelli salvati.",
+    "ja": "保存したテンプレートにアクセスできませんでした。",
+    "pt-BR": "Não foi possível acessar os modelos salvos.",
+    "ko": "저장된 템플릿에 접근할 수 없습니다.",
+    "tr": "Kayıtlı şablonlara erişilemedi.",
+    "az": "Saxlanmış şablonlara giriş mümkün olmadı."
+  },
+  "Table": {
+    "en": "Table",
+    "zh-CN": "表名",
+    "zh-TW": "表名",
+    "es": "Tabla",
+    "it": "Tabella",
+    "ja": "テーブル",
+    "pt-BR": "Tabela",
+    "ko": "표",
+    "tr": "Tablo",
+    "az": "Cədvəl"
+  },
+  "Result view": {
+    "en": "Result view",
+    "zh-CN": "结果视图",
+    "zh-TW": "結果檢視",
+    "es": "Vista de resultados",
+    "it": "Vista dei risultati",
+    "ja": "結果の表示形式",
+    "pt-BR": "Visualização dos resultados",
+    "ko": "결과 보기",
+    "tr": "Sonuç görünümü",
+    "az": "Nəticə görünüşü"
+  },
+  "Click to copy value": {
+    "en": "Click to copy value",
+    "zh-CN": "点击复制该值",
+    "zh-TW": "點擊複製此值",
+    "es": "Haz clic para copiar el valor",
+    "it": "Fai clic per copiare il valore",
+    "ja": "クリックして値をコピー",
+    "pt-BR": "Clique para copiar o valor",
+    "ko": "클릭하여 값 복사",
+    "tr": "Değeri kopyalamak için tıklayın",
+    "az": "Dəyəri kopyalamaq üçün klikləyin"
+  },
+  "Copy all results": {
+    "en": "Copy all results",
+    "zh-CN": "复制全部结果",
+    "zh-TW": "複製全部結果",
+    "es": "Copiar todos los resultados",
+    "it": "Copia tutti i risultati",
+    "ja": "すべての結果をコピー",
+    "pt-BR": "Copiar todos os resultados",
+    "ko": "모든 결과 복사",
+    "tr": "Tüm sonuçları kopyala",
+    "az": "Bütün nəticələri kopyala"
+  },
+  "Empty string": {
+    "en": "Empty string",
+    "zh-CN": "空字符串",
+    "zh-TW": "空字串",
+    "es": "Cadena vacía",
+    "it": "Stringa vuota",
+    "ja": "空文字列",
+    "pt-BR": "String vazia",
+    "ko": "빈 문자열",
+    "tr": "Boş dize",
+    "az": "Boş sətir"
+  },
+  "No generated rows": {
+    "en": "No generated rows",
+    "zh-CN": "暂无生成结果",
+    "zh-TW": "尚無產生結果",
+    "es": "Aún no hay filas generadas",
+    "it": "Nessuna riga generata",
+    "ja": "生成された行はありません",
+    "pt-BR": "Nenhuma linha gerada",
+    "ko": "생성된 행이 없습니다",
+    "tr": "Oluşturulan satır yok",
+    "az": "Yaradılmış sətir yoxdur"
+  },
+  "Previous page": {
+    "en": "Previous page",
+    "zh-CN": "上一页",
+    "zh-TW": "上一頁",
+    "es": "Página anterior",
+    "it": "Pagina precedente",
+    "ja": "前のページ",
+    "pt-BR": "Página anterior",
+    "ko": "이전 페이지",
+    "tr": "Önceki sayfa",
+    "az": "Əvvəlki səhifə"
+  },
+  "Next page": {
+    "en": "Next page",
+    "zh-CN": "下一页",
+    "zh-TW": "下一頁",
+    "es": "Página siguiente",
+    "it": "Pagina successiva",
+    "ja": "次のページ",
+    "pt-BR": "Próxima página",
+    "ko": "다음 페이지",
+    "tr": "Sonraki sayfa",
+    "az": "Növbəti səhifə"
+  },
+  "Custom date format": {
+    "en": "Custom date format",
+    "zh-CN": "自定义日期格式",
+    "zh-TW": "自訂日期格式",
+    "es": "Formato de fecha personalizado",
+    "it": "Formato data personalizzato",
+    "ja": "カスタム日付形式",
+    "pt-BR": "Formato de data personalizado",
+    "ko": "사용자 지정 날짜 형식",
+    "tr": "Özel tarih biçimi",
+    "az": "Fərdi tarix formatı"
+  },
+  "Put literal text in brackets, for example [UTC].": {
+    "en": "Put literal text in brackets, for example [UTC].",
+    "zh-CN": "固定文字放在方括号中，如 [UTC]。",
+    "zh-TW": "固定文字放在方括號內，如 [UTC]。",
+    "es": "Pon el texto literal entre corchetes, por ejemplo [UTC].",
+    "it": "Racchiudi il testo letterale tra parentesi quadre, ad esempio [UTC].",
+    "ja": "固定の文字列は [UTC] のように角括弧で囲みます。",
+    "pt-BR": "Coloque texto literal entre colchetes, como [UTC].",
+    "ko": "그대로 표시할 문구는 [UTC]처럼 대괄호에 넣으세요.",
+    "tr": "Sabit metni [UTC] örneğindeki gibi köşeli paranteze alın.",
+    "az": "Sabit mətni [UTC] nümunəsindəki kimi kvadrat mötərizəyə alın."
+  },
+  "Search countries or regions": {
+    "en": "Search countries or regions",
+    "zh-CN": "搜索国家或地区",
+    "zh-TW": "搜尋國家或地區",
+    "es": "Buscar países o regiones",
+    "it": "Cerca paesi o regioni",
+    "ja": "国や地域を検索",
+    "pt-BR": "Buscar países ou regiões",
+    "ko": "국가 또는 지역 검색",
+    "tr": "Ülke veya bölge ara",
+    "az": "Ölkə və ya region axtar"
+  },
+  "New batch": {
+    "en": "New batch",
+    "zh-CN": "换一批",
+    "zh-TW": "換一批",
+    "es": "Generar otro lote",
+    "it": "Genera un altro lotto",
+    "ja": "別のデータを生成",
+    "pt-BR": "Gerar outro lote",
+    "ko": "새 데이터 생성",
+    "tr": "Yeni grup oluştur",
+    "az": "Yeni dəst yarat"
+  },
+  "Row count must be an integer between 1 and 1000.": {
+    "en": "Row count must be an integer between 1 and 1000.",
+    "zh-CN": "数量必须是 1 到 1000 的整数。",
+    "zh-TW": "數量必須是 1 到 1000 的整數。",
+    "es": "El número de filas debe ser un entero entre 1 y 1000.",
+    "it": "Il numero di righe deve essere un intero tra 1 e 1000.",
+    "ja": "行数には 1〜1000 の整数を指定してください。",
+    "pt-BR": "A quantidade de linhas deve ser um inteiro entre 1 e 1000.",
+    "ko": "행 수는 1에서 1000 사이의 정수여야 합니다.",
+    "tr": "Satır sayısı 1 ile 1000 arasında bir tam sayı olmalıdır.",
+    "az": "Sətir sayı 1 ilə 1000 arasında tam ədəd olmalıdır."
+  },
+  "Choose between 1 and 50 fields.": {
+    "en": "Choose between 1 and 50 fields.",
+    "zh-CN": "请配置 1 到 50 个字段。",
+    "zh-TW": "請設定 1 到 50 個欄位。",
+    "es": "Configura de 1 a 50 campos.",
+    "it": "Configura da 1 a 50 campi.",
+    "ja": "フィールドは 1〜50 個指定してください。",
+    "pt-BR": "Configure de 1 a 50 campos.",
+    "ko": "필드를 1개에서 50개까지 설정하세요.",
+    "tr": "1 ile 50 arasında alan yapılandırın.",
+    "az": "1 ilə 50 arasında sahə qurun."
+  },
+  "Enter a valid field name.": {
+    "en": "Enter a valid field name.",
+    "zh-CN": "请输入有效的字段名。",
+    "zh-TW": "請輸入有效的欄位名稱。",
+    "es": "Introduce un nombre de campo válido.",
+    "it": "Inserisci un nome di campo valido.",
+    "ja": "有効なフィールド名を入力してください。",
+    "pt-BR": "Insira um nome de campo válido.",
+    "ko": "유효한 필드 이름을 입력하세요.",
+    "tr": "Geçerli bir alan adı girin.",
+    "az": "Etibarlı sahə adı daxil edin."
+  },
+  "Field names must be unique.": {
+    "en": "Field names must be unique.",
+    "zh-CN": "字段名不能重复。",
+    "zh-TW": "欄位名稱不可重複。",
+    "es": "Los nombres de campo deben ser únicos.",
+    "it": "I nomi dei campi devono essere univoci.",
+    "ja": "フィールド名は重複できません。",
+    "pt-BR": "Os nomes dos campos devem ser únicos.",
+    "ko": "필드 이름은 고유해야 합니다.",
+    "tr": "Alan adları benzersiz olmalıdır.",
+    "az": "Sahə adları unikal olmalıdır."
+  },
+  "Unknown field type.": {
+    "en": "Unknown field type.",
+    "zh-CN": "无法识别该字段类型。",
+    "zh-TW": "無法辨識此欄位類型。",
+    "es": "Tipo de campo desconocido.",
+    "it": "Tipo di campo sconosciuto.",
+    "ja": "不明なフィールドの種類です。",
+    "pt-BR": "Tipo de campo desconhecido.",
+    "ko": "알 수 없는 필드 유형입니다.",
+    "tr": "Bilinmeyen alan türü.",
+    "az": "Naməlum sahə növü."
+  },
+  "Check the field options.": {
+    "en": "Check the field options.",
+    "zh-CN": "请检查该字段的参数。",
+    "zh-TW": "請檢查此欄位的參數。",
+    "es": "Revisa las opciones del campo.",
+    "it": "Controlla le opzioni del campo.",
+    "ja": "フィールドの設定を確認してください。",
+    "pt-BR": "Verifique as opções do campo.",
+    "ko": "필드 옵션을 확인하세요.",
+    "tr": "Alan seçeneklerini kontrol edin.",
+    "az": "Sahə seçimlərini yoxlayın."
+  },
+  "Set an age range using whole numbers from 0 to 120.": {
+    "en": "Set an age range using whole numbers from 0 to 120.",
+    "zh-CN": "请使用 0 到 120 之间的整数设置年龄范围。",
+    "zh-TW": "請使用 0 到 120 之間的整數設定年齡範圍。",
+    "es": "Usa números enteros de 0 a 120 para el intervalo de edad.",
+    "it": "Usa numeri interi da 0 a 120 per l'intervallo di età.",
+    "ja": "年齢範囲には 0〜120 の整数を指定してください。",
+    "pt-BR": "Use números inteiros de 0 a 120 para a faixa etária.",
+    "ko": "나이 범위는 0에서 120 사이의 정수로 설정하세요.",
+    "tr": "Yaş aralığı için 0 ile 120 arasında tam sayılar kullanın.",
+    "az": "Yaş aralığı üçün 0 ilə 120 arasında tam ədədlər istifadə edin."
+  },
+  "The age ranges must overlap.": {
+    "en": "The age ranges must overlap.",
+    "zh-CN": "年龄范围必须有交集。",
+    "zh-TW": "年齡範圍必須有交集。",
+    "es": "Los intervalos de edad deben coincidir en parte.",
+    "it": "Gli intervalli di età devono sovrapporsi.",
+    "ja": "年齢範囲が重なるように指定してください。",
+    "pt-BR": "As faixas etárias devem se sobrepor.",
+    "ko": "나이 범위가 서로 겹쳐야 합니다.",
+    "tr": "Yaş aralıkları örtüşmelidir.",
+    "az": "Yaş aralıqları üst-üstə düşməlidir."
+  },
+  "Use the same city for address fields in a row.": {
+    "en": "Use the same city for address fields in a row.",
+    "zh-CN": "同一行的地址字段必须使用同一个城市。",
+    "zh-TW": "同一列的地址欄位必須使用相同城市。",
+    "es": "Usa la misma ciudad para los campos de dirección de una fila.",
+    "it": "Usa la stessa città per i campi dell'indirizzo nella riga.",
+    "ja": "同じ行の住所フィールドには同じ都市を指定してください。",
+    "pt-BR": "Use a mesma cidade para os campos de endereço da linha.",
+    "ko": "같은 행의 주소 필드에는 같은 도시를 사용하세요.",
+    "tr": "Bir satırdaki adres alanları için aynı şehri kullanın.",
+    "az": "Bir sətirdəki ünvan sahələri üçün eyni şəhəri istifadə edin."
+  },
+  "Enter a valid age reference date from 1900 onward.": {
+    "en": "Enter a valid age reference date from 1900 onward.",
+    "zh-CN": "请输入 1900 年或之后的有效年龄基准日。",
+    "zh-TW": "請輸入 1900 年起的有效年齡基準日。",
+    "es": "Introduce una fecha válida a partir de 1900.",
+    "it": "Inserisci una data valida dal 1900 in poi.",
+    "ja": "1900 年以降の有効な基準日を入力してください。",
+    "pt-BR": "Insira uma data de referência válida a partir de 1900.",
+    "ko": "1900년 이후의 유효한 나이 기준일을 입력하세요.",
+    "tr": "1900 veya sonrasında geçerli bir yaş referans tarihi girin.",
+    "az": "1900-cü ildən başlayaraq etibarlı yaş tarixi daxil edin."
+  },
+  "Enter a valid start and end date in order.": {
+    "en": "Enter a valid start and end date in order.",
+    "zh-CN": "请输入有效的起止日期，结束日期不得早于开始日期。",
+    "zh-TW": "請輸入有效的起訖日期，結束日期不得早於開始日期。",
+    "es": "Introduce fechas válidas de inicio y fin en orden.",
+    "it": "Inserisci date di inizio e fine valide e in ordine.",
+    "ja": "有効な開始日と終了日を順に指定してください。",
+    "pt-BR": "Insira datas válidas de início e fim, na ordem.",
+    "ko": "유효한 시작일과 종료일을 순서대로 입력하세요.",
+    "tr": "Geçerli başlangıç ve bitiş tarihlerini sırasıyla girin.",
+    "az": "Etibarlı başlanğıc və bitiş tarixlərini ardıcıl daxil edin."
+  },
+  "Check the custom date format and its tokens.": {
+    "en": "Check the custom date format and its tokens.",
+    "zh-CN": "请检查自定义日期格式及占位符。",
+    "zh-TW": "請檢查自訂日期格式及預留位置。",
+    "es": "Revisa el formato de fecha personalizado y sus símbolos.",
+    "it": "Controlla il formato data personalizzato e i suoi simboli.",
+    "ja": "カスタム日付形式と書式記号を確認してください。",
+    "pt-BR": "Verifique o formato de data personalizado e seus símbolos.",
+    "ko": "사용자 지정 날짜 형식과 기호를 확인하세요.",
+    "tr": "Özel tarih biçimini ve belirteçlerini kontrol edin.",
+    "az": "Fərdi tarix formatını və işarələrini yoxlayın."
+  },
+  "Check the numeric bounds and precision.": {
+    "en": "Check the numeric bounds and precision.",
+    "zh-CN": "请检查数值范围和精度。",
+    "zh-TW": "請檢查數值範圍與精度。",
+    "es": "Revisa los límites y la precisión.",
+    "it": "Controlla i limiti e la precisione.",
+    "ja": "数値範囲と精度を確認してください。",
+    "pt-BR": "Verifique os limites e a precisão.",
+    "ko": "수치 범위와 정밀도를 확인하세요.",
+    "tr": "Sayısal sınırları ve hassasiyeti kontrol edin.",
+    "az": "Ədədi hədləri və dəqiqliyi yoxlayın."
+  },
+  "Use safe integers and a nonzero step for the sequence.": {
+    "en": "Use safe integers and a nonzero step for the sequence.",
+    "zh-CN": "序号需在安全整数范围内，且步长不能为零。",
+    "zh-TW": "序號須在安全整數範圍內且步長不可為零。",
+    "es": "Usa enteros seguros y un incremento distinto de cero.",
+    "it": "Usa interi sicuri e un passo diverso da zero.",
+    "ja": "安全な整数と 0 以外の増分を指定してください。",
+    "pt-BR": "Use inteiros seguros e um passo diferente de zero.",
+    "ko": "안전한 정수와 0이 아닌 간격을 사용하세요.",
+    "tr": "Güvenli tam sayılar ve sıfır olmayan bir adım kullanın.",
+    "az": "Təhlükəsiz tam ədədlərdən və sıfır olmayan addımdan istifadə edin."
+  },
+  "Enter at least one nonempty choice.": {
+    "en": "Enter at least one nonempty choice.",
+    "zh-CN": "请至少填写一个非空候选值。",
+    "zh-TW": "請至少填寫一個非空的候選值。",
+    "es": "Introduce al menos una opción no vacía.",
+    "it": "Inserisci almeno un'opzione non vuota.",
+    "ja": "空欄でない選択肢を 1 つ以上入力してください。",
+    "pt-BR": "Insira pelo menos uma opção não vazia.",
+    "ko": "비어 있지 않은 선택 항목을 하나 이상 입력하세요.",
+    "tr": "En az bir boş olmayan seçenek girin.",
+    "az": "Ən azı bir boş olmayan seçim daxil edin."
+  },
+  "Enter a value that matches the selected type.": {
+    "en": "Enter a value that matches the selected type.",
+    "zh-CN": "请输入与所选类型匹配的值。",
+    "zh-TW": "請輸入符合所選類型的值。",
+    "es": "Introduce un valor del tipo seleccionado.",
+    "it": "Inserisci un valore del tipo selezionato.",
+    "ja": "選択した種類に合った値を入力してください。",
+    "pt-BR": "Insira um valor do tipo selecionado.",
+    "ko": "선택한 유형에 맞는 값을 입력하세요.",
+    "tr": "Seçilen türle eşleşen bir değer girin.",
+    "az": "Seçilmiş növə uyğun dəyər daxil edin."
+  },
+  "Enter a pattern of 1 to 256 characters.": {
+    "en": "Enter a pattern of 1 to 256 characters.",
+    "zh-CN": "请输入 1 到 256 个字符的模板。",
+    "zh-TW": "請輸入 1 到 256 個字元的範本。",
+    "es": "Introduce un patrón de 1 a 256 caracteres.",
+    "it": "Inserisci uno schema da 1 a 256 caratteri.",
+    "ja": "1〜256 文字のパターンを入力してください。",
+    "pt-BR": "Insira um padrão de 1 a 256 caracteres.",
+    "ko": "1자에서 256자 사이의 패턴을 입력하세요.",
+    "tr": "1 ile 256 karakter arasında bir kalıp girin.",
+    "az": "1 ilə 256 simvol arasında şablon daxil edin."
+  },
+  "Could not generate a mobile number for this region.": {
+    "en": "Could not generate a mobile number for this region.",
+    "zh-CN": "无法为该地区生成手机号。",
+    "zh-TW": "無法為此地區產生手機號碼。",
+    "es": "No se pudo generar un móvil para esta región.",
+    "it": "Impossibile generare un cellulare per questa regione.",
+    "ja": "この地域の携帯電話番号を作成できませんでした。",
+    "pt-BR": "Não foi possível gerar um celular para esta região.",
+    "ko": "이 지역의 휴대전화 번호를 생성할 수 없습니다.",
+    "tr": "Bu bölge için cep telefonu numarası üretilemedi.",
+    "az": "Bu bölgə üçün mobil telefon nömrəsi yaratmaq mümkün olmadı."
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "zh-CN": "取消"
+  },
+  "Save": {
+    "en": "Save",
+    "zh-CN": "保存"
+  },
+  "Delete": {
+    "en": "Delete",
+    "zh-CN": "删除"
+  },
+  "No matches found": {
+    "en": "No matches found",
+    "zh-CN": "未找到匹配结果"
+  },
+  "Date format": {
+    "en": "Date format",
+    "zh-CN": "日期格式"
+  },
+  "Country / region": {
+    "en": "Country / region",
+    "zh-CN": "国家 / 地区"
+  },
+  "Phone format": {
+    "en": "Phone format",
+    "zh-CN": "号码格式"
+  },
+  "Start value": {
+    "en": "Start value",
+    "zh-CN": "起始值"
+  },
+  "Value type": {
+    "en": "Value type",
+    "zh-CN": "值类型"
+  },
+  "Template": {
+    "en": "Template",
+    "zh-CN": "模板"
+  },
+  "Field name": {
+    "en": "Field name",
+    "zh-CN": "字段名"
+  },
+  "Field {0}": {
+    "en": "Field {0}",
+    "zh-CN": "第 {0} 个字段"
+  },
+  "Remove field": {
+    "en": "Remove field",
+    "zh-CN": "删除字段"
+  },
+  "Generate data": {
+    "en": "Generate data",
+    "zh-CN": "生成数据"
+  },
+  "Advanced settings": {
+    "en": "Advanced settings",
+    "zh-CN": "高级设置"
+  },
+  "Add": {
+    "en": "Add",
+    "zh-CN": "添加"
+  },
+  "Done": {
+    "en": "Done",
+    "zh-CN": "完成"
+  },
+  "Custom": {
+    "en": "Custom",
+    "zh-CN": "自定义"
+  },
+  "China": {
+    "en": "China",
+    "zh-CN": "中国大陆"
+  },
+  "Milliseconds": {
+    "en": "Milliseconds",
+    "zh-CN": "毫秒"
+  },
+  "String": {
+    "en": "String",
+    "zh-CN": "字符串"
+  },
+  "Number": {
+    "en": "Number",
+    "zh-CN": "数字"
+  },
   "Turn text into ASCII art for terminals, comments and README files.": {
     "en": "Turn text into ASCII art for terminals, comments and README files.",
     "zh-CN": "将文字转换为 ASCII 艺术字，适用于终端、注释与 README。"
@@ -3906,10 +5298,6 @@
     "en": "Import an animation to preview, adjust options, and save the result",
     "zh-CN": "导入后可预览动图、调整参数并保存结果"
   },
-  "Cancel": {
-    "en": "Cancel",
-    "zh-CN": "取消"
-  },
   "Animation preview": {
     "en": "Animation preview",
     "zh-CN": "动图预览"
@@ -4010,10 +5398,6 @@
   "Drag the handle to reorder frames": {
     "en": "Drag the handle to reorder frames",
     "zh-CN": "拖动手柄调整帧顺序"
-  },
-  "Delete": {
-    "en": "Delete",
-    "zh-CN": "删除"
   },
   "Extract frame": {
     "en": "Extract frame",
@@ -5398,15 +6782,6 @@
     "ja": "パス",
     "pt-BR": "Caminho"
   },
-  "Table": {
-    "en": "Table",
-    "zh-CN": "表名",
-    "zh-TW": "表名",
-    "es": "Tabla",
-    "it": "Tabella",
-    "ja": "テーブル",
-    "pt-BR": "Tabela"
-  },
   "Kind": {
     "en": "Kind",
     "zh-CN": "类型",
@@ -5517,6 +6892,18 @@
     "ko": "PDF 세션이 가득 찼습니다. PDF 도구를 저장하거나 닫고 다시 시도하세요.",
     "tr": "PDF oturumları dolu. Açık bir PDF aracını kaydedip kapatın ve yeniden deneyin.",
     "az": "PDF sessiyaları doludur. Açıq PDF alətini saxlayın və ya bağlayıb yenidən sınayın."
+  },
+  "The combined PDF exceeds the supported object identifier range.": {
+    "en": "The combined PDF exceeds the supported object identifier range.",
+    "zh-CN": "合并后的 PDF 超出支持的对象编号范围。",
+    "zh-TW": "合併後的 PDF 超出支援的物件編號範圍。",
+    "es": "El PDF combinado supera el intervalo de identificadores de objetos admitido.",
+    "it": "Il PDF unito supera l'intervallo supportato degli identificatori degli oggetti.",
+    "ja": "結合した PDF がサポートされるオブジェクト識別子の範囲を超えています。",
+    "pt-BR": "O PDF combinado excede o intervalo de identificadores de objetos permitido.",
+    "ko": "병합된 PDF가 지원되는 객체 식별자 범위를 벗어났습니다.",
+    "tr": "Birleştirilen PDF, desteklenen nesne tanımlayıcısı aralığını aşıyor.",
+    "az": "Birləşdirilmiş PDF dəstəklənən obyekt identifikatoru diapazonunu aşır."
   },
   "A TOTP store already exists. Unlock it with its dedicated password.": {
     "en": "A TOTP store already exists. Unlock it with its dedicated password.",
@@ -9996,10 +11383,6 @@
     "en": "Format: {n} page, {total} total",
     "zh-CN": "格式：{n} 页码，{total} 总数"
   },
-  "Advanced settings": {
-    "en": "Advanced settings",
-    "zh-CN": "高级设置"
-  },
   "Position is in PDF points, measured from the bottom-left corner.": {
     "en": "Position is in PDF points, measured from the bottom-left corner.",
     "zh-CN": "位置单位为 PDF 点，原点为页面左下角。"
@@ -10436,10 +11819,6 @@
     "en": "Type text to generate a barcode.",
     "zh-CN": "输入文本后生成条码。"
   },
-  "Custom": {
-    "en": "Custom",
-    "zh-CN": "自定义"
-  },
   "{0}, {1}, {2}×{3}px": {
     "en": "{0}, {1}, {2}×{3}px",
     "zh-CN": "{0}，{1}，{2}×{3}px"
@@ -10567,10 +11946,6 @@
   "Paragraph style": {
     "en": "Paragraph style",
     "zh-CN": "段落样式"
-  },
-  "Paragraph": {
-    "en": "Paragraph",
-    "zh-CN": "正文"
   },
   "Quote": {
     "en": "Quote",
@@ -12169,10 +13544,6 @@
     "en": "Try JSON → CSV",
     "zh-CN": "试试 JSON → CSV"
   },
-  "Decimal": {
-    "en": "Decimal",
-    "zh-CN": "十进制"
-  },
   "Hex": {
     "en": "Hex",
     "zh-CN": "Hex"
@@ -12449,10 +13820,6 @@
     "en": "Saved TOTP",
     "zh-CN": "已保存 TOTP"
   },
-  "Done": {
-    "en": "Done",
-    "zh-CN": "完成"
-  },
   "Manage": {
     "en": "Manage",
     "zh-CN": "管理"
@@ -12540,10 +13907,6 @@
   "Note (optional)": {
     "en": "Note (optional)",
     "zh-CN": "备注（可选）"
-  },
-  "Save": {
-    "en": "Save",
-    "zh-CN": "保存"
   },
   "Confirm deletion": {
     "en": "Confirm deletion",
@@ -13189,14 +14552,6 @@
     "en": "International",
     "zh-CN": "国际格式"
   },
-  "National number": {
-    "en": "National number",
-    "zh-CN": "本地号码"
-  },
-  "Country / region": {
-    "en": "Country / region",
-    "zh-CN": "国家 / 地区"
-  },
   "Calling code": {
     "en": "Calling code",
     "zh-CN": "国际区号"
@@ -13288,14 +14643,6 @@
   "Converts automatically when the input, direction, or service name changes": {
     "en": "Converts automatically when the input, direction, or service name changes",
     "zh-CN": "输入、方向或服务名称变化后自动转换"
-  },
-  "Fields (comma-separated)": {
-    "en": "Fields (comma-separated)",
-    "zh-CN": "字段（逗号分隔）"
-  },
-  "Types: name, email, phone, company, date, datetime, uuid, boolean, integer, number, amount, url, ipv4, sentence": {
-    "en": "Types: name, email, phone, company, date, datetime, uuid, boolean, integer, number, amount, url, ipv4, sentence",
-    "zh-CN": "可用类型：name、email、phone、company、date、datetime、uuid、boolean、integer、number、amount、url、ipv4、sentence"
   },
   "docker run → Compose": {
     "en": "docker run → Compose",

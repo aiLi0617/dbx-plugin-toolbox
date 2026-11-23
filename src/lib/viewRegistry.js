@@ -42,6 +42,7 @@ export const VIEW_LOADERS = {
   "gif-tools": () => import("./GifToolsView.svelte"),
   "image-ocr": () => import("./ImageOcrView.svelte"),
   "utility-suite": () => import("./UtilitySuiteView.svelte"),
+  "fake-data": () => import("./FakeDataView.svelte"),
   "developer-utility": () => import("./DeveloperUtilityView.svelte"),
   "http-status": () => import("./HttpStatusView.svelte"),
   "network-calc": () => import("./NetworkCalcView.svelte"),
@@ -73,7 +74,7 @@ export const VIEW_LOADERS = {
 export const FILL_VIEWS = new Set([
   "json-workbench", "markdown", "url", "data-uri", "live-io", "jwt", "aes", "xor", "rsa", "modern-crypto", "signature",
   "specialized-crypto", "kem", "code-format", "data-convert", "spreadsheet", "image-process", "image-generate", "image-utility", "image-stitch", "gif-tools", "image-ocr", "utility-suite", "lorem",
-  "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "key-generator", "unicode-inspect", "developer-utility", "http-status",
+  "whitespace", "gzip", "regex", "diff", "keypair", "symmetric-key", "key-generator", "unicode-inspect", "developer-utility", "http-status", "fake-data",
 ]);
 
 // Keep these established utilities free of per-tool workflow and editing guards.

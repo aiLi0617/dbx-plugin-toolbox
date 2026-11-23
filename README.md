@@ -9,8 +9,8 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | 项目 | 值 |
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
-| 当前版本 | `0.1.6` |
-| 运行要求 | DBX `>= 0.5.68`、Host API `1` |
+| 当前版本 | `0.1.8` |
+| 运行要求 | DBX `>= 0.6.60`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |
 
@@ -18,6 +18,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 
 - [核心特点](#核心特点)
 - [安装与使用](#安装与使用)
+- [在 Codex 中使用 MCP 工具](#在-codex-中使用-mcp-工具)
 - [功能概览](#功能概览)
 - [隐私与安全](#隐私与安全)
 - [架构](#架构)
@@ -57,6 +58,31 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 - 普通工具最多保留 8 个页面，优先释放无未保存内容和无任务的旧页面；全部受保护时先确认。PDF、GIF、OCR 与模型下载在切换工具后继续运行，其进度、排队、结果保存和取消可在右下角“任务管理”查看；详细行为见[任务管理说明](docs/任务管理与可靠性修复.md)。
 - 保存二维码后，“打开所在文件夹”会调用系统文件管理器定位文件。
 - 密钥库的自动锁定与修改主密码统一位于“设置 → 密钥库”；修改主密码需先解锁密钥库，再输入当前主密码并确认新密码，点击“更新”立即生效。密码不随偏好设置保存或导出。
+
+## 在 Codex 中使用 MCP 工具
+
+1. 在 DBX 中安装并启用工具箱。在 **设置 → MCP → 能力 → 插件** 中检查 **DBX 工具箱** 的授权，选择只读即可。
+2. 在 **设置 → MCP → 接入方式** 安装或更新 DBX MCP Server，并使用 DBX 生成的 Codex 配置。已连接同一 DBX 数据目录的 Codex 客户端可复用现有配置。更新插件或授权后，重新连接 MCP Server 以刷新工具列表。 [DBX MCP 接入文档](https://dbxio.com/en/docs/mcp#plugin-tools)
+3. 在 Codex 中试一句「用 DBX 工具箱计算 `abc` 的 SHA-256」。直接列出模式下，工具名带 `dbx_toolbox__` 前缀，例如 `dbx_toolbox__hash`。按需发现模式下，开启 **DBX 通用 → 插件发现与调用**，用插件 ID `io.github.aili0617.toolbox` 调用 `dbx_plugin_tools` 查看工具。
+
+| 类别 | 工具名后缀 |
+| --- | --- |
+| 数据与 SQL · 17 | `json_patch`、`table_transform`、`sql_analyze`、`json`、`json_pointer`、`json_diff`、`csv`、`tsv`、`ndjson`、`dotenv`、`json_to_insert`、`sql_format`、`xml_format`、`data_convert`、`json_query`、`json_generate`、`code_format` |
+| 文本与编解码 · 10 | `hash`、`url`、`gzip`、`escape`、`regex`、`text_diff`、`unicode_inspect`、`file_signature`、`base_codec`、`text_transform` |
+| 时间、网络与开发辅助 · 8 | `timestamp`、`cron`、`cidr`、`ipv4_range`、`semver`、`developer_helpers`、`network_helpers`、`calendar` |
+| 精确计算 · 4 | `radix`、`unit_convert`、`percentage`、`exact_calculate` |
+| 生成与校验 · 8 | `cert`、`jwt_decode`、`iban`、`fake_data`、`random_values`、`qr_code`、`image_transform`、`pdf_document` |
+| 密码学与认证 · 9 | `cipher`、`public_key_cipher`、`message_auth`、`key_derivation`、`digital_signature`、`jwt_signature`、`key_cipher`、`key_exchange`、`key_generate` |
+
+MCP 优先提供需要精确计算、结构处理或专用库的能力。标准 Base64、Hex、UUID、ULID、文本计数、HTTP 状态码速查等独立入口可在桌面工具箱使用。
+
+工具描述默认同时显示简体中文和英文。启动 DBX MCP 或桌面 DBX 时可设置 `DBX_TOOLBOX_MCP_LOCALE=zh-CN`、`zh-TW` 或 `en` 来选择单语描述。直接调用 Sidecar 的客户端也可向 `mcp/tools` 传入 `locale`。当前 DBX 宿主的发现请求不包含界面语言。工具名和参数名在各语言中一致。
+
+数据转换遇到无法保真的数值会报错。JSON Schema 校验只接受能安全表示的整数，JSONPath 仍可原样返回任意精度的 JSON 数字。加解密和签名使用调用时传入的临时测试材料。图像与 PDF 工具使用 Base64 输入和输出，适用于小文件。
+
+JSON 格式化和压缩只调整空白，保留数字原文、键的顺序和重复键。请把待处理的 JSON 作为文本传入。JSON 查询和数据转换的精确结果也按文本返回。CSV 和 TSV 单元格读入时保留为字符串。时间戳、地址数量和换算结果用字符串表示，循环小数用约分后的分数表示。
+
+工具只处理调用传入的数据，无需数据库连接。每个文本参数上限为 64 KiB，序列化结果上限为 128 KiB。如果 DBX 启用了显式工具白名单，可添加 `dbx_toolbox__*`。
 
 ## 功能概览
 
@@ -216,6 +242,8 @@ AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。�
 - Rust stable
 - DBX 插件 CLI（`dbx-plugin`）
 
+构建 Rust Sidecar 前先在项目根目录安装 npm 依赖。MCP 的共享实现在构建时打包进 Sidecar，运行插件无需安装 Node.js。
+
 ### 安装、测试与调试
 
 ```bash
@@ -239,6 +267,12 @@ dbx-plugin dev --path . --port 5190
 ```
 
 DBX 调试命令会把工作目录规范为 `\\?\D:\...`。因此项目在 `dbx-plugin.toml` 中通过 Node 先切回普通盘符路径，再启动 Vite；请勿将该配置简单替换为 `npm.cmd`。
+
+在 PowerShell 中打包时传入普通盘符的绝对输出路径，以便 MSVC 编译随包嵌入的 JavaScript 引擎。
+
+```powershell
+dbx-plugin package . --output-dir (Join-Path $PWD 'dist')
+```
 
 ## 打包与发布
 

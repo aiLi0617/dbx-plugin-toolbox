@@ -1285,7 +1285,7 @@ fn rsa_pem_format(params: &Value) -> Result<&'static str, PluginError> {
     }
 }
 
-fn generate_rsa_pem(bits: usize, format: &str) -> Result<(String, String), PluginError> {
+pub(crate) fn generate_rsa_pem(bits: usize, format: &str) -> Result<(String, String), PluginError> {
     let mut rng = rand::thread_rng();
     let private_key =
         rsa::RsaPrivateKey::new(&mut rng, bits).map_err(|error| err(error.to_string()))?;
@@ -1313,12 +1313,12 @@ fn generate_rsa_pem(bits: usize, format: &str) -> Result<(String, String), Plugi
     }
 }
 
-fn generate_sm2_pair() -> (String, String) {
+pub(crate) fn generate_sm2_pair() -> (String, String) {
     let (sk, pk) = smcrypto::sm2::gen_keypair();
     (pk, sk)
 }
 
-fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginError> {
+pub(crate) fn generate_material(algorithm: &str, params: &Value) -> Result<String, PluginError> {
     let mut rng = rand::thread_rng();
     match algorithm {
         "aes-128" | "sm4-128" => {

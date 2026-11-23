@@ -107,7 +107,7 @@ function optionValue(tokens, index, token, longName) {
   return { value: tokens[index + 1], index: index + 1 };
 }
 
-export function parseCurl(command) {
+export function parseCurl(command, { parseNumber = Number } = {}) {
   const tokens = shellTokens(command.replace(/\\\r?\n/g, " "));
   if (tokens[0] !== "curl") throw new Error("Command must start with curl");
   let method = "GET"; let url = ""; let body = ""; let timeout = null; let connectTimeout = null; let followRedirects = false; let queryMode = false; let bodyType = "raw"; const headers = []; const form = [];
@@ -127,8 +127,8 @@ export function parseCurl(command) {
     else if (["-L", "--location"].includes(token)) followRedirects = true;
     else if (["-I", "--head"].includes(token)) method = "HEAD";
     else if (["-G", "--get"].includes(token)) { queryMode = true; method = "GET"; }
-    else if (token === "--max-time" || token.startsWith("--max-time=")) { const next = optionValue(tokens, i, token, "--max-time"); timeout = Number(next.value); if (!Number.isFinite(timeout) || timeout <= 0) throw new Error("--max-time must be a positive number"); i = next.index; }
-    else if (token === "--connect-timeout" || token.startsWith("--connect-timeout=")) { const next = optionValue(tokens, i, token, "--connect-timeout"); connectTimeout = Number(next.value); if (!Number.isFinite(connectTimeout) || connectTimeout <= 0) throw new Error("--connect-timeout must be a positive number"); i = next.index; }
+    else if (token === "--max-time" || token.startsWith("--max-time=")) { const next = optionValue(tokens, i, token, "--max-time"); timeout = parseNumber(next.value); if (!Number.isFinite(timeout) || timeout <= 0) throw new Error("--max-time must be a positive number"); i = next.index; }
+    else if (token === "--connect-timeout" || token.startsWith("--connect-timeout=")) { const next = optionValue(tokens, i, token, "--connect-timeout"); connectTimeout = parseNumber(next.value); if (!Number.isFinite(connectTimeout) || connectTimeout <= 0) throw new Error("--connect-timeout must be a positive number"); i = next.index; }
     else if (token === "--compressed") headers.push("Accept-Encoding: gzip, deflate, br");
     else if (["-k", "--insecure"].includes(token)) diagnostics.push("TLS certificate verification is disabled by the source command and cannot be represented safely in browser fetch");
     else if (token.startsWith("http://") || token.startsWith("https://")) url = token;
@@ -242,7 +242,7 @@ function dockerEnvironmentMap(values) {
   return environment;
 }
 
-export function dockerRunToCompose(command, { serviceName = "" } = {}) {
+export function dockerRunToCompose(command, { serviceName = "", parseNumber = Number } = {}) {
   const tokens = dockerCommandTokens(command);
   let start = 2;
   if (tokens[0] === "sudo") { tokens.shift(); }
@@ -293,14 +293,14 @@ export function dockerRunToCompose(command, { serviceName = "" } = {}) {
       const at = value.indexOf("=");
       if (at < 1) throw new Error("--ulimit must use name=value or name=soft:hard");
       const name = value.slice(0, at); const limits = value.slice(at + 1).split(":");
-      service.ulimits[name] = limits.length > 1 ? { soft: Number(limits[0]), hard: Number(limits[1]) } : Number(limits[0]);
+      service.ulimits[name] = limits.length > 1 ? { soft: parseNumber(limits[0]), hard: parseNumber(limits[1]) } : parseNumber(limits[0]);
       if (Object.values(typeof service.ulimits[name] === "object" ? service.ulimits[name] : { value: service.ulimits[name] }).some((item) => !Number.isInteger(item) || item < -1)) throw new Error("--ulimit values must be integers greater than or equal to -1");
     }
     else if (token === "--shm-size" || token.startsWith("--shm-size=")) service.shm_size = take("--shm-size");
     else if (token === "--memory" || token === "-m" || token.startsWith("--memory=")) service.mem_limit = take("--memory");
     else if (token === "--cpus" || token.startsWith("--cpus=")) service.cpus = take("--cpus");
-    else if (token === "--cpu-shares" || token.startsWith("--cpu-shares=")) service.cpu_shares = Number(take("--cpu-shares"));
-    else if (token === "--pids-limit" || token.startsWith("--pids-limit=")) service.pids_limit = Number(take("--pids-limit"));
+    else if (token === "--cpu-shares" || token.startsWith("--cpu-shares=")) service.cpu_shares = parseNumber(take("--cpu-shares"));
+    else if (token === "--pids-limit" || token.startsWith("--pids-limit=")) service.pids_limit = parseNumber(take("--pids-limit"));
     else if (token === "--gpus" || token.startsWith("--gpus=")) service.gpus = take("--gpus");
     else if (token === "--pid" || token.startsWith("--pid=")) service.pid = take("--pid");
     else if (token === "--ipc" || token.startsWith("--ipc=")) service.ipc = take("--ipc");
@@ -319,7 +319,7 @@ export function dockerRunToCompose(command, { serviceName = "" } = {}) {
     else if (token === "--health-timeout" || token.startsWith("--health-timeout=")) (service.healthcheck ||= {}).timeout = take("--health-timeout");
     else if (token === "--health-start-period" || token.startsWith("--health-start-period=")) (service.healthcheck ||= {}).start_period = take("--health-start-period");
     else if (token === "--health-start-interval" || token.startsWith("--health-start-interval=")) (service.healthcheck ||= {}).start_interval = take("--health-start-interval");
-    else if (token === "--health-retries" || token.startsWith("--health-retries=")) { const retries = Number(take("--health-retries")); if (!Number.isInteger(retries) || retries < 0) throw new Error("--health-retries must be a non-negative integer"); (service.healthcheck ||= {}).retries = retries; }
+    else if (token === "--health-retries" || token.startsWith("--health-retries=")) { const retries = parseNumber(take("--health-retries")); if (!Number.isInteger(retries) || retries < 0) throw new Error("--health-retries must be a non-negative integer"); (service.healthcheck ||= {}).retries = retries; }
     else if (token === "--no-healthcheck") service.healthcheck = { disable: true };
     else if (token === "--log-driver" || token.startsWith("--log-driver=")) service.logging.driver = take("--log-driver");
     else if (token === "--log-opt" || token.startsWith("--log-opt=")) service.logging.options ||= [], service.logging.options.push(take("--log-opt"));
@@ -621,75 +621,7 @@ export function parseUserAgent(value) {
   return { userAgent, browser, engine, engineVersion, engineVersionSource, os, device, architecture };
 }
 
-const FIRST_NAMES = ["Alex", "Morgan", "Taylor", "Jordan", "Casey", "Riley", "Avery", "Jamie"];
-const LAST_NAMES = ["Chen", "Smith", "Garcia", "Kim", "Patel", "Brown", "Martin", "Lee"];
-const FAKE_TYPES = new Set(["name", "firstName", "lastName", "username", "email", "phone", "company", "date", "datetime", "uuid", "boolean", "integer", "number", "amount", "url", "ipv4", "sentence"]);
-export function parseFakeFields(fields) {
-  const list = Array.isArray(fields) ? fields : String(fields || "").split(",");
-  if (!list.length || list.length > 50) throw new Error("Choose between 1 and 50 fields");
-  const seen = new Set();
-  return list.map((input) => {
-    const raw = String(input).trim(); const at = raw.indexOf(":"); const name = (at < 0 ? raw : raw.slice(0, at)).trim();
-    if (!/^[A-Za-z_][\w.-]{0,63}$/.test(name)) throw new Error(`Invalid field name: ${name || raw}`);
-    if (seen.has(name)) throw new Error(`Duplicate field name: ${name}`); seen.add(name);
-    const requested = at < 0 ? name : raw.slice(at + 1).trim();
-    const type = FAKE_TYPES.has(requested) ? requested : inferFakeType(name);
-    if (at >= 0 && !FAKE_TYPES.has(requested)) throw new Error(`Unsupported fake data type: ${requested}`);
-    return { name, type };
-  });
-}
-
-function inferFakeType(name) {
-  const key = name.toLowerCase();
-  if (key === "id" || key.endsWith("_id")) return "integer";
-  if (key.includes("email")) return "email"; if (key.includes("phone") || key.includes("mobile")) return "phone";
-  if (key.includes("company") || key.includes("organization")) return "company"; if (key.includes("uuid")) return "uuid";
-  if (key.includes("datetime") || key.includes("created") || key.includes("updated")) return "datetime"; if (key.includes("date")) return "date";
-  if (key.includes("price") || key.includes("amount") || key.includes("total")) return "amount"; if (key.includes("url") || key.includes("website")) return "url";
-  if (key.includes("active") || key.startsWith("is_") || key.startsWith("has_")) return "boolean"; if (key.includes("name")) return key.includes("first") ? "firstName" : key.includes("last") ? "lastName" : "name";
-  return "sentence";
-}
-
-export function generateFakeRows(count = 10, fields = ["name", "email", "company", "date", "uuid"], options = {}) {
-  const requested = Number(count);
-  if (!Number.isInteger(requested) || requested < 1 || requested > 1000) throw new Error("Row count must be an integer between 1 and 1000");
-  const total = requested;
-  const descriptors = parseFakeFields(fields);
-  const random = seededRandom(options.seed ?? "dbx-toolbox");
-  return Array.from({ length: total }, (_, index) => {
-    const first = FIRST_NAMES[Math.floor(random() * FIRST_NAMES.length)]; const last = LAST_NAMES[Math.floor(random() * LAST_NAMES.length)];
-    return Object.fromEntries(descriptors.map(({ name, type }) => [name, fakeValue(type, { first, last, index, random })]));
-  });
-}
-
-function seededRandom(seed) {
-  let state = 2166136261;
-  for (const char of String(seed)) { state ^= char.codePointAt(0); state = Math.imul(state, 16777619); }
-  return () => { state += 0x6d2b79f5; let value = state; value = Math.imul(value ^ value >>> 15, value | 1); value ^= value + Math.imul(value ^ value >>> 7, value | 61); return ((value ^ value >>> 14) >>> 0) / 4294967296; };
-}
-
-function fakeValue(type, { first, last, index, random }) {
-  const number = index + 1;
-  if (type === "name") return `${first} ${last}`; if (type === "firstName") return first; if (type === "lastName") return last;
-  if (type === "username") return `${first}.${last}${number}`.toLowerCase(); if (type === "email") return `${first}.${last}.${number}@example.invalid`.toLowerCase();
-  if (type === "phone") return `+1 202 555 ${String(1000 + number % 9000).padStart(4, "0")}`; if (type === "company") return `Example Company ${number}`;
-  const date = new Date(Date.UTC(2024, 0, 1 + index)); if (type === "date") return date.toISOString().slice(0, 10); if (type === "datetime") return date.toISOString();
-  if (type === "boolean") return random() >= .5; if (type === "integer") return Math.floor(random() * 10_000); if (type === "number") return Math.round(random() * 100_000) / 100;
-  if (type === "amount") return (Math.round(random() * 1_000_000) / 100).toFixed(2); if (type === "url") return `https://example.invalid/items/${number}`;
-  if (type === "ipv4") return `192.0.2.${1 + index % 253}`; if (type === "uuid") return fakeUuid(random);
-  return `Synthetic sample ${number}`;
-}
-
-function fakeUuid(random) {
-  const bytes = Array.from({ length: 16 }, () => Math.floor(random() * 256)); bytes[6] = bytes[6] & 0x0f | 0x40; bytes[8] = bytes[8] & 0x3f | 0x80;
-  const hex = bytes.map((byte) => byte.toString(16).padStart(2, "0")).join(""); return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
-}
-
-export function rowsToDelimited(rows, delimiter = ",") {
-  if (!rows.length) return ""; const keys = Object.keys(rows[0]);
-  const quote = (value) => { const text = String(value ?? ""); return text.includes(delimiter) || /["\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text; };
-  return [keys.join(delimiter), ...rows.map((row) => keys.map((key) => quote(row[key])).join(delimiter))].join("\n");
-}
+export { generateFakeRows, parseFakeFields, rowsToDelimited } from "./fakeData.js";
 
 export function parseChartData(text) {
   const source = String(text || "").trim(); if (!source) return [];

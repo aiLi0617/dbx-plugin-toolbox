@@ -8,14 +8,14 @@
   import { saveBlobThroughHost } from "./fileSave.js";
   import {
     buildPreviewDocument, calculateTransfer, chartSvg, collectClientDiagnostics, formatCopyRows, formatCopySections, formatDuration,
-    composeToDockerRun, dockerRunToCompose, generateFakeRows, metaTags, parseChartData, parseCurl,
-    parsePhoneNumber, parseUserAgent, requestCode, rowsToDelimited, serializeKeyboardEvent,
+    composeToDockerRun, dockerRunToCompose, metaTags, parseChartData, parseCurl,
+    parsePhoneNumber, parseUserAgent, requestCode, serializeKeyboardEvent,
   } from "./utilitySuite.js";
 
   let { locale = "zh-CN", toolId = "bandwidth", demo = null, demoRequest = 0 } = $props();
   const t = (zh, en) => pick(locale, zh, en);
   let input = $state(""); let output = $state(""); let error = $state(""); let diagnostics = $state([]);
-  let option = $state(""); let auxiliary = $state(""); let count = $state(12);
+  let option = $state("");
   let chartType = $state("bar"); let chartMarkup = $state(""); let chartTitle = $state("DBX Chart"); let chartColor = $state("#0f9688"); let chartRows = $state([]); let chartDonut = $state(false); let chartSmooth = $state(false);
   let chartShowValues = $state(true); let chartShowPoints = $state(true); let chartShowLabels = $state(true); let chartShowLegend = $state(true); let chartShowGrid = $state(true); let chartTransparent = $state(false); let chartPieLabel = $state("category"); let chartSaving = $state(""); let chartSaved = $state("");
   let chartHover = $state(null); let chartPreviewEl = $state(null);
@@ -28,7 +28,7 @@
   let html = $state("<main>\n  <h1>Hello, DBX</h1>\n</main>"); let css = $state("body { font-family: system-ui; padding: 2rem; }\nh1 { color: #0f766e; }"); let script = $state(""); let scriptEnabled = $state(false);
   const previewChannel = globalThis.crypto?.randomUUID?.() || `preview-${Date.now()}-${Math.random()}`; let consoleRows = $state([]);
   let keyboard = $state(null); let keyboardHistory = $state([]);
-  let query = $state(""); let gitCategory = $state("all"); let format = $state("json"); let fakeSeed = $state("dbx-toolbox");
+  let query = $state(""); let gitCategory = $state("all");
   let deviceGroups = $state([]);
   let userAgentResult = $state(null);
   let appliedDemoRequest = 0;
@@ -77,7 +77,6 @@
     AU: ["澳大利亚", "Australia", "+61", "4 1234 5678"], CA: ["加拿大", "Canada", "+1", "416 555 0123"],
   };
   const regionOptions = Object.entries(phoneRegions).map(([value, [zh, en, code]]) => ({ value, label: `${t(zh, en)} · ${code}` }));
-  const formatOptions = ["json", "csv", "tsv", "ndjson"].map((value) => ({ value, label: value.toUpperCase() }));
   const previewDocument = $derived(buildPreviewDocument({ html, css, script, scriptEnabled, channel: previewChannel }));
   const gitMatchesByCategory = $derived(filterGitReference(GIT_REFERENCE, query, locale));
   const gitCategoryCounts = $derived(Object.fromEntries(gitMatchesByCategory.map((group) => [group.id, group.commands.length])));
@@ -181,7 +180,7 @@
     const resize = () => refreshClientInfo();
     const message = (event) => { const data = event.data; if (data?.source !== "dbx-playground" || data.channel !== previewChannel) return; consoleRows = [...consoleRows.slice(-99), { level: data.level, text: (data.args || []).join(" ") }]; };
     window.addEventListener("resize", resize); window.addEventListener("message", message);
-    if (["chart", "bandwidth", "web-meta", "fake-data", "phone", "user-agent"].includes(toolId)) run();
+    if (["chart", "bandwidth", "web-meta", "phone", "user-agent"].includes(toolId)) run();
     return () => { window.removeEventListener("keydown", keydown); window.removeEventListener("keyup", keyup); window.removeEventListener("resize", resize); window.removeEventListener("message", message); };
   });
 
@@ -243,7 +242,6 @@
         output = result.output; diagnostics = result.diagnostics;
       }
       else if (toolId === "web-meta") { const result = metaTags({ title, description, image: imageUrl, url: pageUrl, siteName, locale: metaLocale, robots, type: metaType, card: twitterCard }); output = result.html; diagnostics = result.warnings; }
-      else if (toolId === "fake-data") { const fields = auxiliary || "name,email,company,date,uuid"; const rows = generateFakeRows(count, fields, { seed: fakeSeed }); output = format === "csv" ? rowsToDelimited(rows) : format === "tsv" ? rowsToDelimited(rows, "\t") : format === "ndjson" ? rows.map((row) => JSON.stringify(row)).join("\n") : JSON.stringify(rows, null, 2); }
       else if (toolId === "chart") { chartSaved = ""; clearChartHover(); chartRows = parseChartData(input); chartMarkup = chartSvg(chartRows, chartType, 900, 520, { title: chartTitle, color: chartColor, donut: chartDonut, smooth: chartSmooth, showValues: chartShowValues, showPoints: chartShowPoints, showLabels: chartShowLabels, showLegend: chartShowLegend, showGrid: chartShowGrid, transparent: chartTransparent, pieLabel: chartPieLabel }); output = chartMarkup; if (chartPointer) tick().then(refreshChartHoverAtPointer); }
     } catch (cause) { error = localizeError(locale, cause); output = ""; if (toolId === "phone") phoneResult = null; if (toolId === "user-agent") userAgentResult = null; }
   }
@@ -614,7 +612,7 @@
           <label>{t("服务名称", "Service name")}<input class="dbx-input mono" bind:value={dockerService} placeholder={dockerDirection === "run-to-compose" ? t("自动（优先使用 --name）", "Auto (prefers --name)") : t("留空则选择首个服务", "First service when empty")} /></label>
           <label class="grow">{dockerDirection === "run-to-compose" ? "docker run" : "compose.yaml"}<textarea class="dbx-textarea mono" bind:value={input}></textarea></label>
           <p class="field-help">{t("输入、方向或服务名称变化后自动转换", "Converts automatically when the input, direction, or service name changes")}</p>
-        {:else if toolId === "fake-data"}<div class="pair"><label>{t("数量", "Count")}<input class="dbx-input" type="number" min="1" max="1000" step="1" bind:value={count} /></label><label>{t("格式", "Format")}<Select bind:value={format} options={formatOptions} /></label></div><label>{t("随机种子", "Seed")}<input class="dbx-input" bind:value={fakeSeed} /></label><label>{t("字段（逗号分隔）", "Fields (comma-separated)")}<input class="dbx-input" bind:value={auxiliary} placeholder="id:integer,name,email,active:boolean,amount" /></label><p class="field-help">{t("可用类型：name、email、phone、company、date、datetime、uuid、boolean、integer、number、amount、url、ipv4、sentence", "Types: name, email, phone, company, date, datetime, uuid, boolean, integer, number, amount, url, ipv4, sentence")}</p>{/if}
+        {/if}
         {#if toolId !== "docker-convert"}<button class="dbx-btn dbx-btn--primary" type="button" onclick={run}>{t("运行", "Run")}</button>{/if}
       </section>
       <section class="result-panel"><div class="result-head"><strong>{t("结果", "Result")}</strong><CopyButton {locale} getText={() => output} /></div><textarea class="dbx-textarea mono" value={output} readonly></textarea></section>

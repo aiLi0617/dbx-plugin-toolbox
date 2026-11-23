@@ -1607,7 +1607,7 @@ fn jwt_sign(vault: &Vault, params: Value) -> Result<Value, PluginError> {
         .map_err(|error| err(error.to_string()))?;
     let payload = str_param(&params, "text")?;
     ensure_input_size(payload, "JWT input", MAX_CRYPTO_INPUT_BYTES)?;
-    serde_json::from_str::<Value>(payload).map_err(json_error)?;
+    serde_json::from_str::<&serde_json::value::RawValue>(payload).map_err(json_error)?;
     let h = b64url(header.as_bytes());
     let p = b64url(payload.as_bytes());
     let signing = format!("{h}.{p}");

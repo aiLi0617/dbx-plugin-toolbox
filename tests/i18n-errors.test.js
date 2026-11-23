@@ -26,6 +26,8 @@ test("literal backend validation errors have specific UI messages, not a generic
   const missing = [];
   // Port errors have a dedicated code-to-message handler in PortProcessesView.
   for (const file of readdirSync(directory).filter((name) => name.endsWith(".rs") && !name.startsWith("ports"))) {
+    // MCP errors go to tool clients and do not pass through Workbench localization.
+    if (file === "mcp.rs") continue;
     const source = readFileSync(new URL(file, directory), "utf8");
     for (const [, message] of source.matchAll(/\b(?:err|bad|internal|asset_error)\(\s*"([^"\n]+)"\s*[,)]/g)) {
       for (const locale of SUPPORTED_LOCALES.filter((item) => item !== "en")) {

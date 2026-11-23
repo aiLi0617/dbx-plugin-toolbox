@@ -1,3 +1,4 @@
+import { FAKE_DATA_PRESET_COPY } from "./fakeDataCopy.js";
 import { L } from "./locale.js";
 
 const additionalErrors = {};
@@ -23,6 +24,20 @@ function errorGroup(keys, ...copy) {
   );
   for (const key of keys) additionalErrors[key] = translations;
 }
+
+errorGroup(
+  ["PDF object identifiers exceed their bounds"],
+  "The combined PDF exceeds the supported object identifier range.",
+  "合并后的 PDF 超出支持的对象编号范围。",
+  "合併後的 PDF 超出支援的物件編號範圍。",
+  "El PDF combinado supera el intervalo de identificadores de objetos admitido.",
+  "Il PDF unito supera l'intervallo supportato degli identificatori degli oggetti.",
+  "結合した PDF がサポートされるオブジェクト識別子の範囲を超えています。",
+  "O PDF combinado excede o intervalo de identificadores de objetos permitido.",
+  "병합된 PDF가 지원되는 객체 식별자 범위를 벗어났습니다.",
+  "Birleştirilen PDF, desteklenen nesne tanımlayıcısı aralığını aşıyor.",
+  "Birləşdirilmiş PDF dəstəklənən obyekt identifikatoru diapazonunu aşır.",
+);
 
 errorGroup(
   ["TOTP store already exists"],
@@ -1209,6 +1224,9 @@ errorGroup(["VAULT_PREVIEW_EXPIRED"],"The restore preview expired. Preview the b
 errorGroup(["TRANSFER_INVALID"],"This result cannot be sent to that tool. Check the format and size.","无法将此结果发送到目标工具，请检查格式和大小。","無法將此結果傳送至目標工具，請檢查格式與大小。","No se puede enviar el resultado. Revisa formato y tamaño.","Impossibile inviare il risultato. Controlla formato e dimensione.","結果を送信できません。形式とサイズを確認してください。","Não foi possível enviar. Verifique formato e tamanho.","결과를 보낼 수 없습니다. 형식과 크기를 확인하세요.","Sonuç gönderilemiyor. Biçimi ve boyutu kontrol edin.","Nəticə göndərilmir. Formatı və ölçünü yoxlayın.");
 export const SIDECAR_ERRORS = {
   ...additionalErrors,
+  "Check the form configuration.": FAKE_DATA_PRESET_COPY.errors.invalid,
+  "Could not access saved forms.": FAKE_DATA_PRESET_COPY.errors.storage,
+  "Enter a form name.": FAKE_DATA_PRESET_COPY.errors.name,
   "Wrong master password or vault data is corrupt": {
     en: "Incorrect master password, or the vault data is damaged. Check your password and try again.",
     "zh-CN": "主密码不正确，或密钥库数据已损坏。请检查密码后重试。",
