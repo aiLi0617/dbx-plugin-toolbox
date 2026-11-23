@@ -431,7 +431,7 @@ fn load_document(path: &Path, password: &str) -> Result<Document, PluginError> {
         .map_err(|e| bad(format!("Could not open PDF: {e}")))
 }
 
-fn inherited(doc: &Document, page_id: ObjectId, key: &[u8]) -> Option<Object> {
+pub(crate) fn inherited(doc: &Document, page_id: ObjectId, key: &[u8]) -> Option<Object> {
     let mut current = page_id;
     for _ in 0..64 {
         let dict = doc.get_object(current).ok()?.as_dict().ok()?;
@@ -472,7 +472,7 @@ fn document_pages(doc: &Document) -> Result<Vec<Value>, PluginError> {
     }).collect())
 }
 
-fn document_has_signature(doc: &Document) -> bool {
+pub(crate) fn document_has_signature(doc: &Document) -> bool {
     doc.objects
         .values()
         .any(|value| value.as_dict().is_ok_and(|dict| dict.has(b"ByteRange")))
@@ -528,7 +528,7 @@ fn pages_root(doc: &Document) -> Result<ObjectId, PluginError> {
         .map_err(|e| err(format!("PDF pages root is invalid: {e}")))
 }
 
-fn set_page_order(doc: &mut Document, order: &[u32]) -> Result<(), PluginError> {
+pub(crate) fn set_page_order(doc: &mut Document, order: &[u32]) -> Result<(), PluginError> {
     let pages = doc.get_pages();
     if order.is_empty() {
         return Err(bad("At least one page is required"));
@@ -574,7 +574,6 @@ fn merge_documents(
     control.update("process", 0, paths.len())?;
     let mut iter = paths.iter();
     let mut output = load_document(iter.next().ok_or_else(|| bad("PDF required"))?, password)?;
-    let root = pages_root(&output)?;
     let initial: Vec<u32> = (1..=output.get_pages().len() as u32).collect();
     if initial.len() > MAX_PAGES {
         return Err(bad("PDF page limit is 5000"));
@@ -582,42 +581,80 @@ fn merge_documents(
     set_page_order(&mut output, &initial)?;
     for (index, path) in iter.enumerate() {
         control.update("process", index + 1, paths.len())?;
-        let mut next = load_document(path, password)?;
-        next.renumber_objects_with(output.max_id + 1);
-        let ids: Vec<ObjectId> = next.get_pages().into_values().collect();
-        control.check()?;
-        if output.get_pages().len() + ids.len() > MAX_PAGES {
-            return Err(bad("PDF page limit is 5000"));
-        }
-        for id in &ids {
-            control.check()?;
-            materialize_page(&mut next, *id);
-        }
-        output.max_id = output.max_id.max(next.max_id);
-        output.objects.extend(next.objects);
-        for id in &ids {
-            output
-                .get_object_mut(*id)
-                .and_then(Object::as_dict_mut)
-                .map_err(|e| err(format!("PDF page is invalid: {e}")))?
-                .set("Parent", root);
-        }
-        let root_dict = output
-            .get_object_mut(root)
-            .and_then(Object::as_dict_mut)
-            .map_err(|e| err(format!("PDF pages root is invalid: {e}")))?;
-        let count = {
-            let kids = root_dict
-                .get_mut(b"Kids")
-                .and_then(Object::as_array_mut)
-                .map_err(|e| err(format!("PDF page tree is invalid: {e}")))?;
-            kids.extend(ids.iter().copied().map(Object::Reference));
-            kids.len()
-        };
-        root_dict.set("Count", count as i64);
+        append_pages(
+            &mut output,
+            load_document(path, password)?,
+            MAX_PAGES,
+            || control.check(),
+        )?;
     }
     output.prune_objects();
     Ok(output)
+}
+
+pub(crate) fn append_pages(
+    output: &mut Document,
+    mut next: Document,
+    max_pages: usize,
+    check: impl Fn() -> Result<(), PluginError>,
+) -> Result<(), PluginError> {
+    let root = pages_root(output)?;
+    let first_new_id = output
+        .max_id
+        .checked_add(1)
+        .filter(|id| *id <= u32::MAX - next.max_id)
+        .ok_or_else(|| bad("PDF object identifiers exceed their bounds"))?;
+    next.renumber_objects_with(first_new_id);
+    let ids: Vec<ObjectId> = next.get_pages().into_values().collect();
+    check()?;
+    if output.get_pages().len() + ids.len() > max_pages {
+        return Err(bad(format!("PDF page limit is {max_pages}")));
+    }
+    for id in &ids {
+        check()?;
+        materialize_page(&mut next, *id);
+        next.get_object_mut(*id)
+            .and_then(Object::as_dict_mut)
+            .map_err(|e| err(format!("PDF page is invalid: {e}")))?
+            .set("Parent", root);
+    }
+    output.max_id = output.max_id.max(next.max_id);
+    output.objects.extend(next.objects);
+    let root_dict = output
+        .get_object_mut(root)
+        .and_then(Object::as_dict_mut)
+        .map_err(|e| err(format!("PDF pages root is invalid: {e}")))?;
+    let kids = root_dict
+        .get_mut(b"Kids")
+        .and_then(Object::as_array_mut)
+        .map_err(|e| err(format!("PDF page tree is invalid: {e}")))?;
+    kids.extend(ids.iter().copied().map(Object::Reference));
+    let count = kids.len() as i64;
+    root_dict.set("Count", count);
+    Ok(())
+}
+
+pub(crate) fn encrypt_document(doc: &mut Document, new_password: &str) -> Result<(), PluginError> {
+    if new_password.is_empty() || new_password.len() > 127 {
+        return Err(bad("Use an opening password of 1 to 127 characters"));
+    }
+    let owner = Uuid::new_v4().simple().to_string();
+    let mut key = zeroize::Zeroizing::new([0u8; 32]);
+    rand::thread_rng().fill_bytes(&mut *key);
+    let filter: Arc<dyn CryptFilter> = Arc::new(Aes256CryptFilter);
+    let state = EncryptionState::try_from(EncryptionVersion::V5 {
+        encrypt_metadata: true,
+        crypt_filters: std::collections::BTreeMap::from([(b"StdCF".to_vec(), filter)]),
+        file_encryption_key: key.as_slice(),
+        stream_filter: b"StdCF".to_vec(),
+        string_filter: b"StdCF".to_vec(),
+        owner_password: &owner,
+        user_password: new_password,
+        permissions: Permissions::all(),
+    })
+    .map_err(|e| err(format!("Could not configure PDF encryption: {e}")))?;
+    doc.encrypt(&state)
+        .map_err(|e| err(format!("Could not encrypt PDF: {e}")))
 }
 
 fn process_documents(
@@ -764,27 +801,7 @@ fn process_documents(
                 }
             }
             "encrypt" => {
-                let new_password = str_param(params, "newPassword")?;
-                if new_password.is_empty() || new_password.len() > 127 {
-                    return Err(bad("Use an opening password of 1 to 127 characters"));
-                }
-                let owner = Uuid::new_v4().simple().to_string();
-                let mut key = [0u8; 32];
-                rand::thread_rng().fill_bytes(&mut key);
-                let filter: Arc<dyn CryptFilter> = Arc::new(Aes256CryptFilter);
-                let state = EncryptionState::try_from(EncryptionVersion::V5 {
-                    encrypt_metadata: true,
-                    crypt_filters: std::collections::BTreeMap::from([(b"StdCF".to_vec(), filter)]),
-                    file_encryption_key: &key,
-                    stream_filter: b"StdCF".to_vec(),
-                    string_filter: b"StdCF".to_vec(),
-                    owner_password: &owner,
-                    user_password: new_password,
-                    permissions: Permissions::all(),
-                })
-                .map_err(|e| err(format!("Could not configure PDF encryption: {e}")))?;
-                doc.encrypt(&state)
-                    .map_err(|e| err(format!("Could not encrypt PDF: {e}")))?;
+                encrypt_document(&mut doc, str_param(params, "newPassword")?)?;
             }
             "split" => {
                 let groups = if opt_str(params, "pages").unwrap_or("").trim().is_empty() {

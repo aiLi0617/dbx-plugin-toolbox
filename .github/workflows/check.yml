@@ -38,18 +38,21 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - run: cargo fmt -- --check
-      - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo test
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - run: npm ci
+        working-directory: .
+      - run: cargo fmt -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
       - run: cargo build --locked
       - name: Verify UI handlers and binary bridge against the Sidecar
         working-directory: .
         env:
           TOOLBOX_SIDECAR: ${{ github.workspace }}/backend/target/debug/dbx-plugin-toolbox${{ runner.os == 'Windows' && '.exe' || '' }}
-        run: node --test tests/native-pdf-integration.test.js tests/vault-backup-integration.test.js
+        run: node --test tests/native-pdf-integration.test.js tests/vault-backup-integration.test.js tests/mcp-sidecar-integration.test.js
 
   ocr-model-integration:
     runs-on: ubuntu-latest
@@ -61,6 +64,12 @@ jobs:
       - name: Install Linux native dependencies
         run: sudo apt-get update && sudo apt-get install -y libwayland-dev
       - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        working-directory: .
       - name: Configure OCR test directory
         run: echo "DBX_PLUGIN_DATA_DIR=$RUNNER_TEMP/dbx-toolbox-ocr-test" >> "$GITHUB_ENV"
       - name: Download pinned official OCR assets once

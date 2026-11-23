@@ -2,7 +2,7 @@ import yaml from "js-yaml";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 import { sqlEscape } from "../simpleTransforms.js";
-import { isLosslessNumber, parseSafeJson, stringifyLosslessJson } from "../jsonPrecision.js";
+import { isLosslessNumber, parseLosslessJson, parseSafeJson, stringifyLosslessJson } from "../jsonPrecision.js";
 
 export { sqlEscape } from "../simpleTransforms.js";
 
@@ -14,6 +14,14 @@ export function parseJson(text) {
 export function runJsonPath(input, path) {
   const data = parseJson(input);
   return JSON.stringify(queryJsonPath(data, path || "$"), null, 2);
+}
+
+export function runExactJsonPath(input, path) {
+  return stringifyLosslessJson(queryJsonPath(parseLosslessJson(input), path), 2);
+}
+
+function jsonContainer(value) {
+  return value !== null && typeof value === "object" && !isLosslessNumber(value);
 }
 
 function queryJsonPath(root, path) {
@@ -29,8 +37,8 @@ function queryJsonPath(root, path) {
     const next = [];
     for (const value of values) {
       if (token.type === "wildcard") {
-        if (value && typeof value === "object") next.push(...Object.values(value));
-      } else if (value != null && typeof value === "object" && Object.hasOwn(value, token.key)) {
+        if (jsonContainer(value)) next.push(...Object.values(value));
+      } else if (jsonContainer(value) && Object.hasOwn(value, token.key)) {
         next.push(value[token.key]);
       }
     }
@@ -62,7 +70,7 @@ function parseJsonPathTokens(source) {
       const end = findJsonPathBracketEnd(source, cursor + 1);
       const body = source.slice(cursor + 1, end).trim();
       if (body === "*") tokens.push({ type: "wildcard" });
-      else if (/^\d+$/.test(body)) tokens.push({ type: "property", key: Number(body) });
+      else if (/^\d+$/.test(body)) tokens.push({ type: "property", key: body.replace(/^0+(?=\d)/, "") });
       else if ((body.startsWith("'") && body.endsWith("'")) || (body.startsWith('"') && body.endsWith('"'))) {
         tokens.push({ type: "property", key: decodeJsonPathString(body) });
       } else invalid();
@@ -93,11 +101,11 @@ function decodeJsonPathString(value) {
 
 function recursiveJsonValues(root, key) {
   const matches = [];
-  const stack = root && typeof root === "object" ? Object.entries(root).reverse() : [];
+  const stack = jsonContainer(root) ? Object.entries(root).reverse() : [];
   while (stack.length) {
     const [childKey, child] = stack.pop();
     if (key === "*" || childKey === key) matches.push(child);
-    if (child && typeof child === "object") {
+    if (jsonContainer(child)) {
       const entries = Object.entries(child);
       for (let index = entries.length - 1; index >= 0; index -= 1) stack.push(entries[index]);
     }

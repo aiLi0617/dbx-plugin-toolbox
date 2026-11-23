@@ -404,9 +404,9 @@ pub(crate) fn save_binary_file(params: Value, bytes: Vec<u8>) -> Result<Value, P
     }))
 }
 
-fn write_binary_export(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+pub(crate) fn write_atomic(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
     if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|error| err(format!("Failed to save file: {error}")))?;
+        fs::create_dir_all(parent)?;
     }
     let temporary = path.with_extension(format!("part-{}", uuid::Uuid::new_v4()));
     let result = (|| -> std::io::Result<()> {
@@ -419,10 +419,14 @@ fn write_binary_export(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
         drop(file);
         fs::rename(&temporary, path)
     })();
-    if let Err(error) = result {
+    if result.is_err() {
         let _ = fs::remove_file(&temporary);
-        return Err(err(format!("Failed to save file: {error}")));
     }
+    result
+}
+
+fn write_binary_export(path: &Path, bytes: &[u8]) -> Result<(), PluginError> {
+    write_atomic(path, bytes).map_err(|error| err(format!("Failed to save file: {error}")))?;
     if let Ok(mut last) = LAST_SAVED.lock() {
         *last = Some(path.to_path_buf());
     }

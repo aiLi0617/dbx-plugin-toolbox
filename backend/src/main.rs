@@ -1,9 +1,11 @@
 mod cipher_defaults;
 mod crypto;
 mod data_dir;
+mod fake_data_presets;
 mod fsutil;
 mod helpers;
 mod keystore;
+mod mcp;
 mod ocr;
 mod ocr_alphabet;
 mod ocr_models;
@@ -52,6 +54,9 @@ impl PluginHandler for Plugin {
         if method.starts_with("toolbox/cipher-defaults/") {
             return cipher_defaults::handle(method, params);
         }
+        if method.starts_with("toolbox/fake-data-presets/") {
+            return fake_data_presets::handle(method, params);
+        }
         if method.starts_with("toolbox/hash-stream/") {
             let mut sessions = self
                 .hash_sessions
@@ -77,6 +82,8 @@ impl PluginHandler for Plugin {
             return fsutil::handle(&mut sessions, method, params);
         }
         match method {
+            "mcp/tools" => Ok(mcp::list_tools(&params)),
+            "mcp/call" => mcp::call_tool(params),
             "toolbox/ports/list" | "toolbox/ports/kill" | "toolbox/ports/recommend" => {
                 ports::handle(method, params)
             }

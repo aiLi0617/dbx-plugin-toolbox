@@ -11,6 +11,7 @@
     ariaLabel = "",
     placeholder = "",
     fitTrigger = false,
+    menuContainer = null,
     searchPlaceholder = "",
     searchEmptyLabel = "",
     onchange,
@@ -55,7 +56,7 @@
   });
 
   function portal(node) {
-    document.body.appendChild(node);
+    (menuContainer || document.body).appendChild(node);
     return {
       destroy() {
         node.remove();
@@ -92,7 +93,7 @@
     const rect = triggerEl.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const triggerWidth = Math.max(rect.width, 128);
+    const triggerWidth = menuContainer && fitTrigger ? rect.width : Math.max(rect.width, 128);
     let contentWidth = triggerWidth;
     if (menuEl && !fitTrigger) {
       const prevWidth = menuEl.style.width;
@@ -100,8 +101,11 @@
       contentWidth = Math.ceil(menuEl.getBoundingClientRect().width);
       menuEl.style.width = prevWidth;
     }
-    const width = Math.min(Math.max(triggerWidth, contentWidth), vw - 16);
-    const left = Math.min(Math.max(8, rect.left), Math.max(8, vw - width - 8));
+    const bounds = menuContainer?.getBoundingClientRect();
+    const leftEdge = Math.max(8, bounds?.left ?? 8);
+    const rightEdge = Math.min(vw - 8, bounds?.right ?? vw - 8);
+    const width = Math.min(Math.max(triggerWidth, contentWidth), rightEdge - leftEdge);
+    const left = Math.min(Math.max(leftEdge, rect.left), rightEdge - width);
     const gap = 4;
     const below = vh - rect.bottom - 8;
     const above = rect.top - 8;
@@ -109,7 +113,8 @@
     const maxHeight = Math.min(280, Math.max(120, openUp ? above : below));
     let top = openUp ? rect.top - gap - maxHeight : rect.bottom + gap;
     if (openUp && menuEl) {
-      const height = Math.min(menuEl.scrollHeight, maxHeight);
+      const chromeHeight = menuEl.getBoundingClientRect().height - menuEl.clientHeight;
+      const height = Math.min(menuEl.scrollHeight + chromeHeight, maxHeight);
       top = Math.max(8, rect.top - gap - height);
     }
     pos = { top, left, width, maxHeight };

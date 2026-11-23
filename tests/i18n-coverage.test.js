@@ -48,6 +48,8 @@ test("manifest advertises the same complete locale set as the UI", () => {
     assert.ok(entry.name?.trim(), `manifest ${locale} name`);
     assert.ok(entry.description?.trim(), `manifest ${locale} description`);
     for (const contribution of manifest.contributions || []) {
+      // The DBX MCP settings use the localized plugin name for this contribution.
+      if (contribution.type === "mcp") continue;
       const translated = entry.contributions?.[contribution.id];
       assert.ok(translated?.label?.trim(), `manifest ${locale} ${contribution.id} label`);
       assert.ok(translated?.description?.trim(), `manifest ${locale} ${contribution.id} description`);

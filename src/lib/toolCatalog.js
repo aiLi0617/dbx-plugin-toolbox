@@ -307,7 +307,7 @@ const rows = [
   ["lorem", "generate", "重复文本", "重複文字", "Repeated text", "lorem", [
     "ipsum", "placeholder", "dbx", "推广文案", "自定义内容", "占位文本", "lorem ipsum",
   ]],
-  ["fake-data", "generate", "假数据生成", "假資料產生", "Fake data generator", "utility-suite", [
+  ["fake-data", "generate", "假数据生成", "假資料產生", "Fake data generator", "fake-data", [
     "mock data", "faker", "csv generator", "测试数据", "虚构数据", "ndjson",
   ]],
 
