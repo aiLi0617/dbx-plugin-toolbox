@@ -22,7 +22,8 @@ function copyWithExecCommand(value) {
   el.setAttribute("readonly", "");
   el.setAttribute("aria-hidden", "true");
   el.style.cssText = "position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent";
-  document.body.appendChild(el);
+  const container = previous?.closest("dialog[open]") ?? document.body;
+  container.appendChild(el);
   el.focus();
   el.select();
   el.setSelectionRange(0, el.value.length);

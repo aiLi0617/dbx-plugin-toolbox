@@ -13631,6 +13631,54 @@
     "tr": "Ayarlar",
     "az": "Parametrlər"
   },
+  "Feedback": {
+    "en": "Feedback",
+    "zh-CN": "反馈",
+    "zh-TW": "意見回饋",
+    "es": "Comentarios",
+    "it": "Invia un commento",
+    "ja": "フィードバック",
+    "pt-BR": "Enviar feedback",
+    "ko": "의견 보내기",
+    "tr": "Geri bildirim",
+    "az": "Rəy bildirin"
+  },
+  "Copy feedback link": {
+    "en": "Copy feedback link",
+    "zh-CN": "复制反馈链接",
+    "zh-TW": "複製意見回饋連結",
+    "es": "Copiar enlace de comentarios",
+    "it": "Copia il link per i commenti",
+    "ja": "フィードバックリンクをコピー",
+    "pt-BR": "Copiar link de feedback",
+    "ko": "의견 보내기 링크 복사",
+    "tr": "Geri bildirim bağlantısını kopyala",
+    "az": "Rəy keçidini kopyala"
+  },
+  "Copy the link and open it in your browser to submit feedback on GitHub.": {
+    "en": "Copy the link and open it in your browser to submit feedback on GitHub.",
+    "zh-CN": "复制链接到浏览器打开，即可在 GitHub 提交反馈。",
+    "zh-TW": "複製連結並在瀏覽器中開啟，即可在 GitHub 提交意見。",
+    "es": "Copia el enlace y ábrelo en tu navegador para enviar comentarios en GitHub.",
+    "it": "Copia il link e aprilo nel browser per inviare un commento su GitHub.",
+    "ja": "リンクをコピーしてブラウザーで開き、GitHub からフィードバックを送信できます。",
+    "pt-BR": "Copie o link e abra-o no navegador para enviar feedback no GitHub.",
+    "ko": "링크를 복사해 브라우저에서 열면 GitHub에 의견을 보낼 수 있습니다.",
+    "tr": "GitHub üzerinden geri bildirim göndermek için bağlantıyı kopyalayıp tarayıcınızda açın.",
+    "az": "GitHub-da rəy bildirmək üçün keçidi kopyalayıb brauzerdə açın."
+  },
+  "Could not open GitHub. Please try again.": {
+    "en": "Could not open GitHub. Please try again.",
+    "zh-CN": "无法打开 GitHub，请重试。",
+    "zh-TW": "無法開啟 GitHub，請再試一次。",
+    "es": "No se pudo abrir GitHub. Inténtalo de nuevo.",
+    "it": "Impossibile aprire GitHub. Riprova.",
+    "ja": "GitHub を開けませんでした。もう一度お試しください。",
+    "pt-BR": "Não foi possível abrir o GitHub. Tente novamente.",
+    "ko": "GitHub를 열 수 없습니다. 다시 시도해 주세요.",
+    "tr": "GitHub açılamadı. Lütfen tekrar deneyin.",
+    "az": "GitHub-u açmaq mümkün olmadı. Yenidən cəhd edin."
+  },
   "DBX Toolbox": {
     "en": "DBX Toolbox",
     "zh-CN": "DBX 工具箱",

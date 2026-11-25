@@ -10,7 +10,8 @@
   ],
   "permissions": [
     "host.binary",
-    "host.events"
+    "host.events",
+    "host.openUrl:https://github.com"
   ],
   "source": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "homepage": "https://github.com/aiLi0617/dbx-plugin-toolbox",

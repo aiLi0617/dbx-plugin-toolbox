@@ -10,7 +10,7 @@ DBX 工具箱（Toolbox）是 [DBX](https://github.com/t8y2/dbx) 的 Workbench �
 | --- | --- |
 | 插件 ID | `io.github.aili0617.toolbox` |
 | 当前版本 | `0.1.8` |
-| 运行要求 | DBX `>= 0.6.60`、Host API `1` |
+| 运行要求 | DBX `>= 0.6.65`、Host API `1` |
 | 源码与主页 | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | 许可证 | [Apache-2.0](LICENSE) |
 
@@ -231,7 +231,7 @@ AES、SM4 和 HMAC 可选择密钥库中的条目或一次性输入的密钥。�
 
 - **前端**：Svelte 5 + Vite，源码位于 `src/`；构建产物写入已忽略的 `ui/`。
 - **后端**：Rust Sidecar 位于 `backend/`，打包为 `bin/dbx-plugin-toolbox`。
-- **贡献点**：一个 `workbench` 入口；声明 `host.binary` 与 `host.events`，不声明运行时网络权限。
+- **贡献点**：工作台使用 `host.binary` 和 `host.events`。反馈入口使用 `host.openUrl:https://github.com`，由 DBX 确认后打开。
 - **Sidecar 接口**：包括 `toolbox/json`、`toolbox/hash`、`toolbox/crypto`、`toolbox/cert`、`toolbox/ocr`、`toolbox/keys/*`、`toolbox/prefs/*` 与本地文件相关接口。
 
 ## 本地开发
@@ -306,7 +306,9 @@ dbx-plugin package .
 
 ## 贡献
 
-欢迎通过 [Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues) 报告普通问题或提出建议。准备代码改动前，请阅读[贡献指南](CONTRIBUTING.md)。
+点击工具箱顶部的「反馈」图标，即可前往 GitHub 选择模板提交问题或建议。使用支持外链的 DBX 宿主时，请在宿主提示中确认打开；不支持外链的调试宿主会显示反馈链接。也可以直接访问 [GitHub Issue 模板](https://github.com/aiLi0617/dbx-plugin-toolbox/issues/new/choose)。
+
+准备代码改动前，请阅读[贡献指南](CONTRIBUTING.md)。
 
 如果问题可能涉及密钥、凭据、任意文件访问、进程终止或其他安全影响，请不要创建公开 Issue；请按照[安全策略](SECURITY.md)私密报告。
 

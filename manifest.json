@@ -10,12 +10,13 @@
   "source": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "homepage": "https://github.com/aiLi0617/dbx-plugin-toolbox",
   "engines": {
-    "dbx": ">=0.6.60",
+    "dbx": ">=0.6.65",
     "host_api": "1"
   },
   "permissions": [
     "host.binary",
-    "host.events"
+    "host.events",
+    "host.openUrl:https://github.com"
   ],
   "entrypoints": {
     "backend": {

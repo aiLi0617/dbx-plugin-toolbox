@@ -34,6 +34,10 @@
   import { sessionState, sessionVictim } from "./lib/sessionState.js";
   import { taskManager } from "./lib/taskManager.js";
   import TaskCenter from "./lib/TaskCenter.svelte";
+  import CopyButton from "./lib/CopyButton.svelte";
+
+  const feedbackUrl = "https://github.com/aiLi0617/dbx-plugin-toolbox/issues/new/choose";
+  const standalonePage = window.top === window;
 
   // Keep demo payloads referentially stable. Tool views use the payload in an
   // effect keyed by demoRequest; recreating it during normal renders can make
@@ -56,6 +60,10 @@
   let settingsOpen = $state(false);
   let settingsInitialTab = $state("general");
   let settingsVersion = $state(null);
+  let canOpenFeedback = $state(false);
+  let openingFeedback = $state(false);
+  let feedbackFailed = $state(false);
+  let feedbackDialog = $state(null);
   let recentToolLimit = $state(DEFAULT_RECENT_TOOL_LIMIT);
   let recentCollapsed = $state(false);
   let recentCollapsedTouched = false;
@@ -138,7 +146,7 @@
     const onActivity = () => recordVaultActivity();
     const onResume = () => { if (!document.hidden) void enforceVaultAutoLock(); };
     const onShortcut = (event) => {
-      if (event.defaultPrevented || event.repeat || event.isComposing || settingsOpen) return;
+      if (event.defaultPrevented || event.repeat || event.isComposing || settingsOpen || feedbackDialog?.open) return;
       const action = Object.keys(shortcuts).find((name) => shortcutMatches(event, shortcuts[name]));
       const editorSafe = action === "search" || action === "settings" || action === "calculate" || action?.startsWith("tool:");
       if (!action || (isEditableTarget(event.target) && !editorSafe)) return;
@@ -161,6 +169,7 @@
     window.addEventListener("toolbox-vault-change", onVaultChange);
     const initialize = async () => {
       await ready(); if (disposed) return;
+      canOpenFeedback = window.dbxPlugin?.capabilities?.openUrl === true;
       // Subscribe before loading preferences: language/theme changes must not be
       // lost while the sidecar-backed startup work is still in flight.
       offInit = observeEnvironment(onEnv);
@@ -207,6 +216,23 @@
       if (typeof offContext === "function") offContext();
     };
   });
+
+  async function openFeedback() {
+    if (!canOpenFeedback) {
+      feedbackDialog.showModal();
+      return;
+    }
+    if (openingFeedback) return;
+    openingFeedback = true;
+    feedbackFailed = false;
+    try {
+      await window.dbxPlugin.openUrl(feedbackUrl);
+    } catch {
+      feedbackFailed = true;
+    } finally {
+      openingFeedback = false;
+    }
+  }
 
   function persistRecent(next) {
     recentTouched = true;
@@ -443,6 +469,13 @@
   {/if}
 {/snippet}
 
+{#snippet feedbackIcon()}
+  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4H6a3 3 0 0 0-3 3v13l4-3h11a3 3 0 0 0 3-3v-3"/>
+    <path d="M20.5 3.5a1.4 1.4 0 0 0-2 0L13 9l-1 3 3-1 5.5-5.5a1.4 1.4 0 0 0 0-2Z"/>
+  </svg>
+{/snippet}
+
 <div class="app" class:sidebar-collapsed={sidebarCollapsed} class:mobile-sidebar-open={mobileSidebarOpen} inert={settingsOpen}>
   {#if mobileSidebarOpen}<button class="sidebar-scrim" type="button" aria-label={pick(locale, chrome.collapseSidebar)} onclick={() => mobileSidebarOpen = false}></button>{/if}
   <ToolboxSidebar {locale} collapsed={sidebarCollapsed && !mobileSidebarOpen} {page} {activeToolId} favorites={favoriteTools} recents={recentTools} {recentCollapsed} {vaultUnlocked} searchShortcut={shortcutLabel(shortcuts.search)}
@@ -458,6 +491,11 @@
           {#if tool.actions?.includes("demo")}<button class="dbx-btn" onclick={loadDemo} type="button">{pick(locale, chrome.loadDemo)}</button>{/if}
           <button class="dbx-btn dbx-btn--ghost icon-btn favorite-action" class:active={favoriteSet.has(tool.id)} disabled={savingPrefs} onclick={() => toggleFavorite(tool.id)} type="button" aria-label={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)} title={pick(locale, favoriteSet.has(tool.id) ? chrome.removeFavorite : chrome.addFavorite)}>{favoriteSet.has(tool.id) ? "★" : "☆"}</button>
         {/if}
+        {#if standalonePage && !canOpenFeedback}
+          <a class="dbx-btn dbx-btn--ghost icon-btn" href={feedbackUrl} target="_blank" rel="noopener noreferrer" aria-label={pick(locale, chrome.feedback)} title={pick(locale, chrome.feedback)}>{@render feedbackIcon()}</a>
+        {:else}
+          <button class="dbx-btn dbx-btn--ghost icon-btn" disabled={openingFeedback} onclick={openFeedback} type="button" aria-label={pick(locale, chrome.feedback)} title={pick(locale, chrome.feedback)} aria-haspopup={canOpenFeedback ? undefined : "dialog"}>{@render feedbackIcon()}</button>
+        {/if}
         <button class="dbx-btn dbx-btn--ghost icon-btn shortcut-settings-action" type="button" aria-label={settingsLabel} title={`${settingsLabel} (${shortcutLabel(shortcuts.settings)})`} onclick={() => runShortcutAction("settings")}>
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9 3-.5 2a8 8 0 0 0-2 1L4.5 5.5 2.5 9l1.5 1.5a8 8 0 0 0 0 3L2.5 15l2 3.5L6.5 18a8 8 0 0 0 2 1l.5 2h6l.5-2a8 8 0 0 0 2-1l2 .5 2-3.5-1.5-1.5a8 8 0 0 0 0-3L21.5 9l-2-3.5-2 .5a8 8 0 0 0-2-1L15 3Z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
@@ -466,6 +504,7 @@
 
 
     {#if prefsError}<div class="banner app-banner">{prefsError}</div>{/if}
+    {#if feedbackFailed}<div class="banner app-banner" role="alert">{pick(locale, chrome.feedbackOpenFailed)}</div>{/if}
     <div class="pane" class:pane-fill={fillPane} class:shell-page={page === "home" || page === "catalog"}>
       {#if page === "home"}
         <ToolboxHome {locale} {tools} favorites={favoriteTools} recents={recentTools} {categoryCounts} onCatalog={openCatalog} onTool={openTool} onToggleFavorite={toggleFavorite} onMoveFavorite={moveFavorite} />
@@ -492,6 +531,20 @@
   </section>
 </div>
 
+{#if !standalonePage && !canOpenFeedback}
+  <dialog class="feedback-dialog" bind:this={feedbackDialog} aria-labelledby="feedback-title" aria-describedby="feedback-description">
+    <h2 id="feedback-title">{pick(locale, chrome.feedback)}</h2>
+    <p id="feedback-description">{pick(locale, chrome.feedbackCopyHint)}</p>
+    <div class="feedback-url">
+      <code>{feedbackUrl}</code>
+      <CopyButton {locale} text={feedbackUrl} label={chrome.copyFeedbackLink} />
+    </div>
+    <div class="feedback-actions">
+      <button class="dbx-btn" type="button" onclick={() => feedbackDialog.close()}>{pick(locale, chrome.close)}</button>
+    </div>
+  </dialog>
+{/if}
+
 {#if launcherOpen}<ToolLauncher {locale} {tools} favorites={favoriteTools} recents={launcherRecentTools} onClose={() => (launcherOpen = false)} onTool={openTool} />{/if}
 {#if settingsOpen}<SettingsDialog {locale} initialTab={settingsInitialTab} {shortcuts} tools={catalogTools} favorites={favoriteIds} sidebarCollapsed={preferredSidebarCollapsed} {recentCollapsed} {recentToolLimit} {vaultAutoLockMinutes} preferencesVersion={settingsVersion}
   onClose={() => (settingsOpen = false)} onSave={applySettings}
@@ -507,4 +560,19 @@
   .tool-session[hidden] { display: none; }
   .view-load-state { display: flex; align-items: center; gap: 10px; color: var(--color-muted-foreground); }
   .support-level{padding:2px 7px;border-radius:999px;background:var(--dbx-selection-background);color:var(--dbx-selection-foreground);font-size:10px}.support-level.compatibility{background:var(--color-warning-bg);color:var(--color-warning)}
+  .feedback-dialog {
+    box-sizing: border-box;
+    width: min(420px, calc(100vw - 32px));
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-popover);
+    color: var(--color-popover-foreground);
+  }
+  .feedback-dialog::backdrop { background: var(--dbx-overlay); }
+  .feedback-dialog h2 { margin: 0; font-size: 17px; }
+  .feedback-dialog p { margin: 8px 0 12px; color: var(--color-muted-foreground); font-size: 13px; }
+  .feedback-url { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+  .feedback-url code { font-size: 12px; overflow-wrap: anywhere; user-select: text; }
+  .feedback-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
 </style>

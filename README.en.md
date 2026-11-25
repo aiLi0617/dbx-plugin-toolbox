@@ -12,7 +12,7 @@ DBX Toolbox is a Workbench plugin for [DBX](https://github.com/t8y2/dbx). It bri
 | --- | --- |
 | Plugin ID | `io.github.aili0617.toolbox` |
 | Current version | `0.1.8` |
-| Requirements | DBX `>= 0.6.60`, Host API `1` |
+| Requirements | DBX `>= 0.6.65`, Host API `1` |
 | Source and homepage | [aiLi0617/dbx-plugin-toolbox](https://github.com/aiLi0617/dbx-plugin-toolbox) |
 | License | [Apache-2.0](LICENSE) |
 
@@ -207,7 +207,7 @@ plugin-data/
 
 - **Frontend:** Svelte 5 and Vite under `src/`; generated assets are written to ignored `ui/` output.
 - **Backend:** Rust sidecar under `backend/`, packaged as `bin/dbx-plugin-toolbox`.
-- **Contribution:** one Workbench entry with `host.binary` and `host.events`; no runtime network permission.
+- The Workbench uses `host.binary` and `host.events`. The feedback button uses `host.openUrl:https://github.com` to open GitHub after DBX confirms.
 - **Sidecar API:** JSON, hash, cryptography, certificates, OCR, keys, preferences, ports, and local-file operations.
 
 ## Local development
@@ -282,7 +282,9 @@ For versioning, candidate packages, `releaseNotes`, and store operations, see th
 
 ## Contributing
 
-Regular bug reports and suggestions are welcome through [GitHub Issues](https://github.com/aiLi0617/dbx-plugin-toolbox/issues). Read the [contribution guide](CONTRIBUTING.en.md) before preparing a code change.
+Select the **Feedback** icon in the Toolbox toolbar to choose a GitHub template for your report or suggestion. DBX prompts you before opening external links. Development hosts without external link support show the feedback link in a dialog. You can also open the [GitHub issue templates](https://github.com/aiLi0617/dbx-plugin-toolbox/issues/new/choose) directly.
+
+Read the [contribution guide](CONTRIBUTING.en.md) before preparing a code change.
 
 Do not open a public issue for a potential vulnerability involving keys, credentials, arbitrary file access, process termination, or another security impact. Follow the [security policy](SECURITY.en.md) to report it privately.
 
